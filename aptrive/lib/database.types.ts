@@ -1,0 +1,373 @@
+// Hand-authored types matching supabase/migrations/0001–0003.
+// Shaped like `supabase gen types typescript` output, so this can be
+// dropped in as-is now and replaced 1:1 by the CLI-generated file
+// later (`supabase gen types typescript --local > lib/database.types.ts`)
+// without touching any calling code.
+
+export type Difficulty = "Easy" | "Medium" | "Hard";
+export type Language = "English" | "Urdu";
+export type ContentType =
+  | "mcq"
+  | "topic-wise"
+  | "chapter-wise"
+  | "past-papers"
+  | "solved-papers"
+  | "mock-tests"
+  | "formula-sheets"
+  | "revision-notes"
+  | "pdf"
+  | "video"
+  | "flashcards"
+  | "ai-generated"
+  | "daily-challenge";
+export type UserRole = "student" | "instructor" | "content_manager" | "administrator";
+export type SessionMode = "practice" | "mock" | "exam" | "daily-challenge";
+export type SessionStatus = "in_progress" | "completed" | "abandoned";
+export type RecentlyViewedType = "practice_set" | "question" | "video" | "pdf";
+
+export interface Database {
+  public: {
+    Tables: {
+      profiles: {
+        Row: {
+          id: string;
+          full_name: string | null;
+          avatar_url: string | null;
+          role: UserRole;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: Partial<Database["public"]["Tables"]["profiles"]["Row"]> & {
+          id: string;
+        };
+        Update: Partial<Database["public"]["Tables"]["profiles"]["Row"]>;
+      };
+
+      subjects: {
+        Row: {
+          id: string;
+          slug: string;
+          name: string;
+          description: string | null;
+          is_coming_soon: boolean;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: Partial<Database["public"]["Tables"]["subjects"]["Row"]> & {
+          slug: string;
+          name: string;
+        };
+        Update: Partial<Database["public"]["Tables"]["subjects"]["Row"]>;
+      };
+
+      practice_sets: {
+        Row: {
+          id: string;
+          slug: string;
+          subject_id: string;
+          title: string;
+          content_type: ContentType;
+          university: string | null;
+          exam_tag: string | null;
+          topic: string;
+          chapter: string | null;
+          difficulty: Difficulty;
+          year: number | null;
+          language: Language;
+          is_solved: boolean;
+          is_premium: boolean;
+          question_count: number;
+          estimated_minutes: number;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: Partial<Database["public"]["Tables"]["practice_sets"]["Row"]> & {
+          slug: string;
+          subject_id: string;
+          title: string;
+          content_type: ContentType;
+          topic: string;
+          difficulty: Difficulty;
+        };
+        Update: Partial<Database["public"]["Tables"]["practice_sets"]["Row"]>;
+      };
+
+      questions: {
+        Row: {
+          id: string;
+          practice_set_id: string;
+          subject_id: string;
+          prompt: string;
+          explanation: string | null;
+          difficulty: Difficulty;
+          topic: string;
+          chapter: string | null;
+          time_estimate_seconds: number;
+          position: number;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: Partial<Database["public"]["Tables"]["questions"]["Row"]> & {
+          practice_set_id: string;
+          subject_id: string;
+          prompt: string;
+          difficulty: Difficulty;
+          topic: string;
+        };
+        Update: Partial<Database["public"]["Tables"]["questions"]["Row"]>;
+      };
+
+      question_options: {
+        Row: {
+          id: string;
+          question_id: string;
+          label: string | null;
+          content: string;
+          is_correct: boolean;
+          position: number;
+        };
+        Insert: Partial<Database["public"]["Tables"]["question_options"]["Row"]> & {
+          question_id: string;
+          content: string;
+        };
+        Update: Partial<Database["public"]["Tables"]["question_options"]["Row"]>;
+      };
+
+      practice_sessions: {
+        Row: {
+          id: string;
+          user_id: string;
+          practice_set_id: string | null;
+          subject_id: string | null;
+          mode: SessionMode;
+          status: SessionStatus;
+          total_questions: number;
+          correct_count: number;
+          incorrect_count: number;
+          skipped_count: number;
+          score_percent: number | null;
+          time_spent_seconds: number;
+          timer_enabled: boolean;
+          randomized: boolean;
+          started_at: string;
+          completed_at: string | null;
+          metadata: Record<string, unknown>;
+        };
+        Insert: Partial<Database["public"]["Tables"]["practice_sessions"]["Row"]> & {
+          user_id: string;
+        };
+        Update: Partial<Database["public"]["Tables"]["practice_sessions"]["Row"]>;
+      };
+
+      question_responses: {
+        Row: {
+          id: string;
+          session_id: string;
+          user_id: string;
+          question_id: string;
+          selected_option_id: string | null;
+          is_correct: boolean;
+          flagged_for_review: boolean;
+          time_spent_seconds: number;
+          answered_at: string;
+        };
+        Insert: Partial<Database["public"]["Tables"]["question_responses"]["Row"]> & {
+          session_id: string;
+          user_id: string;
+          question_id: string;
+        };
+        Update: Partial<Database["public"]["Tables"]["question_responses"]["Row"]>;
+      };
+
+      topic_mastery: {
+        Row: {
+          id: string;
+          user_id: string;
+          subject_id: string | null;
+          topic: string;
+          questions_attempted: number;
+          questions_correct: number;
+          mastery_percent: number;
+          last_practiced_at: string | null;
+          updated_at: string;
+        };
+        Insert: never; // system-maintained via trigger
+        Update: never;
+      };
+
+      daily_activity: {
+        Row: {
+          id: string;
+          user_id: string;
+          activity_date: string;
+          questions_attempted: number;
+          correct_count: number;
+          study_seconds: number;
+          sessions_completed: number;
+        };
+        Insert: never; // system-maintained via trigger
+        Update: never;
+      };
+
+      study_streaks: {
+        Row: {
+          user_id: string;
+          current_streak: number;
+          longest_streak: number;
+          last_active_date: string | null;
+          updated_at: string;
+        };
+        Insert: never; // system-maintained via trigger
+        Update: never;
+      };
+
+      bookmarks: {
+        Row: {
+          id: string;
+          user_id: string;
+          question_id: string | null;
+          practice_set_id: string | null;
+          created_at: string;
+        };
+        Insert: Partial<Database["public"]["Tables"]["bookmarks"]["Row"]> & {
+          user_id: string;
+        };
+        Update: Partial<Database["public"]["Tables"]["bookmarks"]["Row"]>;
+      };
+
+      recently_viewed: {
+        Row: {
+          id: string;
+          user_id: string;
+          resource_type: RecentlyViewedType;
+          resource_id: string;
+          viewed_at: string;
+        };
+        Insert: Partial<Database["public"]["Tables"]["recently_viewed"]["Row"]> & {
+          user_id: string;
+          resource_type: RecentlyViewedType;
+          resource_id: string;
+        };
+        Update: Partial<Database["public"]["Tables"]["recently_viewed"]["Row"]>;
+      };
+
+      achievements: {
+        Row: {
+          id: string;
+          slug: string;
+          name: string;
+          description: string | null;
+          icon: string | null;
+          criteria: Record<string, unknown>;
+          created_at: string;
+        };
+        Insert: Partial<Database["public"]["Tables"]["achievements"]["Row"]> & {
+          slug: string;
+          name: string;
+        };
+        Update: Partial<Database["public"]["Tables"]["achievements"]["Row"]>;
+      };
+
+      user_achievements: {
+        Row: {
+          id: string;
+          user_id: string;
+          achievement_id: string;
+          earned_at: string;
+        };
+        Insert: Partial<Database["public"]["Tables"]["user_achievements"]["Row"]> & {
+          user_id: string;
+          achievement_id: string;
+        };
+        Update: Partial<Database["public"]["Tables"]["user_achievements"]["Row"]>;
+      };
+
+      student_profiles: {
+        Row: {
+          id: string;
+          user_id: string;
+          display_name: string | null;
+          target_university: string | null;
+          target_program: string | null;
+          entry_test: string | null;
+          education_level: string | null;
+          matric_marks: number | null;
+          intermediate_marks: number | null;
+          expected_test_date: string | null;
+          preferred_study_schedule: string | null;
+          daily_study_target_minutes: number;
+          improvement_subjects: string[];
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: Partial<Database["public"]["Tables"]["student_profiles"]["Row"]> & {
+          user_id: string;
+        };
+        Update: Partial<Database["public"]["Tables"]["student_profiles"]["Row"]>;
+      };
+
+      goal_progress: {
+        Row: {
+          id: string;
+          user_id: string;
+          period: "daily" | "weekly" | "monthly";
+          period_start: string;
+          target_questions: number;
+          completed_questions: number;
+          target_minutes: number;
+          completed_minutes: number;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: Partial<Database["public"]["Tables"]["goal_progress"]["Row"]> & {
+          user_id: string;
+          period: "daily" | "weekly" | "monthly";
+          period_start: string;
+        };
+        Update: Partial<Database["public"]["Tables"]["goal_progress"]["Row"]>;
+      };
+
+      admission_deadlines: {
+        Row: {
+          id: string;
+          university: string;
+          program: string | null;
+          deadline_date: string;
+          label: string;
+          source_url: string | null;
+          created_at: string;
+        };
+        Insert: Partial<Database["public"]["Tables"]["admission_deadlines"]["Row"]> & {
+          university: string;
+          deadline_date: string;
+          label: string;
+        };
+        Update: Partial<Database["public"]["Tables"]["admission_deadlines"]["Row"]>;
+      };
+
+      notifications: {
+        Row: {
+          id: string;
+          user_id: string;
+          title: string;
+          body: string;
+          notification_type: "reminder" | "deadline" | "achievement" | "material" | "system";
+          read_at: string | null;
+          action_url: string | null;
+          created_at: string;
+        };
+        Insert: Partial<Database["public"]["Tables"]["notifications"]["Row"]> & {
+          user_id: string;
+          title: string;
+          body: string;
+          notification_type: "reminder" | "deadline" | "achievement" | "material" | "system";
+        };
+        Update: Partial<Database["public"]["Tables"]["notifications"]["Row"]>;
+      };
+    };
+    Views: Record<string, never>;
+    Functions: Record<string, never>;
+    Enums: Record<string, never>;
+    CompositeTypes: Record<string, never>;
+  };
+}
