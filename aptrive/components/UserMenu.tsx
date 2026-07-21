@@ -8,6 +8,7 @@ export type HeaderUser = {
   fullName: string;
   email: string;
   avatarUrl: string | null;
+  isStaff?: boolean;
 };
 
 export default function UserMenu({ user }: { user: HeaderUser }) {
@@ -71,6 +72,7 @@ export default function UserMenu({ user }: { user: HeaderUser }) {
             <MenuLink href="/practice">Resume practice</MenuLink>
             <MenuLink href="/leaderboard">Rankings</MenuLink>
             <MenuLink href="/profile">Profile</MenuLink>
+            {user.isStaff && <MenuLink href="/admin">Admin</MenuLink>}
           </div>
 
           <div className="border-t border-line py-1">

@@ -25,6 +25,18 @@ export type SessionMode = "practice" | "mock" | "exam" | "daily-challenge";
 export type SessionStatus = "in_progress" | "completed" | "abandoned";
 export type RecentlyViewedType = "practice_set" | "question" | "video" | "pdf";
 
+// -- Admin CMS (0005_admin_cms_foundation) -----------------------
+export type QuestionStatus = "draft" | "in_review" | "published" | "archived";
+export type PracticeSetStatus = "draft" | "published" | "archived";
+export type ImportBatchStatus =
+  | "validating"
+  | "ready"
+  | "importing"
+  | "completed"
+  | "failed"
+  | "rolled_back";
+export type ImportRowStatus = "pending" | "valid" | "warning" | "error";
+
 export interface Database {
   public: {
     Tables: {
@@ -78,6 +90,7 @@ export interface Database {
           is_premium: boolean;
           question_count: number;
           estimated_minutes: number;
+          status: PracticeSetStatus;
           created_at: string;
           updated_at: string;
         };
@@ -104,6 +117,16 @@ export interface Database {
           chapter: string | null;
           time_estimate_seconds: number;
           position: number;
+          status: QuestionStatus;
+          source: string | null;
+          source_year: number | null;
+          tags: string[];
+          ai_generated: boolean;
+          human_reviewed: boolean;
+          current_version: number;
+          created_by: string | null;
+          reviewed_by: string | null;
+          duplicated_from_id: string | null;
           created_at: string;
           updated_at: string;
         };
@@ -115,6 +138,20 @@ export interface Database {
           topic: string;
         };
         Update: Partial<Database["public"]["Tables"]["questions"]["Row"]>;
+      };
+
+      question_versions: {
+        Row: {
+          id: string;
+          question_id: string;
+          version_number: number;
+          snapshot: Record<string, unknown>;
+          changed_by: string | null;
+          change_summary: string | null;
+          created_at: string;
+        };
+        Insert: never; // system-maintained via trigger
+        Update: never;
       };
 
       question_options: {
@@ -363,6 +400,49 @@ export interface Database {
           notification_type: "reminder" | "deadline" | "achievement" | "material" | "system";
         };
         Update: Partial<Database["public"]["Tables"]["notifications"]["Row"]>;
+      };
+
+      import_batches: {
+        Row: {
+          id: string;
+          created_by: string | null;
+          file_name: string;
+          source_type: "csv";
+          target_practice_set_id: string;
+          status: ImportBatchStatus;
+          total_rows: number;
+          valid_rows: number;
+          warning_rows: number;
+          error_rows: number;
+          error_message: string | null;
+          created_at: string;
+          completed_at: string | null;
+        };
+        Insert: Partial<Database["public"]["Tables"]["import_batches"]["Row"]> & {
+          file_name: string;
+          target_practice_set_id: string;
+        };
+        Update: Partial<Database["public"]["Tables"]["import_batches"]["Row"]>;
+      };
+
+      import_batch_rows: {
+        Row: {
+          id: string;
+          batch_id: string;
+          row_number: number;
+          raw_data: Record<string, string>;
+          row_status: ImportRowStatus;
+          errors: string[];
+          warnings: string[];
+          question_id: string | null;
+          created_at: string;
+        };
+        Insert: Partial<Database["public"]["Tables"]["import_batch_rows"]["Row"]> & {
+          batch_id: string;
+          row_number: number;
+          raw_data: Record<string, string>;
+        };
+        Update: Partial<Database["public"]["Tables"]["import_batch_rows"]["Row"]>;
       };
     };
     Views: Record<string, never>;

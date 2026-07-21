@@ -8,16 +8,27 @@ export default async function Header() {
     data: { user },
   } = await supabase.auth.getUser();
 
-  const headerUser: HeaderUser | null = user
-    ? {
-        fullName:
-          (user.user_metadata?.full_name as string | undefined) ??
-          user.email ??
-          "Student",
-        email: user.email ?? "",
-        avatarUrl: (user.user_metadata?.avatar_url as string | undefined) ?? null,
-      }
-    : null;
+  let headerUser: HeaderUser | null = null;
+
+  if (user) {
+    const { data: profile } = await supabase
+      .from("profiles")
+      .select("role")
+      .eq("id", user.id)
+      .maybeSingle();
+
+    headerUser = {
+      fullName:
+        (user.user_metadata?.full_name as string | undefined) ??
+        user.email ??
+        "Student",
+      email: user.email ?? "",
+      avatarUrl: (user.user_metadata?.avatar_url as string | undefined) ?? null,
+      isStaff: profile?.role
+        ? ["instructor", "content_manager", "administrator"].includes(profile.role)
+        : false,
+    };
+  }
 
   // SiteNav renders its own <header> so it can control sticky/hide-on-scroll
   // behavior as one unit — see components/SiteNav.tsx.
