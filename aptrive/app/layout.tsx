@@ -1,6 +1,10 @@
 import type { Metadata } from "next";
 import { Space_Grotesk, Inter, IBM_Plex_Mono } from "next/font/google";
+import { SpeedInsights } from "@vercel/speed-insights/next";
+import { Analytics } from "@vercel/analytics/react";
+
 import "./globals.css";
+
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import StructuredData from "@/components/StructuredData";
@@ -27,22 +31,43 @@ const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "https://aptrive.com";
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
+
   title: {
     default: "Aptrive — Master the Test. Unlock Your Future.",
     template: "%s · Aptrive",
   },
+
   description:
     "Aptrive is an intelligent learning platform for Pakistan's most competitive university entrance examinations — structured education, analytics, and modern technology built for ambitious students.",
+
   keywords: [
     "NUST NET",
-    "entrance exam preparation",
-    "Pakistan",
-    "university admissions",
+    "FAST NU",
     "ECAT",
     "MDCAT",
-    "practice MCQs",
+    "Pakistan",
+    "University Admission",
+    "Entry Test",
+    "Practice MCQs",
+    "Learning Platform",
+    "Aptrive",
   ],
-  authors: [{ name: "Aptrive" }],
+
+  authors: [
+    {
+      name: "Aptrive",
+    },
+  ],
+
+  creator: "Aptrive",
+
+  publisher: "Aptrive",
+
+  robots: {
+    index: true,
+    follow: true,
+  },
+
   openGraph: {
     type: "website",
     locale: "en_PK",
@@ -50,17 +75,14 @@ export const metadata: Metadata = {
     siteName: "Aptrive",
     title: "Aptrive — Master the Test. Unlock Your Future.",
     description:
-      "Intelligent preparation for NUST NET and Pakistan's competitive university entrance examinations.",
+      "Intelligent preparation platform for Pakistan's competitive university entrance examinations.",
   },
+
   twitter: {
     card: "summary_large_image",
     title: "Aptrive — Master the Test. Unlock Your Future.",
     description:
-      "Intelligent preparation for NUST NET and Pakistan's competitive university entrance examinations.",
-  },
-  robots: {
-    index: true,
-    follow: true,
+      "Intelligent preparation platform for Pakistan's competitive university entrance examinations.",
   },
 };
 
@@ -73,12 +95,24 @@ export default function RootLayout({
     <html
       lang="en"
       className={`${spaceGrotesk.variable} ${inter.variable} ${ibmPlexMono.variable} h-full`}
+      suppressHydrationWarning
     >
-      <body className="min-h-full flex flex-col bg-graphite text-fg">
+      <body className="min-h-full flex flex-col bg-graphite text-fg antialiased">
         <StructuredData />
+
         <Header />
-        <main className="flex-1">{children}</main>
+
+        <main className="flex-1">
+          {children}
+        </main>
+
         <Footer />
+
+        {/* Vercel Analytics */}
+        <Analytics />
+
+        {/* Vercel Speed Insights */}
+        <SpeedInsights />
       </body>
     </html>
   );
