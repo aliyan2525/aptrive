@@ -8,6 +8,7 @@ import "./globals.css";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { OrganizationSchema } from "@/components/StructuredData";
+import GoogleAnalytics from "@/components/analytics/GoogleAnalytics";
 
 const spaceGrotesk = Space_Grotesk({
   variable: "--font-space-grotesk",
@@ -68,6 +69,13 @@ export const metadata: Metadata = {
     follow: true,
   },
 
+  // Google Search Console domain verification (Phase 11). Next.js's
+  // Metadata API renders this as
+  // <meta name="google-site-verification" content="..." /> in <head>.
+  verification: {
+    google: "Q59yO2kRrObxD1htTeWTxHH1AEvr-jyJITXkHuB2-ZU",
+  },
+
   openGraph: {
     type: "website",
     locale: "en_PK",
@@ -113,6 +121,9 @@ export default function RootLayout({
 
         {/* Vercel Speed Insights */}
         <SpeedInsights />
+
+        {/* Google Analytics 4 (Phase 11) */}
+        <GoogleAnalytics />
       </body>
     </html>
   );

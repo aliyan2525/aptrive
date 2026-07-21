@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useRef, useState } from "react";
 import { universities } from "@/lib/universities";
+import { event as gaEvent } from "@/lib/gtag";
 
 type MarksState = Record<string, { obtained: string; total: string }>;
 
@@ -140,6 +141,10 @@ export default function AggregateCalculator() {
     }
 
     setResult({ aggregate, breakdown });
+    gaEvent("calculator_used", {
+      university_id: uni.id,
+      university_name: uni.name,
+    });
   }
 
   const isUnavailable = !uni.verified || uni.components.length === 0;

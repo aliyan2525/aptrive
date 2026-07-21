@@ -1,5 +1,6 @@
 import Link from "next/link";
 import AuthShell from "@/components/auth/AuthShell";
+import SignupCompleteEvent from "@/components/analytics/SignupCompleteEvent";
 
 export default function CheckEmailPage() {
   return (
@@ -16,6 +17,8 @@ export default function CheckEmailPage() {
         </>
       }
     >
+      <SignupCompleteEvent />
+
       <p className="text-center text-sm text-muted">
         Once confirmed, you can{" "}
         <Link href="/login" className="text-teal hover:underline">
