@@ -7,7 +7,7 @@ import "./globals.css";
 
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
-import StructuredData from "@/components/StructuredData";
+import { OrganizationSchema } from "@/components/StructuredData";
 
 const spaceGrotesk = Space_Grotesk({
   variable: "--font-space-grotesk",
@@ -98,7 +98,7 @@ export default function RootLayout({
       suppressHydrationWarning
     >
       <body className="min-h-full flex flex-col bg-graphite text-fg antialiased">
-        <StructuredData />
+        <OrganizationSchema />
 
         <Header />
 

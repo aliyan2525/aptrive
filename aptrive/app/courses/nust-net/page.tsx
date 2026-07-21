@@ -1,6 +1,7 @@
 import Link from "next/link";
 import type { Metadata } from "next";
 import TickDivider from "@/components/TickDivider";
+import { CourseSchema } from "@/components/StructuredData";
 
 export const metadata: Metadata = {
   title: "NUST NET Preparation — Aptrive",
@@ -56,6 +57,10 @@ const faqs = [
 export default function NustNetPage() {
   return (
     <>
+      <CourseSchema
+        name="NUST NET Preparation"
+        description="Mathematics-focused NUST NET preparation with diagnostics, adaptive practice, analytics, and timed mock exams."
+      />
       <section className="container-aptrive py-16 md:py-24">
         <div className="grid gap-12 md:grid-cols-2 md:items-start">
           <div>

@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import StatCounter from "@/components/StatCounter";
@@ -11,6 +12,12 @@ import FeaturedLibrary from "@/components/FeaturedLibrary";
 import Testimonials from "@/components/Testimonials";
 import FAQAccordion from "@/components/FAQAccordion";
 import { createClient } from "@/lib/supabase/server";
+
+export const metadata: Metadata = {
+  title: "Aptrive — AI-Powered Prep for Pakistan's University Entrance Exams",
+  description:
+    "Prepare for NUST NET, FAST, GIKI, PIEAS, COMSATS, and UET with adaptive practice, mock exams, aggregate calculators, and AI-powered analytics.",
+};
 
 const steps = [
   {
