@@ -189,12 +189,26 @@ export default function UetPage() {
             Browse the Question Library for physics, chemistry, and
             mathematics practice sets, past papers, and formula sheets.
           </p>
-          <Link
-            href="/library/mathematics"
-            className="mt-4 inline-block text-sm font-medium text-teal hover:underline"
-          >
-            Go to the Mathematics library →
-          </Link>
+          <div className="mt-4 flex flex-wrap gap-x-6 gap-y-2">
+            <Link
+              href="/library/mathematics"
+              className="text-sm font-medium text-teal hover:underline"
+            >
+              Go to the Mathematics library →
+            </Link>
+            <Link
+              href="/library/physics"
+              className="text-sm font-medium text-teal hover:underline"
+            >
+              Go to the Physics library →
+            </Link>
+            <Link
+              href="/library/chemistry"
+              className="text-sm font-medium text-teal hover:underline"
+            >
+              Go to the Chemistry library →
+            </Link>
+          </div>
         </div>
       </section>
 
