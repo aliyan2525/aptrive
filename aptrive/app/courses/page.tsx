@@ -3,7 +3,8 @@ import type { Metadata } from "next";
 
 export const metadata: Metadata = {
   title: "Courses — Aptrive",
-  description: "Explore Aptrive's exam preparation tracks, starting with NUST NET.",
+  description:
+    "Explore Aptrive's exam preparation tracks: NUST NET, FAST-NUCES, GIKI, PIEAS, COMSATS, and UET Lahore.",
 };
 
 const courses = [
@@ -13,6 +14,46 @@ const courses = [
     name: "NUST NET",
     tagline: "Engineering entrance — mathematics-focused",
     body: "Structured practice across the full NUST NET mathematics syllabus, with diagnostics, topic-level analytics, and full-length timed mocks.",
+    active: true,
+  },
+  {
+    slug: "fast",
+    status: "Available now",
+    name: "FAST-NUCES",
+    tagline: "Computer Science & Engineering entrance",
+    body: "Quantitative, analytical, and verbal reasoning preparation for FAST-NUCES's entry test, on the same diagnostic-and-analytics engine.",
+    active: true,
+  },
+  {
+    slug: "comsats",
+    status: "Available now",
+    name: "COMSATS",
+    tagline: "University-wide entrance test",
+    body: "Quantitative, analytical, and verbal reasoning preparation for the COMSATS entry test, across all campuses.",
+    active: true,
+  },
+  {
+    slug: "uet",
+    status: "Available now",
+    name: "UET Lahore",
+    tagline: "ECAT engineering entrance",
+    body: "Physics, chemistry, and mathematics preparation for UET Lahore's ECAT, with diagnostics and full-length timed mocks.",
+    active: true,
+  },
+  {
+    slug: "pieas",
+    status: "Available now",
+    name: "PIEAS",
+    tagline: "Engineering & Applied Sciences entrance",
+    body: "Mathematics and physics preparation for PIEAS's entry test, on the same diagnostic-and-analytics engine.",
+    active: true,
+  },
+  {
+    slug: "giki",
+    status: "Available now",
+    name: "GIKI",
+    tagline: "Engineering Sciences entrance",
+    body: "Mathematics, physics, and analytical-reasoning preparation for GIKI's entry test, with diagnostics and full-length timed mocks.",
     active: true,
   },
   {

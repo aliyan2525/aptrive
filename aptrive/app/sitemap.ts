@@ -11,6 +11,11 @@ export default function sitemap(): MetadataRoute.Sitemap {
     "/calculator",
     "/courses",
     "/courses/nust-net",
+    "/courses/fast",
+    "/courses/giki",
+    "/courses/pieas",
+    "/courses/comsats",
+    "/courses/uet",
     "/library",
     "/practice",
     "/leaderboard",
@@ -28,8 +33,5 @@ export default function sitemap(): MetadataRoute.Sitemap {
       lastModified: new Date(),
     }));
 
-  // NOTE: once the Phase 4 course pages (/courses/fast, /courses/giki,
-  // /courses/pieas, /courses/comsats, /courses/uet) exist, add them here —
-  // e.g. by mapping over lib/universities.ts entries with a matching route.
   return [...staticRoutes, ...libraryRoutes];
 }

@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState } from "react";
+import { useSearchParams } from "next/navigation";
 import { universities } from "@/lib/universities";
 import { event as gaEvent } from "@/lib/gtag";
 
@@ -62,7 +63,14 @@ function useAnimatedNumber(target: number, durationMs = 500) {
 }
 
 export default function AggregateCalculator() {
-  const [uniId, setUniId] = useState(universities[0].id);
+  const searchParams = useSearchParams();
+  const requestedUni = searchParams.get("uni");
+  const initialUniId =
+    requestedUni && universities.some((u) => u.id === requestedUni)
+      ? requestedUni
+      : universities[0].id;
+
+  const [uniId, setUniId] = useState(initialUniId);
   const [marks, setMarks] = useState<MarksState>({});
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [result, setResult] = useState<null | {
