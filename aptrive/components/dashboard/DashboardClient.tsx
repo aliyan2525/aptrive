@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
 import type { getDashboardData } from "@/lib/dashboard-data";
 
 type DashboardData = Awaited<ReturnType<typeof getDashboardData>>;
@@ -25,6 +25,38 @@ const quickActions = [
   { href: "/calculator", title: "Estimate Merit", meta: "University aggregate" },
 ];
 
+const weekdayLabels = ["S", "M", "T", "W", "T", "F", "S"];
+
+/**
+ * Time-of-day greeting. Kept out of the initial render (see the
+ * "Welcome back" default + useEffect below) so the server-rendered
+ * HTML and the first client render always match — computing this
+ * directly from `new Date()` during render would read the server's
+ * clock/timezone on the first paint and the visitor's on hydration,
+ * which can disagree and trigger a hydration mismatch.
+ */
+function getGreeting(hour: number) {
+  if (hour < 5) return "Still up";
+  if (hour < 12) return "Good morning";
+  if (hour < 17) return "Good afternoon";
+  if (hour < 21) return "Good evening";
+  return "Good night";
+}
+
+function getStreakLine(streak: number) {
+  if (streak <= 0) return "Start today's session to begin a new streak.";
+  if (streak === 1) return "1-day streak — keep it going tomorrow.";
+  if (streak < 7) return `${streak}-day streak — you're building real momentum.`;
+  if (streak < 30) return `${streak}-day streak. That's real consistency.`;
+  return `${streak}-day streak. That's elite-level discipline.`;
+}
+
+interface CalendarDay {
+  day: number;
+  active: boolean;
+  isToday: boolean;
+}
+
 export default function DashboardClient({
   firstName,
   email,
@@ -38,13 +70,55 @@ export default function DashboardClient({
   memberSince: string | null;
   data: DashboardData;
 }) {
+  const streak = data.streak?.current_streak ?? 0;
   const quote = quotes[new Date().getDay() % quotes.length];
+
+  // See getGreeting's comment: default matches what the server renders,
+  // then swaps to the visitor's local time after mount.
+  const [greeting, setGreeting] = useState("Welcome back");
+  const [calendarDays, setCalendarDays] = useState<CalendarDay[]>([]);
+
+  useEffect(() => {
+    // Deliberately deferred: this reads the visitor's local clock, which
+    // must not run during SSR/first-paint or it will disagree with the
+    // server's render and trigger a hydration mismatch. This is the
+    // standard fix for that, not the "derived state" anti-pattern the
+    // react-hooks/set-state-in-effect rule normally targets.
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setGreeting(getGreeting(new Date().getHours()));
+  }, []);
+
+  useEffect(() => {
+    const now = new Date();
+    const year = now.getFullYear();
+    const month = now.getMonth();
+    const daysInMonth = new Date(year, month + 1, 0).getDate();
+    const todayStr = now.toISOString().slice(0, 10);
+    const activityByDate = new Map(data.activity.map((d) => [d.activity_date, d]));
+
+    // Same rationale as the greeting effect above: "today" and "this
+    // month" must be read from the visitor's clock, not the server's.
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setCalendarDays(
+      Array.from({ length: daysInMonth }, (_, i) => {
+        const day = i + 1;
+        const dateStr = `${year}-${String(month + 1).padStart(2, "0")}-${String(day).padStart(2, "0")}`;
+        const record = activityByDate.get(dateStr);
+        return {
+          day,
+          active: !!record && record.sessions_completed > 0,
+          isToday: dateStr === todayStr,
+        };
+      })
+    );
+  }, [data.activity]);
+
   const prepPercent = Math.min(
     100,
     Math.round(
       (data.weeklySummary.questionsAttempted / 120) * 45 +
         data.weeklySummary.accuracyPercent * 0.35 +
-        ((data.streak?.current_streak ?? 0) / 14) * 20
+        (streak / 14) * 20
     )
   );
   const activity = data.activity.slice(-28);
@@ -62,7 +136,7 @@ export default function DashboardClient({
     : 42;
 
   const kpis = [
-    { label: "Study streak", value: `${data.streak?.current_streak ?? 0} days`, tone: "teal" },
+    { label: "Study streak", value: `${streak} days`, tone: "teal" },
     { label: "Preparation", value: `${prepPercent}%`, tone: "gold" },
     { label: "Study hours", value: `${data.weeklySummary.studyHours}h`, tone: "teal" },
     { label: "Accuracy", value: `${data.weeklySummary.accuracyPercent}%`, tone: "gold" },
@@ -79,10 +153,10 @@ export default function DashboardClient({
           <div className="motion-card rounded-md border border-line bg-[linear-gradient(135deg,rgba(35,213,196,0.16),rgba(201,162,75,0.08),rgba(18,22,29,0.9))] p-6 md:p-8">
             <div className="eyebrow">Learning command center</div>
             <h1 className="font-display mt-3 text-3xl font-semibold tracking-tight text-fg md:text-5xl">
-              Welcome back, {firstName}
+              {greeting}, {firstName}
             </h1>
             <p className="mt-4 max-w-2xl text-sm leading-relaxed text-muted">
-              {quote}
+              {getStreakLine(streak)} {quote}
             </p>
             <div className="mt-6 flex flex-wrap gap-3">
               <Link href="/practice" className="pressable glow-on-hover rounded-sm bg-teal px-4 py-2 text-sm font-semibold text-graphite">
@@ -141,17 +215,33 @@ export default function DashboardClient({
 
         <section className="mt-6 grid gap-6 xl:grid-cols-[1.1fr_0.9fr]">
           <Panel title="Weekly activity heatmap" subtitle="Questions attempted over the last 28 active days">
-            <div className="grid grid-cols-7 gap-2">
+            <div className="grid grid-cols-7 gap-2 text-center text-[10px] uppercase tracking-wide text-muted-2">
+              {weekdayLabels.map((label, i) => (
+                <span key={`${label}-${i}`}>{label}</span>
+              ))}
+            </div>
+            <div className="mt-2 grid grid-cols-7 gap-2">
               {activity.map((day) => (
                 <div
                   key={day.activity_date}
                   title={`${day.activity_date}: ${day.questions_attempted} questions`}
-                  className="aspect-square rounded-sm border border-line"
+                  className="aspect-square rounded-sm border border-line transition-transform duration-200 [transition-timing-function:var(--ease-smooth)] hover:scale-110"
                   style={{
                     backgroundColor: `rgba(35, 213, 196, ${0.12 + (day.questions_attempted / maxQuestions) * 0.65})`,
                   }}
                 />
               ))}
+            </div>
+            <div className="mt-4 flex items-center justify-end gap-2 text-[11px] text-muted-2">
+              <span>Less</span>
+              {[0.12, 0.3, 0.5, 0.77].map((alpha) => (
+                <span
+                  key={alpha}
+                  className="h-3 w-3 rounded-sm border border-line"
+                  style={{ backgroundColor: `rgba(35, 213, 196, ${alpha})` }}
+                />
+              ))}
+              <span>More</span>
             </div>
           </Panel>
 
@@ -164,7 +254,10 @@ export default function DashboardClient({
                     <span className="font-mono-data text-muted">{item.mastery_percent}%</span>
                   </div>
                   <div className="mt-2 h-2 overflow-hidden rounded-full bg-panel-2">
-                    <div className="h-full rounded-full bg-teal" style={{ width: `${item.mastery_percent}%` }} />
+                    <div
+                      className="h-full rounded-full bg-teal transition-[width] duration-700 [transition-timing-function:var(--ease-smooth)]"
+                      style={{ width: `${item.mastery_percent}%` }}
+                    />
                   </div>
                 </div>
               ))}
@@ -206,18 +299,21 @@ export default function DashboardClient({
         </section>
 
         <section className="mt-6 grid gap-6 lg:grid-cols-[0.9fr_1.1fr]">
-          <Panel title="Practice calendar" subtitle="Completed sessions across the current month">
+          <Panel title="Practice calendar" subtitle="Days with a completed session this month">
             <div className="grid grid-cols-7 gap-2">
-              {Array.from({ length: 35 }, (_, index) => {
-                const active = index % 3 !== 0 && index < 30;
-                return (
-                  <div
-                    key={index}
-                    className={`aspect-square rounded-sm border border-line ${active ? "bg-teal-dim" : "bg-panel-2"}`}
-                    title={active ? "Practice completed" : "No session"}
-                  />
-                );
-              })}
+              {(calendarDays.length ? calendarDays : placeholderCalendar).map((d) => (
+                <div
+                  key={d.day}
+                  title={d.active ? `${d.day} — session completed` : `${d.day} — no session`}
+                  className={`relative grid aspect-square place-items-center rounded-sm border text-[11px] transition-colors duration-200 ${
+                    d.active
+                      ? "border-teal/40 bg-teal-dim text-fg"
+                      : "border-line bg-panel-2 text-muted-2"
+                  } ${d.isToday ? "ring-1 ring-teal ring-offset-1 ring-offset-panel" : ""}`}
+                >
+                  {d.day}
+                </div>
+              ))}
             </div>
           </Panel>
 
@@ -244,6 +340,14 @@ export default function DashboardClient({
     </main>
   );
 }
+
+// Rendered only for the first frame before the client-computed real
+// calendar takes over in useEffect — see the comment on getGreeting.
+const placeholderCalendar: CalendarDay[] = Array.from({ length: 30 }, (_, i) => ({
+  day: i + 1,
+  active: false,
+  isToday: false,
+}));
 
 const fallbackMastery = [
   { topic: "Algebra", mastery_percent: 74 },
@@ -279,7 +383,7 @@ function ProgressRing({ value }: { value: number }) {
     [value]
   );
   return (
-    <div className="grid h-20 w-20 place-items-center rounded-full" style={style}>
+    <div className="grid h-20 w-20 place-items-center rounded-full transition-[background] duration-700 [transition-timing-function:var(--ease-smooth)]" style={style}>
       <div className="grid h-14 w-14 place-items-center rounded-full bg-panel text-sm font-semibold text-fg">{value}%</div>
     </div>
   );
@@ -294,7 +398,10 @@ function GoalRow({ label, done, total }: { label: string; done: number; total: n
         <span className="font-mono-data">{done}/{total}</span>
       </div>
       <div className="mt-2 h-2 overflow-hidden rounded-full bg-panel-2">
-        <div className="h-full rounded-full bg-gold" style={{ width: `${percent}%` }} />
+        <div
+          className="h-full rounded-full bg-gold transition-[width] duration-700 [transition-timing-function:var(--ease-smooth)]"
+          style={{ width: `${percent}%` }}
+        />
       </div>
     </div>
   );
