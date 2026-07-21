@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
@@ -50,13 +50,16 @@ const navLinks = [
 function navLinkClass(active: boolean) {
   return active
     ? "relative text-sm font-medium text-fg after:absolute after:-bottom-2 after:left-0 after:h-0.5 after:w-full after:rounded-full after:bg-teal after:content-['']"
-    : "relative text-sm text-muted transition-colors hover:text-fg after:absolute after:-bottom-2 after:left-0 after:h-0.5 after:w-0 after:rounded-full after:bg-teal after:transition-all after:content-[''] hover:after:w-full";
+    : "relative text-sm text-muted transition-colors hover:text-fg after:absolute after:-bottom-2 after:left-0 after:h-0.5 after:w-0 after:rounded-full after:bg-teal after:transition-all after:duration-300 after:[transition-timing-function:var(--ease-smooth)] after:content-[''] hover:after:w-full";
 }
 
 export default function SiteNav({ user }: { user: HeaderUser | null }) {
   const pathname = usePathname();
   const [mobileOpen, setMobileOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const [hidden, setHidden] = useState(false);
+  const lastY = useRef(0);
+
   const visibleLinks = useMemo(
     () => navLinks.filter((link) => !link.authOnly || user),
     [user]
@@ -70,19 +73,48 @@ export default function SiteNav({ user }: { user: HeaderUser | null }) {
   }, [mobileOpen]);
 
   useEffect(() => {
-    const update = () => setScrolled(window.scrollY > 8);
+    function update() {
+      const y = window.scrollY;
+      setScrolled(y > 8);
+
+      if (mobileOpen) {
+        lastY.current = y;
+        return;
+      }
+
+      if (y < 80) {
+        setHidden(false);
+      } else if (y > lastY.current + 4) {
+        setHidden(true); // scrolling down — get out of the way
+      } else if (y < lastY.current - 4) {
+        setHidden(false); // scrolling up — bring it back
+      }
+      lastY.current = y;
+    }
     update();
     window.addEventListener("scroll", update, { passive: true });
     return () => window.removeEventListener("scroll", update);
-  }, []);
+  }, [mobileOpen]);
 
   return (
     <>
-      <div
-        className={`container-aptrive flex h-16 items-center justify-between transition-all duration-300 ${
-          scrolled ? "bg-graphite/80 backdrop-blur" : ""
+      {/*
+        The translateY hide/show lives on this top <header> only — never
+        wrap the fixed-position mobile menu / bottom nav below in an
+        element that has a `transform`, since a transformed ancestor
+        creates a new containing block and would trap `fixed` children
+        inside the header's box instead of the viewport.
+      */}
+      <header
+        className={`sticky top-0 z-50 border-b border-line bg-graphite/90 backdrop-blur transition-transform duration-300 [transition-timing-function:var(--ease-smooth)] ${
+          hidden ? "-translate-y-full" : "translate-y-0"
         }`}
       >
+        <div
+          className={`container-aptrive flex h-16 items-center justify-between transition-colors duration-300 ${
+            scrolled ? "bg-graphite/80 backdrop-blur" : ""
+          }`}
+        >
         <Link href="/" className="flex items-center gap-2.5" aria-label="Aptrive — home">
           <Image
             src="/logo-mark.png"
@@ -113,7 +145,7 @@ export default function SiteNav({ user }: { user: HeaderUser | null }) {
         <div className="flex items-center gap-3">
           <Link
             href="/library"
-            className="hidden h-9 min-w-[160px] items-center gap-2 rounded-sm border border-line bg-panel/70 px-3 text-sm text-muted transition-colors hover:border-teal/40 hover:text-fg lg:flex"
+            className="pressable hidden h-9 min-w-[160px] items-center gap-2 rounded-sm border border-line bg-panel/70 px-3 text-sm text-muted hover:border-teal/40 hover:text-fg lg:flex"
             aria-label="Search library"
           >
             <span aria-hidden="true">⌕</span>
@@ -124,7 +156,7 @@ export default function SiteNav({ user }: { user: HeaderUser | null }) {
             <>
               <Link
                 href="/dashboard"
-                className="hidden h-9 w-9 place-items-center rounded-sm border border-line bg-panel text-muted transition-colors hover:border-teal/40 hover:text-fg sm:grid"
+                className="pressable hidden h-9 w-9 place-items-center rounded-sm border border-line bg-panel text-muted hover:border-teal/40 hover:text-fg sm:grid"
                 aria-label="Notifications"
               >
                 <span aria-hidden="true">◦</span>
@@ -150,11 +182,19 @@ export default function SiteNav({ user }: { user: HeaderUser | null }) {
 
           <button
             type="button"
-            className="flex h-10 w-10 items-center justify-center rounded-sm border border-line text-fg md:hidden"
+            className="pressable flex h-10 w-10 items-center justify-center rounded-sm border border-line text-fg md:hidden"
             aria-expanded={mobileOpen}
             aria-controls="mobile-nav"
             aria-label={mobileOpen ? "Close menu" : "Open menu"}
-            onClick={() => setMobileOpen((open) => !open)}
+            onClick={() =>
+              setMobileOpen((open) => {
+                const next = !open;
+                // Never hide the bar while the mobile menu is open, or
+                // the menu and its trigger would visually disconnect.
+                if (next) setHidden(false);
+                return next;
+              })
+            }
           >
             <span className="sr-only">{mobileOpen ? "Close menu" : "Open menu"}</span>
             {mobileOpen ? (
@@ -178,7 +218,8 @@ export default function SiteNav({ user }: { user: HeaderUser | null }) {
             )}
           </button>
         </div>
-      </div>
+        </div>
+      </header>
 
       {mobileOpen && (
         <div
@@ -202,7 +243,7 @@ export default function SiteNav({ user }: { user: HeaderUser | null }) {
                 key={link.href}
                 href={link.href}
                 onClick={() => setMobileOpen(false)}
-                className={`rounded-sm px-3 py-3 text-base ${
+                className={`rounded-sm px-3 py-3 text-base transition-colors duration-200 ${
                   link.match(pathname)
                     ? "bg-teal-dim font-medium text-fg"
                     : "text-muted hover:bg-panel hover:text-fg"
@@ -218,14 +259,14 @@ export default function SiteNav({ user }: { user: HeaderUser | null }) {
                 <Link
                   href="/login"
                   onClick={() => setMobileOpen(false)}
-                  className="block rounded-sm border border-line px-4 py-3 text-center text-sm font-medium text-fg"
+                  className="pressable block rounded-sm border border-line px-4 py-3 text-center text-sm font-medium text-fg"
                 >
                   Log in
                 </Link>
                 <Link
                   href="/signup"
                   onClick={() => setMobileOpen(false)}
-                  className="block rounded-sm bg-teal px-4 py-3 text-center text-sm font-medium text-graphite"
+                  className="pressable block rounded-sm bg-teal px-4 py-3 text-center text-sm font-medium text-graphite"
                 >
                   Create account
                 </Link>
@@ -236,14 +277,14 @@ export default function SiteNav({ user }: { user: HeaderUser | null }) {
                 <Link
                   href="/profile"
                   onClick={() => setMobileOpen(false)}
-                  className="rounded-sm border border-line px-4 py-3 text-center text-sm font-medium text-fg"
+                  className="pressable rounded-sm border border-line px-4 py-3 text-center text-sm font-medium text-fg"
                 >
                   Profile
                 </Link>
                 <Link
                   href="/leaderboard"
                   onClick={() => setMobileOpen(false)}
-                  className="rounded-sm bg-teal px-4 py-3 text-center text-sm font-medium text-graphite"
+                  className="pressable rounded-sm bg-teal px-4 py-3 text-center text-sm font-medium text-graphite"
                 >
                   Rankings
                 </Link>
@@ -269,7 +310,7 @@ export default function SiteNav({ user }: { user: HeaderUser | null }) {
               <Link
                 key={item.href}
                 href={item.href}
-                className={`rounded-sm px-2 py-2 text-center text-xs font-medium ${
+                className={`pressable rounded-sm px-2 py-2 text-center text-xs font-medium transition-colors duration-200 ${
                   active ? "bg-teal text-graphite" : "text-muted"
                 }`}
                 aria-current={active ? "page" : undefined}

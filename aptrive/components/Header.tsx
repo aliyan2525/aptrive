@@ -19,9 +19,7 @@ export default async function Header() {
       }
     : null;
 
-  return (
-    <header className="sticky top-0 z-50 border-b border-line bg-graphite/90 backdrop-blur">
-      <SiteNav user={headerUser} />
-    </header>
-  );
+  // SiteNav renders its own <header> so it can control sticky/hide-on-scroll
+  // behavior as one unit — see components/SiteNav.tsx.
+  return <SiteNav user={headerUser} />;
 }
