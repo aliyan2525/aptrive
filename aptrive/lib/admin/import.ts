@@ -1,6 +1,16 @@
 import { createClient } from "@/lib/supabase/server";
 import { parseCsvToRecords, type CsvRecord } from "@/lib/admin/csv";
-import type { Difficulty } from "@/lib/database.types";
+import type { Database, Difficulty } from "@/lib/database.types";
+
+// Our hand-authored Database type (like the rest of this codebase's
+// database.types.ts) doesn't carry Supabase's generated `Relationships`
+// metadata, so embedded selects such as `practice_sets(title, slug)`
+// can't be type-inferred by the client and need an explicit cast at
+// the boundary — same convention lib/dashboard-data.ts already uses
+// for `user_achievements.select("...achievements(name, icon, ...)")`.
+type ImportBatchRow = Database["public"]["Tables"]["import_batches"]["Row"] & {
+  practice_sets: { title: string; slug: string } | null;
+};
 
 /**
  * CSV import pipeline: validate -> preview -> commit -> rollback.
@@ -197,10 +207,10 @@ export async function getImportBatch(batchId: string) {
     .order("row_number", { ascending: true });
   if (rowsError) throw rowsError;
 
-  return { batch, rows: rows ?? [] };
+  return { batch: batch as unknown as ImportBatchRow, rows: rows ?? [] };
 }
 
-export async function listImportBatches() {
+export async function listImportBatches(): Promise<ImportBatchRow[]> {
   const supabase = await createClient();
   const { data, error } = await supabase
     .from("import_batches")
@@ -208,7 +218,7 @@ export async function listImportBatches() {
     .order("created_at", { ascending: false })
     .limit(50);
   if (error) throw error;
-  return data ?? [];
+  return (data ?? []) as unknown as ImportBatchRow[];
 }
 
 function buildOptionsFromRow(raw: CsvRecord) {

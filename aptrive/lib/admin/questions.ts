@@ -22,6 +22,24 @@ export type QuestionListFilters = {
 
 const DEFAULT_PAGE_SIZE = 25;
 
+export type QuestionListRow = Pick<
+  QuestionRow,
+  | "id"
+  | "prompt"
+  | "difficulty"
+  | "topic"
+  | "chapter"
+  | "status"
+  | "tags"
+  | "ai_generated"
+  | "human_reviewed"
+  | "current_version"
+  | "updated_at"
+> & {
+  subjects: { name: string } | null;
+  practice_sets: { title: string } | null;
+};
+
 /**
  * Searchable/filterable question list for the admin table. Uses
  * offset pagination — fine at the row counts this table will see for
@@ -64,7 +82,12 @@ export async function listQuestionsForAdmin(filters: QuestionListFilters) {
   if (error) throw error;
 
   return {
-    rows: data ?? [],
+    // See the comment on ImportBatchRow in lib/admin/import.ts — the
+    // hand-authored Database type has no Relationships metadata, so
+    // this embedded select needs an explicit cast rather than relying
+    // on inference (which otherwise resolves the joined fields to
+    // `never` and breaks every consumer of `.rows`).
+    rows: (data ?? []) as unknown as QuestionListRow[],
     total: count ?? 0,
     page,
     pageSize,
