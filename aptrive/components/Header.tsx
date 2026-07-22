@@ -11,11 +11,17 @@ export default async function Header() {
   let headerUser: HeaderUser | null = null;
 
   if (user) {
-    const { data: profile } = await supabase
+    const { data } = await supabase
       .from("profiles")
       .select("role")
       .eq("id", user.id)
       .maybeSingle();
+
+    // Cast required: this project's hand-authored Database type has no
+    // Relationships metadata, which the client's type builder needs
+    // even for plain selects — see lib/admin/import.ts for the fuller
+    // explanation and the convention this follows.
+    const profile = data as { role: string } | null;
 
     headerUser = {
       fullName:
