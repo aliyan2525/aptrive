@@ -18,6 +18,11 @@ export type ClientQuestion = {
   chapter: string | null;
   timeEstimateSeconds: number;
   options: ClientOption[];
+  // New Phase 2 fields surfaced to the client so the runner can render
+  // the appropriate input type without leaking answer keys.
+  questionType?: "single_choice" | "multiple_choice" | "numeric";
+  numericAnswerValue?: number | null; // NOT sent for security, but helpful if desired — kept null by default
+  numericAnswerTolerance?: number | null;
 };
 
 type QuestionRow = {
@@ -28,6 +33,9 @@ type QuestionRow = {
   chapter: string | null;
   time_estimate_seconds: number;
   position: number;
+  question_type?: "single_choice" | "multiple_choice" | "numeric" | null;
+  numeric_answer_value?: number | null;
+  numeric_answer_tolerance?: number | null;
   question_options: {
     id: string;
     label: string | null;
@@ -81,7 +89,7 @@ export async function getQuestionRowsForPracticeSet(
   const { data, error } = await supabase
     .from("questions")
     .select(
-      "id, prompt, difficulty, topic, chapter, time_estimate_seconds, position, question_options(id, label, content, is_correct, position)"
+      "id, prompt, difficulty, topic, chapter, time_estimate_seconds, position, question_type, numeric_answer_value, numeric_answer_tolerance, question_options(id, label, content, is_correct, position)"
     )
     .eq("practice_set_id", practiceSetId)
     .order("position", { ascending: true });
@@ -105,7 +113,7 @@ export async function getQuestionRowsByIds(
   const { data, error } = await supabase
     .from("questions")
     .select(
-      "id, prompt, difficulty, topic, chapter, time_estimate_seconds, position, question_options(id, label, content, is_correct, position)"
+      "id, prompt, difficulty, topic, chapter, time_estimate_seconds, position, question_type, numeric_answer_value, numeric_answer_tolerance, question_options(id, label, content, is_correct, position)"
     )
     .in("id", questionIds);
 
@@ -127,5 +135,9 @@ export function toClientQuestion(row: QuestionRow): ClientQuestion {
       label: o.label,
       content: o.content,
     })),
+    questionType: row.question_type ?? undefined,
+    // Don't send the numeric answer value/tolerance to the client by default
+    numericAnswerValue: null,
+    numericAnswerTolerance: null,
   };
 }

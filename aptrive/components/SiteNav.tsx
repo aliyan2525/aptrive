@@ -5,6 +5,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
 import UserMenu, { type HeaderUser } from "@/components/UserMenu";
+import ThemeToggle from "@/components/ThemeToggle";
 
 const navLinks = [
   { href: "/", label: "Home", match: (path: string) => path === "/" },
@@ -143,6 +144,7 @@ export default function SiteNav({ user }: { user: HeaderUser | null }) {
         </nav>
 
         <div className="flex items-center gap-3">
+          <ThemeToggle />
           <Link
             href="/library"
             className="pressable hidden h-9 min-w-[160px] items-center gap-2 rounded-sm border border-line bg-panel/70 px-3 text-sm text-muted hover:border-teal/40 hover:text-fg lg:flex"

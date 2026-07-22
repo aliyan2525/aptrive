@@ -21,6 +21,26 @@
 }
 
 @theme inline {
+  /* Light theme override when [data-theme="light"] is set on <html> */
+}
+
+/* Theme overrides based on data-theme attribute */
+:root[data-theme="light"], html[data-theme="light"] {
+  --graphite: #fbfdff;
+  --panel: #ffffff;
+  --panel-2: #f7fafc;
+  --line: rgba(15, 23, 42, 0.06);
+  --line-strong: rgba(15, 23, 42, 0.12);
+  --fg: #071126;
+  --muted: #475569;
+  --muted-2: #6b7280;
+  --teal: #0ea5a4; /* slightly darker teal on light */
+  --teal-dim: rgba(14, 165, 164, 0.12);
+  --gold: #b8862b;
+  --gold-dim: rgba(184, 134, 43, 0.12);
+}
+
+@theme inline {
   --color-graphite: var(--graphite);
   --color-panel: var(--panel);
   --color-panel-2: var(--panel-2);

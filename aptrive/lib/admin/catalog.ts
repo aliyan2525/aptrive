@@ -10,7 +10,7 @@ type PracticeSetRow = Pick<
 type PracticeSetLookupRow = Pick<Tables["practice_sets"]["Row"], "id" | "slug" | "title" | "subject_id">;
 
 type UniversityRow = Pick<Tables["universities"]["Row"], "id" | "name" | "slug">;
-type TestRow = Pick<Tables["tests"]["Row"], "id" | "name" | "slug">;
+type TestRow = Pick<Tables["tests"]["Row"], "id" | "name" | "slug" | "university_id">;
 type DifficultyLevelRow = Pick<Tables["difficulty_levels"]["Row"], "id" | "label" | "rank">;
 type ChapterRow = Pick<Tables["chapters"]["Row"], "id" | "name" | "slug" | "subject_id">;
 type TopicRow = Pick<Tables["topics"]["Row"], "id" | "name" | "slug" | "chapter_id">;

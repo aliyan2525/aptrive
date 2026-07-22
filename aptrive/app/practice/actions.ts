@@ -4,7 +4,7 @@ import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
 import { getQuestionRowsByIds } from "@/lib/repositories/questions.repository";
-import { gradeMcqAttempt } from "@/lib/services/scoring";
+import { gradeAttempt } from "@/lib/services/scoring";
 import {
   completeSession as completeSessionRepo,
   createAdHocSession,
@@ -15,13 +15,23 @@ import { toggleQuestionBookmark } from "@/lib/repositories/bookmarks.repository"
 export type SubmitAnswerInput = {
   sessionId: string;
   questionId: string;
-  selectedOptionId: string | null;
+  // single-choice clients may post `selectedOptionId`; multiple-choice
+  // clients should post `selectedOptionIds`. Numeric clients post
+  // `numericAnswer`.
+  selectedOptionId?: string | null;
+  selectedOptionIds?: string[] | null;
+  numericAnswer?: number | null;
   timeSpentSeconds: number;
 };
 
 export type SubmitAnswerResult = {
   isCorrect: boolean;
-  correctOptionId: string | null;
+  // single-choice
+  correctOptionId?: string | null;
+  // multiple-choice
+  correctOptionIds?: string[] | null;
+  // numeric
+  correctNumericValue?: number | null;
   error?: string;
 };
 
@@ -46,25 +56,53 @@ export async function submitAnswer(
 
   const [questionRow] = await getQuestionRowsByIds([input.questionId]);
   if (!questionRow) {
-    return { isCorrect: false, correctOptionId: null, error: "Question not found." };
+    return { isCorrect: false, error: "Question not found.", correctOptionId: null };
   }
 
-  const { isCorrect, correctOptionId } = gradeMcqAttempt(
-    questionRow.question_options,
-    input.selectedOptionId
-  );
+  const questionType = (questionRow.question_type as
+    | "single_choice"
+    | "multiple_choice"
+    | "numeric"
+    | null) ?? "single_choice";
+
+  // Build options for MCQ grading
+  const options = (questionRow.question_options ?? []).map((o: any) => ({
+    id: o.id,
+    is_correct: !!o.is_correct,
+  })) as { id: string; is_correct: boolean }[];
+
+  const grade = gradeAttempt({
+    questionType: questionType === null ? "single_choice" : questionType,
+    options: questionType === "numeric" ? undefined : options,
+    selectedOptionId: input.selectedOptionId ?? null,
+    selectedOptionIds: input.selectedOptionIds ?? null,
+    numericAnswer: input.numericAnswer ?? null,
+    numericAnswerValue: questionRow.numeric_answer_value ?? null,
+    numericAnswerTolerance: questionRow.numeric_answer_tolerance ?? null,
+  });
+
+  // For compatibility, keep selected_option_id populated with the
+  // first selected option when multiple selectedOptionIds are present.
+  const compatibilitySelectedId =
+    input.selectedOptionId ?? (input.selectedOptionIds && input.selectedOptionIds[0]) ?? null;
 
   await recordResponse({
     supabase,
     sessionId: input.sessionId,
     userId: user.id,
     questionId: input.questionId,
-    selectedOptionId: input.selectedOptionId,
-    isCorrect,
+    selectedOptionId: compatibilitySelectedId,
+    selectedOptionIds: input.selectedOptionIds ?? null,
+    isCorrect: grade.isCorrect,
     timeSpentSeconds: input.timeSpentSeconds,
   });
 
-  return { isCorrect, correctOptionId };
+  return {
+    isCorrect: grade.isCorrect,
+    correctOptionId: grade.correctOptionId ?? null,
+    correctOptionIds: grade.correctOptionIds ?? null,
+    correctNumericValue: grade.correctNumericValue ?? null,
+  };
 }
 
 export async function completeSessionAction(sessionId: string) {

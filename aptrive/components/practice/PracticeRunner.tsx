@@ -9,6 +9,7 @@ import BookmarkButton from "./BookmarkButton";
 type ExistingResponse = {
   question_id: string;
   selected_option_id: string | null;
+  selected_option_ids?: string[] | null;
   is_correct: boolean;
 };
 
@@ -24,7 +25,14 @@ type Props = {
 
 type AnswerState = Record<
   string,
-  { selectedOptionId: string | null; isCorrect: boolean; correctOptionId: string | null }
+  {
+    selectedOptionId: string | null;
+    selectedOptionIds?: string[] | null;
+    numericAnswer?: number | null;
+    isCorrect: boolean;
+    correctOptionId: string | null;
+    correctOptionIds?: string[] | null;
+  }
 >;
 
 export default function PracticeRunner({
@@ -42,6 +50,7 @@ export default function PracticeRunner({
     for (const r of initialResponses) {
       initial[r.question_id] = {
         selectedOptionId: r.selected_option_id,
+        selectedOptionIds: r.selected_option_ids ?? null,
         isCorrect: r.is_correct,
         correctOptionId: null,
       };
@@ -64,14 +73,12 @@ export default function PracticeRunner({
     [answers]
   );
 
-  function selectOption(optionId: string) {
+  // For single-choice questions we submit immediately on click.
+  async function submitSingle(optionId: string) {
     if (answered || pending) return;
 
     startTransition(async () => {
-      const timeSpentSeconds = Math.max(
-        1,
-        Math.round((Date.now() - questionStartedAt) / 1000)
-      );
+      const timeSpentSeconds = Math.max(1, Math.round((Date.now() - questionStartedAt) / 1000));
       const result = await submitAnswer({
         sessionId,
         questionId: question.id,
@@ -84,9 +91,75 @@ export default function PracticeRunner({
         [question.id]: {
           selectedOptionId: optionId,
           isCorrect: result.isCorrect,
-          correctOptionId: result.correctOptionId,
+          correctOptionId: result.correctOptionId ?? null,
         },
       }));
+    });
+  }
+
+  // For multiple-choice questions, collect selections locally and submit
+  const [multiSelected, setMultiSelected] = useState<Set<string>>(new Set());
+  function toggleMulti(optionId: string) {
+    if (answered || pending) return;
+    setMultiSelected((prev) => {
+      const copy = new Set(prev);
+      if (copy.has(optionId)) copy.delete(optionId);
+      else copy.add(optionId);
+      return copy;
+    });
+  }
+
+  async function submitMulti() {
+    if (answered || pending) return;
+    const selected = Array.from(multiSelected);
+    startTransition(async () => {
+      const timeSpentSeconds = Math.max(1, Math.round((Date.now() - questionStartedAt) / 1000));
+      const result = await submitAnswer({
+        sessionId,
+        questionId: question.id,
+        selectedOptionIds: selected,
+        timeSpentSeconds,
+      });
+
+      setAnswers((prev) => ({
+        ...prev,
+        [question.id]: {
+          selectedOptionId: selected[0] ?? null,
+          selectedOptionIds: selected,
+          isCorrect: result.isCorrect,
+          correctOptionIds: result.correctOptionIds ?? null,
+          correctOptionId: result.correctOptionId ?? null,
+        },
+      }));
+      setMultiSelected(new Set());
+    });
+  }
+
+  // Numeric answer flow
+  const [numericDraft, setNumericDraft] = useState<string>("");
+  async function submitNumeric() {
+    if (answered || pending) return;
+    const numericVal = numericDraft.trim() === "" ? null : Number(numericDraft);
+    startTransition(async () => {
+      const timeSpentSeconds = Math.max(1, Math.round((Date.now() - questionStartedAt) / 1000));
+      const result = await submitAnswer({
+        sessionId,
+        questionId: question.id,
+        numericAnswer: numericVal,
+        timeSpentSeconds,
+      });
+
+      setAnswers((prev) => ({
+        ...prev,
+        [question.id]: {
+          selectedOptionId: null,
+          numericAnswer: numericVal,
+          isCorrect: result.isCorrect,
+          correctOptionId: result.correctOptionId ?? null,
+          correctNumericValue: result.correctNumericValue ?? null,
+        },
+      }));
+      setNumericDraft("");
     });
   }
 
@@ -175,36 +248,112 @@ export default function PracticeRunner({
         </h2>
 
         <div className="mt-6 flex flex-col gap-3">
-          {question.options.map((option) => {
-            const isSelected = answered?.selectedOptionId === option.id;
-            const isCorrectOption = answered && answered.correctOptionId === option.id;
-            const showAsWrong = answered && isSelected && !answered.isCorrect;
-
-            return (
-              <button
-                key={option.id}
-                type="button"
+          {question.questionType === "numeric" ? (
+            <div>
+              <input
+                type="text"
+                value={numericDraft}
+                onChange={(e) => setNumericDraft(e.target.value)}
+                placeholder="Enter numerical response..."
+                className="w-full max-w-xs rounded-sm border border-line bg-panel px-4 py-2 text-sm text-fg"
                 disabled={!!answered || pending}
-                onClick={() => selectOption(option.id)}
-                className={`rounded-xl border px-4 py-3 text-left text-sm transition-colors ${
-                  isCorrectOption
-                    ? "border-teal bg-teal-dim text-fg"
-                    : showAsWrong
-                    ? "border-gold bg-gold-dim text-fg"
-                    : isSelected
-                    ? "border-teal text-fg"
-                    : "border-line text-muted hover:border-line-strong hover:text-fg"
-                } ${answered ? "cursor-default" : "cursor-pointer"}`}
-              >
-                {option.label ? (
-                  <span className="mr-2 font-mono-data text-xs text-muted">
-                    {option.label}
-                  </span>
-                ) : null}
-                {option.content}
-              </button>
-            );
-          })}
+              />
+              <div className="mt-3">
+                <button
+                  type="button"
+                  onClick={submitNumeric}
+                  disabled={pending || !!answered}
+                  className="rounded-sm bg-teal px-4 py-2 text-sm font-semibold text-graphite disabled:opacity-50"
+                >
+                  Submit answer
+                </button>
+              </div>
+            </div>
+          ) : question.questionType === "multiple_choice" ? (
+            <div>
+              {question.options.map((option) => {
+                const isSelected = multiSelected.has(option.id);
+                const isCorrectOption = answered && answered.correctOptionIds?.includes(option.id);
+                const showAsWrong = answered && isSelected && !answered.isCorrect;
+
+                return (
+                  <button
+                    key={option.id}
+                    type="button"
+                    disabled={!!answered || pending}
+                    onClick={() => toggleMulti(option.id)}
+                    className={`flex items-center gap-3 w-full rounded-xl border px-4 py-3 text-left text-sm transition-colors ${
+                      isCorrectOption
+                        ? "border-teal bg-teal-dim text-fg"
+                        : showAsWrong
+                        ? "border-gold bg-gold-dim text-fg"
+                        : isSelected
+                        ? "border-teal text-fg"
+                        : "border-line text-muted hover:border-line-strong hover:text-fg"
+                    } ${answered ? "cursor-default" : "cursor-pointer"}`}
+                  >
+                    <span className={`h-4 w-4 rounded-sm border ${isSelected ? 'bg-teal border-teal' : 'border-line'}`} />
+                    {option.label ? (
+                      <span className="mr-2 font-mono-data text-xs text-muted">
+                        {option.label}
+                      </span>
+                    ) : null}
+                    {option.content}
+                  </button>
+                );
+              })}
+
+              <div className="mt-3 flex gap-2">
+                <button
+                  type="button"
+                  onClick={submitMulti}
+                  disabled={pending || !!answered}
+                  className="rounded-sm bg-teal px-4 py-2 text-sm font-semibold text-graphite disabled:opacity-50"
+                >
+                  Submit answer
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setMultiSelected(new Set())}
+                  disabled={pending || !!answered}
+                  className="rounded-sm border border-line px-4 py-2 text-sm text-fg"
+                >
+                  Clear
+                </button>
+              </div>
+            </div>
+          ) : (
+            question.options.map((option) => {
+              const isSelected = answered?.selectedOptionId === option.id;
+              const isCorrectOption = answered && answered.correctOptionId === option.id;
+              const showAsWrong = answered && isSelected && !answered.isCorrect;
+
+              return (
+                <button
+                  key={option.id}
+                  type="button"
+                  disabled={!!answered || pending}
+                  onClick={() => submitSingle(option.id)}
+                  className={`rounded-xl border px-4 py-3 text-left text-sm transition-colors ${
+                    isCorrectOption
+                      ? "border-teal bg-teal-dim text-fg"
+                      : showAsWrong
+                      ? "border-gold bg-gold-dim text-fg"
+                      : isSelected
+                      ? "border-teal text-fg"
+                      : "border-line text-muted hover:border-line-strong hover:text-fg"
+                  } ${answered ? "cursor-default" : "cursor-pointer"}`}
+                >
+                  {option.label ? (
+                    <span className="mr-2 font-mono-data text-xs text-muted">
+                      {option.label}
+                    </span>
+                  ) : null}
+                  {option.content}
+                </button>
+              );
+            })
+          )}
         </div>
       </div>
 

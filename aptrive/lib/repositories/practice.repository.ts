@@ -123,7 +123,7 @@ export async function getSessionResponses(sessionId: string, userId: string) {
   const supabase = await createClient();
   const { data, error } = await supabase
     .from("question_responses")
-    .select("question_id, selected_option_id, is_correct, flagged_for_review")
+    .select("question_id, selected_option_id, selected_option_ids, is_correct, flagged_for_review")
     .eq("session_id", sessionId)
     .eq("user_id", userId);
 
@@ -153,17 +153,21 @@ export async function recordResponse(params: {
   userId: string;
   questionId: string;
   selectedOptionId: string | null;
+  selectedOptionIds?: string[] | null;
   isCorrect: boolean;
   timeSpentSeconds: number;
   flaggedForReview?: boolean;
 }) {
   const supabase = params.supabase ?? (await createClient());
 
-  const payload: ResponseInsert = {
+  // Use `any` here because the typed ResponseInsert lacks the new
+  // selected_option_ids column in the hand-authored types.
+  const payload: any = {
     session_id: params.sessionId,
     user_id: params.userId,
     question_id: params.questionId,
     selected_option_id: params.selectedOptionId,
+    selected_option_ids: params.selectedOptionIds ?? null,
     is_correct: params.isCorrect,
     flagged_for_review: params.flaggedForReview ?? false,
     time_spent_seconds: params.timeSpentSeconds,
