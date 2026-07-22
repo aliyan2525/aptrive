@@ -1,6 +1,12 @@
 import { createClient } from "@/lib/supabase/server";
 import type { Database, QuestionStatus, Difficulty } from "@/lib/database.types";
 
+// The hand-authored Database type lacks Supabase's Relationships
+// metadata, which causes .insert() / .update() argument types to
+// resolve to `never`.  The workaround is to cast the query-builder
+// itself — `(supabase.from(...) as any)` — so that every chained
+// call is untyped.  Results are still cast back to the correct row
+// types via `as unknown as T`.
 type QuestionRow = Database["public"]["Tables"]["questions"]["Row"];
 type OptionRow = Database["public"]["Tables"]["question_options"]["Row"];
 type QuestionVersionRow = Database["public"]["Tables"]["question_versions"]["Row"];
@@ -162,8 +168,8 @@ export type QuestionFormInput = {
 export async function createQuestion(input: QuestionFormInput, createdBy: string) {
   const supabase = await createClient();
 
-  const { data: question, error: questionError } = await supabase
-    .from("questions")
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const { data: question, error: questionError } = await (supabase.from("questions") as any)
     .insert({
       practice_set_id: input.practice_set_id,
       subject_id: input.subject_id,
@@ -186,7 +192,8 @@ export async function createQuestion(input: QuestionFormInput, createdBy: string
   if (questionError) throw questionError;
   const questionId = (question as unknown as { id: string }).id;
 
-  const { error: optionsError } = await supabase.from("question_options").insert(
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const { error: optionsError } = await (supabase.from("question_options") as any).insert(
     input.options.map((option, index) => ({
       question_id: questionId,
       content: option.content,
@@ -218,8 +225,8 @@ export async function updateQuestion(
 ) {
   const supabase = await createClient();
 
-  const { error: questionError } = await supabase
-    .from("questions")
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const { error: questionError } = await (supabase.from("questions") as any)
     .update({
       practice_set_id: input.practice_set_id,
       subject_id: input.subject_id,
@@ -246,7 +253,8 @@ export async function updateQuestion(
     .eq("question_id", id);
   if (deleteError) throw deleteError;
 
-  const { error: insertError } = await supabase.from("question_options").insert(
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const { error: insertError } = await (supabase.from("question_options") as any).insert(
     input.options.map((option, index) => ({
       question_id: id,
       content: option.content,
@@ -259,7 +267,8 @@ export async function updateQuestion(
 
 export async function setQuestionStatus(id: string, status: QuestionStatus) {
   const supabase = await createClient();
-  const { error } = await supabase.from("questions").update({ status }).eq("id", id);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const { error } = await (supabase.from("questions") as any).update({ status }).eq("id", id);
   if (error) throw error;
 }
 
@@ -288,8 +297,8 @@ export async function duplicateQuestion(id: string, createdBy: string) {
     createdBy
   );
 
-  const { error } = await supabase
-    .from("questions")
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const { error } = await (supabase.from("questions") as any)
     .update({ duplicated_from_id: id })
     .eq("id", newId);
   if (error) throw error;

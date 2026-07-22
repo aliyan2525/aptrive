@@ -8,6 +8,13 @@ import type { Database, Difficulty } from "@/lib/database.types";
 // this file is cast to one of these row types rather than relied on
 // for inference, matching the established convention in
 // lib/dashboard-data.ts (which casts every result, embedded or not).
+//
+// The missing Relationships metadata also causes .insert() / .update()
+// argument types to resolve to `never`, which TypeScript rejects even
+// when the argument is cast `as unknown as any`.  The workaround is to
+// cast the query-builder itself — `(supabase.from(...) as any)` — so
+// that every chained call is untyped.  Results are still cast back to
+// the correct row types via `as unknown as T`.
 type Tables = Database["public"]["Tables"];
 type ImportBatchRowBase = Tables["import_batches"]["Row"];
 type ImportBatchRow = ImportBatchRowBase & {
@@ -163,8 +170,8 @@ export async function createImportBatch(params: {
     { valid: 0, warning: 0, error: 0 } as Record<"valid" | "warning" | "error", number>
   );
 
-  const { data: batchData, error: batchError } = await supabase
-    .from("import_batches")
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const { data: batchData, error: batchError } = await (supabase.from("import_batches") as any)
     .insert({
       file_name: params.fileName,
       target_practice_set_id: params.targetPracticeSetId,
@@ -180,7 +187,8 @@ export async function createImportBatch(params: {
   if (batchError) throw batchError;
   const batchId = (batchData as unknown as QuestionIdRow).id;
 
-  const { error: rowsError } = await supabase.from("import_batch_rows").insert(
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const { error: rowsError } = await (supabase.from("import_batch_rows") as any).insert(
     validated.map((row) => ({
       batch_id: batchId,
       row_number: row.rowNumber,
@@ -269,7 +277,8 @@ export async function commitImportBatch(batchId: string, createdBy: string) {
     throw new Error(`Batch is "${batch.status}" and cannot be committed again`);
   }
 
-  await supabase.from("import_batches").update({ status: "importing" }).eq("id", batchId);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  await (supabase.from("import_batches") as any).update({ status: "importing" }).eq("id", batchId);
 
   const { data: rowsData, error: rowsError } = await supabase
     .from("import_batch_rows")
@@ -295,8 +304,8 @@ export async function commitImportBatch(batchId: string, createdBy: string) {
     const raw = row.raw_data as unknown as CsvRecord;
     const options = buildOptionsFromRow(raw);
 
-    const { data: questionData, error: questionError } = await supabase
-      .from("questions")
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const { data: questionData, error: questionError } = await (supabase.from("questions") as any)
       .insert({
         practice_set_id: batch.target_practice_set_id,
         subject_id: subjectId,
@@ -318,8 +327,8 @@ export async function commitImportBatch(batchId: string, createdBy: string) {
 
     if (questionError || !questionData) {
       failed++;
-      await supabase
-        .from("import_batch_rows")
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      await (supabase.from("import_batch_rows") as any)
         .update({
           row_status: "error",
           errors: [...(row.errors ?? []), `Import failed: ${questionError?.message ?? "unknown error"}`],
@@ -330,15 +339,16 @@ export async function commitImportBatch(batchId: string, createdBy: string) {
 
     const questionId = (questionData as unknown as QuestionIdRow).id;
 
-    const { error: optionsError } = await supabase.from("question_options").insert(
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const { error: optionsError } = await (supabase.from("question_options") as any).insert(
       options.map((o) => ({ ...o, question_id: questionId }))
     );
 
     if (optionsError) {
       await supabase.from("questions").delete().eq("id", questionId);
       failed++;
-      await supabase
-        .from("import_batch_rows")
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      await (supabase.from("import_batch_rows") as any)
         .update({
           row_status: "error",
           errors: [...(row.errors ?? []), `Options import failed: ${optionsError.message}`],
@@ -348,11 +358,12 @@ export async function commitImportBatch(batchId: string, createdBy: string) {
     }
 
     imported++;
-    await supabase.from("import_batch_rows").update({ question_id: questionId }).eq("id", row.id);
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    await (supabase.from("import_batch_rows") as any).update({ question_id: questionId }).eq("id", row.id);
   }
 
-  await supabase
-    .from("import_batches")
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  await (supabase.from("import_batches") as any)
     .update({
       status: failed > 0 && imported === 0 ? "failed" : "completed",
       valid_rows: imported,
@@ -395,7 +406,8 @@ export async function rollbackImportBatch(batchId: string) {
 
   const questionIds = rows.map((r) => r.question_id).filter((id): id is string => !!id);
   if (questionIds.length === 0) {
-    await supabase.from("import_batches").update({ status: "rolled_back" }).eq("id", batchId);
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    await (supabase.from("import_batches") as any).update({ status: "rolled_back" }).eq("id", batchId);
     return { deleted: 0 };
   }
 
@@ -416,6 +428,7 @@ export async function rollbackImportBatch(batchId: string) {
   const { error: deleteError } = await supabase.from("questions").delete().in("id", questionIds);
   if (deleteError) throw deleteError;
 
-  await supabase.from("import_batches").update({ status: "rolled_back" }).eq("id", batchId);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  await (supabase.from("import_batches") as any).update({ status: "rolled_back" }).eq("id", batchId);
   return { deleted: questionIds.length };
 }
