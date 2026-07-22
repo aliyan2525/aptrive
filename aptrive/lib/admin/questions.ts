@@ -1,5 +1,5 @@
 import { createClient } from "@/lib/supabase/server";
-import type { Database, QuestionStatus, Difficulty } from "@/lib/database.types";
+import type { Database, QuestionStatus, Difficulty, BloomLevel, QuestionType } from "@/lib/database.types";
 
 // The hand-authored Database type lacks Supabase's Relationships
 // metadata, which causes .insert() / .update() argument types to
@@ -155,6 +155,17 @@ export type QuestionFormInput = {
   tags: string[];
   ai_generated: boolean;
   options: QuestionOptionInput[];
+  // Phase 0/1 fields:
+  university_id: string | null;
+  test_id: string | null;
+  chapter_id: string;
+  topic_id: string;
+  subtopic_id: string | null;
+  difficulty_level_id: string;
+  bloom_level: BloomLevel;
+  question_type: QuestionType;
+  numeric_answer_value: number | null;
+  numeric_answer_tolerance: number | null;
 };
 
 /**
@@ -185,6 +196,17 @@ export async function createQuestion(input: QuestionFormInput, createdBy: string
       tags: input.tags,
       ai_generated: input.ai_generated,
       created_by: createdBy,
+      // Phase 0/1 columns
+      university_id: input.university_id,
+      test_id: input.test_id,
+      chapter_id: input.chapter_id,
+      topic_id: input.topic_id,
+      subtopic_id: input.subtopic_id,
+      difficulty_level_id: input.difficulty_level_id,
+      bloom_level: input.bloom_level,
+      question_type: input.question_type,
+      numeric_answer_value: input.numeric_answer_value,
+      numeric_answer_tolerance: input.numeric_answer_tolerance,
     })
     .select("id")
     .single();
@@ -242,6 +264,17 @@ export async function updateQuestion(
       tags: input.tags,
       ai_generated: input.ai_generated,
       reviewed_by: reviewedBy,
+      // Phase 0/1 columns
+      university_id: input.university_id,
+      test_id: input.test_id,
+      chapter_id: input.chapter_id,
+      topic_id: input.topic_id,
+      subtopic_id: input.subtopic_id,
+      difficulty_level_id: input.difficulty_level_id,
+      bloom_level: input.bloom_level,
+      question_type: input.question_type,
+      numeric_answer_value: input.numeric_answer_value,
+      numeric_answer_tolerance: input.numeric_answer_tolerance,
     })
     .eq("id", id);
 
@@ -293,6 +326,17 @@ export async function duplicateQuestion(id: string, createdBy: string) {
       tags: original.tags,
       ai_generated: original.ai_generated,
       options: original.options.map((o) => ({ content: o.content, is_correct: o.is_correct })),
+      // Phase 0/1 columns
+      university_id: original.university_id,
+      test_id: original.test_id,
+      chapter_id: original.chapter_id,
+      topic_id: original.topic_id,
+      subtopic_id: original.subtopic_id,
+      difficulty_level_id: original.difficulty_level_id,
+      bloom_level: original.bloom_level,
+      question_type: original.question_type,
+      numeric_answer_value: original.numeric_answer_value,
+      numeric_answer_tolerance: original.numeric_answer_tolerance,
     },
     createdBy
   );

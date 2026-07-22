@@ -37,6 +37,11 @@ export type ImportBatchStatus =
   | "rolled_back";
 export type ImportRowStatus = "pending" | "valid" | "warning" | "error";
 
+// -- Phase 0 Custom Types ----------------------------------------
+export type BloomLevel = "remember" | "understand" | "apply" | "analyze" | "evaluate" | "create";
+export type QuestionType = "single_choice" | "multiple_choice" | "numeric";
+export type AdminRole = "super_admin" | "content_manager" | "moderator" | "content_creator" | "reviewer";
+
 export interface Database {
   public: {
     Tables: {
@@ -129,6 +134,17 @@ export interface Database {
           duplicated_from_id: string | null;
           created_at: string;
           updated_at: string;
+          // Relational Extensions (Phase 0)
+          university_id: string | null;
+          test_id: string | null;
+          chapter_id: string;
+          topic_id: string;
+          subtopic_id: string | null;
+          difficulty_level_id: string;
+          bloom_level: BloomLevel;
+          question_type: QuestionType;
+          numeric_answer_value: number | null;
+          numeric_answer_tolerance: number | null;
         };
         Insert: Partial<Database["public"]["Tables"]["questions"]["Row"]> & {
           practice_set_id: string;
@@ -136,6 +152,9 @@ export interface Database {
           prompt: string;
           difficulty: Difficulty;
           topic: string;
+          chapter_id: string;
+          topic_id: string;
+          difficulty_level_id: string;
         };
         Update: Partial<Database["public"]["Tables"]["questions"]["Row"]>;
       };
@@ -443,6 +462,256 @@ export interface Database {
           raw_data: Record<string, string>;
         };
         Update: Partial<Database["public"]["Tables"]["import_batch_rows"]["Row"]>;
+      };
+
+      // -- Phase 0 Catalog & Question Metadata Tables ------------------
+      universities: {
+        Row: {
+          id: string;
+          name: string;
+          slug: string;
+          logo_url: string | null;
+          description: string | null;
+          is_active: boolean;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: Partial<Database["public"]["Tables"]["universities"]["Row"]> & {
+          name: string;
+          slug: string;
+        };
+        Update: Partial<Database["public"]["Tables"]["universities"]["Row"]>;
+      };
+
+      tests: {
+        Row: {
+          id: string;
+          university_id: string | null;
+          name: string;
+          slug: string;
+          description: string | null;
+          exam_pattern: Record<string, unknown>;
+          is_active: boolean;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: Partial<Database["public"]["Tables"]["tests"]["Row"]> & {
+          name: string;
+          slug: string;
+        };
+        Update: Partial<Database["public"]["Tables"]["tests"]["Row"]>;
+      };
+
+      difficulty_levels: {
+        Row: {
+          id: string;
+          label: string;
+          rank: number;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: Partial<Database["public"]["Tables"]["difficulty_levels"]["Row"]> & {
+          label: string;
+          rank: number;
+        };
+        Update: Partial<Database["public"]["Tables"]["difficulty_levels"]["Row"]>;
+      };
+
+      chapters: {
+        Row: {
+          id: string;
+          subject_id: string;
+          name: string;
+          slug: string;
+          order_index: number;
+          icon: string | null;
+          estimated_minutes: number | null;
+          is_active: boolean;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: Partial<Database["public"]["Tables"]["chapters"]["Row"]> & {
+          subject_id: string;
+          name: string;
+          slug: string;
+        };
+        Update: Partial<Database["public"]["Tables"]["chapters"]["Row"]>;
+      };
+
+      topics: {
+        Row: {
+          id: string;
+          chapter_id: string;
+          name: string;
+          slug: string;
+          order_index: number;
+          icon: string | null;
+          estimated_minutes: number | null;
+          is_active: boolean;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: Partial<Database["public"]["Tables"]["topics"]["Row"]> & {
+          chapter_id: string;
+          name: string;
+          slug: string;
+        };
+        Update: Partial<Database["public"]["Tables"]["topics"]["Row"]>;
+      };
+
+      subtopics: {
+        Row: {
+          id: string;
+          topic_id: string;
+          name: string;
+          slug: string;
+          order_index: number;
+          icon: string | null;
+          estimated_minutes: number | null;
+          is_active: boolean;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: Partial<Database["public"]["Tables"]["subtopics"]["Row"]> & {
+          topic_id: string;
+          name: string;
+          slug: string;
+        };
+        Update: Partial<Database["public"]["Tables"]["subtopics"]["Row"]>;
+      };
+
+      admin_users: {
+        Row: {
+          user_id: string;
+          role: AdminRole;
+          permissions: Record<string, unknown>;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: Partial<Database["public"]["Tables"]["admin_users"]["Row"]> & {
+          user_id: string;
+          role: AdminRole;
+        };
+        Update: Partial<Database["public"]["Tables"]["admin_users"]["Row"]>;
+      };
+
+      question_images: {
+        Row: {
+          id: string;
+          question_id: string;
+          storage_path: string;
+          alt_text: string | null;
+          attached_to: "question" | "option" | "explanation";
+          related_option_id: string | null;
+          created_at: string;
+        };
+        Insert: Partial<Database["public"]["Tables"]["question_images"]["Row"]> & {
+          question_id: string;
+          storage_path: string;
+          attached_to: "question" | "option" | "explanation";
+        };
+        Update: Partial<Database["public"]["Tables"]["question_images"]["Row"]>;
+      };
+
+      question_tags: {
+        Row: {
+          id: string;
+          name: string;
+          created_at: string;
+        };
+        Insert: Partial<Database["public"]["Tables"]["question_tags"]["Row"]> & {
+          name: string;
+        };
+        Update: Partial<Database["public"]["Tables"]["question_tags"]["Row"]>;
+      };
+
+      question_tag_map: {
+        Row: {
+          question_id: string;
+          tag_id: string;
+        };
+        Insert: {
+          question_id: string;
+          tag_id: string;
+        };
+        Update: Partial<Database["public"]["Tables"]["question_tag_map"]["Row"]>;
+      };
+
+      question_explanations: {
+        Row: {
+          id: string;
+          question_id: string;
+          content: string;
+          order_index: number;
+          created_at: string;
+        };
+        Insert: Partial<Database["public"]["Tables"]["question_explanations"]["Row"]> & {
+          question_id: string;
+          content: string;
+        };
+        Update: Partial<Database["public"]["Tables"]["question_explanations"]["Row"]>;
+      };
+
+      question_hints: {
+        Row: {
+          id: string;
+          question_id: string;
+          content: string;
+          order_index: number;
+          created_at: string;
+        };
+        Insert: Partial<Database["public"]["Tables"]["question_hints"]["Row"]> & {
+          question_id: string;
+          content: string;
+        };
+        Update: Partial<Database["public"]["Tables"]["question_hints"]["Row"]>;
+      };
+
+      question_formulas: {
+        Row: {
+          id: string;
+          question_id: string;
+          content: string;
+          order_index: number;
+          created_at: string;
+        };
+        Insert: Partial<Database["public"]["Tables"]["question_formulas"]["Row"]> & {
+          question_id: string;
+          content: string;
+        };
+        Update: Partial<Database["public"]["Tables"]["question_formulas"]["Row"]>;
+      };
+
+      question_references: {
+        Row: {
+          id: string;
+          question_id: string;
+          content: string;
+          order_index: number;
+          created_at: string;
+        };
+        Insert: Partial<Database["public"]["Tables"]["question_references"]["Row"]> & {
+          question_id: string;
+          content: string;
+        };
+        Update: Partial<Database["public"]["Tables"]["question_references"]["Row"]>;
+      };
+
+      question_reviews: {
+        Row: {
+          id: string;
+          question_id: string;
+          reviewer_id: string;
+          decision: "approved" | "rejected" | "changes_requested";
+          comment: string | null;
+          created_at: string;
+        };
+        Insert: Partial<Database["public"]["Tables"]["question_reviews"]["Row"]> & {
+          question_id: string;
+          reviewer_id: string;
+          decision: "approved" | "rejected" | "changes_requested";
+        };
+        Update: Partial<Database["public"]["Tables"]["question_reviews"]["Row"]>;
       };
     };
     Views: Record<string, never>;

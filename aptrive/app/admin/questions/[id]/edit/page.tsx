@@ -2,7 +2,16 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import QuestionForm from "@/components/admin/QuestionForm";
 import { getQuestionForAdmin } from "@/lib/admin/questions";
-import { listSubjectsForAdmin, listPracticeSetsForAdmin } from "@/lib/admin/catalog";
+import { 
+  listSubjectsForAdmin, 
+  listPracticeSetsForAdmin,
+  listUniversitiesForAdmin,
+  listTestsForAdmin,
+  listChaptersForAdmin,
+  listTopicsForAdmin,
+  listSubtopicsForAdmin,
+  listDifficultyLevelsForAdmin
+} from "@/lib/admin/catalog";
 import QuestionStatusActions from "@/components/admin/QuestionStatusActions";
 
 export const metadata: Metadata = { title: "Edit question — Aptrive Admin" };
@@ -13,10 +22,26 @@ export default async function EditQuestionPage({
   params: Promise<{ id: string }>;
 }) {
   const { id } = await params;
-  const [question, subjects, practiceSets] = await Promise.all([
+  const [
+    question, 
+    subjects, 
+    practiceSets,
+    universities,
+    tests,
+    chapters,
+    topics,
+    subtopics,
+    difficultyLevels
+  ] = await Promise.all([
     getQuestionForAdmin(id),
     listSubjectsForAdmin(),
     listPracticeSetsForAdmin(),
+    listUniversitiesForAdmin(),
+    listTestsForAdmin(),
+    listChaptersForAdmin(),
+    listTopicsForAdmin(),
+    listSubtopicsForAdmin(),
+    listDifficultyLevelsForAdmin(),
   ]);
 
   if (!question) notFound();
@@ -34,8 +59,19 @@ export default async function EditQuestionPage({
         <QuestionStatusActions questionId={question.id} currentStatus={question.status} />
       </div>
       <div className="mt-8">
-        <QuestionForm subjects={subjects} practiceSets={practiceSets} existing={question} />
+        <QuestionForm 
+          subjects={subjects} 
+          practiceSets={practiceSets} 
+          universities={universities}
+          tests={tests}
+          chapters={chapters}
+          topics={topics}
+          subtopics={subtopics}
+          difficultyLevels={difficultyLevels}
+          existing={question} 
+        />
       </div>
     </div>
   );
 }
+

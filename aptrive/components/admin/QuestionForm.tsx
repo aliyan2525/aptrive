@@ -1,15 +1,21 @@
 "use client";
 
 import { useMemo, useState, useTransition } from "react";
-import type { Difficulty, QuestionStatus } from "@/lib/database.types";
+import type { Difficulty, QuestionStatus, BloomLevel, QuestionType } from "@/lib/database.types";
 import type { QuestionFormInput, QuestionWithOptions } from "@/lib/admin/questions";
 import { createQuestionAction, updateQuestionAction } from "@/app/admin/actions";
 
-type SubjectOption = { id: string; name: string };
-type PracticeSetOption = { id: string; title: string; subject_id: string };
+type CatalogItem = { id: string; name: string };
+type UniversityOption = { id: string; name: string };
+type TestOption = { id: string; name: string; university_id: string | null };
+type DifficultyLevelOption = { id: string; label: string; rank: number };
+type ChapterOption = { id: string; name: string; subject_id: string };
+type TopicOption = { id: string; name: string; chapter_id: string };
+type SubtopicOption = { id: string; name: string; topic_id: string };
 
-const DIFFICULTIES: Difficulty[] = ["Easy", "Medium", "Hard"];
 const STATUSES: QuestionStatus[] = ["draft", "in_review", "published", "archived"];
+const BLOOM_LEVELS: BloomLevel[] = ["remember", "understand", "apply", "analyze", "evaluate", "create"];
+const QUESTION_TYPES: QuestionType[] = ["single_choice", "multiple_choice", "numeric"];
 
 type OptionDraft = { content: string; is_correct: boolean };
 
@@ -25,10 +31,22 @@ function emptyOptions(): OptionDraft[] {
 export default function QuestionForm({
   subjects,
   practiceSets,
+  universities,
+  tests,
+  chapters,
+  topics,
+  subtopics,
+  difficultyLevels,
   existing,
 }: {
-  subjects: SubjectOption[];
-  practiceSets: PracticeSetOption[];
+  subjects: CatalogItem[];
+  practiceSets: { id: string; title: string; subject_id: string }[];
+  universities: UniversityOption[];
+  tests: TestOption[];
+  chapters: ChapterOption[];
+  topics: TopicOption[];
+  subtopics: SubtopicOption[];
+  difficultyLevels: DifficultyLevelOption[];
   existing?: QuestionWithOptions | null;
 }) {
   const [subjectId, setSubjectId] = useState(existing?.subject_id ?? subjects[0]?.id ?? "");
@@ -52,6 +70,28 @@ export default function QuestionForm({
       : emptyOptions()
   );
 
+  // Phase 0/1 fields
+  const [universityId, setUniversityId] = useState(existing?.university_id ?? "");
+  const [testId, setTestId] = useState(existing?.test_id ?? "");
+  const [chapterId, setChapterId] = useState(existing?.chapter_id ?? "");
+  const [topicId, setTopicId] = useState(existing?.topic_id ?? "");
+  const [subtopicId, setSubtopicId] = useState(existing?.subtopic_id ?? "");
+  const [difficultyLevelId, setDifficultyLevelId] = useState(
+    existing?.difficulty_level_id ?? difficultyLevels.find(d => d.label === "Medium")?.id ?? difficultyLevels[0]?.id ?? ""
+  );
+  const [bloomLevel, setBloomLevel] = useState<BloomLevel>(existing?.bloom_level ?? "remember");
+  const [questionType, setQuestionType] = useState<QuestionType>(existing?.question_type ?? "single_choice");
+  const [numericAnswerValue, setNumericAnswerValue] = useState(
+    existing?.numeric_answer_value !== undefined && existing?.numeric_answer_value !== null
+      ? String(existing.numeric_answer_value)
+      : ""
+  );
+  const [numericAnswerTolerance, setNumericAnswerTolerance] = useState(
+    existing?.numeric_answer_tolerance !== undefined && existing?.numeric_answer_tolerance !== null
+      ? String(existing.numeric_answer_tolerance)
+      : ""
+  );
+
   const [error, setError] = useState<string | null>(null);
   const [pending, startTransition] = useTransition();
 
@@ -60,12 +100,36 @@ export default function QuestionForm({
     [practiceSets, subjectId]
   );
 
+  const filteredTests = useMemo(
+    () => universityId ? tests.filter((t) => t.university_id === universityId) : tests,
+    [tests, universityId]
+  );
+
+  const filteredChapters = useMemo(
+    () => subjectId ? chapters.filter((c) => c.subject_id === subjectId) : chapters,
+    [chapters, subjectId]
+  );
+
+  const filteredTopics = useMemo(
+    () => chapterId ? topics.filter((t) => t.chapter_id === chapterId) : topics,
+    [topics, chapterId]
+  );
+
+  const filteredSubtopics = useMemo(
+    () => topicId ? subtopics.filter((s) => s.topic_id === topicId) : subtopics,
+    [subtopics, topicId]
+  );
+
   function updateOption(index: number, content: string) {
     setOptions((prev) => prev.map((o, i) => (i === index ? { ...o, content } : o)));
   }
 
-  function setCorrect(index: number) {
-    setOptions((prev) => prev.map((o, i) => ({ ...o, is_correct: i === index })));
+  function toggleCorrect(index: number) {
+    if (questionType === "single_choice") {
+      setOptions((prev) => prev.map((o, i) => ({ ...o, is_correct: i === index })));
+    } else {
+      setOptions((prev) => prev.map((o, i) => (i === index ? { ...o, is_correct: !o.is_correct } : o)));
+    }
   }
 
   function addOption() {
@@ -85,11 +149,23 @@ export default function QuestionForm({
   function validate(): string | null {
     if (!prompt.trim()) return "Question text is required.";
     if (!practiceSetId) return "Choose which practice set this belongs to.";
-    if (!topic.trim()) return "Topic is required.";
-    const filled = options.filter((o) => o.content.trim().length > 0);
-    if (filled.length < 2) return "At least 2 options are required.";
-    if (!options.some((o) => o.is_correct && o.content.trim().length > 0)) {
-      return "Mark one option as correct.";
+    if (!chapterId) return "Chapter is required.";
+    if (!topicId) return "Topic is required.";
+    if (!difficultyLevelId) return "Difficulty level is required.";
+
+    if (questionType === "numeric") {
+      if (!numericAnswerValue.trim() || isNaN(Number(numericAnswerValue))) {
+        return "Numeric answer value must be a valid number.";
+      }
+      if (numericAnswerTolerance.trim() && isNaN(Number(numericAnswerTolerance))) {
+        return "Numeric answer tolerance must be a valid number.";
+      }
+    } else {
+      const filled = options.filter((o) => o.content.trim().length > 0);
+      if (filled.length < 2) return "At least 2 options are required.";
+      if (!options.some((o) => o.is_correct && o.content.trim().length > 0)) {
+        return "At least one option must be marked correct.";
+      }
     }
     return null;
   }
@@ -120,7 +196,18 @@ export default function QuestionForm({
         .map((t) => t.trim())
         .filter(Boolean),
       ai_generated: aiGenerated,
-      options: options.filter((o) => o.content.trim().length > 0),
+      options: questionType === "numeric" ? [] : options.filter((o) => o.content.trim().length > 0),
+      // Relational inputs
+      university_id: universityId || null,
+      test_id: testId || null,
+      chapter_id: chapterId,
+      topic_id: topicId,
+      subtopic_id: subtopicId || null,
+      difficulty_level_id: difficultyLevelId,
+      bloom_level: bloomLevel,
+      question_type: questionType,
+      numeric_answer_value: questionType === "numeric" ? Number(numericAnswerValue) : null,
+      numeric_answer_tolerance: questionType === "numeric" && numericAnswerTolerance ? Number(numericAnswerTolerance) : null,
     };
 
     startTransition(async () => {
@@ -135,60 +222,108 @@ export default function QuestionForm({
     <form onSubmit={handleSubmit} className="grid gap-8 lg:grid-cols-[1.4fr_1fr]">
       <div className="space-y-6">
         <div className="rounded-md border border-line bg-panel p-6">
+          <div className="flex items-center justify-between mb-4">
+            <span className="text-sm font-medium text-fg">Question Layout</span>
+            <div className="flex gap-2">
+              {QUESTION_TYPES.map((type) => (
+                <button
+                  key={type}
+                  type="button"
+                  onClick={() => setQuestionType(type)}
+                  className={`rounded-sm px-2.5 py-1 text-xs font-semibold uppercase tracking-wide border transition-all ${
+                    questionType === type ? "border-teal bg-teal text-graphite" : "border-line text-muted hover:text-fg"
+                  }`}
+                >
+                  {type.replace("_", " ")}
+                </button>
+              ))}
+            </div>
+          </div>
+
           <label className="grid gap-2 text-sm font-medium text-fg">
-            Question text (Markdown / LaTeX supported at render time)
+            Question text (Markdown & LaTeX supported)
             <textarea
               value={prompt}
               onChange={(e) => setPrompt(e.target.value)}
               rows={5}
-              className="rounded-sm border border-line-strong bg-graphite px-4 py-3 text-sm text-fg"
+              className="rounded-sm border border-line-strong bg-graphite px-4 py-3 text-sm text-fg focus:border-teal"
               placeholder="e.g. Solve for x: $2x + 5 = 17$"
             />
           </label>
 
-          <div className="mt-6">
-            <p className="text-sm font-medium text-fg">Options</p>
-            <div className="mt-3 space-y-3">
-              {options.map((option, index) => (
-                <div key={index} className="flex items-start gap-3">
-                  <button
-                    type="button"
-                    onClick={() => setCorrect(index)}
-                    aria-label={`Mark option ${index + 1} correct`}
-                    className={`mt-2 h-5 w-5 shrink-0 rounded-full border-2 transition-colors ${
-                      option.is_correct ? "border-teal bg-teal" : "border-line-strong"
-                    }`}
-                  />
-                  <input
-                    type="text"
-                    value={option.content}
-                    onChange={(e) => updateOption(index, e.target.value)}
-                    placeholder={`Option ${String.fromCharCode(65 + index)}`}
-                    className="flex-1 rounded-sm border border-line-strong bg-graphite px-4 py-2 text-sm text-fg"
-                  />
-                  {options.length > 2 && (
+          {/* Conditional Answer Types */}
+          {questionType === "numeric" ? (
+            <div className="mt-6 grid grid-cols-2 gap-4">
+              <label className="grid gap-2 text-sm font-medium text-fg">
+                Correct Answer Value
+                <input
+                  type="text"
+                  value={numericAnswerValue}
+                  onChange={(e) => setNumericAnswerValue(e.target.value)}
+                  placeholder="e.g. 12"
+                  className="rounded-sm border border-line-strong bg-graphite px-4 py-2 text-sm text-fg"
+                />
+              </label>
+              <label className="grid gap-2 text-sm font-medium text-fg">
+                Tolerance Margin (optional)
+                <input
+                  type="text"
+                  value={numericAnswerTolerance}
+                  onChange={(e) => setNumericAnswerTolerance(e.target.value)}
+                  placeholder="e.g. 0.05"
+                  className="rounded-sm border border-line-strong bg-graphite px-4 py-2 text-sm text-fg"
+                />
+              </label>
+            </div>
+          ) : (
+            <div className="mt-6">
+              <p className="text-sm font-medium text-fg">Options</p>
+              <div className="mt-3 space-y-3">
+                {options.map((option, index) => (
+                  <div key={index} className="flex items-start gap-3">
                     <button
                       type="button"
-                      onClick={() => removeOption(index)}
-                      className="mt-1 text-xs text-muted hover:text-red-400"
-                    >
-                      Remove
-                    </button>
-                  )}
-                </div>
-              ))}
+                      onClick={() => toggleCorrect(index)}
+                      aria-label={`Mark option ${index + 1} correct`}
+                      className={`mt-2 h-5 w-5 shrink-0 rounded-full border-2 transition-colors ${
+                        option.is_correct ? "border-teal bg-teal" : "border-line-strong"
+                      }`}
+                    />
+                    <input
+                      type="text"
+                      value={option.content}
+                      onChange={(e) => updateOption(index, e.target.value)}
+                      placeholder={`Option ${String.fromCharCode(65 + index)}`}
+                      className="flex-1 rounded-sm border border-line-strong bg-graphite px-4 py-2 text-sm text-fg"
+                    />
+                    {options.length > 2 && (
+                      <button
+                        type="button"
+                        onClick={() => removeOption(index)}
+                        className="mt-1 text-xs text-muted hover:text-red-400"
+                      >
+                        Remove
+                      </button>
+                    )}
+                  </div>
+                ))}
+              </div>
+              {options.length < 6 && (
+                <button
+                  type="button"
+                  onClick={addOption}
+                  className="mt-3 text-sm text-teal hover:underline"
+                >
+                  + Add option
+                </button>
+              )}
+              <p className="mt-2 text-xs text-muted-2">
+                {questionType === "single_choice"
+                  ? "Mark the correct option's circle."
+                  : "Mark all correct option circles (multiple correct choices)."}
+              </p>
             </div>
-            {options.length < 6 && (
-              <button
-                type="button"
-                onClick={addOption}
-                className="mt-3 text-sm text-teal hover:underline"
-              >
-                + Add option
-              </button>
-            )}
-            <p className="mt-2 text-xs text-muted-2">Click the circle to mark the correct option.</p>
-          </div>
+          )}
 
           <label className="mt-6 grid gap-2 text-sm font-medium text-fg">
             Explanation
@@ -199,6 +334,36 @@ export default function QuestionForm({
               className="rounded-sm border border-line-strong bg-graphite px-4 py-3 text-sm text-fg"
             />
           </label>
+        </div>
+
+        {/* Live Student Previewer */}
+        <div className="rounded-md border border-line bg-panel p-6">
+          <h3 className="text-sm font-semibold uppercase tracking-wide text-muted mb-4">Student Preview</h3>
+          <div className="border border-line bg-graphite p-6 rounded-md">
+            <p className="text-fg leading-relaxed whitespace-pre-wrap">{prompt || "Draft prompt text will render here..."}</p>
+            {questionType === "numeric" ? (
+              <div className="mt-4">
+                <input
+                  type="text"
+                  disabled
+                  placeholder="Enter numerical response..."
+                  className="w-full max-w-xs rounded-sm border border-line bg-panel px-4 py-2 text-sm text-muted"
+                />
+              </div>
+            ) : (
+              <div className="mt-4 grid gap-2">
+                {options.map((option, idx) => (
+                  <div
+                    key={idx}
+                    className="border border-line rounded-md p-4 text-left text-sm text-muted bg-panel-2"
+                  >
+                    <span className="font-semibold text-fg mr-2">{String.fromCharCode(65 + idx)}.</span>
+                    {option.content || "Empty option"}
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
         </div>
 
         {error && (
@@ -220,8 +385,41 @@ export default function QuestionForm({
 
       <div className="space-y-6">
         <div className="rounded-md border border-line bg-panel p-6">
-          <p className="text-sm font-medium text-fg">Classification</p>
+          <p className="text-sm font-medium text-fg">Classification & Taxonomy</p>
           <div className="mt-4 grid gap-4">
+            <label className="grid gap-2 text-sm text-fg">
+              University (optional)
+              <select
+                value={universityId}
+                onChange={(e) => {
+                  setUniversityId(e.target.value);
+                  setTestId("");
+                }}
+                className="rounded-sm border border-line-strong bg-graphite px-4 py-2 text-sm text-fg"
+              >
+                <option value="">No specific university</option>
+                {universities.map((u) => (
+                  <option key={u.id} value={u.id}>
+                    {u.name}
+                  </option>
+                ))}
+              </select>
+            </label>
+            <label className="grid gap-2 text-sm text-fg">
+              Test (optional)
+              <select
+                value={testId}
+                onChange={(e) => setTestId(e.target.value)}
+                className="rounded-sm border border-line-strong bg-graphite px-4 py-2 text-sm text-fg"
+              >
+                <option value="">No specific test</option>
+                {filteredTests.map((t) => (
+                  <option key={t.id} value={t.id}>
+                    {t.name}
+                  </option>
+                ))}
+              </select>
+            </label>
             <label className="grid gap-2 text-sm text-fg">
               Subject
               <select
@@ -229,6 +427,9 @@ export default function QuestionForm({
                 onChange={(e) => {
                   setSubjectId(e.target.value);
                   setPracticeSetId("");
+                  setChapterId("");
+                  setTopicId("");
+                  setSubtopicId("");
                 }}
                 className="rounded-sm border border-line-strong bg-graphite px-4 py-2 text-sm text-fg"
               >
@@ -255,31 +456,81 @@ export default function QuestionForm({
               </select>
             </label>
             <label className="grid gap-2 text-sm text-fg">
-              Topic
-              <input
-                value={topic}
-                onChange={(e) => setTopic(e.target.value)}
-                className="rounded-sm border border-line-strong bg-graphite px-4 py-2 text-sm text-fg"
-              />
-            </label>
-            <label className="grid gap-2 text-sm text-fg">
-              Chapter (optional)
-              <input
-                value={chapter ?? ""}
-                onChange={(e) => setChapter(e.target.value)}
-                className="rounded-sm border border-line-strong bg-graphite px-4 py-2 text-sm text-fg"
-              />
-            </label>
-            <label className="grid gap-2 text-sm text-fg">
-              Difficulty
+              Chapter
               <select
-                value={difficulty}
-                onChange={(e) => setDifficulty(e.target.value as Difficulty)}
+                value={chapterId}
+                onChange={(e) => {
+                  setChapterId(e.target.value);
+                  setTopicId("");
+                  setSubtopicId("");
+                }}
                 className="rounded-sm border border-line-strong bg-graphite px-4 py-2 text-sm text-fg"
               >
-                {DIFFICULTIES.map((d) => (
-                  <option key={d} value={d}>
-                    {d}
+                <option value="">Select a chapter…</option>
+                {filteredChapters.map((c) => (
+                  <option key={c.id} value={c.id}>
+                    {c.name}
+                  </option>
+                ))}
+              </select>
+            </label>
+            <label className="grid gap-2 text-sm text-fg">
+              Topic
+              <select
+                value={topicId}
+                onChange={(e) => {
+                  setTopicId(e.target.value);
+                  setSubtopicId("");
+                }}
+                className="rounded-sm border border-line-strong bg-graphite px-4 py-2 text-sm text-fg"
+              >
+                <option value="">Select a topic…</option>
+                {filteredTopics.map((t) => (
+                  <option key={t.id} value={t.id}>
+                    {t.name}
+                  </option>
+                ))}
+              </select>
+            </label>
+            <label className="grid gap-2 text-sm text-fg">
+              Subtopic (optional)
+              <select
+                value={subtopicId}
+                onChange={(e) => setSubtopicId(e.target.value)}
+                className="rounded-sm border border-line-strong bg-graphite px-4 py-2 text-sm text-fg"
+              >
+                <option value="">No subtopic</option>
+                {filteredSubtopics.map((s) => (
+                  <option key={s.id} value={s.id}>
+                    {s.name}
+                  </option>
+                ))}
+              </select>
+            </label>
+            <label className="grid gap-2 text-sm text-fg">
+              Difficulty Rank
+              <select
+                value={difficultyLevelId}
+                onChange={(e) => setDifficultyLevelId(e.target.value)}
+                className="rounded-sm border border-line-strong bg-graphite px-4 py-2 text-sm text-fg"
+              >
+                {difficultyLevels.map((d) => (
+                  <option key={d.id} value={d.id}>
+                    {d.label}
+                  </option>
+                ))}
+              </select>
+            </label>
+            <label className="grid gap-2 text-sm text-fg">
+              Bloom Taxonomy level
+              <select
+                value={bloomLevel}
+                onChange={(e) => setBloomLevel(e.target.value as BloomLevel)}
+                className="rounded-sm border border-line-strong bg-graphite px-4 py-2 text-sm text-fg"
+              >
+                {BLOOM_LEVELS.map((b) => (
+                  <option key={b} value={b}>
+                    {b}
                   </option>
                 ))}
               </select>
@@ -298,7 +549,7 @@ export default function QuestionForm({
         </div>
 
         <div className="rounded-md border border-line bg-panel p-6">
-          <p className="text-sm font-medium text-fg">Publishing</p>
+          <p className="text-sm font-medium text-fg">Publishing & Metadata</p>
           <div className="mt-4 grid gap-4">
             <label className="grid gap-2 text-sm text-fg">
               Status
@@ -365,3 +616,4 @@ export default function QuestionForm({
     </form>
   );
 }
+
