@@ -80,7 +80,7 @@ export async function listTestsForAdmin(): Promise<TestRow[]> {
   const supabase = await createClient();
   const { data, error } = await supabase
     .from("tests")
-    .select("id, name, slug")
+    .select("id, name, slug, university_id")
     .order("name", { ascending: true });
   if (error) throw error;
   return (data ?? []) as unknown as TestRow[];
@@ -125,4 +125,3 @@ export async function listSubtopicsForAdmin(): Promise<SubtopicRow[]> {
   if (error) throw error;
   return (data ?? []) as unknown as SubtopicRow[];
 }
-

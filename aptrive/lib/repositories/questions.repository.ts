@@ -141,3 +141,17 @@ export function toClientQuestion(row: QuestionRow): ClientQuestion {
     numericAnswerTolerance: null,
   };
 }
+
+export async function getPublishedQuestionIdsForTopic(topicId: string): Promise<string[]> {
+  const supabase = await createClient();
+  const { data, error } = await supabase
+    .from("questions")
+    .select("id")
+    .eq("topic_id", topicId)
+    .eq("status", "published")
+    .order("position", { ascending: true });
+
+  if (error) throw error;
+  const rows = (data ?? []) as unknown as { id: string }[];
+  return rows.map((row) => row.id);
+}

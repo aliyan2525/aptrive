@@ -3,7 +3,10 @@
 import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
-import { getQuestionRowsByIds } from "@/lib/repositories/questions.repository";
+import {
+  getPublishedQuestionIdsForTopic,
+  getQuestionRowsByIds,
+} from "@/lib/repositories/questions.repository";
 import { gradeAttempt } from "@/lib/services/scoring";
 import {
   completeSession as completeSessionRepo,
@@ -66,7 +69,7 @@ export async function submitAnswer(
     | null) ?? "single_choice";
 
   // Build options for MCQ grading
-  const options = (questionRow.question_options ?? []).map((o: any) => ({
+  const options = (questionRow.question_options ?? []).map((o) => ({
     id: o.id,
     is_correct: !!o.is_correct,
   })) as { id: string; is_correct: boolean }[];
@@ -134,6 +137,29 @@ export async function startAdHocSession(
   if (questionIds.length === 0) return;
 
   const session = await createAdHocSession(user.id, kind, questionIds);
+  redirect(`/practice/session/${session.id}`);
+}
+
+export async function startTopicPractice(topicId: string, topicName: string, subjectSlug: string) {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  if (!user) {
+    redirect(`/login?next=/practice/subjects/${subjectSlug}`);
+  }
+
+  const questionIds = await getPublishedQuestionIdsForTopic(topicId);
+  if (questionIds.length === 0) {
+    redirect(`/practice/subjects/${subjectSlug}?empty=1`);
+  }
+
+  const session = await createAdHocSession(user.id, "topic", questionIds, {
+    topic_id: topicId,
+    topic_name: topicName,
+    subject_slug: subjectSlug,
+  });
   redirect(`/practice/session/${session.id}`);
 }
 

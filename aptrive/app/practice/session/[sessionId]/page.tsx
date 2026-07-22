@@ -42,10 +42,29 @@ export default async function AdHocSessionPage({
     .filter((row): row is NonNullable<typeof row> => !!row)
     .map(toClientQuestion);
 
-  const title = sessionKind === "revision" ? "Revision session" : "Bookmarked questions";
-  const backHref = sessionKind === "revision" ? "/practice/revision" : "/practice/bookmarks";
+  const topicName = (session.metadata?.topic_name as string | undefined) ?? "Topic";
+  const subjectSlug = (session.metadata?.subject_slug as string | undefined) ?? "";
+
+  const title =
+    sessionKind === "revision"
+      ? "Revision session"
+      : sessionKind === "bookmarks"
+      ? "Bookmarked questions"
+      : `${topicName} practice`;
+  const backHref =
+    sessionKind === "revision"
+      ? "/practice/revision"
+      : sessionKind === "bookmarks"
+      ? "/practice/bookmarks"
+      : subjectSlug
+      ? `/practice/subjects/${subjectSlug}`
+      : "/practice/subjects";
   const backLabel =
-    sessionKind === "revision" ? "Back to revision list" : "Back to bookmarks";
+    sessionKind === "revision"
+      ? "Back to revision list"
+      : sessionKind === "bookmarks"
+      ? "Back to bookmarks"
+      : "Back to subject topics";
 
   return (
     <div className="container-aptrive">

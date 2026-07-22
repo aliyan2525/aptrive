@@ -63,7 +63,7 @@ export async function getOrCreatePracticeSetSession(
   return created as unknown as SessionCore;
 }
 
-export type AdHocSessionKind = "revision" | "bookmarks";
+export type AdHocSessionKind = "revision" | "bookmarks" | "topic";
 
 /** Ad-hoc session not tied to a single practice set — used for
  * revision (incorrect questions) and "practice my bookmarks" flows.
@@ -77,7 +77,8 @@ export type AdHocSessionKind = "revision" | "bookmarks";
 export async function createAdHocSession(
   userId: string,
   kind: AdHocSessionKind,
-  questionIds: string[]
+  questionIds: string[],
+  metadata?: Record<string, unknown>
 ): Promise<SessionCore & { metadata: Record<string, unknown> }> {
   const supabase = await createClient();
 
@@ -86,7 +87,7 @@ export async function createAdHocSession(
     mode: "practice",
     status: "in_progress",
     total_questions: questionIds.length,
-    metadata: { session_kind: kind, question_ids: questionIds },
+    metadata: { session_kind: kind, question_ids: questionIds, ...(metadata ?? {}) },
   };
 
   const { data, error } = await supabase
@@ -160,9 +161,7 @@ export async function recordResponse(params: {
 }) {
   const supabase = params.supabase ?? (await createClient());
 
-  // Use `any` here because the typed ResponseInsert lacks the new
-  // selected_option_ids column in the hand-authored types.
-  const payload: any = {
+  const payload: ResponseInsert & { selected_option_ids?: string[] | null } = {
     session_id: params.sessionId,
     user_id: params.userId,
     question_id: params.questionId,

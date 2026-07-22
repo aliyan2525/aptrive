@@ -69,7 +69,14 @@ export default async function AdminDashboardPage() {
         ))}
       </div>
 
-      <div className="mt-10 grid gap-4 sm:grid-cols-2">
+      <div className="mt-10 grid gap-4 sm:grid-cols-3">
+        <Link
+          href="/admin/catalog"
+          className="rounded-md border border-line bg-panel p-6 transition-colors hover:border-teal/50"
+        >
+          <p className="font-display text-lg font-semibold text-fg">Catalog</p>
+          <p className="mt-1 text-sm text-muted">Manage chapters, topics, and question taxonomy.</p>
+        </Link>
         <Link
           href="/admin/questions/new"
           className="rounded-md border border-line bg-panel p-6 transition-colors hover:border-teal/50"
