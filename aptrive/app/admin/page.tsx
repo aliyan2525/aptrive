@@ -1,6 +1,16 @@
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
 
+type RecentBatchRow = {
+  id: string;
+  file_name: string;
+  status: string;
+  total_rows: number;
+  valid_rows: number;
+  error_rows: number;
+  created_at: string;
+};
+
 async function getContentHealth() {
   const supabase = await createClient();
 
@@ -21,7 +31,11 @@ async function getContentHealth() {
     inReview: inReview.count ?? 0,
     published: published.count ?? 0,
     archived: archived.count ?? 0,
-    recentBatches: batches.data ?? [],
+    // Cast required: this project's hand-authored Database type has no
+    // Relationships metadata, which the client's type builder needs
+    // even for plain selects — see lib/admin/import.ts for the fuller
+    // explanation and the convention this follows.
+    recentBatches: (batches.data ?? []) as unknown as RecentBatchRow[],
   };
 }
 

@@ -2,15 +2,21 @@ import { createClient } from "@/lib/supabase/server";
 import { parseCsvToRecords, type CsvRecord } from "@/lib/admin/csv";
 import type { Database, Difficulty } from "@/lib/database.types";
 
-// Our hand-authored Database type (like the rest of this codebase's
-// database.types.ts) doesn't carry Supabase's generated `Relationships`
-// metadata, so embedded selects such as `practice_sets(title, slug)`
-// can't be type-inferred by the client and need an explicit cast at
-// the boundary — same convention lib/dashboard-data.ts already uses
-// for `user_achievements.select("...achievements(name, icon, ...)")`.
-type ImportBatchRow = Database["public"]["Tables"]["import_batches"]["Row"] & {
+// This project's hand-authored Database type doesn't carry Supabase's
+// generated Relationships metadata, which the client's type builder
+// needs even for plain (non-embedded) selects — every query result in
+// this file is cast to one of these row types rather than relied on
+// for inference, matching the established convention in
+// lib/dashboard-data.ts (which casts every result, embedded or not).
+type Tables = Database["public"]["Tables"];
+type ImportBatchRowBase = Tables["import_batches"]["Row"];
+type ImportBatchRow = ImportBatchRowBase & {
   practice_sets: { title: string; slug: string } | null;
 };
+type ImportBatchRowRecord = Tables["import_batch_rows"]["Row"];
+type QuestionIdRow = { id: string };
+type PracticeSetSubjectRow = { subject_id: string };
+type QuestionStatusSnapshotRow = { id: string; status: string; current_version: number };
 
 /**
  * CSV import pipeline: validate -> preview -> commit -> rollback.
@@ -137,15 +143,16 @@ export async function createImportBatch(params: {
 }) {
   const supabase = await createClient();
 
-  const { data: existingQuestions, error: existingError } = await supabase
+  const { data: existingQuestionsData, error: existingError } = await supabase
     .from("questions")
     .select("prompt")
     .eq("practice_set_id", params.targetPracticeSetId);
   if (existingError) throw existingError;
+  const existingQuestions = (existingQuestionsData ?? []) as unknown as { prompt: string }[];
 
   const validated = validateCsvRows(
     params.csvText,
-    (existingQuestions ?? []).map((q) => q.prompt)
+    existingQuestions.map((q) => q.prompt)
   );
 
   const counts = validated.reduce(
@@ -156,7 +163,7 @@ export async function createImportBatch(params: {
     { valid: 0, warning: 0, error: 0 } as Record<"valid" | "warning" | "error", number>
   );
 
-  const { data: batch, error: batchError } = await supabase
+  const { data: batchData, error: batchError } = await supabase
     .from("import_batches")
     .insert({
       file_name: params.fileName,
@@ -171,10 +178,11 @@ export async function createImportBatch(params: {
     .select("id")
     .single();
   if (batchError) throw batchError;
+  const batchId = (batchData as unknown as QuestionIdRow).id;
 
   const { error: rowsError } = await supabase.from("import_batch_rows").insert(
     validated.map((row) => ({
-      batch_id: batch.id,
+      batch_id: batchId,
       row_number: row.rowNumber,
       raw_data: row.raw,
       row_status: row.status,
@@ -183,11 +191,11 @@ export async function createImportBatch(params: {
     }))
   );
   if (rowsError) {
-    await supabase.from("import_batches").delete().eq("id", batch.id);
+    await supabase.from("import_batches").delete().eq("id", batchId);
     throw rowsError;
   }
 
-  return batch.id as string;
+  return batchId;
 }
 
 export async function getImportBatch(batchId: string) {
@@ -207,7 +215,10 @@ export async function getImportBatch(batchId: string) {
     .order("row_number", { ascending: true });
   if (rowsError) throw rowsError;
 
-  return { batch: batch as unknown as ImportBatchRow, rows: rows ?? [] };
+  return {
+    batch: batch as unknown as ImportBatchRow,
+    rows: (rows ?? []) as unknown as ImportBatchRowRecord[],
+  };
 }
 
 export async function listImportBatches(): Promise<ImportBatchRow[]> {
@@ -246,45 +257,49 @@ function buildOptionsFromRow(raw: CsvRecord) {
 export async function commitImportBatch(batchId: string, createdBy: string) {
   const supabase = await createClient();
 
-  const { data: batch, error: batchError } = await supabase
+  const { data: batchData, error: batchError } = await supabase
     .from("import_batches")
     .select("*")
     .eq("id", batchId)
     .maybeSingle();
   if (batchError) throw batchError;
-  if (!batch) throw new Error("Import batch not found");
+  if (!batchData) throw new Error("Import batch not found");
+  const batch = batchData as unknown as ImportBatchRowBase;
   if (batch.status !== "ready") {
     throw new Error(`Batch is "${batch.status}" and cannot be committed again`);
   }
 
   await supabase.from("import_batches").update({ status: "importing" }).eq("id", batchId);
 
-  const { data: rows, error: rowsError } = await supabase
+  const { data: rowsData, error: rowsError } = await supabase
     .from("import_batch_rows")
     .select("*")
     .eq("batch_id", batchId)
     .in("row_status", ["valid", "warning"])
     .order("row_number", { ascending: true });
   if (rowsError) throw rowsError;
+  const rows = (rowsData ?? []) as unknown as ImportBatchRowRecord[];
+
+  const { data: practiceSetData, error: practiceSetError } = await supabase
+    .from("practice_sets")
+    .select("subject_id")
+    .eq("id", batch.target_practice_set_id)
+    .single();
+  if (practiceSetError) throw practiceSetError;
+  const subjectId = (practiceSetData as unknown as PracticeSetSubjectRow).subject_id;
 
   let imported = 0;
   let failed = 0;
 
-  for (const row of rows ?? []) {
-    const raw = row.raw_data as CsvRecord;
+  for (const row of rows) {
+    const raw = row.raw_data as unknown as CsvRecord;
     const options = buildOptionsFromRow(raw);
 
-    const { data: question, error: questionError } = await supabase
+    const { data: questionData, error: questionError } = await supabase
       .from("questions")
       .insert({
         practice_set_id: batch.target_practice_set_id,
-        subject_id: (
-          await supabase
-            .from("practice_sets")
-            .select("subject_id")
-            .eq("id", batch.target_practice_set_id)
-            .single()
-        ).data?.subject_id,
+        subject_id: subjectId,
         prompt: raw.prompt,
         explanation: raw.explanation || null,
         difficulty: raw.difficulty as Difficulty,
@@ -301,7 +316,7 @@ export async function commitImportBatch(batchId: string, createdBy: string) {
       .select("id")
       .single();
 
-    if (questionError || !question) {
+    if (questionError || !questionData) {
       failed++;
       await supabase
         .from("import_batch_rows")
@@ -313,12 +328,14 @@ export async function commitImportBatch(batchId: string, createdBy: string) {
       continue;
     }
 
+    const questionId = (questionData as unknown as QuestionIdRow).id;
+
     const { error: optionsError } = await supabase.from("question_options").insert(
-      options.map((o) => ({ ...o, question_id: question.id }))
+      options.map((o) => ({ ...o, question_id: questionId }))
     );
 
     if (optionsError) {
-      await supabase.from("questions").delete().eq("id", question.id);
+      await supabase.from("questions").delete().eq("id", questionId);
       failed++;
       await supabase
         .from("import_batch_rows")
@@ -331,7 +348,7 @@ export async function commitImportBatch(batchId: string, createdBy: string) {
     }
 
     imported++;
-    await supabase.from("import_batch_rows").update({ question_id: question.id }).eq("id", row.id);
+    await supabase.from("import_batch_rows").update({ question_id: questionId }).eq("id", row.id);
   }
 
   await supabase
@@ -356,38 +373,41 @@ export async function commitImportBatch(batchId: string, createdBy: string) {
 export async function rollbackImportBatch(batchId: string) {
   const supabase = await createClient();
 
-  const { data: batch, error: batchError } = await supabase
+  const { data: batchData, error: batchError } = await supabase
     .from("import_batches")
     .select("*")
     .eq("id", batchId)
     .maybeSingle();
   if (batchError) throw batchError;
-  if (!batch) throw new Error("Import batch not found");
+  if (!batchData) throw new Error("Import batch not found");
+  const batch = batchData as unknown as ImportBatchRowBase;
   if (batch.status !== "completed") {
     throw new Error(`Batch is "${batch.status}" and cannot be rolled back`);
   }
 
-  const { data: rows, error: rowsError } = await supabase
+  const { data: rowsData, error: rowsError } = await supabase
     .from("import_batch_rows")
     .select("id, question_id")
     .eq("batch_id", batchId)
     .not("question_id", "is", null);
   if (rowsError) throw rowsError;
+  const rows = (rowsData ?? []) as unknown as { id: string; question_id: string | null }[];
 
-  const questionIds = (rows ?? []).map((r) => r.question_id).filter((id): id is string => !!id);
+  const questionIds = rows.map((r) => r.question_id).filter((id): id is string => !!id);
   if (questionIds.length === 0) {
     await supabase.from("import_batches").update({ status: "rolled_back" }).eq("id", batchId);
     return { deleted: 0 };
   }
 
-  const { data: questions, error: questionsError } = await supabase
+  const { data: questionsData, error: questionsError } = await supabase
     .from("questions")
     .select("id, status, current_version")
     .in("id", questionIds);
   if (questionsError) throw questionsError;
+  const questions = (questionsData ?? []) as unknown as QuestionStatusSnapshotRow[];
 
-  const untouched = (questions ?? []).filter((q) => q.status === "draft" && q.current_version === 1);
-  if (untouched.length !== (questions ?? []).length) {
+  const untouched = questions.filter((q) => q.status === "draft" && q.current_version === 1);
+  if (untouched.length !== questions.length) {
     throw new Error(
       "Cannot roll back: some imported questions have already been edited or published since import."
     );

@@ -3,6 +3,7 @@ import type { Database, QuestionStatus, Difficulty } from "@/lib/database.types"
 
 type QuestionRow = Database["public"]["Tables"]["questions"]["Row"];
 type OptionRow = Database["public"]["Tables"]["question_options"]["Row"];
+type QuestionVersionRow = Database["public"]["Tables"]["question_versions"]["Row"];
 
 export type QuestionWithOptions = QuestionRow & {
   options: OptionRow[];
@@ -116,7 +117,7 @@ export async function getQuestionForAdmin(id: string): Promise<QuestionWithOptio
   };
 }
 
-export async function listQuestionVersions(questionId: string) {
+export async function listQuestionVersions(questionId: string): Promise<QuestionVersionRow[]> {
   const supabase = await createClient();
   const { data, error } = await supabase
     .from("question_versions")
@@ -125,7 +126,7 @@ export async function listQuestionVersions(questionId: string) {
     .order("version_number", { ascending: false });
 
   if (error) throw error;
-  return data ?? [];
+  return (data ?? []) as unknown as QuestionVersionRow[];
 }
 
 export type QuestionOptionInput = {
@@ -183,10 +184,11 @@ export async function createQuestion(input: QuestionFormInput, createdBy: string
     .single();
 
   if (questionError) throw questionError;
+  const questionId = (question as unknown as { id: string }).id;
 
   const { error: optionsError } = await supabase.from("question_options").insert(
     input.options.map((option, index) => ({
-      question_id: question.id,
+      question_id: questionId,
       content: option.content,
       is_correct: option.is_correct,
       position: index,
@@ -194,11 +196,11 @@ export async function createQuestion(input: QuestionFormInput, createdBy: string
   );
 
   if (optionsError) {
-    await supabase.from("questions").delete().eq("id", question.id);
+    await supabase.from("questions").delete().eq("id", questionId);
     throw optionsError;
   }
 
-  return question.id as string;
+  return questionId;
 }
 
 /**
