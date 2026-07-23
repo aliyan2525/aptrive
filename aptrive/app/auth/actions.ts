@@ -15,12 +15,15 @@ export async function signIn(
   const email = String(formData.get("email") || "").trim();
   const password = String(formData.get("password") || "");
   const mode = String(formData.get("mode") || "student");
+  // Admin login has no "Remember me" control and always persists for
+  // the length of a normal session; students opt out by unchecking it.
+  const rememberMe = mode === "admin" || formData.get("rememberMe") === "true";
 
   if (!email || !password) {
     return { error: "Please enter your email and password." };
   }
 
-  const supabase = await createClient();
+  const supabase = await createClient({ persistSession: rememberMe });
   const { error } = await supabase.auth.signInWithPassword({ email, password });
 
   if (error) {
@@ -46,7 +49,18 @@ export async function signIn(
   }
 
   revalidatePath("/", "layout");
-  redirect("/dashboard");
+  redirect(safeRedirectTarget(formData.get("next")) ?? "/dashboard");
+}
+
+/**
+ * Only allow redirecting to an internal, single-segment-rooted path
+ * (e.g. "/practice/subjects") after login — guards against the
+ * "next" query param being used for an open redirect.
+ */
+function safeRedirectTarget(next: FormDataEntryValue | null): string | null {
+  const value = String(next || "");
+  if (!value.startsWith("/") || value.startsWith("//")) return null;
+  return value;
 }
 
 export async function signUp(
