@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 import { universities } from "@/lib/universities";
 
 const featured = ["nust", "fast", "giki", "pieas", "comsats", "ned"];
@@ -13,14 +14,18 @@ export default function PopularUniversities() {
       {items.map((uni) => (
         <div
           key={uni.id}
-          className="group rounded-md border border-line bg-panel p-6 transition-colors hover:border-teal/40"
+          className="group rounded-2xl border border-line bg-panel p-6 transition-all hover:-translate-y-0.5 hover:border-teal/40"
         >
           <div className="flex items-start gap-4">
-            <div
-              className="flex h-11 w-11 shrink-0 items-center justify-center rounded-sm border border-line-strong bg-panel-2 font-display text-xs font-semibold tracking-wide text-fg"
-              aria-hidden="true"
-            >
-              {uni.name.slice(0, 4)}
+            <div className="flex h-11 w-11 shrink-0 items-center justify-center overflow-hidden rounded-md border border-line-strong bg-white/95 p-1.5">
+              <Image
+                src={`https://logo.clearbit.com/${uni.website}`}
+                alt={`${uni.name} logo`}
+                width={36}
+                height={36}
+                loading="lazy"
+                className="h-8 w-8 object-contain"
+              />
             </div>
             <div className="min-w-0 flex-1">
               <div className="flex items-start justify-between gap-2">

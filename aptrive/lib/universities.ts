@@ -10,6 +10,7 @@ export type University = {
   id: string;
   name: string;
   fullName: string;
+  website: string;
   location: string;
   verified: boolean;
   formulaText: string;
@@ -26,6 +27,7 @@ export const universities: University[] = [
     id: "nust",
     name: "NUST",
     fullName: "National University of Sciences & Technology",
+    website: "nust.edu.pk",
     location: "Islamabad (+ campuses)",
     verified: true,
     formulaText: "Matric 10% + FSc 15% + NET 75%",
@@ -40,6 +42,7 @@ export const universities: University[] = [
     id: "fast",
     name: "FAST-NUCES",
     fullName: "National University of Computer & Emerging Sciences",
+    website: "nu.edu.pk",
     location: "Islamabad, Lahore, Karachi, Peshawar",
     verified: true,
     formulaText: "Matric 10% + FSc 40% + Entry Test 50%",
@@ -54,6 +57,7 @@ export const universities: University[] = [
     id: "comsats",
     name: "COMSATS",
     fullName: "COMSATS University Islamabad",
+    website: "comsats.edu.pk",
     location: "Islamabad (+ campuses)",
     verified: true,
     formulaText: "Matric 10% + FSc 40% + NTS/NAT 50%",
@@ -68,6 +72,7 @@ export const universities: University[] = [
     id: "uet-lahore",
     name: "UET Lahore",
     fullName: "University of Engineering & Technology, Lahore",
+    website: "uet.edu.pk",
     location: "Lahore",
     verified: true,
     formulaText: "Matric 17% + FSc 50% + ECAT 33%",
@@ -82,6 +87,7 @@ export const universities: University[] = [
     id: "giki",
     name: "GIKI",
     fullName: "Ghulam Ishaq Khan Institute of Engineering Sciences & Technology",
+    website: "giki.edu.pk",
     location: "Topi, KPK",
     verified: false,
     formulaText: "Intermediate 15% + Entry Test 85% (reported — confirm before relying on it)",
@@ -95,6 +101,7 @@ export const universities: University[] = [
     id: "pieas",
     name: "PIEAS",
     fullName: "Pakistan Institute of Engineering & Applied Sciences",
+    website: "pieas.edu.pk",
     location: "Nilore, Islamabad",
     verified: true,
     formulaText: "Matric 15% + FSc Part-I 25% + Entry Test 60%",
@@ -109,6 +116,7 @@ export const universities: University[] = [
     id: "ned",
     name: "NED",
     fullName: "NED University of Engineering & Technology",
+    website: "neduet.edu.pk",
     location: "Karachi",
     verified: true,
     formulaText: "FSc 40% + Entry Test 60% (Matric not used)",
@@ -122,6 +130,7 @@ export const universities: University[] = [
     id: "air",
     name: "Air University",
     fullName: "Air University",
+    website: "au.edu.pk",
     location: "Islamabad",
     verified: true,
     formulaText: "Matric 10% + FSc 40% + Entry Test 50%",
@@ -136,6 +145,7 @@ export const universities: University[] = [
     id: "bahria",
     name: "Bahria University",
     fullName: "Bahria University",
+    website: "bahria.edu.pk",
     location: "Islamabad, Karachi, Lahore",
     verified: true,
     formulaText: "Intermediate 50% + Entry Test 50%",
@@ -149,6 +159,7 @@ export const universities: University[] = [
     id: "ist",
     name: "IST",
     fullName: "Institute of Space Technology",
+    website: "ist.edu.pk",
     location: "Islamabad",
     verified: true,
     formulaText: "Matric 40% + Intermediate 60% (no entry test)",
@@ -162,6 +173,7 @@ export const universities: University[] = [
     id: "umt",
     name: "UMT",
     fullName: "University of Management & Technology",
+    website: "umt.edu.pk",
     location: "Lahore",
     verified: false,
     formulaText: "Formula pending confirmation",
@@ -172,6 +184,7 @@ export const universities: University[] = [
     id: "ucp",
     name: "UCP",
     fullName: "University of Central Punjab",
+    website: "ucp.edu.pk",
     location: "Lahore",
     verified: false,
     formulaText: "Formula pending confirmation",

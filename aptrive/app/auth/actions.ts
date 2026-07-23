@@ -14,6 +14,7 @@ export async function signIn(
 ): Promise<AuthState> {
   const email = String(formData.get("email") || "").trim();
   const password = String(formData.get("password") || "");
+  const mode = String(formData.get("mode") || "student");
 
   if (!email || !password) {
     return { error: "Please enter your email and password." };
@@ -24,6 +25,24 @@ export async function signIn(
 
   if (error) {
     return { error: friendlyAuthError(error.message) };
+  }
+
+  if (mode === "admin") {
+    const { data } = await supabase
+      .from("profiles")
+      .select("role")
+      .maybeSingle();
+    const profile = data as { role: string } | null;
+    const allowed = profile?.role
+      ? ["instructor", "content_manager", "administrator"].includes(profile.role)
+      : false;
+
+    if (!allowed) {
+      await supabase.auth.signOut();
+      return { error: "Admin access is restricted to staff accounts only." };
+    }
+    revalidatePath("/", "layout");
+    redirect("/admin");
   }
 
   revalidatePath("/", "layout");
