@@ -3,11 +3,7 @@
 import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
-import {
-  getPublishedQuestionIdsForTopic,
-  getQuestionRowsByIds,
-} from "@/lib/repositories/questions.repository";
-import { gradeAttempt } from "@/lib/services/scoring";
+import { getPublishedQuestionIdsForTopic } from "@/lib/repositories/questions.repository";
 import {
   completeSession as completeSessionRepo,
   createAdHocSession,
@@ -39,11 +35,18 @@ export type SubmitAnswerResult = {
 };
 
 /**
- * The only sanctioned write path for a question attempt. Re-fetches
- * the question's real answer key server-side and grades against that
- * — a client can never post a fabricated "correct" result. Progress
- * (topic mastery, streaks, daily activity) updates automatically via
- * the DB trigger on question_responses; this action doesn't touch it.
+ * The only sanctioned write path for a question attempt. Grading now
+ * happens server-side inside `record_attempt_and_update_progress`
+ * (SECURITY DEFINER, re-fetches the real answer key itself) — a
+ * client can never post a fabricated "correct" result, and this
+ * action no longer needs to fetch the question or call
+ * `gradeAttempt` locally to grade it. Progress (topic progress, XP,
+ * streaks) updates atomically inside the RPC; this action doesn't
+ * touch it directly.
+ *
+ * `SubmitAnswerInput`/`SubmitAnswerResult` are unchanged so the
+ * calling UI (components/practice/PracticeRunner.tsx) needed no
+ * changes.
  */
 export async function submitAnswer(
   input: SubmitAnswerInput
@@ -57,54 +60,30 @@ export async function submitAnswer(
     return { isCorrect: false, correctOptionId: null, error: "Not signed in." };
   }
 
-  const [questionRow] = await getQuestionRowsByIds([input.questionId]);
-  if (!questionRow) {
-    return { isCorrect: false, error: "Question not found.", correctOptionId: null };
-  }
+  // Normalize single-choice input onto the array shape the RPC expects.
+  const selectedOptionIds =
+    input.selectedOptionIds ?? (input.selectedOptionId ? [input.selectedOptionId] : null);
 
-  const questionType = (questionRow.question_type as
-    | "single_choice"
-    | "multiple_choice"
-    | "numeric"
-    | null) ?? "single_choice";
-
-  // Build options for MCQ grading
-  const options = (questionRow.question_options ?? []).map((o) => ({
-    id: o.id,
-    is_correct: !!o.is_correct,
-  })) as { id: string; is_correct: boolean }[];
-
-  const grade = gradeAttempt({
-    questionType: questionType === null ? "single_choice" : questionType,
-    options: questionType === "numeric" ? undefined : options,
-    selectedOptionId: input.selectedOptionId ?? null,
-    selectedOptionIds: input.selectedOptionIds ?? null,
-    numericAnswer: input.numericAnswer ?? null,
-    numericAnswerValue: questionRow.numeric_answer_value ?? null,
-    numericAnswerTolerance: questionRow.numeric_answer_tolerance ?? null,
-  });
-
-  // For compatibility, keep selected_option_id populated with the
-  // first selected option when multiple selectedOptionIds are present.
-  const compatibilitySelectedId =
-    input.selectedOptionId ?? (input.selectedOptionIds && input.selectedOptionIds[0]) ?? null;
-
-  await recordResponse({
+  const result = await recordResponse({
     supabase,
-    sessionId: input.sessionId,
+    practiceSessionId: input.sessionId,
     userId: user.id,
     questionId: input.questionId,
-    selectedOptionId: compatibilitySelectedId,
-    selectedOptionIds: input.selectedOptionIds ?? null,
-    isCorrect: grade.isCorrect,
+    selectedOptionIds,
+    numericAnswer: input.numericAnswer ?? null,
     timeSpentSeconds: input.timeSpentSeconds,
   });
 
+  const correctOptionIds = result.correct_option_ids ?? null;
+
   return {
-    isCorrect: grade.isCorrect,
-    correctOptionId: grade.correctOptionId ?? null,
-    correctOptionIds: grade.correctOptionIds ?? null,
-    correctNumericValue: grade.correctNumericValue ?? null,
+    isCorrect: result.is_correct,
+    // Single-choice callers read `correctOptionId`; derive it from the
+    // (always single-element, for single_choice questions) array the
+    // RPC returns.
+    correctOptionId: correctOptionIds?.[0] ?? null,
+    correctOptionIds,
+    correctNumericValue: result.correct_numeric_value ?? null,
   };
 }
 

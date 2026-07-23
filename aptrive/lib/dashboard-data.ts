@@ -2,10 +2,16 @@ import { createClient } from "@/lib/supabase/server";
 import type { Database } from "@/lib/database.types";
 
 type Tables = Database["public"]["Tables"];
-type DailyActivity = Tables["daily_activity"]["Row"];
-type TopicMastery = Tables["topic_mastery"]["Row"];
+type Views = Database["public"]["Views"];
+// DailyActivity kept as the shape name for the heatmap/weekly-summary
+// data even though the source table changed — v_user_dashboard_summary
+// (derived from user_attempts) is shaped identically to the legacy
+// daily_activity row it replaces, so sampleActivity() and the
+// downstream weeklySummary reducer below needed no changes.
+type DailyActivity = Views["v_user_dashboard_summary"]["Row"];
+type TopicProgress = Tables["user_topic_progress"]["Row"];
 type GoalProgress = Tables["goal_progress"]["Row"];
-type StudyStreak = Tables["study_streaks"]["Row"];
+type UserStreak = Tables["user_streaks"]["Row"];
 type AdmissionDeadline = Tables["admission_deadlines"]["Row"];
 type RecentlyViewed = Tables["recently_viewed"]["Row"];
 type StudentProfile = Tables["student_profiles"]["Row"];
@@ -22,6 +28,16 @@ type UserAchievement = Tables["user_achievements"]["Row"] & {
  * layout shell. Every query is scoped to auth.uid() implicitly via RLS —
  * no user_id filters are trustable client-side, but adding them here too
  * keeps intent obvious and avoids relying solely on RLS during review.
+ *
+ * Migrated off topic_mastery/study_streaks/daily_activity (populated by
+ * the retired `on_question_response_insert` trigger) onto their
+ * user_attempts-derived equivalents: user_topic_progress, user_streaks,
+ * and v_user_dashboard_summary. `achievements`/`user_achievements` was
+ * deliberately left reading the original tables — nothing in either the
+ * legacy or new attempt-recording path writes to user_achievements (no
+ * trigger or RPC logic touches it in this codebase), so there's no
+ * "goes stale" risk to migrate away from; see
+ * PRACTICE_MIGRATION_WRITEUP.md for this scope decision.
  */
 export async function getDashboardData(userId: string) {
   const supabase = await createClient();
@@ -39,15 +55,15 @@ export async function getDashboardData(userId: string) {
     recentRes,
     studentProfileRes,
   ] = await Promise.all([
-    supabase.from("study_streaks").select("*").eq("user_id", userId).maybeSingle(),
+    supabase.from("user_streaks").select("*").eq("user_id", userId).maybeSingle(),
     supabase
-      .from("daily_activity")
+      .from("v_user_dashboard_summary")
       .select("*")
       .eq("user_id", userId)
       .gte("activity_date", twelveWeeksAgo.toISOString().slice(0, 10))
       .order("activity_date", { ascending: true }),
     supabase
-      .from("topic_mastery")
+      .from("user_topic_progress")
       .select("*")
       .eq("user_id", userId)
       .order("mastery_percent", { ascending: false })
@@ -98,9 +114,9 @@ export async function getDashboardData(userId: string) {
     );
 
   return {
-    streak: streakRes.data as StudyStreak | null,
+    streak: streakRes.data as UserStreak | null,
     activity,
-    topicMastery: (masteryRes.data ?? []) as TopicMastery[],
+    topicMastery: (masteryRes.data ?? []) as TopicProgress[],
     dailyGoal: goalRes.data as GoalProgress | null,
     achievements: (achievementsRes.data ?? []) as UserAchievement[],
     upcomingDeadlines: (deadlinesRes.data ?? []) as AdmissionDeadline[],
@@ -122,7 +138,6 @@ function sampleActivity(): DailyActivity[] {
     date.setDate(date.getDate() - (27 - index));
     const questions = [8, 14, 0, 22, 18, 34, 26][index % 7];
     return {
-      id: `sample-${index}`,
       user_id: "sample",
       activity_date: date.toISOString().slice(0, 10),
       questions_attempted: questions,

@@ -5,7 +5,9 @@ import type { Database } from "@/lib/database.types";
 type SupabaseServer = Awaited<ReturnType<typeof createClient>>;
 type SessionRow = Database["public"]["Tables"]["practice_sessions"]["Row"];
 type SessionInsert = Database["public"]["Tables"]["practice_sessions"]["Insert"];
-type ResponseInsert = Database["public"]["Tables"]["question_responses"]["Insert"];
+type UserAttemptRow = Database["public"]["Tables"]["user_attempts"]["Row"];
+type RecordAttemptResult =
+  Database["public"]["Functions"]["record_attempt_and_update_progress"]["Returns"];
 
 type SessionCore = Pick<
   SessionRow,
@@ -120,109 +122,119 @@ export async function getSessionById(sessionId: string, userId: string) {
     | null;
 }
 
+/**
+ * Reads answered-so-far state for a practice session from
+ * `user_attempts` (source of truth as of the user_attempts migration —
+ * see PRACTICE_MIGRATION_WRITEUP.md). `selected_option_id` is derived
+ * as the first entry of `selected_option_ids` for single-choice
+ * compatibility with existing UI code that still reads the singular
+ * field. `flagged_for_review` from the legacy `question_responses`
+ * shape was dropped: it wasn't read by any UI component
+ * (components/practice/PracticeRunner.tsx destructures the response
+ * shape but never uses that field), so it isn't part of `user_attempts`
+ * — see the writeup for this scope decision.
+ */
 export async function getSessionResponses(sessionId: string, userId: string) {
   const supabase = await createClient();
   const { data, error } = await supabase
-    .from("question_responses")
-    .select("question_id, selected_option_id, selected_option_ids, is_correct, flagged_for_review")
-    .eq("session_id", sessionId)
+    .from("user_attempts")
+    .select("question_id, selected_option_ids, is_correct")
+    .eq("practice_session_id", sessionId)
     .eq("user_id", userId);
 
   if (error) throw error;
-  return (data ?? []) as unknown as {
-    question_id: string;
-    selected_option_id: string | null;
-    is_correct: boolean;
-    flagged_for_review: boolean;
-  }[];
+  const rows = (data ?? []) as unknown as Pick<
+    UserAttemptRow,
+    "question_id" | "selected_option_ids" | "is_correct"
+  >[];
+
+  return rows.map((row) => ({
+    question_id: row.question_id,
+    selected_option_id: row.selected_option_ids?.[0] ?? null,
+    selected_option_ids: row.selected_option_ids ?? null,
+    is_correct: row.is_correct,
+  }));
 }
 
 /**
- * Records (or overwrites, if the learner changes their answer before
- * finishing the session) one question's response, then recomputes the
- * parent session's counters. Grading happens in the caller — this
- * function only persists an already-graded result.
+ * Records (or, if the learner changes their answer before finishing
+ * the session, revises) one question's attempt by calling
+ * `record_attempt_and_update_progress` — the only sanctioned write
+ * path into `user_attempts` (it has no client-writable RLS policy).
+ * Grading now happens server-side inside the RPC against the real
+ * answer key; this function no longer accepts a pre-graded
+ * `isCorrect` from the caller. Progress side effects
+ * (user_topic_progress, user_xp_ledger, user_streaks) are handled
+ * atomically by the RPC — this function does not duplicate that logic.
  *
- * Everything downstream (topic_mastery, daily_activity, study_streaks)
- * is kept in sync automatically by the `on_question_response_insert`
- * trigger already installed in 0003_progress_practice_engagement.sql —
- * this function does not duplicate that logic.
+ * The `practice_sessions.correct_count`/`incorrect_count` recompute-
+ * and-update step from the legacy version of this function is
+ * intentionally gone: those columns are no longer written to by this
+ * path (see PRACTICE_MIGRATION_WRITEUP.md — "computed on read"
+ * decision). `completeSession` below computes the score straight from
+ * `user_attempts`.
  */
 export async function recordResponse(params: {
   supabase?: SupabaseServer;
-  sessionId: string;
+  practiceSessionId: string;
   userId: string;
   questionId: string;
-  selectedOptionId: string | null;
   selectedOptionIds?: string[] | null;
-  isCorrect: boolean;
+  numericAnswer?: number | null;
   timeSpentSeconds: number;
-  flaggedForReview?: boolean;
 }) {
   const supabase = params.supabase ?? (await createClient());
 
-  const payload: ResponseInsert & { selected_option_ids?: string[] | null } = {
-    session_id: params.sessionId,
-    user_id: params.userId,
-    question_id: params.questionId,
-    selected_option_id: params.selectedOptionId,
-    selected_option_ids: params.selectedOptionIds ?? null,
-    is_correct: params.isCorrect,
-    flagged_for_review: params.flaggedForReview ?? false,
-    time_spent_seconds: params.timeSpentSeconds,
-  };
+  const { data, error } = await supabase.rpc("record_attempt_and_update_progress", {
+    attempt: {
+      practice_session_id: params.practiceSessionId,
+      question_id: params.questionId,
+      selected_option_ids: params.selectedOptionIds ?? null,
+      numeric_answer_given: params.numericAnswer ?? null,
+      time_taken_seconds: params.timeSpentSeconds,
+    },
+  });
 
-  const { error: upsertError } = await supabase
-    .from("question_responses")
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any -- postgrest-js resolves insert/update payload types to `never` here; see comment above.
-    .upsert(payload as any, { onConflict: "session_id,question_id" });
-
-  if (upsertError) throw upsertError;
-
-  const { data: responsesData, error: countError } = await supabase
-    .from("question_responses")
-    .select("is_correct")
-    .eq("session_id", params.sessionId);
-
-  if (countError) throw countError;
-  const responses = (responsesData ?? []) as unknown as { is_correct: boolean }[];
-
-  const correct = responses.filter((r) => r.is_correct).length;
-  const incorrect = responses.length - correct;
-
-  const { error: updateError } = await (
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any -- postgrest-js resolves insert/update payload types to `never` here; see comment above.
-    supabase.from("practice_sessions") as any
-  )
-    .update({ correct_count: correct, incorrect_count: incorrect })
-    .eq("id", params.sessionId)
-    .eq("user_id", params.userId);
-
-  if (updateError) throw updateError;
-
-  return { correct, incorrect };
+  if (error) throw error;
+  return data as unknown as RecordAttemptResult;
 }
 
+/**
+ * Score is computed fresh from `user_attempts` grouped by
+ * `practice_session_id` rather than read from the cached
+ * `practice_sessions.correct_count`/`incorrect_count` columns — those
+ * columns are kept in the schema for historical rows but are no
+ * longer written to by this path, so reading them here would silently
+ * go stale. See PRACTICE_MIGRATION_WRITEUP.md for the full decision
+ * writeup.
+ */
 export async function completeSession(sessionId: string, userId: string) {
   const supabase = await createClient();
 
-  const { data: sessionData, error: fetchError } = await supabase
-    .from("practice_sessions")
-    .select("total_questions, correct_count, incorrect_count")
-    .eq("id", sessionId)
-    .eq("user_id", userId)
-    .single();
+  const [{ data: sessionData, error: fetchError }, { data: attemptsData, error: attemptsError }] =
+    await Promise.all([
+      supabase
+        .from("practice_sessions")
+        .select("total_questions")
+        .eq("id", sessionId)
+        .eq("user_id", userId)
+        .single(),
+      supabase
+        .from("user_attempts")
+        .select("is_correct")
+        .eq("practice_session_id", sessionId)
+        .eq("user_id", userId),
+    ]);
 
   if (fetchError) throw fetchError;
-  const session = sessionData as unknown as {
-    total_questions: number;
-    correct_count: number;
-    incorrect_count: number;
-  };
+  if (attemptsError) throw attemptsError;
 
-  const answered = session.correct_count + session.incorrect_count;
-  const scorePercent =
-    answered > 0 ? Math.round((session.correct_count / answered) * 10000) / 100 : 0;
+  const session = sessionData as unknown as { total_questions: number };
+  const attempts = (attemptsData ?? []) as unknown as Pick<UserAttemptRow, "is_correct">[];
+
+  const answered = attempts.length;
+  const correct = attempts.filter((a) => a.is_correct).length;
+  const scorePercent = answered > 0 ? Math.round((correct / answered) * 10000) / 100 : 0;
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any -- postgrest-js resolves insert/update payload types to `never` here; see comment above.
   const { error } = await (supabase.from("practice_sessions") as any)

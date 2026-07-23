@@ -7,7 +7,7 @@ type PracticeSetRow = Database["public"]["Tables"]["practice_sets"]["Row"];
 type ChapterRow = Database["public"]["Tables"]["chapters"]["Row"];
 type TopicRow = Database["public"]["Tables"]["topics"]["Row"];
 type QuestionRow = Database["public"]["Tables"]["questions"]["Row"];
-type TopicMasteryRow = Database["public"]["Tables"]["topic_mastery"]["Row"];
+type TopicMasteryRow = Database["public"]["Tables"]["user_topic_progress"]["Row"];
 
 export type SubjectWithStats = {
   id: string;
@@ -220,7 +220,7 @@ export async function listSubjectChaptersWithTopics(
   const masteryByTopicName = new Map<string, Pick<TopicMasteryRow, "mastery_percent" | "questions_attempted">>();
   if (userId) {
     const { data: masteryData, error: masteryError } = await supabase
-      .from("topic_mastery")
+      .from("user_topic_progress")
       .select("topic, mastery_percent, questions_attempted")
       .eq("user_id", userId)
       .eq("subject_id", subjectId);

@@ -713,9 +713,115 @@ export interface Database {
         };
         Update: Partial<Database["public"]["Tables"]["question_reviews"]["Row"]>;
       };
+
+      // -- user_attempts new path (0008/0009) --------------------------
+      // NOTE: hand-authored against the ticket's description of
+      // already-existing infrastructure that wasn't present in the
+      // repo snapshot this was written against — see the header
+      // comment in 0008_user_attempts_foundation.sql. Re-generate this
+      // block from the real schema (`supabase gen types typescript`)
+      // once available rather than trusting it verbatim.
+      exam_sessions: {
+        Row: {
+          id: string;
+          user_id: string;
+          test_id: string | null;
+          status: "in_progress" | "completed" | "abandoned";
+          total_questions: number;
+          started_at: string;
+          completed_at: string | null;
+          metadata: Record<string, unknown>;
+        };
+        Insert: Partial<Database["public"]["Tables"]["exam_sessions"]["Row"]> & {
+          user_id: string;
+        };
+        Update: Partial<Database["public"]["Tables"]["exam_sessions"]["Row"]>;
+      };
+
+      user_attempts: {
+        Row: {
+          id: string;
+          user_id: string;
+          exam_session_id: string | null;
+          practice_session_id: string | null;
+          question_id: string;
+          selected_option_ids: string[] | null;
+          numeric_answer_given: number | null;
+          is_correct: boolean;
+          time_taken_seconds: number;
+          xp_awarded: number;
+          attempted_at: string;
+        };
+        // No client-writable policy — every row is written exclusively
+        // through the record_attempt_and_update_progress RPC.
+        Insert: never;
+        Update: never;
+      };
+
+      user_topic_progress: {
+        Row: {
+          id: string;
+          user_id: string;
+          subject_id: string | null;
+          topic: string;
+          questions_attempted: number;
+          questions_correct: number;
+          mastery_percent: number;
+          last_practiced_at: string | null;
+          updated_at: string;
+        };
+        Insert: never; // system-maintained via record_attempt_and_update_progress
+        Update: never;
+      };
+
+      user_xp_ledger: {
+        Row: {
+          id: string;
+          user_id: string;
+          attempt_id: string | null;
+          source: "question_attempt" | "achievement" | "bonus";
+          xp_delta: number;
+          created_at: string;
+        };
+        Insert: never; // system-maintained via record_attempt_and_update_progress
+        Update: never;
+      };
+
+      user_streaks: {
+        Row: {
+          user_id: string;
+          current_streak: number;
+          longest_streak: number;
+          last_active_date: string | null;
+          updated_at: string;
+        };
+        Insert: never; // system-maintained via record_attempt_and_update_progress
+        Update: never;
+      };
     };
-    Views: Record<string, never>;
-    Functions: Record<string, never>;
+    Views: {
+      v_user_dashboard_summary: {
+        Row: {
+          user_id: string;
+          activity_date: string;
+          questions_attempted: number;
+          correct_count: number;
+          study_seconds: number;
+          sessions_completed: number;
+        };
+      };
+    };
+    Functions: {
+      record_attempt_and_update_progress: {
+        Args: { attempt: Record<string, unknown> };
+        Returns: {
+          is_correct: boolean;
+          correct_option_ids: string[] | null;
+          correct_numeric_value: number | null;
+          xp_awarded: number;
+        };
+      };
+    };
     Enums: Record<string, never>;
     CompositeTypes: Record<string, never>;
   };

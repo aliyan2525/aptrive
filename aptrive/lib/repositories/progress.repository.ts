@@ -14,6 +14,13 @@ export type RevisionQuestionSummary = {
  * Every question the user most recently got wrong, deduped so a
  * question that was eventually answered correctly on a later attempt
  * drops out of the revision list automatically.
+ *
+ * Reads from `user_attempts` (both practice and mock-exam attempts —
+ * an incorrect answer on a mock exam is just as revision-worthy as
+ * one from a practice session, so no `practice_session_id`/
+ * `exam_session_id` filter is applied). Dedup key is `question_id`;
+ * "most recent" is `attempted_at` descending, same as the legacy
+ * `question_responses.answered_at` ordering it replaces.
  */
 export async function listIncorrectQuestions(
   userId: string,
@@ -22,19 +29,19 @@ export async function listIncorrectQuestions(
   const supabase = await createClient();
 
   const { data, error } = await supabase
-    .from("question_responses")
+    .from("user_attempts")
     .select(
-      "question_id, is_correct, answered_at, questions(prompt, topic, difficulty, subjects(name))"
+      "question_id, is_correct, attempted_at, questions(prompt, topic, difficulty, subjects(name))"
     )
     .eq("user_id", userId)
-    .order("answered_at", { ascending: false });
+    .order("attempted_at", { ascending: false });
 
   if (error) throw error;
 
   type Row = {
     question_id: string;
     is_correct: boolean;
-    answered_at: string;
+    attempted_at: string;
     questions: {
       prompt: string;
       topic: string;
@@ -60,6 +67,6 @@ export async function listIncorrectQuestions(
       topic: row.questions!.topic,
       difficulty: row.questions!.difficulty,
       subjectName: row.questions!.subjects?.name ?? null,
-      lastAnsweredAt: row.answered_at,
+      lastAnsweredAt: row.attempted_at,
     }));
 }
