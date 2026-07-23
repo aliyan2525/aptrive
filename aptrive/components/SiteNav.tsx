@@ -4,9 +4,10 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
-import { Bell, ChevronDown, Info, MoonStar, UserRound } from "lucide-react";
+import { Bell, BookOpen, ChevronDown, LayoutDashboard, LibraryBig, Trophy, UserRound } from "lucide-react";
 import UserMenu, { type HeaderUser } from "@/components/UserMenu";
 import ThemeToggle from "@/components/ThemeToggle";
+import Button from "@/components/ui/Button";
 
 type NavItem = {
   href: string;
@@ -136,23 +137,26 @@ export default function SiteNav({ user }: { user: HeaderUser | null }) {
             <ThemeToggle />
             {user ? (
               <>
-                <Link
+                <Button
                   href="/dashboard"
-                  className="pressable hidden h-9 w-9 place-items-center rounded-full border border-line bg-panel text-muted hover:border-teal/40 hover:text-fg sm:grid"
+                  variant="ghost"
+                  size="icon"
+                  ripple={false}
                   aria-label="Notifications"
+                  className="hidden border border-line hover:border-teal/40 sm:inline-flex"
                 >
                   <Bell className="h-4 w-4" />
-                </Link>
+                </Button>
                 <UserMenu user={user} />
               </>
             ) : (
               <>
-                <Link href="/login" className="hidden text-sm font-medium text-muted transition-colors hover:text-fg sm:block">
+                <Button href="/login" variant="ghost" size="sm" ripple={false} className="hidden sm:inline-flex">
                   Login
-                </Link>
-                <Link href="/signup" className="pressable glow-on-hover hidden rounded-full border border-teal/40 bg-teal-dim px-4 py-2 text-sm font-medium text-teal transition-colors hover:bg-teal hover:text-graphite sm:block">
+                </Button>
+                <Button href="/signup" variant="primary" size="sm" className="hidden sm:inline-flex">
                   Create account
-                </Link>
+                </Button>
               </>
             )}
 
@@ -211,12 +215,24 @@ export default function SiteNav({ user }: { user: HeaderUser | null }) {
 
             {!user ? (
               <div className="mt-6 space-y-3 border-t border-line pt-6">
-                <Link href="/login" onClick={() => setMobileOpen(false)} className="pressable block rounded-full border border-line px-4 py-3 text-center text-sm font-medium text-fg">
+                <Button
+                  href="/login"
+                  variant="outline"
+                  size="md"
+                  fullWidth
+                  onClick={() => setMobileOpen(false)}
+                >
                   Login
-                </Link>
-                <Link href="/signup" onClick={() => setMobileOpen(false)} className="pressable block rounded-full bg-teal px-4 py-3 text-center text-sm font-medium text-graphite">
+                </Button>
+                <Button
+                  href="/signup"
+                  variant="primary"
+                  size="md"
+                  fullWidth
+                  onClick={() => setMobileOpen(false)}
+                >
                   Create account
-                </Link>
+                </Button>
               </div>
             ) : (
               <div className="mt-6 grid grid-cols-3 gap-3 border-t border-line pt-6">
@@ -238,10 +254,10 @@ export default function SiteNav({ user }: { user: HeaderUser | null }) {
       {user && (
         <nav className="fixed inset-x-3 bottom-3 z-30 grid grid-cols-5 rounded-2xl border border-line bg-panel/95 p-1.5 shadow-2xl backdrop-blur md:hidden" aria-label="Mobile primary">
           {[
-            { href: "/dashboard", label: "Dashboard", icon: UserRound },
-            { href: "/practice", label: "Practice", icon: MoonStar },
-            { href: "/library", label: "Library", icon: Info },
-            { href: "/leaderboard", label: "Ranks", icon: Bell },
+            { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
+            { href: "/practice", label: "Practice", icon: BookOpen },
+            { href: "/library", label: "Library", icon: LibraryBig },
+            { href: "/leaderboard", label: "Ranks", icon: Trophy },
             { href: "/profile", label: "Profile", icon: UserRound },
           ].map((item) => {
             const active = pathname.startsWith(item.href);

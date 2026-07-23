@@ -467,3 +467,28 @@ details.faq-item[open] .faq-chevron {
   white-space: nowrap;
   border-width: 0;
 }
+
+/* Button ripple — spawned/removed by components/ui/Button.tsx.
+   Starts at 0 scale under the click point, expands to fully cover
+   the button, and fades out over the same span. */
+@keyframes btn-ripple {
+  0% {
+    transform: scale(0);
+    opacity: 0.55;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 0;
+  }
+}
+
+.btn-ripple {
+  transform: scale(0);
+  animation: btn-ripple 0.6s var(--ease-smooth) forwards;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .btn-ripple {
+    display: none;
+  }
+}

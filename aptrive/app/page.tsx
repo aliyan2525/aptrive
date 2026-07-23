@@ -1,17 +1,15 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import dynamic from "next/dynamic";
 import { redirect } from "next/navigation";
+import { ArrowRight } from "lucide-react";
 import Reveal from "@/components/Reveal";
 import PopularUniversities from "@/components/PopularUniversities";
 import FeaturedLibrary from "@/components/FeaturedLibrary";
 import FAQAccordion from "@/components/FAQAccordion";
+import HeroOrbitScene from "@/components/HeroOrbitSceneClient";
+import Button from "@/components/ui/Button";
+import Card from "@/components/ui/Card";
 import { createClient } from "@/lib/supabase/server";
-
-const HeroOrbitScene = dynamic(() => import("@/components/HeroOrbitScene"), {
-  ssr: false,
-  loading: () => <div className="h-[420px] animate-pulse rounded-3xl border border-line bg-panel md:h-[520px]" />,
-});
 
 export const metadata: Metadata = {
   title: "Aptrive — Premium AI Prep for University Entrance Exams",
@@ -61,18 +59,21 @@ const blogPreview = [
   {
     title: "How to Build a 12-Week NET Prep Strategy",
     category: "Study Strategy",
+    description: "A week-by-week structure for turning a fixed syllabus into a compounding daily practice habit.",
     readTime: "8 min read",
     href: "/blog",
   },
   {
     title: "Topic Mastery vs Random Practice: What Works Better?",
     category: "Learning Science",
+    description: "Why chapter-order practice under-serves your weakest topics, and what to do instead.",
     readTime: "6 min read",
     href: "/blog",
   },
   {
     title: "Avoid These 7 Mistakes in Last-Month Preparation",
     category: "Exam Prep",
+    description: "The most common last-month errors that quietly cost students marks on test day.",
     readTime: "5 min read",
     href: "/blog",
   },
@@ -92,26 +93,29 @@ export default async function Home() {
     <>
       <section className="relative overflow-hidden border-b border-line">
         <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_15%_20%,rgba(35,213,196,0.22),transparent_35%),radial-gradient(circle_at_82%_10%,rgba(47,129,255,0.22),transparent_42%),linear-gradient(to_bottom,rgba(18,22,29,0.38),transparent)]" />
-        <div className="container-aptrive relative py-20 md:py-28">
-          <div className="grid items-center gap-10 lg:grid-cols-[1fr_1.05fr]">
-            <div>
+        <div className="container-aptrive relative py-24 md:py-32">
+          <div className="grid items-center gap-12 lg:grid-cols-[1fr_1.05fr]">
+            {/* Glass panel: translucent + blurred so the gradient behind it
+                still reads through, per the "glassmorphism where appropriate"
+                brief — used once, on the hero, not scattered everywhere. */}
+            <div className="rounded-3xl border border-line/60 bg-panel/40 p-8 backdrop-blur-xl md:p-10">
               <span className="eyebrow">AI-Powered Entrance Preparation</span>
-              <h1 className="font-display mt-5 text-5xl font-semibold leading-[1.02] tracking-tight text-fg md:text-7xl">
+              <h1 className="text-display-1 mt-5 text-fg">
                 Learn like a top scorer.
                 <br />
                 Prepare with precision.
               </h1>
-              <p className="mt-6 max-w-xl text-base leading-relaxed text-muted md:text-lg">
+              <p className="text-body-lg mt-6 max-w-xl">
                 Aptrive combines adaptive practice, premium analytics, and exam-focused pathways
                 so every study hour compounds toward your target university.
               </p>
               <div className="mt-9 flex flex-wrap gap-4">
-                <Link href="/signup" className="rounded-full bg-teal px-7 py-3 text-sm font-semibold text-graphite transition hover:-translate-y-0.5 hover:shadow-[0_10px_30px_rgba(35,213,196,0.28)]">
+                <Button href="/signup" variant="primary" size="lg">
                   Create account
-                </Link>
-                <Link href="/practice" className="rounded-full border border-line-strong bg-panel/70 px-7 py-3 text-sm font-semibold text-fg transition hover:border-teal/50">
+                </Button>
+                <Button href="/practice" variant="outline" size="lg">
                   Explore practice
-                </Link>
+                </Button>
               </div>
             </div>
             <Reveal delay={120}>
@@ -125,7 +129,7 @@ export default async function Home() {
         <Reveal>
           <div className="max-w-2xl">
             <span className="eyebrow">Why Aptrive</span>
-            <h2 className="font-display mt-4 text-3xl font-semibold tracking-tight text-fg md:text-5xl">
+            <h2 className="text-display-2 mt-4 text-fg">
               Built for high-stakes admissions, not generic test prep.
             </h2>
           </div>
@@ -133,10 +137,10 @@ export default async function Home() {
         <div className="mt-12 grid gap-5 md:grid-cols-2 xl:grid-cols-4">
           {pillars.map((pillar, index) => (
             <Reveal key={pillar.title} delay={index * 90}>
-              <article className="motion-card h-full rounded-2xl border border-line bg-panel p-6">
-                <h3 className="font-display text-xl font-semibold text-fg">{pillar.title}</h3>
-                <p className="mt-3 text-sm leading-relaxed text-muted">{pillar.body}</p>
-              </article>
+              <Card variant="interactive" padding="lg" className="h-full">
+                <h3 className="text-heading-2 text-fg">{pillar.title}</h3>
+                <p className="text-body-sm mt-3">{pillar.body}</p>
+              </Card>
             </Reveal>
           ))}
         </div>
@@ -147,7 +151,7 @@ export default async function Home() {
           <Reveal>
             <div className="max-w-2xl">
               <span className="eyebrow">Student Success Journey</span>
-              <h2 className="font-display mt-4 text-3xl font-semibold tracking-tight text-fg md:text-5xl">
+              <h2 className="text-display-2 mt-4 text-fg">
                 A clear progression from first diagnostic to final admission push.
               </h2>
             </div>
@@ -158,8 +162,8 @@ export default async function Home() {
                 <p className="font-mono-data text-xs uppercase tracking-[0.14em] text-teal">
                   Step {String(index + 1).padStart(2, "0")}
                 </p>
-                <h3 className="font-display mt-3 text-lg font-semibold text-fg">{step.title}</h3>
-                <p className="mt-2 text-sm leading-relaxed text-muted">{step.body}</p>
+                <h3 className="text-heading-3 mt-3 text-fg">{step.title}</h3>
+                <p className="text-body-sm mt-2">{step.body}</p>
               </Reveal>
             ))}
           </div>
@@ -171,12 +175,15 @@ export default async function Home() {
           <div className="flex flex-wrap items-end justify-between gap-5">
             <div className="max-w-2xl">
               <span className="eyebrow">University Roadmaps</span>
-              <h2 className="font-display mt-4 text-3xl font-semibold tracking-tight text-fg md:text-5xl">
+              <h2 className="text-display-2 mt-4 text-fg">
                 Stay aligned with official institutions and merit pathways.
               </h2>
             </div>
-            <Link href="/calculator" className="text-sm font-semibold text-teal hover:underline">
-              Open calculator
+            <Link
+              href="/calculator"
+              className="inline-flex items-center gap-1.5 text-sm font-semibold text-teal transition hover:gap-2.5"
+            >
+              Open calculator <ArrowRight className="h-3.5 w-3.5" />
             </Link>
           </div>
         </Reveal>
@@ -191,12 +198,15 @@ export default async function Home() {
             <div className="flex flex-wrap items-end justify-between gap-5">
               <div className="max-w-2xl">
                 <span className="eyebrow">Resource Library</span>
-                <h2 className="font-display mt-4 text-3xl font-semibold tracking-tight text-fg md:text-5xl">
+                <h2 className="text-display-2 mt-4 text-fg">
                   Notes, sheets, practice sets, and concept material in one place.
                 </h2>
               </div>
-              <Link href="/library" className="text-sm font-semibold text-teal hover:underline">
-                Browse all resources
+              <Link
+                href="/library"
+                className="inline-flex items-center gap-1.5 text-sm font-semibold text-teal transition hover:gap-2.5"
+              >
+                Browse all resources <ArrowRight className="h-3.5 w-3.5" />
               </Link>
             </div>
           </Reveal>
@@ -211,26 +221,32 @@ export default async function Home() {
           <div className="flex flex-wrap items-end justify-between gap-5">
             <div className="max-w-2xl">
               <span className="eyebrow">Latest Blogs</span>
-              <h2 className="font-display mt-4 text-3xl font-semibold tracking-tight text-fg md:text-5xl">
+              <h2 className="text-display-2 mt-4 text-fg">
                 Practical, data-backed preparation guidance from the Aptrive team.
               </h2>
             </div>
-            <Link href="/blog" className="text-sm font-semibold text-teal hover:underline">
-              View blog hub
+            <Link
+              href="/blog"
+              className="inline-flex items-center gap-1.5 text-sm font-semibold text-teal transition hover:gap-2.5"
+            >
+              View blog hub <ArrowRight className="h-3.5 w-3.5" />
             </Link>
           </div>
         </Reveal>
         <div className="mt-10 grid gap-5 md:grid-cols-3">
           {blogPreview.map((post, index) => (
             <Reveal key={post.title} delay={index * 80}>
-              <article className="motion-card rounded-2xl border border-line bg-panel p-6">
+              <Card variant="interactive" padding="lg" className="flex h-full flex-col">
                 <p className="font-mono-data text-xs uppercase tracking-[0.14em] text-teal">{post.category}</p>
-                <h3 className="font-display mt-4 text-xl font-semibold text-fg">{post.title}</h3>
-                <p className="mt-2 text-sm text-muted">{post.readTime}</p>
-                <Link href={post.href} className="mt-5 inline-block text-sm font-semibold text-teal hover:underline">
-                  Read more
-                </Link>
-              </article>
+                <h3 className="text-heading-2 mt-4 text-fg">{post.title}</h3>
+                <p className="text-body-sm mt-2 flex-1">{post.description}</p>
+                <div className="mt-5 flex items-center justify-between">
+                  <span className="text-caption">{post.readTime}</span>
+                  <Link href={post.href} className="text-sm font-semibold text-teal hover:underline">
+                    Read more
+                  </Link>
+                </div>
+              </Card>
             </Reveal>
           ))}
         </div>
@@ -240,7 +256,7 @@ export default async function Home() {
         <Reveal>
           <div className="max-w-2xl">
             <span className="eyebrow">FAQ</span>
-            <h2 className="font-display mt-4 text-3xl font-semibold tracking-tight text-fg md:text-5xl">
+            <h2 className="text-display-2 mt-4 text-fg">
               Questions students ask before they begin.
             </h2>
           </div>
@@ -253,16 +269,16 @@ export default async function Home() {
       <section className="border-t border-line bg-panel">
         <div className="container-aptrive flex flex-col items-start justify-between gap-7 py-16 md:flex-row md:items-center">
           <div>
-            <h2 className="font-display text-2xl font-semibold tracking-tight text-fg md:text-4xl">
+            <h2 className="text-heading-1 text-fg">
               Ready to build your university admission edge?
             </h2>
-            <p className="mt-3 text-sm text-muted">
+            <p className="text-body mt-3">
               Start with your first adaptive session and unlock your personalized roadmap.
             </p>
           </div>
-          <Link href="/signup" className="rounded-full bg-teal px-7 py-3 text-sm font-semibold text-graphite transition hover:-translate-y-0.5">
+          <Button href="/signup" variant="primary" size="lg">
             Get started now
-          </Link>
+          </Button>
         </div>
       </section>
     </>
