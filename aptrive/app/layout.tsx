@@ -9,6 +9,7 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { OrganizationSchema } from "@/components/StructuredData";
 import GoogleAnalytics from "@/components/analytics/GoogleAnalytics";
+import { Scene3DProvider } from "@/components/three/Scene3DProvider";
 
 const spaceGrotesk = Space_Grotesk({
   variable: "--font-space-grotesk",
@@ -108,13 +109,15 @@ export default function RootLayout({
       <body className="min-h-full flex flex-col bg-graphite text-fg antialiased">
         <OrganizationSchema />
 
-        <Header />
+        <Scene3DProvider>
+          <Header />
 
-        <main className="flex-1">
-          {children}
-        </main>
+          <main className="flex-1">
+            {children}
+          </main>
 
-        <Footer />
+          <Footer />
+        </Scene3DProvider>
 
         {/* Vercel Analytics */}
         <Analytics />
