@@ -4,6 +4,7 @@ import { useMemo, useRef } from "react";
 import * as THREE from "three";
 import { Canvas, useFrame } from "@react-three/fiber";
 import { useScene3D } from "@/components/three/Scene3DProvider";
+import { createSeededRandom } from "@/lib/three/seeded-random";
 
 // Mirrors AggregateCalculator's segmentPalette so this scene's colors
 // match the real breakdown bar directly beneath it — the one place
@@ -24,16 +25,18 @@ function Fragment({ index, total, active }: FragmentProps) {
   // Stable per-fragment scatter position and phase — rolled once, not
   // re-rolled on every `active` toggle (that would make fragments jump
   // to a new scatter point instead of returning to where they were).
-  const scatter = useMemo(
-    () =>
-      new THREE.Vector3(
-        (Math.random() - 0.5) * 3.2,
-        (Math.random() - 0.5) * 1.8,
-        (Math.random() - 0.5) * 1.6
-      ),
-    []
-  );
-  const phase = useMemo(() => Math.random() * Math.PI * 2, []);
+  // Seeded on `index` (deterministic per fragment) rather than the
+  // impure global `Math.random`, satisfying react-hooks/purity while
+  // still giving each fragment a distinct scatter point.
+  const scatter = useMemo(() => {
+    const random = createSeededRandom(index * 7919 + 17);
+    return new THREE.Vector3(
+      (random() - 0.5) * 3.2,
+      (random() - 0.5) * 1.8,
+      (random() - 0.5) * 1.6
+    );
+  }, [index]);
+  const phase = useMemo(() => createSeededRandom(index * 104729 + 3)() * Math.PI * 2, [index]);
 
   const assembled = useMemo(() => {
     const spacing = 0.62;

@@ -54,8 +54,6 @@ export default function QuestionForm({
   const [prompt, setPrompt] = useState(existing?.prompt ?? "");
   const [explanation, setExplanation] = useState(existing?.explanation ?? "");
   const [difficulty, setDifficulty] = useState<Difficulty>(existing?.difficulty ?? "Medium");
-  const [topic, setTopic] = useState(existing?.topic ?? "");
-  const [chapter, setChapter] = useState(existing?.chapter ?? "");
   const [timeEstimate, setTimeEstimate] = useState(existing?.time_estimate_seconds ?? 60);
   const [status, setStatus] = useState<QuestionStatus>(existing?.status ?? "draft");
   const [source, setSource] = useState(existing?.source ?? "");
@@ -179,14 +177,25 @@ export default function QuestionForm({
     }
     setError(null);
 
+    // The `topic`/`chapter` columns are legacy free-text fields kept
+    // for older UI/reporting code that reads them by name (see
+    // lib/repositories/catalog.repository.ts's normalizeTopicKey /
+    // masteryByTopicName). This form only exposes the normalized
+    // Chapter/Topic *selects* (chapterId/topicId) — there's no separate
+    // free-text input for them — so derive the legacy strings from the
+    // selected records rather than from untethered state that never had
+    // an input wired to it (previously always submitted as "").
+    const selectedChapterName = chapters.find((c) => c.id === chapterId)?.name ?? null;
+    const selectedTopicName = topics.find((t) => t.id === topicId)?.name ?? "";
+
     const input: QuestionFormInput = {
       practice_set_id: practiceSetId,
       subject_id: subjectId,
       prompt: prompt.trim(),
       explanation: explanation.trim() || null,
       difficulty,
-      topic: topic.trim(),
-      chapter: chapter.trim() || null,
+      topic: selectedTopicName,
+      chapter: selectedChapterName,
       time_estimate_seconds: Number(timeEstimate) || 60,
       status,
       source: source.trim() || null,

@@ -185,7 +185,6 @@ export async function recordResponse(params: {
 }) {
   const supabase = params.supabase ?? (await createClient());
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any -- postgrest-js resolves this RPC's `attempt: Record<string, unknown>` arg to `never` against a specific object literal; see comment above.
   const { data, error } = await supabase.rpc("record_attempt_and_update_progress", {
     attempt: {
       practice_session_id: params.practiceSessionId,
@@ -194,6 +193,7 @@ export async function recordResponse(params: {
       numeric_answer_given: params.numericAnswer ?? null,
       time_taken_seconds: params.timeSpentSeconds,
     },
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any -- postgrest-js resolves this RPC's `attempt: Record<string, unknown>` arg to `never` against a specific object literal; see comment above.
   } as any);
 
   if (error) throw error;
