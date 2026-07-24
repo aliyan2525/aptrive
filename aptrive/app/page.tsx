@@ -8,6 +8,7 @@ import PopularUniversities from "@/components/PopularUniversities";
 import FeaturedLibrary from "@/components/FeaturedLibrary";
 import FAQAccordion from "@/components/FAQAccordion";
 import HeroSceneClient from "@/components/hero/HeroSceneClient";
+import HeadlineReveal from "@/components/transitions/HeadlineReveal";
 import Button from "@/components/ui/Button";
 import Card from "@/components/ui/Card";
 import { createClient } from "@/lib/supabase/server";
@@ -101,20 +102,19 @@ export default async function Home() {
                 brief — used once, on the hero, not scattered everywhere. */}
             <div className="rounded-3xl border border-line/60 bg-panel/40 p-8 backdrop-blur-xl md:p-10">
               <span className="eyebrow">AI-Powered Entrance Preparation</span>
-              <h1 className="text-display-1 mt-5 text-fg">
-                Learn like a top scorer.
-                <br />
-                Prepare with precision.
-              </h1>
+              <HeadlineReveal
+                lines={["Learn like a top scorer.", "Prepare with precision."]}
+                className="text-display-1 mt-5 text-fg"
+              />
               <p className="text-body-lg mt-6 max-w-xl">
                 Aptrive combines adaptive practice, premium analytics, and exam-focused pathways
                 so every study hour compounds toward your target university.
               </p>
               <div className="mt-9 flex flex-wrap gap-4">
-                <Button href="/signup" variant="primary" size="lg">
+                <Button href="/signup" variant="primary" size="lg" magnetic>
                   Create account
                 </Button>
-                <Button href="/practice" variant="outline" size="lg">
+                <Button href="/practice" variant="glass" size="lg" magnetic>
                   Explore practice
                 </Button>
               </div>

@@ -9,6 +9,21 @@ gsap.registerPlugin(ScrollTrigger);
 interface UseScrollProgressOptions {
   start?: string;
   end?: string;
+  /**
+   * Optional shaping function applied to the raw 0→1 scroll fraction
+   * before it's written into the returned ref. Omit for the raw
+   * linear value (existing callers keep their current behavior
+   * unchanged). New section scene wrappers building the shared
+   * "arrive into view" convention should pass `arriveEase` from
+   * `@/lib/three/universe-theme` here so their `arriveProgress` means
+   * the same curve everywhere it's used across sections.
+   *
+   * This function is a `useEffect` dependency — pass the stable
+   * `arriveEase` export directly, not a new inline arrow
+   * (`ease={(t) => arriveEase(t)}`), or the ScrollTrigger this hook
+   * creates will be torn down and recreated on every render.
+   */
+  ease?: (t: number) => number;
 }
 
 /**
@@ -24,7 +39,7 @@ interface UseScrollProgressOptions {
  */
 export function useScrollProgress(
   scopeRef: RefObject<HTMLElement | null>,
-  { start = "top 75%", end = "bottom 40%" }: UseScrollProgressOptions = {}
+  { start = "top 75%", end = "bottom 40%", ease }: UseScrollProgressOptions = {}
 ) {
   const progressRef = useRef(0);
 
@@ -42,12 +57,12 @@ export function useScrollProgress(
       start,
       end,
       onUpdate: (self) => {
-        progressRef.current = self.progress;
+        progressRef.current = ease ? ease(self.progress) : self.progress;
       },
     });
 
     return () => trigger.kill();
-  }, [scopeRef, start, end]);
+  }, [scopeRef, start, end, ease]);
 
   return progressRef;
 }

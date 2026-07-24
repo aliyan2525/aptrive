@@ -7,15 +7,25 @@ import { useFrame, useThree } from "@react-three/fiber";
 interface CameraRigProps {
   pointerRef: RefObject<{ x: number; y: number }>;
   /**
-   * 0 at rest. Not driven by anything yet in this phase — HeroScene
-   * passes a ref that stays at 0 until the phase-3 scroll-storytelling
-   * system (GSAP ScrollTrigger) writes into it. Wiring the prop now
-   * means that integration won't require touching this file again.
+   * 0→1 across the Hero section's own scroll range, fed by
+   * `useScrollProgress` in HeroScene.tsx. Read every frame via
+   * useFrame rather than triggering a re-render, same reasoning as
+   * `pointerRef`.
    */
   scrollProgressRef: RefObject<number>;
 }
 
 const basePosition = new THREE.Vector3(0, 0, 8);
+// How far the camera orbits around the nucleus over the Hero's full
+// scroll range — kept modest (25°) so it reads as "drifting past"
+// rather than a disorienting swing, per the master prompt's "subtle
+// parallax" brief.
+const SCROLL_ORBIT_RADIANS = Math.PI / 7.2;
+// Subtracted from z as scroll increases — moves the camera closer to
+// (and past) the nucleus, not away from it. Named for what it does,
+// not "pullback", to avoid the ambiguity the original unnamed literal
+// here had.
+const SCROLL_APPROACH = 2.2;
 
 /**
  * Runs inside the <Canvas> tree (needs useThree/useFrame). Named after
@@ -36,11 +46,24 @@ export default function CameraRig({ pointerRef, scrollProgressRef }: CameraRigPr
     smoothed.current.y += (pointer.y - smoothed.current.y) * 0.04;
 
     const breathing = Math.sin(clock.elapsedTime * 0.4) * 0.08;
+    // Directly scrubbed by scroll position, not eased on a delay —
+    // this is a continuous camera pan the user is steering with the
+    // scrollbar, not a one-time "arrive into view" reveal, so it
+    // shouldn't use the shared `arriveEase` settle curve from
+    // universe-theme.ts. Deliberately different case from an
+    // arriveProgress-driven section reveal.
     const scrollProgress = scrollProgressRef.current ?? 0;
+    const orbitAngle = scrollProgress * SCROLL_ORBIT_RADIANS;
 
-    camera.position.x = basePosition.x + smoothed.current.x * 0.6;
+    // Orbit around the nucleus on top of the existing pull-back, so
+    // the camera drifts around/past it as the user scrolls rather
+    // than just retreating straight back.
+    const orbitedX = basePosition.x * Math.cos(orbitAngle) + basePosition.z * Math.sin(orbitAngle);
+    const orbitedZ = basePosition.z * Math.cos(orbitAngle) - basePosition.x * Math.sin(orbitAngle);
+
+    camera.position.x = orbitedX + smoothed.current.x * 0.6;
     camera.position.y = basePosition.y + smoothed.current.y * 0.4 + breathing * 0.3;
-    camera.position.z = basePosition.z - scrollProgress * 1.5 + breathing;
+    camera.position.z = orbitedZ - scrollProgress * SCROLL_APPROACH + breathing;
 
     camera.lookAt(0, 0, 0);
   });

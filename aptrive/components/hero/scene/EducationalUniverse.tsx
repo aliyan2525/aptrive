@@ -4,12 +4,7 @@ import { useMemo, useRef } from "react";
 import * as THREE from "three";
 import { useFrame } from "@react-three/fiber";
 import { createAtmosphereMaterial } from "./shaders/atmosphere.glsl";
-
-// Brand palette (matches tailwind.config: teal accent, blue secondary,
-// gold as the third "premium" accent introduced for orbit nodes).
-const TEAL = "#23d5c4";
-const BLUE = "#2f81ff";
-const GOLD = "#c9a24b";
+import { TEAL, BLUE, GOLD } from "@/lib/three/universe-theme";
 
 interface OrbitNodeConfig {
   radius: number;

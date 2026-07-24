@@ -1,6 +1,6 @@
 "use client";
 
-import { forwardRef, useState } from "react";
+import { forwardRef, useRef, useState } from "react";
 import type {
   AnchorHTMLAttributes,
   ButtonHTMLAttributes,
@@ -11,7 +11,7 @@ import Link from "next/link";
 import { Loader2 } from "lucide-react";
 import { cn } from "@/lib/cn";
 
-export type ButtonVariant = "primary" | "secondary" | "ghost" | "outline";
+export type ButtonVariant = "primary" | "secondary" | "ghost" | "outline" | "glass";
 export type ButtonSize = "sm" | "md" | "lg" | "icon";
 
 const base =
@@ -27,6 +27,13 @@ const variantClass: Record<ButtonVariant, string> = {
     "bg-panel-2 text-fg border border-line-strong hover:border-teal/50 hover:-translate-y-0.5 active:translate-y-0",
   ghost: "text-muted hover:text-fg hover:bg-panel-2",
   outline: "border border-line-strong bg-panel/70 text-fg hover:border-teal/50 hover:-translate-y-0.5 active:translate-y-0",
+  // Same translucent + blurred treatment as the Hero glass panel
+  // (bg-panel/40 backdrop-blur-xl) rather than a new glass recipe —
+  // "glassmorphism where appropriate, used sparingly" per the
+  // existing brief, so a CTA sitting on top of that panel or the
+  // Hero scene reads as part of the same surface.
+  glass:
+    "border border-line/60 bg-panel/40 text-fg backdrop-blur-xl hover:border-teal/50 hover:bg-panel/55 hover:-translate-y-0.5 active:translate-y-0",
 };
 
 const sizeClass: Record<ButtonSize, string> = {
@@ -46,6 +53,7 @@ const rippleColor: Record<ButtonVariant, string> = {
   secondary: "rgba(243, 245, 242, 0.16)",
   ghost: "rgba(243, 245, 242, 0.14)",
   outline: "rgba(243, 245, 242, 0.16)",
+  glass: "rgba(243, 245, 242, 0.16)",
 };
 
 type Ripple = { id: number; x: number; y: number; size: number };
@@ -59,6 +67,15 @@ type CommonProps = {
   fullWidth?: boolean;
   /** Click-positioned ripple, on by default. Set false to opt out per-instance. */
   ripple?: boolean;
+  /**
+   * Opt-in "magnetic" hover — the button nudges toward the cursor
+   * within a small radius, spring-back on leave. Off by default:
+   * this is a Hero/marketing-CTA flourish, not something every button
+   * in forms/admin/etc. should have. Automatically no-ops on
+   * touch/coarse pointers and under prefers-reduced-motion, same
+   * convention as HeroBackground's pointer parallax.
+   */
+  magnetic?: boolean;
   className?: string;
   children?: ReactNode;
 };
@@ -96,6 +113,7 @@ const Button = forwardRef<HTMLButtonElement | HTMLAnchorElement, ButtonProps>(fu
     rightIcon,
     fullWidth,
     ripple = true,
+    magnetic = false,
     className,
     children,
     ...rest
@@ -103,6 +121,55 @@ const Button = forwardRef<HTMLButtonElement | HTMLAnchorElement, ButtonProps>(fu
   ref,
 ) {
   const [ripples, setRipples] = useState<Ripple[]>([]);
+  const magneticElRef = useRef<HTMLButtonElement | HTMLAnchorElement | null>(null);
+
+  // Merges the internal ref this component needs for magnetic pointer
+  // tracking with whatever ref the caller passed in via forwardRef —
+  // without this, enabling `magnetic` would silently break any caller
+  // that also holds a ref to the button.
+  function setMergedRef(node: HTMLButtonElement | HTMLAnchorElement | null) {
+    magneticElRef.current = node;
+    if (typeof ref === "function") {
+      ref(node as never);
+    } else if (ref) {
+      (ref as { current: HTMLButtonElement | HTMLAnchorElement | null }).current = node;
+    }
+  }
+
+  function handleMagneticMove(event: ReactMouseEvent<HTMLElement>) {
+    if (!magnetic || loading) return;
+    // Coarse/touch pointers don't hover, and this is a hover effect;
+    // reduced-motion opts out of the movement entirely — same
+    // convention HeroBackground.tsx uses for its pointer parallax.
+    if (
+      !window.matchMedia("(pointer: fine)").matches ||
+      window.matchMedia("(prefers-reduced-motion: reduce)").matches
+    ) {
+      return;
+    }
+    const el = magneticElRef.current;
+    if (!el) return;
+    const rect = el.getBoundingClientRect();
+    const relX = event.clientX - (rect.left + rect.width / 2);
+    const relY = event.clientY - (rect.top + rect.height / 2);
+    const strength = 0.25;
+    const maxOffset = 10;
+    const x = Math.max(-maxOffset, Math.min(maxOffset, relX * strength));
+    const y = Math.max(-maxOffset, Math.min(maxOffset, relY * strength));
+    // No transition while actively tracking the cursor — it should
+    // feel attached, not laggy. The spring-back transition is applied
+    // only on leave, below.
+    el.style.transition = "none";
+    el.style.transform = `translate(${x}px, ${y}px)`;
+  }
+
+  function handleMagneticLeave() {
+    if (!magnetic) return;
+    const el = magneticElRef.current;
+    if (!el) return;
+    el.style.transition = "transform 0.4s var(--ease-smooth)";
+    el.style.transform = "";
+  }
 
   const classes = cn(
     base,
@@ -163,16 +230,24 @@ const Button = forwardRef<HTMLButtonElement | HTMLAnchorElement, ButtonProps>(fu
     );
 
   if ("href" in rest && rest.href) {
-    const { href, onClick, ...anchorRest } = rest as ButtonAsLink;
+    const { href, onClick, onMouseMove, onMouseLeave, ...anchorRest } = rest as ButtonAsLink;
     return (
       <Link
         href={href}
-        ref={ref as React.Ref<HTMLAnchorElement>}
+        ref={setMergedRef as React.Ref<HTMLAnchorElement>}
         className={classes}
         aria-disabled={loading || undefined}
         onClick={(event) => {
           spawnRipple(event);
           onClick?.(event);
+        }}
+        onMouseMove={(event) => {
+          handleMagneticMove(event);
+          onMouseMove?.(event);
+        }}
+        onMouseLeave={(event) => {
+          handleMagneticLeave();
+          onMouseLeave?.(event);
         }}
         {...anchorRest}
       >
@@ -182,16 +257,24 @@ const Button = forwardRef<HTMLButtonElement | HTMLAnchorElement, ButtonProps>(fu
     );
   }
 
-  const { disabled, onClick, ...buttonRest } = rest as ButtonAsButton;
+  const { disabled, onClick, onMouseMove, onMouseLeave, ...buttonRest } = rest as ButtonAsButton;
   return (
     <button
-      ref={ref as React.Ref<HTMLButtonElement>}
+      ref={setMergedRef as React.Ref<HTMLButtonElement>}
       className={classes}
       disabled={disabled || loading}
       aria-busy={loading || undefined}
       onClick={(event) => {
         spawnRipple(event);
         onClick?.(event);
+      }}
+      onMouseMove={(event) => {
+        handleMagneticMove(event);
+        onMouseMove?.(event);
+      }}
+      onMouseLeave={(event) => {
+        handleMagneticLeave();
+        onMouseLeave?.(event);
       }}
       {...buttonRest}
     >

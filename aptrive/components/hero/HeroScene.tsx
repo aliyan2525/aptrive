@@ -3,16 +3,27 @@
 import { Suspense, useEffect, useRef } from "react";
 import { Canvas } from "@react-three/fiber";
 import { useScene3D } from "@/components/three/Scene3DProvider";
+import { useScrollProgress } from "@/lib/scroll/useScrollProgress";
+import { getStarfieldDensity, NEBULA_FOG_COLOR } from "@/lib/three/universe-theme";
 import EducationalUniverse from "./scene/EducationalUniverse";
 import KnowledgeParticles from "./scene/KnowledgeParticles";
+import HeroStarfield from "./scene/HeroStarfield";
 import CameraRig from "./useHeroCameraRig";
 import PostFX from "./PostFX";
 
 export default function HeroScene() {
-  const { preset } = useScene3D();
+  const { preset, tier } = useScene3D();
   const containerRef = useRef<HTMLDivElement>(null);
   const pointerRef = useRef({ x: 0, y: 0 });
-  const scrollProgressRef = useRef(0);
+
+  // Tracks scroll progress through the Hero section itself — 0 as its
+  // top reaches the viewport top, 1 as its bottom leaves the viewport
+  // top — so the camera travel plays out over exactly the scroll
+  // distance the user spends leaving Hero, not an arbitrary window.
+  const scrollProgressRef = useScrollProgress(containerRef, {
+    start: "top top",
+    end: "bottom top",
+  });
 
   useEffect(() => {
     const container = containerRef.current;
@@ -48,10 +59,16 @@ export default function HeroScene() {
         aria-hidden
       >
         <Suspense fallback={null}>
+          {/* Subtle depth fog reading from the shared theme, not an
+              arbitrary color — reads as nebula haze at the edges of
+              the scene without obscuring the nucleus at its center. */}
+          <fog attach="fog" args={[NEBULA_FOG_COLOR, 6, 16]} />
+
           <ambientLight intensity={0.5} />
           <pointLight position={[2, 4, 5]} intensity={1.4} color="#23d5c4" />
           <pointLight position={[-3, -2, -4]} intensity={0.5} color="#c9a24b" />
 
+          <HeroStarfield count={getStarfieldDensity(tier)} />
           <EducationalUniverse />
           <KnowledgeParticles count={preset.particleCount} pointerRef={pointerRef} />
           <CameraRig pointerRef={pointerRef} scrollProgressRef={scrollProgressRef} />
