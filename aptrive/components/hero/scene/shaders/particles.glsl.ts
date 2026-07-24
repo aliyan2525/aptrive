@@ -23,7 +23,7 @@ export function createParticleMaterial(color: THREE.ColorRepresentation) {
       uniform vec2 uPointer;
       uniform float uSize;
 
-      // `seed` is packed per-particle in the position buffer's unused
+      // 'seed' is packed per-particle in the position buffer's unused
       // precision headroom via a separate attribute, so each particle
       // drifts out of phase with its neighbors instead of breathing
       // in lockstep.
