@@ -4,6 +4,7 @@ import { useMemo, useRef, type RefObject } from "react";
 import * as THREE from "three";
 import { useFrame } from "@react-three/fiber";
 import { createParticleMaterial } from "./shaders/particles.glsl";
+import { createSeededRandom } from "@/lib/three/seeded-random";
 
 interface KnowledgeParticlesProps {
   count: number;
@@ -25,19 +26,24 @@ export default function KnowledgeParticles({
   const geometry = useMemo(() => {
     const positions = new Float32Array(count * 3);
     const seeds = new Float32Array(count);
+    // Seeded on `count`/`radius` — the same values gating this memo — so
+    // the generated layout is deterministic for a given prop combination
+    // (satisfies React's render-purity rule) while still reading as a
+    // random scatter.
+    const random = createSeededRandom(count * 1_000_003 + Math.round(radius * 1000));
 
     for (let i = 0; i < count; i += 1) {
       // Even distribution across a spherical shell around the core,
       // with some radial spread so it reads as volumetric rather than
       // a flat sphere shell.
-      const r = radius + Math.random() * radius * 0.8;
-      const theta = Math.random() * Math.PI * 2;
-      const phi = Math.acos(2 * Math.random() - 1);
+      const r = radius + random() * radius * 0.8;
+      const theta = random() * Math.PI * 2;
+      const phi = Math.acos(2 * random() - 1);
 
       positions[i * 3] = r * Math.sin(phi) * Math.cos(theta);
       positions[i * 3 + 1] = r * Math.sin(phi) * Math.sin(theta);
       positions[i * 3 + 2] = r * Math.cos(phi);
-      seeds[i] = Math.random();
+      seeds[i] = random();
     }
 
     const geo = new THREE.BufferGeometry();
