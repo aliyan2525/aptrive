@@ -3,6 +3,7 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import { ArrowRight } from "lucide-react";
 import Reveal from "@/components/Reveal";
+import SectionReveal from "@/components/transitions/SectionReveal";
 import PopularUniversities from "@/components/PopularUniversities";
 import FeaturedLibrary from "@/components/FeaturedLibrary";
 import FAQAccordion from "@/components/FAQAccordion";
@@ -135,14 +136,14 @@ export default async function Home() {
           </div>
         </Reveal>
         <div className="mt-12 grid gap-5 md:grid-cols-2 xl:grid-cols-4">
-          {pillars.map((pillar, index) => (
-            <Reveal key={pillar.title} delay={index * 90}>
-              <Card variant="interactive" padding="lg" className="h-full">
+          <SectionReveal stagger className="contents">
+            {pillars.map((pillar) => (
+              <Card key={pillar.title} variant="interactive" padding="lg" className="h-full">
                 <h3 className="text-heading-2 text-fg">{pillar.title}</h3>
                 <p className="text-body-sm mt-3">{pillar.body}</p>
               </Card>
-            </Reveal>
-          ))}
+            ))}
+          </SectionReveal>
         </div>
       </section>
 

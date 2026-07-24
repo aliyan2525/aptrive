@@ -10,6 +10,8 @@ import Footer from "@/components/Footer";
 import { OrganizationSchema } from "@/components/StructuredData";
 import GoogleAnalytics from "@/components/analytics/GoogleAnalytics";
 import { Scene3DProvider } from "@/components/three/Scene3DProvider";
+import { SmoothScrollProvider } from "@/lib/scroll/SmoothScrollProvider";
+import PageTransition from "@/components/transitions/PageTransition";
 
 const spaceGrotesk = Space_Grotesk({
   variable: "--font-space-grotesk",
@@ -109,15 +111,17 @@ export default function RootLayout({
       <body className="min-h-full flex flex-col bg-graphite text-fg antialiased">
         <OrganizationSchema />
 
-        <Scene3DProvider>
-          <Header />
+        <SmoothScrollProvider>
+          <Scene3DProvider>
+            <Header />
 
-          <main className="flex-1">
-            {children}
-          </main>
+            <main className="flex-1">
+              <PageTransition>{children}</PageTransition>
+            </main>
 
-          <Footer />
-        </Scene3DProvider>
+            <Footer />
+          </Scene3DProvider>
+        </SmoothScrollProvider>
 
         {/* Vercel Analytics */}
         <Analytics />
