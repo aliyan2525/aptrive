@@ -25,9 +25,8 @@ function pointAt(t: number) {
 
 function RoadmapScene({ milestoneCount, progressRef }: SceneProps) {
   const curve = useMemo(() => {
-    const points = Array.from({ length: Math.max(milestoneCount, 2) * 8 }, (_, i, arr) =>
-      pointAt(i / (arr.length - 1))
-    );
+    const total = Math.max(milestoneCount, 2) * 8;
+    const points = Array.from({ length: total }, (_, i) => pointAt(i / (total - 1)));
     return new THREE.CatmullRomCurve3(points);
   }, [milestoneCount]);
 

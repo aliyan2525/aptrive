@@ -23,7 +23,7 @@ interface UseScrollProgressOptions {
  * completed state instead of looking permanently unfinished.
  */
 export function useScrollProgress(
-  scopeRef: RefObject<HTMLElement>,
+  scopeRef: RefObject<HTMLElement | null>,
   { start = "top 75%", end = "bottom 40%" }: UseScrollProgressOptions = {}
 ) {
   const progressRef = useRef(0);
