@@ -6,7 +6,7 @@ import Reveal from "@/components/Reveal";
 import PopularUniversities from "@/components/PopularUniversities";
 import FeaturedLibrary from "@/components/FeaturedLibrary";
 import FAQAccordion from "@/components/FAQAccordion";
-import HeroOrbitScene from "@/components/HeroOrbitSceneClient";
+import HeroSceneClient from "@/components/hero/HeroSceneClient";
 import Button from "@/components/ui/Button";
 import Card from "@/components/ui/Card";
 import { createClient } from "@/lib/supabase/server";
@@ -119,7 +119,7 @@ export default async function Home() {
               </div>
             </div>
             <Reveal delay={120}>
-              <HeroOrbitScene />
+              <HeroSceneClient />
             </Reveal>
           </div>
         </div>
