@@ -34,7 +34,7 @@ interface UseScrollTimelineOptions {
  * permanently.
  */
 export function useScrollTimeline(
-  scopeRef: RefObject<HTMLElement>,
+  scopeRef: RefObject<HTMLElement | null>,
   build: TimelineBuilder,
   {
     start = "top 80%",
