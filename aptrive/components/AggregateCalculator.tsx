@@ -4,6 +4,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { universities } from "@/lib/universities";
 import { event as gaEvent } from "@/lib/gtag";
+import AssemblingFormulaClient from "@/components/calculator/scene/AssemblingFormulaClient";
 
 type MarksState = Record<string, { obtained: string; total: string }>;
 
@@ -278,6 +279,13 @@ export default function AggregateCalculator() {
       {/* RESULT PANEL */}
       <div className="motion-card rounded-md border border-line bg-panel p-6 md:p-8">
         <div className="eyebrow">Result</div>
+
+        {!isUnavailable && (
+          <AssemblingFormulaClient
+            fragmentCount={uni.components.length || 3}
+            active={Boolean(result)}
+          />
+        )}
 
         {!result ? (
           <div className="flex h-full min-h-[220px] flex-col items-center justify-center text-center">
