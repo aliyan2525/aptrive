@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { categories, contentTypeLabels } from "@/lib/library-data";
 import CategoryCard from "@/components/library/CategoryCard";
+import FloatingBookshelfClient from "@/components/library/scene/FloatingBookshelfClient";
 
 export const metadata: Metadata = {
   title: "Library — Aptrive",
@@ -28,6 +29,10 @@ export default function LibraryPage() {
             AI-generated sets — organized by subject and filterable by
             university, entry test, difficulty, and more.
           </p>
+        </div>
+
+        <div className="mt-10">
+          <FloatingBookshelfClient count={Math.min(categories.length, 7)} />
         </div>
 
         <div className="mt-10 grid grid-cols-2 gap-6 border-y border-line py-6 md:grid-cols-4">

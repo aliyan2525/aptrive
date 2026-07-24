@@ -1,4 +1,6 @@
 import type { Metadata } from "next";
+import Podium3DClient from "@/components/leaderboard/scene/Podium3DClient";
+import AnimatedStat from "@/components/leaderboard/AnimatedStat";
 
 export const metadata: Metadata = {
   title: "Rankings - Aptrive",
@@ -30,11 +32,15 @@ export default function LeaderboardPage() {
             </p>
           </div>
           <div className="grid grid-cols-3 gap-3">
-            <Stat label="Tracked signals" value="7" />
-            <Stat label="Ranking views" value="7" />
-            <Stat label="Scale target" value="1M+" />
+            <Stat label="Tracked signals" value={7} />
+            <Stat label="Ranking views" value={7} />
+            <Stat label="Scale target" value={1} suffix="M+" />
           </div>
         </section>
+
+        <div className="mt-10">
+          <Podium3DClient />
+        </div>
 
         <div className="mt-8 flex gap-2 overflow-x-auto pb-2">
           {tabs.map((tab, index) => (
@@ -69,8 +75,12 @@ export default function LeaderboardPage() {
                 </div>
               </div>
               <p className="text-sm text-muted">{student.university}</p>
-              <p className="font-mono-data text-sm text-fg">{student.accuracy}%</p>
-              <p className="font-mono-data text-sm text-gold">{student.xp.toLocaleString()}</p>
+              <p className="font-mono-data text-sm text-fg">
+                <AnimatedStat value={student.accuracy} suffix="%" />
+              </p>
+              <p className="font-mono-data text-sm text-gold">
+                <AnimatedStat value={student.xp} />
+              </p>
             </div>
           ))}
         </section>
@@ -79,11 +89,13 @@ export default function LeaderboardPage() {
   );
 }
 
-function Stat({ label, value }: { label: string; value: string }) {
+function Stat({ label, value, suffix = "" }: { label: string; value: number; suffix?: string }) {
   return (
     <div className="rounded-md border border-line bg-panel p-4">
       <p className="text-xs uppercase tracking-wide text-muted-2">{label}</p>
-      <p className="font-display mt-2 text-2xl font-semibold text-fg">{value}</p>
+      <p className="font-display mt-2 text-2xl font-semibold text-fg">
+        <AnimatedStat value={value} suffix={suffix} />
+      </p>
     </div>
   );
 }

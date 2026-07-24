@@ -3,6 +3,7 @@ import type { Metadata } from "next";
 import TickDivider from "@/components/TickDivider";
 import { CourseSchema } from "@/components/StructuredData";
 import { universities } from "@/lib/universities";
+import RoadmapSection from "@/components/courses/RoadmapSection";
 
 const uni = universities.find((u) => u.id === "pieas")!;
 
@@ -130,28 +131,7 @@ export default function PieasPage() {
       <TickDivider />
 
       {/* WHAT'S INCLUDED */}
-      <section className="container-aptrive py-16 md:py-24">
-        <div className="eyebrow">What&apos;s included</div>
-        <h2 className="font-display mt-3 text-3xl font-semibold tracking-tight text-fg md:text-4xl">
-          Everything runs on the same engine.
-        </h2>
-
-        <div className="mt-12 grid gap-6 md:grid-cols-2">
-          {included.map((item) => (
-            <div
-              key={item.title}
-              className="rounded-md border border-line bg-panel p-6"
-            >
-              <div className="font-display text-lg font-semibold text-fg">
-                {item.title}
-              </div>
-              <p className="mt-2 text-sm leading-relaxed text-muted">
-                {item.body}
-              </p>
-            </div>
-          ))}
-        </div>
-      </section>
+      <RoadmapSection items={included} />
 
       <TickDivider />
 
