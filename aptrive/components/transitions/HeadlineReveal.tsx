@@ -1,15 +1,17 @@
 "use client";
 
-import { useRef, type ElementType } from "react";
+import { useRef } from "react";
 import gsap from "gsap";
 import { useScrollTimeline } from "@/lib/scroll/useScrollTimeline";
 import { cn } from "@/lib/cn";
+
+type HeadlineTag = "h1" | "h2" | "h3" | "h4" | "h5" | "h6" | "p" | "div" | "span";
 
 interface HeadlineRevealProps {
   /** Each entry renders as its own masked line, revealed in a staggered sequence. */
   lines: string[];
   /** Heading tag to render — defaults to h1 since the first use is the Hero headline. */
-  as?: ElementType;
+  as?: HeadlineTag;
   className?: string;
   lineClassName?: string;
   delay?: number;
