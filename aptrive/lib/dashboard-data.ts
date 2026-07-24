@@ -49,6 +49,7 @@ export async function getDashboardData(userId: string) {
     streakRes,
     activityRes,
     masteryRes,
+    weakTopicsRes,
     goalRes,
     achievementsRes,
     deadlinesRes,
@@ -68,6 +69,12 @@ export async function getDashboardData(userId: string) {
       .eq("user_id", userId)
       .order("mastery_percent", { ascending: false })
       .limit(6),
+    supabase
+      .from("user_topic_progress")
+      .select("*")
+      .eq("user_id", userId)
+      .order("mastery_percent", { ascending: true })
+      .limit(5),
     supabase
       .from("goal_progress")
       .select("*")
@@ -113,10 +120,17 @@ export async function getDashboardData(userId: string) {
       { questions: 0, correct: 0, seconds: 0 }
     );
 
+  const strongTopics = (masteryRes.data ?? []) as TopicProgress[];
+  const strongTopicNames = new Set(strongTopics.map((t) => t.topic));
+  const weakTopics = ((weakTopicsRes.data ?? []) as TopicProgress[]).filter(
+    (t) => !strongTopicNames.has(t.topic)
+  );
+
   return {
     streak: streakRes.data as UserStreak | null,
     activity,
-    topicMastery: (masteryRes.data ?? []) as TopicProgress[],
+    topicMastery: strongTopics,
+    weakTopics,
     dailyGoal: goalRes.data as GoalProgress | null,
     achievements: (achievementsRes.data ?? []) as UserAchievement[],
     upcomingDeadlines: (deadlinesRes.data ?? []) as AdmissionDeadline[],
