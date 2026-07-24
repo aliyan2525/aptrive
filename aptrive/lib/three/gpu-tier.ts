@@ -41,7 +41,7 @@ let pendingDetection: Promise<TierResult> | null = null;
 function detectOnce(): Promise<TierResult> {
   if (cachedResult) return Promise.resolve(cachedResult);
   if (!pendingDetection) {
-    pendingDetection = getGPUTier({ mobileBenchmarkPercentages: [0, 50, 30, 20] })
+    pendingDetection = getGPUTier({ mobileTiers: [0, 50, 30, 20] })
       .then((result) => {
         cachedResult = result;
         return result;
