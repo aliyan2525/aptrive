@@ -4,6 +4,7 @@ import TickDivider from "@/components/TickDivider";
 import { CourseSchema } from "@/components/StructuredData";
 import { universities } from "@/lib/universities";
 import RoadmapSection from "@/components/courses/RoadmapSection";
+import UniversityLogo from "@/components/UniversityLogo";
 
 const uni = universities.find((u) => u.id === "fast")!;
 
@@ -66,6 +67,7 @@ export default function FastPage() {
       <section className="container-aptrive py-16 md:py-24">
         <div className="grid gap-12 md:grid-cols-2 md:items-start">
           <div>
+            <UniversityLogo university="fast" displayName="FAST-NUCES" size={48} className="mb-4" />
             <div className="eyebrow">FAST-NUCES · Computer Science & Engineering</div>
             <h1 className="font-display mt-3 text-4xl font-semibold tracking-tight text-fg md:text-5xl">
               FAST-NUCES Entry Test Preparation

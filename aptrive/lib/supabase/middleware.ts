@@ -1,12 +1,13 @@
 import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
+import type { Database } from "@/lib/database.types";
 
 const PROTECTED_PREFIXES = ["/dashboard", "/admin"];
 
 export async function updateSession(request: NextRequest) {
   let supabaseResponse = NextResponse.next({ request });
 
-  const supabase = createServerClient(
+  const supabase = createServerClient<Database>(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
     {
@@ -52,6 +53,28 @@ export async function updateSession(request: NextRequest) {
     url.pathname = "/dashboard";
     url.search = "";
     return NextResponse.redirect(url);
+  }
+
+  // First-login gate: a signed-in user with no student_profiles row
+  // hasn't completed onboarding yet. Scoped to /dashboard only — not
+  // /admin, which already self-protects via requireStaff() in
+  // app/admin/layout.tsx and whose staff accounts aren't expected to
+  // have gone through student onboarding at all.
+  const isOnboardingGated = path === "/dashboard" || path.startsWith("/dashboard/");
+
+  if (user && isOnboardingGated) {
+    const { data: profile } = await supabase
+      .from("student_profiles")
+      .select("user_id")
+      .eq("user_id", user.id)
+      .maybeSingle();
+
+    if (!profile) {
+      const url = request.nextUrl.clone();
+      url.pathname = "/onboarding";
+      url.search = "";
+      return NextResponse.redirect(url);
+    }
   }
 
   return supabaseResponse;

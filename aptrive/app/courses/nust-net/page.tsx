@@ -3,6 +3,7 @@ import type { Metadata } from "next";
 import TickDivider from "@/components/TickDivider";
 import { CourseSchema } from "@/components/StructuredData";
 import RoadmapSection from "@/components/courses/RoadmapSection";
+import UniversityLogo from "@/components/UniversityLogo";
 
 export const metadata: Metadata = {
   title: "NUST NET Preparation — Aptrive",
@@ -65,6 +66,7 @@ export default function NustNetPage() {
       <section className="container-aptrive py-16 md:py-24">
         <div className="grid gap-12 md:grid-cols-2 md:items-start">
           <div>
+            <UniversityLogo university="nust-net" displayName="NUST" size={48} className="mb-4" />
             <div className="eyebrow">NUST NET · Engineering</div>
             <h1 className="font-display mt-3 text-4xl font-semibold tracking-tight text-fg md:text-5xl">
               NUST NET Preparation

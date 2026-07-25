@@ -4,6 +4,7 @@ import TickDivider from "@/components/TickDivider";
 import { CourseSchema } from "@/components/StructuredData";
 import { universities } from "@/lib/universities";
 import RoadmapSection from "@/components/courses/RoadmapSection";
+import UniversityLogo from "@/components/UniversityLogo";
 
 const uni = universities.find((u) => u.id === "pieas")!;
 
@@ -66,6 +67,7 @@ export default function PieasPage() {
       <section className="container-aptrive py-16 md:py-24">
         <div className="grid gap-12 md:grid-cols-2 md:items-start">
           <div>
+            <UniversityLogo university="pieas" displayName="PIEAS" size={48} className="mb-4" />
             <div className="eyebrow">PIEAS · Engineering & Applied Sciences</div>
             <h1 className="font-display mt-3 text-4xl font-semibold tracking-tight text-fg md:text-5xl">
               PIEAS Entry Test Preparation

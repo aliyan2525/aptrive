@@ -5,6 +5,7 @@ import { useSearchParams } from "next/navigation";
 import { universities } from "@/lib/universities";
 import { event as gaEvent } from "@/lib/gtag";
 import AssemblingFormulaClient from "@/components/calculator/scene/AssemblingFormulaClient";
+import UniversityLogo from "@/components/UniversityLogo";
 
 type MarksState = Record<string, { obtained: string; total: string }>;
 
@@ -165,18 +166,21 @@ export default function AggregateCalculator() {
         <label htmlFor="university" className="eyebrow">
           University
         </label>
-        <select
-          id="university"
-          value={uniId}
-          onChange={(e) => handleUniChange(e.target.value)}
-          className="pressable mt-2 w-full rounded-sm border border-line bg-panel-2 px-4 py-3 text-sm text-fg outline-none focus:border-teal/50"
-        >
-          {universities.map((u) => (
-            <option key={u.id} value={u.id}>
-              {u.name} — {u.location}
-            </option>
-          ))}
-        </select>
+        <div className="mt-2 flex items-center gap-3">
+          <UniversityLogo university={uni.id} displayName={uni.name} size={40} />
+          <select
+            id="university"
+            value={uniId}
+            onChange={(e) => handleUniChange(e.target.value)}
+            className="pressable w-full rounded-sm border border-line bg-panel-2 px-4 py-3 text-sm text-fg outline-none focus:border-teal/50"
+          >
+            {universities.map((u) => (
+              <option key={u.id} value={u.id}>
+                {u.name} — {u.location}
+              </option>
+            ))}
+          </select>
+        </div>
 
         <p className="mt-3 text-xs leading-relaxed text-muted">
           Formula used: <span className="font-mono-data text-teal">{uni.formulaText}</span>

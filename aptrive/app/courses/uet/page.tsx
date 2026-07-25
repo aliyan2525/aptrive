@@ -4,6 +4,7 @@ import TickDivider from "@/components/TickDivider";
 import { CourseSchema } from "@/components/StructuredData";
 import { universities } from "@/lib/universities";
 import RoadmapSection from "@/components/courses/RoadmapSection";
+import UniversityLogo from "@/components/UniversityLogo";
 
 // NOTE: the Phase 3 doc referred to this as adding a "uet" entry to
 // lib/universities.ts, but that data already exists under the id
@@ -71,6 +72,7 @@ export default function UetPage() {
       <section className="container-aptrive py-16 md:py-24">
         <div className="grid gap-12 md:grid-cols-2 md:items-start">
           <div>
+            <UniversityLogo university="uet" displayName="UET Lahore" size={48} className="mb-4" />
             <div className="eyebrow">UET Lahore · ECAT Engineering</div>
             <h1 className="font-display mt-3 text-4xl font-semibold tracking-tight text-fg md:text-5xl">
               UET Lahore ECAT Preparation

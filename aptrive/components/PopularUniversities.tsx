@@ -1,6 +1,6 @@
 import Link from "next/link";
-import Image from "next/image";
 import { universities } from "@/lib/universities";
+import UniversityLogo from "@/components/UniversityLogo";
 
 const featured = ["nust", "fast", "giki", "pieas", "comsats", "ned"];
 
@@ -17,16 +17,7 @@ export default function PopularUniversities() {
           className="group rounded-2xl border border-line bg-panel p-6 transition-all hover:-translate-y-0.5 hover:border-teal/40"
         >
           <div className="flex items-start gap-4">
-            <div className="flex h-11 w-11 shrink-0 items-center justify-center overflow-hidden rounded-md border border-line-strong bg-white/95 p-1.5">
-              <Image
-                src={`https://logo.clearbit.com/${uni.website}`}
-                alt={`${uni.name} logo`}
-                width={36}
-                height={36}
-                loading="lazy"
-                className="h-8 w-8 object-contain"
-              />
-            </div>
+            <UniversityLogo university={uni.id} displayName={uni.name} size={44} />
             <div className="min-w-0 flex-1">
               <div className="flex items-start justify-between gap-2">
                 <span className="font-display text-lg font-semibold text-fg">

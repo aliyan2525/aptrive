@@ -7,6 +7,7 @@ import type { getDashboardData } from "@/lib/dashboard-data";
 import BentoCard from "./BentoCard";
 import ComingSoonCard from "./ComingSoonCard";
 import PerformanceTrend from "./PerformanceTrend";
+import UniversityLogo from "@/components/UniversityLogo";
 
 type DashboardData = Awaited<ReturnType<typeof getDashboardData>>;
 
@@ -224,15 +225,20 @@ export default function DashboardClient({
 
         <BentoCard title="University goal" subtitle="Your target, set in onboarding" className="lg:col-span-4">
           <div className="flex h-full flex-col justify-between">
-            <div>
-              <p className="font-display text-xl font-semibold text-fg">
-                {data.studentProfile?.target_university ?? "Not set yet"}
-              </p>
-              <p className="mt-2 text-sm leading-relaxed text-muted">
-                {data.studentProfile?.target_university
-                  ? "Your practice mix and mock recommendations are weighted toward this university's pattern."
-                  : "Set a target university in onboarding to personalize your practice mix."}
-              </p>
+            <div className="flex items-start gap-3">
+              {data.studentProfile?.target_university && (
+                <UniversityLogo university={data.studentProfile.target_university} size={40} />
+              )}
+              <div>
+                <p className="font-display text-xl font-semibold text-fg">
+                  {data.studentProfile?.target_university ?? "Not set yet"}
+                </p>
+                <p className="mt-2 text-sm leading-relaxed text-muted">
+                  {data.studentProfile?.target_university
+                    ? "Your practice mix and mock recommendations are weighted toward this university's pattern."
+                    : "Set a target university in onboarding to personalize your practice mix."}
+                </p>
+              </div>
             </div>
             <Link href="/onboarding" className="mt-4 text-sm font-semibold text-teal hover:underline">
               {data.studentProfile?.target_university ? "Change target" : "Set target"} &gt;
@@ -299,8 +305,11 @@ export default function DashboardClient({
         <BentoCard title="Upcoming exams" subtitle="Keep application dates visible" className="lg:col-span-7">
           <div className="space-y-3">
             {(data.upcomingDeadlines.length ? data.upcomingDeadlines : fallbackDeadlines).map((item) => (
-              <div key={`${item.university}-${item.deadline_date}`} className="flex justify-between gap-4 border-b border-line pb-3 text-sm last:border-0">
-                <span className="text-fg">{item.university}</span>
+              <div key={`${item.university}-${item.deadline_date}`} className="flex items-center justify-between gap-4 border-b border-line pb-3 text-sm last:border-0">
+                <span className="flex items-center gap-2.5 text-fg">
+                  <UniversityLogo university={item.university} size={24} />
+                  {item.university}
+                </span>
                 <span className="font-mono-data text-muted">{formatDate(item.deadline_date)}</span>
               </div>
             ))}

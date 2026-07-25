@@ -4,10 +4,11 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
-import { Bell, BookOpen, ChevronDown, LayoutDashboard, LibraryBig, Trophy, UserRound } from "lucide-react";
+import { BookOpen, ChevronDown, LayoutDashboard, LibraryBig, Trophy, UserRound } from "lucide-react";
 import UserMenu, { type HeaderUser } from "@/components/UserMenu";
 import ThemeToggle from "@/components/ThemeToggle";
 import Button from "@/components/ui/Button";
+import NotificationBell, { type NotificationItem } from "@/components/NotificationBell";
 
 type NavItem = {
   href: string;
@@ -47,7 +48,15 @@ function navLinkClass(active: boolean) {
     : "relative text-sm text-muted transition-colors hover:text-fg after:absolute after:-bottom-2 after:left-0 after:h-0.5 after:w-0 after:rounded-full after:bg-teal after:transition-all after:duration-300 after:[transition-timing-function:var(--ease-smooth)] after:content-[''] hover:after:w-full";
 }
 
-export default function SiteNav({ user }: { user: HeaderUser | null }) {
+export default function SiteNav({
+  user,
+  notifications = [],
+  unreadCount = 0,
+}: {
+  user: HeaderUser | null;
+  notifications?: NotificationItem[];
+  unreadCount?: number;
+}) {
   const pathname = usePathname();
   const [mobileOpen, setMobileOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
@@ -137,16 +146,11 @@ export default function SiteNav({ user }: { user: HeaderUser | null }) {
             <ThemeToggle />
             {user ? (
               <>
-                <Button
-                  href="/dashboard"
-                  variant="ghost"
-                  size="icon"
-                  ripple={false}
-                  aria-label="Notifications"
-                  className="hidden border border-line hover:border-teal/40 sm:inline-flex"
-                >
-                  <Bell className="h-4 w-4" />
-                </Button>
+                <NotificationBell
+                  key={`${unreadCount}:${notifications.map((n) => n.id).join(",")}`}
+                  initialNotifications={notifications}
+                  initialUnreadCount={unreadCount}
+                />
                 <UserMenu user={user} />
               </>
             ) : (

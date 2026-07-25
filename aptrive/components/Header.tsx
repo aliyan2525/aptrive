@@ -1,6 +1,7 @@
 import { createClient } from "@/lib/supabase/server";
 import SiteNav from "@/components/SiteNav";
 import type { HeaderUser } from "@/components/UserMenu";
+import { listNotifications, countUnreadNotifications } from "@/lib/repositories/notifications.repository";
 
 export default async function Header() {
   const supabase = await createClient();
@@ -9,6 +10,8 @@ export default async function Header() {
   } = await supabase.auth.getUser();
 
   let headerUser: HeaderUser | null = null;
+  let notifications: Awaited<ReturnType<typeof listNotifications>> = [];
+  let unreadCount = 0;
 
   if (user) {
     const { data } = await supabase
@@ -34,9 +37,14 @@ export default async function Header() {
         ? ["instructor", "content_manager", "administrator"].includes(profile.role)
         : false,
     };
+
+    [notifications, unreadCount] = await Promise.all([
+      listNotifications(supabase, user.id),
+      countUnreadNotifications(supabase, user.id),
+    ]);
   }
 
   // SiteNav renders its own <header> so it can control sticky/hide-on-scroll
   // behavior as one unit — see components/SiteNav.tsx.
-  return <SiteNav user={headerUser} />;
+  return <SiteNav user={headerUser} notifications={notifications} unreadCount={unreadCount} />;
 }

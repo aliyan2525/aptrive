@@ -1,28 +1,85 @@
 "use client";
 
-import { useMemo, useState } from "react";
-import Link from "next/link";
+import { useMemo, useState, useTransition } from "react";
+import UniversityLogo from "@/components/UniversityLogo";
+import { completeOnboardingAction } from "@/app/onboarding/actions";
+import type { OnboardingInput } from "@/lib/repositories/onboarding.repository";
 
 const steps = ["Identity", "Target", "Academics", "Schedule", "Plan"];
 const universities = ["NUST", "FAST", "COMSATS", "GIKI", "PIEAS", "UET"];
-const tests = ["NET", "ECAT", "MDCAT", "FAST Admission Test", "GIKI Test"];
+
+// value = what's stored in student_profiles.entry_test (Postgres enum:
+// NET | ECAT | MDCAT | NAT | SAT | GAT | OTHER — see supabase/migrations/0004).
+const testOptions = [
+  { label: "NUST NET", value: "NET" },
+  { label: "ECAT", value: "ECAT" },
+  { label: "MDCAT", value: "MDCAT" },
+  { label: "NTS / NAT", value: "NAT" },
+  { label: "SAT", value: "SAT" },
+  { label: "GAT", value: "GAT" },
+  { label: "Other", value: "OTHER" },
+];
+
+// value = student_profiles.education_level enum: matric | intermediate |
+// a_levels | undergraduate | other.
+const educationOptions = [
+  { label: "Matric", value: "matric" },
+  { label: "Intermediate / FSc", value: "intermediate" },
+  { label: "A-Levels", value: "a_levels" },
+  { label: "Undergraduate (transfer)", value: "undergraduate" },
+  { label: "Other", value: "other" },
+];
+
+// value = student_profiles.preferred_study_schedule enum.
+const scheduleOptions = [
+  { label: "Early morning", value: "early_morning" },
+  { label: "Morning", value: "morning" },
+  { label: "Afternoon", value: "afternoon" },
+  { label: "Evening", value: "evening" },
+  { label: "Night", value: "night" },
+  { label: "Flexible", value: "flexible" },
+];
+
 const subjects = ["Mathematics", "Physics", "English", "Intelligence", "Computer Science"];
 
-export default function OnboardingFlow() {
+type OnboardingFlowProps = {
+  /** Pre-fills the form when the user has a partial/existing profile
+   * (e.g. they left onboarding halfway and came back). Undefined for a
+   * brand-new user. */
+  existingProfile?: {
+    display_name: string | null;
+    target_university: string | null;
+    target_program: string | null;
+    entry_test: string | null;
+    education_level: string | null;
+    matric_marks: number | null;
+    intermediate_marks: number | null;
+    expected_test_date: string | null;
+    preferred_study_schedule: string | null;
+    daily_study_target_minutes: number;
+    improvement_subjects: string[];
+  } | null;
+};
+
+export default function OnboardingFlow({ existingProfile }: OnboardingFlowProps) {
   const [step, setStep] = useState(0);
+  const [isPending, startTransition] = useTransition();
+  const [submitError, setSubmitError] = useState<string | null>(null);
   const [form, setForm] = useState({
-    fullName: "",
-    displayName: "",
-    university: "NUST",
-    program: "Computer Science",
-    test: "NET",
-    education: "Intermediate / A-Level",
-    matric: "",
-    intermediate: "",
-    testDate: "",
-    schedule: "Evening",
-    dailyTarget: "90",
-    improvement: ["Mathematics", "Physics"],
+    fullName: existingProfile?.display_name ?? "",
+    displayName: existingProfile?.display_name ?? "",
+    university: existingProfile?.target_university ?? "NUST",
+    program: existingProfile?.target_program ?? "Computer Science",
+    test: existingProfile?.entry_test ?? "NET",
+    education: existingProfile?.education_level ?? "intermediate",
+    matric: existingProfile?.matric_marks?.toString() ?? "",
+    intermediate: existingProfile?.intermediate_marks?.toString() ?? "",
+    testDate: existingProfile?.expected_test_date ?? "",
+    schedule: existingProfile?.preferred_study_schedule ?? "evening",
+    dailyTarget: existingProfile?.daily_study_target_minutes?.toString() ?? "90",
+    improvement: existingProfile?.improvement_subjects?.length
+      ? existingProfile.improvement_subjects
+      : ["Mathematics", "Physics"],
   });
 
   const completion = Math.round(((step + 1) / steps.length) * 100);
@@ -35,6 +92,46 @@ export default function OnboardingFlow() {
       { label: "Priority subjects", value: form.improvement.join(", ") },
     ];
   }, [form.dailyTarget, form.improvement]);
+
+  function handleFinish() {
+    setSubmitError(null);
+    const input: OnboardingInput = {
+      displayName: form.displayName || form.fullName,
+      targetUniversity: form.university,
+      targetProgram: form.program,
+      entryTest: form.test,
+      educationLevel: form.education,
+      matricMarks: form.matric ? Number(form.matric) : null,
+      intermediateMarks: form.intermediate ? Number(form.intermediate) : null,
+      expectedTestDate: form.testDate || null,
+      preferredStudySchedule: form.schedule,
+      dailyStudyTargetMinutes: Number(form.dailyTarget) || 90,
+      improvementSubjects: form.improvement,
+    };
+
+    startTransition(async () => {
+      try {
+        // completeOnboardingAction redirects on success (throws
+        // NEXT_REDIRECT internally), so this only returns on failure.
+        await completeOnboardingAction(input);
+      } catch (error) {
+        // Next's redirect() throws a special error to unwind out of the
+        // action — that's the success path, not a real failure, and
+        // must not be shown to the user.
+        const isRedirect =
+          typeof error === "object" &&
+          error !== null &&
+          "digest" in error &&
+          typeof (error as { digest?: unknown }).digest === "string" &&
+          (error as { digest: string }).digest.startsWith("NEXT_REDIRECT");
+        if (isRedirect) throw error;
+
+        setSubmitError(
+          error instanceof Error ? error.message : "Something went wrong saving your profile. Please try again."
+        );
+      }
+    });
+  }
 
   return (
     <main className="min-h-[calc(100vh-4rem)] bg-graphite px-6 py-10">
@@ -83,15 +180,15 @@ export default function OnboardingFlow() {
 
           {step === 1 && (
             <Fieldset title="Choose your admission target">
-              <SelectField label="Target university" value={form.university} options={universities} onChange={(university) => setForm({ ...form, university })} />
+              <SelectField label="Target university" value={form.university} options={universities} onChange={(university) => setForm({ ...form, university })} showLogo />
               <TextField label="Target degree/program" value={form.program} onChange={(program) => setForm({ ...form, program })} />
-              <SelectField label="Entry test" value={form.test} options={tests} onChange={(test) => setForm({ ...form, test })} />
+              <SelectField label="Entry test" value={form.test} options={testOptions} onChange={(test) => setForm({ ...form, test })} />
             </Fieldset>
           )}
 
           {step === 2 && (
             <Fieldset title="Add academic context">
-              <SelectField label="Current education level" value={form.education} options={["Matric", "Intermediate / A-Level", "Gap year", "Undergraduate transfer"]} onChange={(education) => setForm({ ...form, education })} />
+              <SelectField label="Current education level" value={form.education} options={educationOptions} onChange={(education) => setForm({ ...form, education })} />
               <TextField label="Matric marks" value={form.matric} onChange={(matric) => setForm({ ...form, matric })} />
               <TextField label="Intermediate marks" value={form.intermediate} onChange={(intermediate) => setForm({ ...form, intermediate })} />
               <TextField label="Expected entry test date" type="date" value={form.testDate} onChange={(testDate) => setForm({ ...form, testDate })} />
@@ -100,7 +197,7 @@ export default function OnboardingFlow() {
 
           {step === 3 && (
             <Fieldset title="Set your rhythm">
-              <SelectField label="Preferred study schedule" value={form.schedule} options={["Morning", "Afternoon", "Evening", "Late night"]} onChange={(schedule) => setForm({ ...form, schedule })} />
+              <SelectField label="Preferred study schedule" value={form.schedule} options={scheduleOptions} onChange={(schedule) => setForm({ ...form, schedule })} />
               <TextField label="Daily study target (minutes)" value={form.dailyTarget} onChange={(dailyTarget) => setForm({ ...form, dailyTarget })} />
               <div>
                 <label className="text-sm font-medium text-fg">Subjects needing improvement</label>
@@ -136,7 +233,7 @@ export default function OnboardingFlow() {
             <div>
               <h2 className="font-display text-2xl font-semibold text-fg">Your personalized starter plan</h2>
               <p className="mt-2 text-sm leading-relaxed text-muted">
-                This preview can be saved to Supabase next; the schema already has profile, goals, notifications, and progress tables ready for it.
+                This saves your profile, target, and today&apos;s study goal — your dashboard will personalize around it right away.
               </p>
               <div className="mt-6 grid gap-4 sm:grid-cols-2">
                 {plan.map((item) => (
@@ -146,9 +243,19 @@ export default function OnboardingFlow() {
                   </div>
                 ))}
               </div>
-              <Link href="/dashboard" className="mt-8 inline-flex rounded-sm bg-teal px-4 py-2 text-sm font-semibold text-graphite">
-                Go to dashboard
-              </Link>
+              {submitError && (
+                <p className="mt-6 rounded-sm border border-red-500/30 bg-red-500/10 px-4 py-3 text-sm text-red-300">
+                  {submitError}
+                </p>
+              )}
+              <button
+                type="button"
+                onClick={handleFinish}
+                disabled={isPending}
+                className="mt-8 inline-flex rounded-sm bg-teal px-4 py-2 text-sm font-semibold text-graphite disabled:opacity-60"
+              >
+                {isPending ? "Saving…" : "Save and go to dashboard"}
+              </button>
             </div>
           )}
 
@@ -184,15 +291,31 @@ function TextField({ label, value, onChange, type = "text" }: { label: string; v
   );
 }
 
-function SelectField({ label, value, options, onChange }: { label: string; value: string; options: string[]; onChange: (value: string) => void }) {
+function SelectField({
+  label,
+  value,
+  options,
+  onChange,
+  showLogo = false,
+}: {
+  label: string;
+  value: string;
+  options: string[] | { label: string; value: string }[];
+  onChange: (value: string) => void;
+  showLogo?: boolean;
+}) {
+  const normalized = options.map((opt) => (typeof opt === "string" ? { label: opt, value: opt } : opt));
   return (
     <label className="grid gap-2 text-sm font-medium text-fg">
       {label}
-      <select value={value} onChange={(event) => onChange(event.target.value)} className="rounded-sm border border-line-strong bg-graphite px-4 py-3 text-sm text-fg">
-        {options.map((option) => (
-          <option key={option} value={option}>{option}</option>
-        ))}
-      </select>
+      <div className="flex items-center gap-3">
+        {showLogo && <UniversityLogo university={value} size={36} />}
+        <select value={value} onChange={(event) => onChange(event.target.value)} className="w-full rounded-sm border border-line-strong bg-graphite px-4 py-3 text-sm text-fg">
+          {normalized.map((option) => (
+            <option key={option.value} value={option.value}>{option.label}</option>
+          ))}
+        </select>
+      </div>
     </label>
   );
 }

@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Podium3DClient from "@/components/leaderboard/scene/Podium3DClient";
 import AnimatedStat from "@/components/leaderboard/AnimatedStat";
+import UniversityLogo from "@/components/UniversityLogo";
 
 export const metadata: Metadata = {
   title: "Rankings - Aptrive",
@@ -74,7 +75,10 @@ export default function LeaderboardPage() {
                   <p className="text-xs text-muted">{student.streak} day streak</p>
                 </div>
               </div>
-              <p className="text-sm text-muted">{student.university}</p>
+              <p className="flex items-center gap-2 text-sm text-muted">
+                <UniversityLogo university={student.university} size={22} />
+                {student.university}
+              </p>
               <p className="font-mono-data text-sm text-fg">
                 <AnimatedStat value={student.accuracy} suffix="%" />
               </p>
