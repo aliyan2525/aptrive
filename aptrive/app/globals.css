@@ -255,11 +255,24 @@ select:focus-visible {
 }
 
 .eyebrow {
-  font-family: var(--font-mono);
-  font-size: 0.75rem;
-  letter-spacing: 0.14em;
+  font-family: var(--font-body);
+  font-size: 0.6875rem;
+  font-weight: 600;
+  letter-spacing: 0.09em;
   text-transform: uppercase;
-  color: var(--teal);
+  color: var(--muted);
+}
+
+.eyebrow::before {
+  content: "";
+  display: inline-block;
+  width: 5px;
+  height: 5px;
+  margin-right: 0.55em;
+  margin-bottom: 1px;
+  border-radius: 50%;
+  background: var(--teal);
+  vertical-align: middle;
 }
 
 .container-aptrive {
