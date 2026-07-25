@@ -1,6 +1,6 @@
 import { Suspense } from "react";
 import type { Metadata } from "next";
-import AggregateCalculator from "@/components/AggregateCalculator";
+import CalculatorWithMeritEstimator from "@/components/calculator/CalculatorWithMeritEstimator";
 import TickDivider from "@/components/TickDivider";
 import { universities } from "@/lib/universities";
 
@@ -29,7 +29,7 @@ export default function CalculatorPage() {
 
         <div className="mt-14">
           <Suspense fallback={null}>
-            <AggregateCalculator />
+            <CalculatorWithMeritEstimator />
           </Suspense>
         </div>
       </section>

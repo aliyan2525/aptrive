@@ -100,3 +100,20 @@ export const nustPrograms: NustProgram[] = [
   // --- Bioinformatics ---
   { code: "SINES-R665", name: "Bachelor of Science in Bioinformatics", school: "SINES", category: "Bioinformatics", topMerit: { merit: 15, netMarks: 157, cummAggregate: 82.43636 }, lastMerit: { merit: 383, netMarks: 132, cummAggregate: 72.11591 } },
 ];
+
+/** nustPrograms grouped by their `category`, in first-seen order — the
+ * shape the program <select>'s <optgroup> list wants. Computed once at
+ * module load so every consumer (calculator, merit estimator) shares
+ * the same grouping instead of re-deriving it. */
+export const groupedNustPrograms: { category: string; programs: NustProgram[] }[] = (() => {
+  const groups: { category: string; programs: NustProgram[] }[] = [];
+  for (const program of nustPrograms) {
+    let group = groups.find((g) => g.category === program.category);
+    if (!group) {
+      group = { category: program.category, programs: [] };
+      groups.push(group);
+    }
+    group.programs.push(program);
+  }
+  return groups;
+})();

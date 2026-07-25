@@ -1,11 +1,10 @@
 "use client";
 
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { universities } from "@/lib/universities";
-import { nustPrograms, NUST_MERIT_SOURCE_NOTE } from "@/lib/nust-programs";
-import { estimateNustAdmissionChance, CHANCE_COLORS } from "@/lib/merit-chance";
 import { event as gaEvent } from "@/lib/gtag";
+import { useAnimatedNumber } from "@/lib/hooks/useAnimatedNumber";
 import AssemblingFormulaClient from "@/components/calculator/scene/AssemblingFormulaClient";
 import UniversityLogo from "@/components/UniversityLogo";
 
@@ -18,55 +17,14 @@ const segmentPalette = [
   "rgba(35, 213, 196, 0.55)",
 ];
 
-/**
- * Animates a number toward `target` instead of snapping to it, so the
- * result panel feels like it's "computing" rather than just appearing.
- * Respects prefers-reduced-motion by jumping straight to the value.
- */
-function useAnimatedNumber(target: number, durationMs = 500) {
-  const [value, setValue] = useState(target);
-  const fromRef = useRef(target);
-  const rafRef = useRef(0);
+type AggregateCalculatorProps = {
+  /** Fired every time a fresh aggregate is computed (or cleared, as
+   * `null`) so a parent can hand the number off to the Merit Estimator
+   * section below without the two components being coupled directly. */
+  onResult?: (aggregate: number | null) => void;
+};
 
-  useEffect(() => {
-    const reduceMotion = window.matchMedia(
-      "(prefers-reduced-motion: reduce)"
-    ).matches;
-    if (reduceMotion) {
-      // This effect *is* the animation driver (the rAF loop below calls
-      // setState every frame, which is unavoidable for a JS-driven
-      // number tween); this branch is just its "skip the animation"
-      // path when the user has reduced motion enabled.
-      // eslint-disable-next-line react-hooks/set-state-in-effect
-      setValue(target);
-      return;
-    }
-
-    const from = fromRef.current;
-    const start = performance.now();
-
-    function tick(now: number) {
-      const elapsed = now - start;
-      const t = Math.min(1, elapsed / durationMs);
-      const eased = 1 - Math.pow(1 - t, 3); // ease-out-cubic
-      setValue(from + (target - from) * eased);
-      if (t < 1) {
-        rafRef.current = requestAnimationFrame(tick);
-      } else {
-        fromRef.current = target;
-      }
-    }
-
-    cancelAnimationFrame(rafRef.current);
-    rafRef.current = requestAnimationFrame(tick);
-    return () => cancelAnimationFrame(rafRef.current);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [target]);
-
-  return value;
-}
-
-export default function AggregateCalculator() {
+export default function AggregateCalculator({ onResult }: AggregateCalculatorProps) {
   const searchParams = useSearchParams();
   const requestedUni = searchParams.get("uni");
   const initialUniId =
@@ -81,48 +39,26 @@ export default function AggregateCalculator() {
     aggregate: number;
     breakdown: { label: string; weight: number; pct: number; contribution: number }[];
   }>(null);
-  const [programCode, setProgramCode] = useState<string>("");
-
   const uni = useMemo(
     () => universities.find((u) => u.id === uniId) ?? universities[0],
     [uniId]
   );
 
-  // Program-level chance estimator is currently NUST-only — that's the
-  // only university with real per-program merit-list data on hand.
-  const hasProgramData = uni.id === "nust";
-
-  const selectedProgram = useMemo(
-    () => nustPrograms.find((p) => p.code === programCode) ?? null,
-    [programCode]
-  );
-
-  const chanceResult = useMemo(() => {
-    if (!result || !selectedProgram) return null;
-    return estimateNustAdmissionChance(result.aggregate, selectedProgram);
-  }, [result, selectedProgram]);
-
-  const groupedNustPrograms = useMemo(() => {
-    const groups: { category: string; programs: typeof nustPrograms }[] = [];
-    for (const program of nustPrograms) {
-      let group = groups.find((g) => g.category === program.category);
-      if (!group) {
-        group = { category: program.category, programs: [] };
-        groups.push(group);
-      }
-      group.programs.push(program);
-    }
-    return groups;
-  }, []);
-
   const animatedAggregate = useAnimatedNumber(result?.aggregate ?? 0);
+
+  // Hand the computed aggregate up to whichever parent is listening —
+  // the calculator page wires this straight into the Merit Estimator
+  // section below, so it auto-fills the moment a result lands here.
+  useEffect(() => {
+    onResult?.(result?.aggregate ?? null);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [result]);
 
   function handleUniChange(id: string) {
     setUniId(id);
     setMarks({});
     setErrors({});
     setResult(null);
-    setProgramCode("");
   }
 
   function updateField(key: string, field: "obtained" | "total", value: string) {
@@ -387,82 +323,17 @@ export default function AggregateCalculator() {
               official admission portal before making decisions.
             </p>
 
-            {hasProgramData ? (
-              <div className="mt-10 border-t border-line pt-8">
-                <div className="eyebrow">Merit estimator</div>
-                <label htmlFor="program" className="mt-4 block text-sm text-fg">
-                  Target program
-                </label>
-                <select
-                  id="program"
-                  value={programCode}
-                  onChange={(e) => setProgramCode(e.target.value)}
-                  className="pressable mt-2 w-full rounded-sm border border-line bg-panel-2 px-4 py-3 text-sm text-fg outline-none focus:border-teal/50"
-                >
-                  <option value="">Select a program…</option>
-                  {groupedNustPrograms.map((group) => (
-                    <optgroup key={group.category} label={group.category}>
-                      {group.programs.map((program) => (
-                        <option key={program.code} value={program.code}>
-                          {program.name} — {program.code}
-                        </option>
-                      ))}
-                    </optgroup>
-                  ))}
-                </select>
-
-                {selectedProgram && chanceResult ? (
-                  <div className="motion-card mt-5 rounded-md border border-line bg-panel-2 p-5">
-                    <div className="flex items-center gap-3">
-                      <span
-                        className="h-2.5 w-2.5 shrink-0 rounded-full"
-                        style={{ backgroundColor: CHANCE_COLORS[chanceResult.chance] }}
-                        aria-hidden="true"
-                      />
-                      <span
-                        className="font-display text-lg font-semibold"
-                        style={{ color: CHANCE_COLORS[chanceResult.chance] }}
-                      >
-                        {chanceResult.label} chance
-                      </span>
-                    </div>
-                    <p className="mt-2 text-xs leading-relaxed text-muted">
-                      {chanceResult.description}
-                    </p>
-
-                    <div className="mt-4 grid grid-cols-2 gap-4 text-xs">
-                      <div>
-                        <div className="text-muted-2">Top merit (last cycle)</div>
-                        <div className="mt-1 font-mono-data text-fg">
-                          {selectedProgram.topMerit.cummAggregate.toFixed(2)}%
-                        </div>
-                      </div>
-                      <div>
-                        <div className="text-muted-2">Closing merit (last cycle)</div>
-                        <div className="mt-1 font-mono-data text-fg">
-                          {selectedProgram.lastMerit.cummAggregate.toFixed(2)}%
-                        </div>
-                      </div>
-                    </div>
-
-                    <p className="mt-4 text-xs leading-relaxed text-muted-2">
-                      Chance is an estimate based on last cycle&apos;s closing merit
-                      for this program, not a guarantee — cutoffs shift every
-                      admission cycle. {NUST_MERIT_SOURCE_NOTE}
-                    </p>
-                  </div>
-                ) : (
-                  <p className="mt-3 text-xs leading-relaxed text-muted-2">
-                    Pick a program above to see your estimated chance of
-                    admission against last cycle&apos;s closing merit.
-                  </p>
-                )}
-              </div>
-            ) : (
-              <p className="mt-6 text-xs leading-relaxed text-muted-2">
-                Program-level chance estimation is available for NUST for now.
-              </p>
-            )}
+            <a
+              href="#merit-estimator"
+              className="pressable mt-8 flex items-center justify-between gap-3 rounded-sm border border-teal/25 bg-teal-dim px-5 py-4 text-sm text-fg transition-colors hover:border-teal/50"
+            >
+              <span>
+                See your admission chance against real NUST program cutoffs
+              </span>
+              <span aria-hidden="true" className="font-mono-data text-teal">
+                ↓
+              </span>
+            </a>
           </div>
         )}
       </div>
