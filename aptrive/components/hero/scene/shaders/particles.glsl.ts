@@ -17,11 +17,19 @@ export function createParticleMaterial(color: THREE.ColorRepresentation) {
       uPointer: { value: new THREE.Vector2(0, 0) },
       uSize: { value: 22.0 },
       uColor: { value: new THREE.Color(color) },
+      // 0→1, driven from the Hero's scroll-out progress (see
+      // KnowledgeParticles' releaseRef). At 0 the field just idles in
+      // its resting shell; at 1 every particle has been pushed out
+      // along its own radial direction and down toward the next
+      // section, and faded — the "released knowledge particles"
+      // phase of the crack-open exit.
+      uRelease: { value: 0 },
     },
     vertexShader: /* glsl */ `
       uniform float uTime;
       uniform vec2 uPointer;
       uniform float uSize;
+      uniform float uRelease;
 
       // 'seed' is packed per-particle in the position buffer's unused
       // precision headroom via a separate attribute, so each particle
@@ -46,14 +54,27 @@ export function createParticleMaterial(color: THREE.ColorRepresentation) {
         pos.x += uPointer.x * 0.35;
         pos.y += uPointer.y * 0.35;
 
+        // Release: push each particle further out along its own
+        // resting direction from the core (radial, per-particle —
+        // reuses the original position attribute before drift/
+        // parallax so the push is stable per-particle rather than
+        // recomputed from the drifted value) and down, so the field
+        // disperses downward toward the section below rather than
+        // uniformly outward.
+        vec3 outward = normalize(position) * uRelease * 3.2;
+        pos += outward;
+        pos.y -= uRelease * 2.4;
+
         vec4 mvPosition = modelViewMatrix * vec4(pos, 1.0);
 
         // Size attenuation so distant particles don't dominate — same
         // falloff PointsMaterial(sizeAttenuation) uses internally.
-        gl_PointSize = uSize * (1.0 / -mvPosition.z);
+        // Particles also shrink slightly as they disperse, so the
+        // field reads as thinning out rather than just spreading.
+        gl_PointSize = uSize * (1.0 / -mvPosition.z) * (1.0 - uRelease * 0.4);
         gl_Position = projectionMatrix * mvPosition;
 
-        vAlpha = 0.35 + 0.35 * sin(t * 2.0);
+        vAlpha = (0.35 + 0.35 * sin(t * 2.0)) * (1.0 - uRelease * 0.7);
       }
     `,
     fragmentShader: /* glsl */ `

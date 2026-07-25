@@ -12,6 +12,14 @@ interface KnowledgeParticlesProps {
   radius?: number;
   /** Normalized [-1, 1] pointer position, updated imperatively by the parent so this component never re-renders on pointer move. */
   pointerRef: RefObject<{ x: number; y: number }>;
+  /**
+   * 0→1, how far through leaving the Hero the user has scrolled (same
+   * ref the camera rig and EducationalUniverse's crackProgressRef
+   * read) — drives the shader's uRelease uniform. Optional so this
+   * component still works standalone (resting shell, no dispersal)
+   * if a future caller doesn't wire scroll in.
+   */
+  releaseRef?: RefObject<number>;
 }
 
 export default function KnowledgeParticles({
@@ -19,6 +27,7 @@ export default function KnowledgeParticles({
   color = "#9dd8ff",
   radius = 3.4,
   pointerRef,
+  releaseRef,
 }: KnowledgeParticlesProps) {
   // Positions + per-particle seed built once per `count` change, not
   // per frame. `count` only changes when the GPU tier changes (rare —
@@ -57,6 +66,15 @@ export default function KnowledgeParticles({
 
   useFrame((_, delta) => {
     material.uniforms.uTime.value += delta;
+
+    if (releaseRef) {
+      // Lerp rather than snap, same reasoning as the pointer signal
+      // below — scroll progress can jump on fast flicks/trackpad
+      // input and a hard-set uniform would make the dispersal visibly
+      // stutter instead of reading as continuous.
+      const targetRelease = releaseRef.current ?? 0;
+      material.uniforms.uRelease.value += (targetRelease - material.uniforms.uRelease.value) * 0.08;
+    }
 
     const pointer = pointerRef.current;
     if (pointer) {

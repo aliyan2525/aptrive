@@ -8,6 +8,7 @@ import PopularUniversities from "@/components/PopularUniversities";
 import FeaturedLibrary from "@/components/FeaturedLibrary";
 import FAQAccordion from "@/components/FAQAccordion";
 import HeroSceneClient from "@/components/hero/HeroSceneClient";
+import FeaturesSceneClient from "@/components/features/FeaturesSceneClient";
 import HeadlineReveal from "@/components/transitions/HeadlineReveal";
 import Button from "@/components/ui/Button";
 import Card from "@/components/ui/Card";
@@ -126,24 +127,33 @@ export default async function Home() {
         </div>
       </section>
 
-      <section className="container-aptrive py-20 md:py-28">
-        <Reveal>
-          <div className="max-w-2xl">
-            <span className="eyebrow">Why Aptrive</span>
-            <h2 className="text-display-2 mt-4 text-fg">
-              Built for high-stakes admissions, not generic test prep.
-            </h2>
+      <section className="relative overflow-hidden py-20 md:py-28">
+        {/* Full-bleed scene layer, behind the container-aptrive content
+            below — continues the Hero's released-particle motif as an
+            ambient background rather than a bordered panel of its own.
+            aria-hidden + pointer-events-none via FeaturesBackground /
+            FeaturesScene's own canvas wrapper; content stays on a
+            positioned layer above it. */}
+        <FeaturesSceneClient />
+        <div className="container-aptrive relative z-10">
+          <Reveal>
+            <div className="max-w-2xl">
+              <span className="eyebrow">Why Aptrive</span>
+              <h2 className="text-display-2 mt-4 text-fg">
+                Built for high-stakes admissions, not generic test prep.
+              </h2>
+            </div>
+          </Reveal>
+          <div className="mt-12 grid gap-5 md:grid-cols-2 xl:grid-cols-4">
+            <SectionReveal stagger className="contents">
+              {pillars.map((pillar) => (
+                <Card key={pillar.title} variant="interactive" padding="lg" className="h-full">
+                  <h3 className="text-heading-2 text-fg">{pillar.title}</h3>
+                  <p className="text-body-sm mt-3">{pillar.body}</p>
+                </Card>
+              ))}
+            </SectionReveal>
           </div>
-        </Reveal>
-        <div className="mt-12 grid gap-5 md:grid-cols-2 xl:grid-cols-4">
-          <SectionReveal stagger className="contents">
-            {pillars.map((pillar) => (
-              <Card key={pillar.title} variant="interactive" padding="lg" className="h-full">
-                <h3 className="text-heading-2 text-fg">{pillar.title}</h3>
-                <p className="text-body-sm mt-3">{pillar.body}</p>
-              </Card>
-            ))}
-          </SectionReveal>
         </div>
       </section>
 
