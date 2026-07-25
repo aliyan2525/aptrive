@@ -9,6 +9,8 @@ import FeaturedLibrary from "@/components/FeaturedLibrary";
 import FAQAccordion from "@/components/FAQAccordion";
 import HeroSceneClient from "@/components/hero/HeroSceneClient";
 import FeaturesSceneClient from "@/components/features/FeaturesSceneClient";
+import JourneySceneClient from "@/components/journey/JourneySceneClient";
+import JourneyTimeline from "@/components/journey/JourneyTimeline";
 import HeadlineReveal from "@/components/transitions/HeadlineReveal";
 import Button from "@/components/ui/Button";
 import Card from "@/components/ui/Card";
@@ -157,8 +159,9 @@ export default async function Home() {
         </div>
       </section>
 
-      <section className="border-y border-line bg-panel/40">
-        <div className="container-aptrive py-20 md:py-28">
+      <section className="relative overflow-hidden border-y border-line bg-panel/40 py-20 md:py-28">
+        <JourneySceneClient />
+        <div className="container-aptrive relative z-10">
           <Reveal>
             <div className="max-w-2xl">
               <span className="eyebrow">Student Success Journey</span>
@@ -167,17 +170,7 @@ export default async function Home() {
               </h2>
             </div>
           </Reveal>
-          <div className="mt-12 grid gap-px overflow-hidden rounded-3xl border border-line bg-line md:grid-cols-2 lg:grid-cols-4">
-            {journey.map((step, index) => (
-              <Reveal key={step.title} delay={index * 90} className="bg-panel p-6">
-                <p className="font-mono-data text-xs uppercase tracking-[0.14em] text-teal">
-                  Step {String(index + 1).padStart(2, "0")}
-                </p>
-                <h3 className="text-heading-3 mt-3 text-fg">{step.title}</h3>
-                <p className="text-body-sm mt-2">{step.body}</p>
-              </Reveal>
-            ))}
-          </div>
+          <JourneyTimeline steps={journey} className="mt-16" />
         </div>
       </section>
 
