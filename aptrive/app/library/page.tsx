@@ -1,97 +1,81 @@
 import type { Metadata } from "next";
-import Link from "next/link";
-import { notFound } from "next/navigation";
-import { categories, resources } from "@/lib/library-data";
-import LibraryExplorer from "@/components/library/LibraryExplorer";
+import { categories, contentTypeLabels } from "@/lib/library-data";
+import CategoryCard from "@/components/library/CategoryCard";
+import FloatingBookshelfClient from "@/components/library/scene/FloatingBookshelfClient";
 
-export function generateStaticParams() {
-  return categories
-    .filter((c) => !c.comingSoon)
-    .map((c) => ({ category: c.slug }));
-}
+export const metadata: Metadata = {
+  title: "Library — Aptrive",
+  description:
+    "Every resource for university entrance test preparation: practice MCQs, past papers, mock tests, formula sheets, and more — organized by subject.",
+};
 
-export async function generateMetadata({
-  params,
-}: {
-  params: Promise<{ category: string }>;
-}): Promise<Metadata> {
-  const { category: slug } = await params;
-  const category = categories.find((c) => c.slug === slug);
-  if (!category) return {};
-  return {
-    title: `${category.name} — Library — Aptrive`,
-    description: category.description,
-  };
-}
-
-export default async function CategoryPage({
-  params,
-}: {
-  params: Promise<{ category: string }>;
-}) {
-  const { category: slug } = await params;
-  const category = categories.find((c) => c.slug === slug);
-  if (!category || category.comingSoon) notFound();
-
-  const categoryResources = resources.filter((r) => r.categorySlug === slug);
+export default function LibraryPage() {
+  const totalQuestions = categories.reduce(
+    (sum, c) => sum + c.totalQuestions,
+    0
+  );
+  const totalSets = categories.reduce((sum, c) => sum + c.practiceSets, 0);
 
   return (
-    <section className="container-aptrive py-16 md:py-24">
-      <Link
-        href="/library"
-        className="text-xs font-medium text-muted hover:text-teal"
-      >
-        ← All subjects
-      </Link>
+    <>
+      <section className="container-aptrive py-16 md:py-24">
+        <div className="max-w-xl">
+          <div className="eyebrow">Library</div>
+          <h1 className="font-display mt-3 text-4xl font-semibold tracking-tight text-fg md:text-5xl">
+            Everything you need to prepare, in one place.
+          </h1>
+          <p className="mt-4 text-sm leading-relaxed text-muted">
+            Practice MCQs, past papers, mock tests, formula sheets, and
+            AI-generated sets — organized by subject and filterable by
+            university, entry test, difficulty, and more.
+          </p>
+        </div>
 
-      <div className="mt-4 max-w-xl">
-        <div className="eyebrow">{category.name}</div>
-        <h1 className="font-display mt-3 text-4xl font-semibold tracking-tight text-fg md:text-5xl">
-          {category.name} library
-        </h1>
-        <p className="mt-4 text-sm leading-relaxed text-muted">
-          {category.description}
-        </p>
-      </div>
+        <div className="mt-10">
+          <FloatingBookshelfClient count={Math.min(categories.length, 7)} />
+        </div>
 
-      <div className="mt-8 grid grid-cols-2 gap-6 border-y border-line py-6 md:grid-cols-4">
-        <div>
-          <div className="font-mono-data text-xl font-medium text-fg">
-            {category.totalQuestions.toLocaleString()}
+        <div className="mt-10 grid grid-cols-2 gap-6 border-y border-line py-6 md:grid-cols-4">
+          <div>
+            <div className="font-mono-data text-2xl font-medium text-teal">
+              {totalQuestions.toLocaleString()}+
+            </div>
+            <div className="mt-1 text-xs uppercase tracking-[0.14em] text-muted">
+              Questions
+            </div>
           </div>
-          <div className="mt-1 text-xs uppercase tracking-[0.14em] text-muted">
-            Total questions
+          <div>
+            <div className="font-mono-data text-2xl font-medium text-teal">
+              {totalSets}
+            </div>
+            <div className="mt-1 text-xs uppercase tracking-[0.14em] text-muted">
+              Practice sets
+            </div>
+          </div>
+          <div>
+            <div className="font-mono-data text-2xl font-medium text-teal">
+              {categories.length}
+            </div>
+            <div className="mt-1 text-xs uppercase tracking-[0.14em] text-muted">
+              Subjects
+            </div>
+          </div>
+          <div>
+            <div className="font-mono-data text-2xl font-medium text-teal">
+              {Object.keys(contentTypeLabels).length}
+            </div>
+            <div className="mt-1 text-xs uppercase tracking-[0.14em] text-muted">
+              Content types
+            </div>
           </div>
         </div>
-        <div>
-          <div className="font-mono-data text-xl font-medium text-fg">
-            {category.practiceSets}
-          </div>
-          <div className="mt-1 text-xs uppercase tracking-[0.14em] text-muted">
-            Practice sets
-          </div>
-        </div>
-        <div>
-          <div className="font-mono-data text-xl font-medium text-fg">
-            {category.estimatedStudyTime}
-          </div>
-          <div className="mt-1 text-xs uppercase tracking-[0.14em] text-muted">
-            Est. study time
-          </div>
-        </div>
-        <div>
-          <div className="font-mono-data text-xl font-medium text-fg">
-            {category.lastUpdated}
-          </div>
-          <div className="mt-1 text-xs uppercase tracking-[0.14em] text-muted">
-            Last updated
-          </div>
-        </div>
-      </div>
 
-      <div className="mt-10">
-        <LibraryExplorer resources={categoryResources} />
-      </div>
-    </section>
+        <div className="mt-14 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+          {categories.map((category) => (
+            <CategoryCard key={category.slug} category={category} />
+          ))}
+        </div>
+      </section>
+    </>
   );
 }

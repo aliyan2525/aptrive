@@ -100,29 +100,3 @@ export const nustPrograms: NustProgram[] = [
   // --- Bioinformatics ---
   { code: "SINES-R665", name: "Bachelor of Science in Bioinformatics", school: "SINES", category: "Bioinformatics", topMerit: { merit: 15, netMarks: 157, cummAggregate: 82.43636 }, lastMerit: { merit: 383, netMarks: 132, cummAggregate: 72.11591 } },
 ];
-
-export type NustProgramGroup = {
-  category: string;
-  programs: NustProgram[];
-};
-
-/**
- * `nustPrograms` grouped by `category`, as an ordered array (not a
- * map) so consumers like the program <select> in MeritEstimator.tsx
- * can render `<optgroup label={group.category}>` in the same order
- * categories first appear in the source list, without needing
- * `Object.entries` + a separate order array. Built from `nustPrograms`
- * so it can't drift out of sync with the underlying data.
- */
-export const groupedNustPrograms: NustProgramGroup[] = nustPrograms.reduce<NustProgramGroup[]>(
-  (groups, program) => {
-    const existing = groups.find((g) => g.category === program.category);
-    if (existing) {
-      existing.programs.push(program);
-    } else {
-      groups.push({ category: program.category, programs: [program] });
-    }
-    return groups;
-  },
-  []
-);

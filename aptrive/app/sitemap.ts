@@ -7,6 +7,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
   const staticRoutes = [
     "",
     "/about",
+    "/contact",
     "/calculator",
     "/courses",
     "/courses/nust-net",

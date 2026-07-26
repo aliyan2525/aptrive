@@ -12,7 +12,7 @@ import HeroBackground from "@/components/HeroBackground";
 const HeroScene = dynamic(() => import("./HeroScene"), {
   ssr: false,
   loading: () => (
-    <div className="relative h-[420px] w-full animate-pulse overflow-hidden rounded-3xl border border-line bg-panel/40 md:h-[520px]" />
+    <div className="pointer-events-none fixed inset-0 -z-10 h-screen w-screen animate-pulse bg-graphite" />
   ),
 });
 

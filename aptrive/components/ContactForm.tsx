@@ -1,14 +1,18 @@
 "use client";
 
-import { useActionState } from "react";
-import { submitContactMessage, type ContactState } from "@/app/contact/actions";
-
-const initialState: ContactState = { status: "idle" };
+import { useState } from "react";
 
 export default function ContactForm() {
-  const [state, formAction, pending] = useActionState(submitContactMessage, initialState);
+  const [status, setStatus] = useState<"idle" | "sent">("idle");
 
-  if (state.status === "sent") {
+  function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
+    e.preventDefault();
+    // Connect this to a real endpoint (see README step "Wire up the contact form")
+    // e.g. fetch("/api/contact", { method: "POST", body: new FormData(e.currentTarget) })
+    setStatus("sent");
+  }
+
+  if (status === "sent") {
     return (
       <div className="rounded-md border border-teal/30 bg-teal-dim p-6">
         <div className="font-display text-lg font-semibold text-fg">
@@ -22,12 +26,7 @@ export default function ContactForm() {
   }
 
   return (
-    <form action={formAction} className="space-y-5">
-      {state.status === "error" && state.error && (
-        <div className="rounded-md border border-red-500/30 bg-red-500/10 px-4 py-3 text-sm text-red-400">
-          {state.error}
-        </div>
-      )}
+    <form onSubmit={handleSubmit} className="space-y-5">
       <div>
         <label htmlFor="name" className="eyebrow">
           Name
@@ -87,10 +86,9 @@ export default function ContactForm() {
 
       <button
         type="submit"
-        disabled={pending}
-        className="rounded-sm bg-teal px-6 py-3 text-sm font-medium text-graphite transition-opacity hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50"
+        className="rounded-sm bg-teal px-6 py-3 text-sm font-medium text-graphite transition-opacity hover:opacity-90"
       >
-        {pending ? "Sending…" : "Send message"}
+        Send message
       </button>
     </form>
   );

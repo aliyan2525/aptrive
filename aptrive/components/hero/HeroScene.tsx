@@ -8,46 +8,59 @@ import { getStarfieldDensity, NEBULA_FOG_COLOR } from "@/lib/three/universe-them
 import EducationalUniverse from "./scene/EducationalUniverse";
 import KnowledgeParticles from "./scene/KnowledgeParticles";
 import HeroStarfield from "./scene/HeroStarfield";
+import Nebula from "./scene/Nebula";
 import CameraRig from "./useHeroCameraRig";
 import PostFX from "./PostFX";
 
+/**
+ * The homepage's persistent cosmic background — mounted once, fixed
+ * behind the entire page (not confined to the Hero section's old
+ * bordered box). The camera drifts as the *whole page* scrolls, not
+ * just while the Hero section itself is passing by, so the sense of
+ * "travelling through space" continues for as long as the visitor
+ * scrolls the homepage.
+ */
 export default function HeroScene() {
   const { preset, tier } = useScene3D();
-  const containerRef = useRef<HTMLDivElement>(null);
   const pointerRef = useRef({ x: 0, y: 0 });
 
-  // Tracks scroll progress through the Hero section itself — 0 as its
-  // top reaches the viewport top, 1 as its bottom leaves the viewport
-  // top — so the camera travel plays out over exactly the scroll
-  // distance the user spends leaving Hero, not an arbitrary window.
-  const scrollProgressRef = useScrollProgress(containerRef, {
+  // `document.documentElement` is available immediately here — this
+  // component is only ever mounted client-side (dynamic import with
+  // ssr:false in HeroSceneClient.tsx), so there's no SSR/hydration
+  // window where `document` wouldn't exist yet.
+  const pageRef = useRef<HTMLElement | null>(
+    typeof document !== "undefined" ? document.documentElement : null
+  );
+
+  // Tracks scroll progress across the *entire page* (top of the
+  // document to the bottom), not just the Hero section's own scroll
+  // range, so the camera keeps travelling for the whole homepage
+  // scroll instead of settling once Hero scrolls out of view.
+  const scrollProgressRef = useScrollProgress(pageRef, {
     start: "top top",
-    end: "bottom top",
+    end: "bottom bottom",
   });
 
   useEffect(() => {
-    const container = containerRef.current;
-    if (!container) return;
-
     const handlePointerMove = (event: PointerEvent) => {
-      const bounds = container.getBoundingClientRect();
       pointerRef.current = {
-        x: ((event.clientX - bounds.left) / bounds.width) * 2 - 1,
-        y: -(((event.clientY - bounds.top) / bounds.height) * 2 - 1),
+        x: (event.clientX / window.innerWidth) * 2 - 1,
+        y: -((event.clientY / window.innerHeight) * 2 - 1),
       };
     };
 
-    container.addEventListener("pointermove", handlePointerMove, { passive: true });
-    return () => container.removeEventListener("pointermove", handlePointerMove);
+    window.addEventListener("pointermove", handlePointerMove, { passive: true });
+    return () => window.removeEventListener("pointermove", handlePointerMove);
   }, []);
 
   return (
     <div
-      ref={containerRef}
-      className="relative h-[420px] w-full overflow-hidden rounded-3xl border border-line bg-panel/40 md:h-[520px]"
+      // `fixed` (not `absolute`) so the scene stays pinned to the
+      // viewport as the page scrolls underneath it — the camera rig
+      // does the "movement", the layer itself never scrolls away.
+      className="pointer-events-none fixed inset-0 -z-10 h-screen w-screen overflow-hidden"
+      aria-hidden
     >
-      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_20%_20%,rgba(35,213,196,0.16),transparent_45%),radial-gradient(circle_at_80%_10%,rgba(47,129,255,0.2),transparent_48%)]" />
-
       <Canvas
         dpr={preset.dpr}
         gl={{ antialias: preset.antialias, alpha: true }}
@@ -69,6 +82,7 @@ export default function HeroScene() {
           <pointLight position={[-3, -2, -4]} intensity={0.5} color="#c9a24b" />
 
           <HeroStarfield count={getStarfieldDensity(tier)} />
+          <Nebula />
           <EducationalUniverse />
           <KnowledgeParticles count={preset.particleCount} pointerRef={pointerRef} />
           <CameraRig pointerRef={pointerRef} scrollProgressRef={scrollProgressRef} />

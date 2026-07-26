@@ -168,7 +168,7 @@ export default function HeroBackground() {
   return (
     <div
       aria-hidden="true"
-      className="pointer-events-none absolute inset-0 -z-10 overflow-hidden"
+      className="pointer-events-none fixed inset-0 -z-10 h-screen w-screen overflow-hidden"
     >
       <div className="absolute inset-0 bg-[radial-gradient(ellipse_80%_60%_at_50%_-10%,rgba(35,213,196,0.08),transparent)]" />
       <div
@@ -188,8 +188,6 @@ export default function HeroBackground() {
       >
         <canvas ref={canvasRef} className="h-full w-full" />
       </div>
-
-      <div className="absolute inset-x-0 bottom-0 h-32 bg-gradient-to-t from-graphite to-transparent" />
     </div>
   );
 }

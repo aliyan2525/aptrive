@@ -32,6 +32,7 @@ type AnswerState = Record<
     isCorrect: boolean;
     correctOptionId: string | null;
     correctOptionIds?: string[] | null;
+    correctNumericValue?: number | null;
   }
 >;
 

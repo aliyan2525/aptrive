@@ -3,11 +3,8 @@
 import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
-import { checkRateLimit, getClientIp } from "@/lib/rate-limit";
 
 export type AuthState = { error: string | null };
-
-const RATE_LIMIT_MESSAGE = "Too many attempts. Please wait a moment and try again.";
 
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000";
 
@@ -24,12 +21,6 @@ export async function signIn(
 
   if (!email || !password) {
     return { error: "Please enter your email and password." };
-  }
-
-  const ip = await getClientIp();
-  const { allowed } = checkRateLimit(`signin:${ip}:${email.toLowerCase()}`, 10, 60);
-  if (!allowed) {
-    return { error: RATE_LIMIT_MESSAGE };
   }
 
   const supabase = await createClient({ persistSession: rememberMe });
@@ -91,12 +82,6 @@ export async function signUp(
     return { error: "Passwords do not match." };
   }
 
-  const ip = await getClientIp();
-  const { allowed } = checkRateLimit(`signup:${ip}`, 5, 60);
-  if (!allowed) {
-    return { error: RATE_LIMIT_MESSAGE };
-  }
-
   const supabase = await createClient();
   const { error } = await supabase.auth.signUp({
     email,
@@ -147,12 +132,6 @@ export async function requestPasswordReset(
 
   if (!email) {
     return { error: "Please enter your email." };
-  }
-
-  const ip = await getClientIp();
-  const { allowed } = checkRateLimit(`reset:${ip}:${email.toLowerCase()}`, 3, 300);
-  if (!allowed) {
-    return { error: RATE_LIMIT_MESSAGE };
   }
 
   const supabase = await createClient();
