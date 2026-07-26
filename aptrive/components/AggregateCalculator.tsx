@@ -66,7 +66,15 @@ function useAnimatedNumber(target: number, durationMs = 500) {
   return value;
 }
 
-export default function AggregateCalculator() {
+type AggregateCalculatorProps = {
+  /** Called with the freshly computed aggregate whenever Calculate
+   * succeeds, and with null whenever the result is cleared (Reset,
+   * switching university, or editing a field after a calculation) —
+   * lets a parent use this as a prefill source elsewhere on the page. */
+  onResult?: (aggregate: number | null) => void;
+};
+
+export default function AggregateCalculator({ onResult }: AggregateCalculatorProps) {
   const searchParams = useSearchParams();
   const requestedUni = searchParams.get("uni");
   const initialUniId =
@@ -116,6 +124,11 @@ export default function AggregateCalculator() {
   }, []);
 
   const animatedAggregate = useAnimatedNumber(result?.aggregate ?? 0);
+
+  useEffect(() => {
+    onResult?.(result?.aggregate ?? null);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [result]);
 
   function handleUniChange(id: string) {
     setUniId(id);
