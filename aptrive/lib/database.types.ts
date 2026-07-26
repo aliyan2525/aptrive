@@ -798,6 +798,24 @@ export interface Database {
         Insert: never; // system-maintained via record_attempt_and_update_progress
         Update: never;
       };
+
+      contact_messages: {
+        Row: {
+          id: string;
+          name: string;
+          email: string;
+          exam_interest: string | null;
+          message: string;
+          status: "new" | "read" | "resolved";
+          created_at: string;
+        };
+        Insert: Partial<Database["public"]["Tables"]["contact_messages"]["Row"]> & {
+          name: string;
+          email: string;
+          message: string;
+        };
+        Update: Partial<Database["public"]["Tables"]["contact_messages"]["Row"]>;
+      };
     };
     Views: {
       v_user_dashboard_summary: {
