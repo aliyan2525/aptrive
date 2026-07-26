@@ -26,6 +26,11 @@ export type NustProgram = {
   lastMerit: MeritPoint;
 };
 
+export type NustProgramGroup = {
+  category: string;
+  programs: NustProgram[];
+};
+
 export const NUST_MERIT_SOURCE_NOTE =
   "Transcribed from a merit-list summary circulated by a test-prep page, not fetched directly from NUST's admissions portal. Cycle year not stated on the source — confirm against ugadmissions.nust.edu.pk before relying on it.";
 
@@ -100,3 +105,19 @@ export const nustPrograms: NustProgram[] = [
   // --- Bioinformatics ---
   { code: "SINES-R665", name: "Bachelor of Science in Bioinformatics", school: "SINES", category: "Bioinformatics", topMerit: { merit: 15, netMarks: 157, cummAggregate: 82.43636 }, lastMerit: { merit: 383, netMarks: 132, cummAggregate: 72.11591 } },
 ];
+
+// `nustPrograms` grouped by `category`, preserving the order categories
+// first appear in above (so <optgroup> lists render in the same order
+// as the source data, not alphabetically).
+export const groupedNustPrograms: NustProgramGroup[] = nustPrograms.reduce<NustProgramGroup[]>(
+  (groups, program) => {
+    const existing = groups.find((g) => g.category === program.category);
+    if (existing) {
+      existing.programs.push(program);
+    } else {
+      groups.push({ category: program.category, programs: [program] });
+    }
+    return groups;
+  },
+  []
+);
