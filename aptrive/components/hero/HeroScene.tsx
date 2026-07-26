@@ -69,14 +69,8 @@ export default function HeroScene() {
           <pointLight position={[-3, -2, -4]} intensity={0.5} color="#c9a24b" />
 
           <HeroStarfield count={getStarfieldDensity(tier)} />
-          {/* Reuses the same 0→1 scrollProgressRef the camera rig
-              already reads (progress through leaving the Hero) to
-              drive the nucleus's crack-open exit and the particle
-              field's release/dispersal — one scroll signal driving
-              every part of the exit transition, not three separately
-              tuned ones. */}
-          <EducationalUniverse crackProgressRef={scrollProgressRef} />
-          <KnowledgeParticles count={preset.particleCount} pointerRef={pointerRef} releaseRef={scrollProgressRef} />
+          <EducationalUniverse />
+          <KnowledgeParticles count={preset.particleCount} pointerRef={pointerRef} />
           <CameraRig pointerRef={pointerRef} scrollProgressRef={scrollProgressRef} />
           {preset.postprocessing && <PostFX />}
         </Suspense>

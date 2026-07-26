@@ -1,290 +1,105 @@
 import type { Metadata } from "next";
-import Link from "next/link";
-import { redirect } from "next/navigation";
-import { ArrowRight } from "lucide-react";
-import Reveal from "@/components/Reveal";
-import SectionReveal from "@/components/transitions/SectionReveal";
-import PopularUniversities from "@/components/PopularUniversities";
-import FeaturedLibrary from "@/components/FeaturedLibrary";
-import FAQAccordion from "@/components/FAQAccordion";
-import HeroSceneClient from "@/components/hero/HeroSceneClient";
-import FeaturesSceneClient from "@/components/features/FeaturesSceneClient";
-import JourneySceneClient from "@/components/journey/JourneySceneClient";
-import JourneyTimeline from "@/components/journey/JourneyTimeline";
-import HeadlineReveal from "@/components/transitions/HeadlineReveal";
-import Button from "@/components/ui/Button";
-import Card from "@/components/ui/Card";
-import { createClient } from "@/lib/supabase/server";
+import Podium3DClient from "@/components/leaderboard/scene/Podium3DClient";
+import AnimatedStat from "@/components/leaderboard/AnimatedStat";
+import UniversityLogo from "@/components/UniversityLogo";
 
 export const metadata: Metadata = {
-  title: "Aptrive — Premium AI Prep for University Entrance Exams",
-  description:
-    "Aptrive helps students prepare for NUST, FAST, PIEAS, GIKI, COMSATS, UET, AIR, IST, and Bahria through adaptive AI practice and real progress analytics.",
+  title: "Rankings - Aptrive",
+  description: "Global, university, subject, weekly, monthly, and all-time student rankings.",
 };
 
-const pillars = [
-  {
-    title: "Adaptive AI Learning",
-    body: "Your next question is selected from your weakest concepts, not a fixed chapter order.",
-  },
-  {
-    title: "Mock Testing Engine",
-    body: "Timed sessions with exam-like pressure, clean review workflows, and focused post-test feedback.",
-  },
-  {
-    title: "Personalized Analytics",
-    body: "Topic mastery, speed trends, and consistency signals designed for decision-making.",
-  },
-  {
-    title: "University Roadmaps",
-    body: "Preparation tracks aligned with Pakistan's leading entrance exams and merit expectations.",
-  },
+const students = [
+  { rank: 1, name: "Ayesha Khan", university: "NUST", accuracy: 94, xp: 18420, streak: 28 },
+  { rank: 2, name: "Hamza Malik", university: "FAST", accuracy: 91, xp: 17110, streak: 21 },
+  { rank: 3, name: "Zara Ahmed", university: "GIKI", accuracy: 89, xp: 16270, streak: 18 },
+  { rank: 4, name: "Bilal Raza", university: "PIEAS", accuracy: 87, xp: 15190, streak: 14 },
+  { rank: 5, name: "Maham Iqbal", university: "COMSATS", accuracy: 85, xp: 14480, streak: 12 },
 ];
 
-const journey = [
-  {
-    title: "Diagnostic Baseline",
-    body: "Start with a quick calibration to map current strengths and weak areas.",
-  },
-  {
-    title: "Structured Daily Practice",
-    body: "Follow smart practice sets with gradual difficulty progression and revision loops.",
-  },
-  {
-    title: "Mock + Feedback",
-    body: "Simulate the exam, then close gaps with targeted follow-up sessions.",
-  },
-  {
-    title: "Admission Readiness",
-    body: "Track progress against your target university and keep refining until ready.",
-  },
-];
+const tabs = ["Global", "Friends", "University", "Subject", "Weekly", "Monthly", "All-time"];
 
-const blogPreview = [
-  {
-    title: "How to Build a 12-Week NET Prep Strategy",
-    category: "Study Strategy",
-    description: "A week-by-week structure for turning a fixed syllabus into a compounding daily practice habit.",
-    readTime: "8 min read",
-    href: "/blog",
-  },
-  {
-    title: "Topic Mastery vs Random Practice: What Works Better?",
-    category: "Learning Science",
-    description: "Why chapter-order practice under-serves your weakest topics, and what to do instead.",
-    readTime: "6 min read",
-    href: "/blog",
-  },
-  {
-    title: "Avoid These 7 Mistakes in Last-Month Preparation",
-    category: "Exam Prep",
-    description: "The most common last-month errors that quietly cost students marks on test day.",
-    readTime: "5 min read",
-    href: "/blog",
-  },
-];
-
-export default async function Home() {
-  const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-
-  if (user) {
-    redirect("/dashboard");
-  }
-
+export default function LeaderboardPage() {
   return (
-    <>
-      <section className="relative overflow-hidden border-b border-line">
-        <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_15%_20%,rgba(35,213,196,0.22),transparent_35%),radial-gradient(circle_at_82%_10%,rgba(47,129,255,0.22),transparent_42%),linear-gradient(to_bottom,rgba(18,22,29,0.38),transparent)]" />
-        <div className="container-aptrive relative py-24 md:py-32">
-          <div className="grid items-center gap-12 lg:grid-cols-[1fr_1.05fr]">
-            {/* Glass panel: translucent + blurred so the gradient behind it
-                still reads through, per the "glassmorphism where appropriate"
-                brief — used once, on the hero, not scattered everywhere. */}
-            <div className="rounded-3xl border border-line/60 bg-panel/40 p-8 backdrop-blur-xl md:p-10">
-              <span className="eyebrow">AI-Powered Entrance Preparation</span>
-              <HeadlineReveal
-                lines={["Learn like a top scorer.", "Prepare with precision."]}
-                className="text-display-1 mt-5 text-fg"
-              />
-              <p className="text-body-lg mt-6 max-w-xl">
-                Aptrive combines adaptive practice, premium analytics, and exam-focused pathways
-                so every study hour compounds toward your target university.
-              </p>
-              <div className="mt-9 flex flex-wrap gap-4">
-                <Button href="/signup" variant="primary" size="lg" magnetic>
-                  Create account
-                </Button>
-                <Button href="/practice" variant="glass" size="lg" magnetic>
-                  Explore practice
-                </Button>
-              </div>
-            </div>
-            <Reveal delay={120}>
-              <HeroSceneClient />
-            </Reveal>
-          </div>
-        </div>
-      </section>
-
-      <section className="relative overflow-hidden py-20 md:py-28">
-        {/* Full-bleed scene layer, behind the container-aptrive content
-            below — continues the Hero's released-particle motif as an
-            ambient background rather than a bordered panel of its own.
-            aria-hidden + pointer-events-none via FeaturesBackground /
-            FeaturesScene's own canvas wrapper; content stays on a
-            positioned layer above it. */}
-        <FeaturesSceneClient />
-        <div className="container-aptrive relative z-10">
-          <Reveal>
-            <div className="max-w-2xl">
-              <span className="eyebrow">Why Aptrive</span>
-              <h2 className="text-display-2 mt-4 text-fg">
-                Built for high-stakes admissions, not generic test prep.
-              </h2>
-            </div>
-          </Reveal>
-          <div className="mt-12 grid gap-5 md:grid-cols-2 xl:grid-cols-4">
-            <SectionReveal stagger className="contents">
-              {pillars.map((pillar) => (
-                <Card key={pillar.title} variant="interactive" padding="lg" className="h-full">
-                  <h3 className="text-heading-2 text-fg">{pillar.title}</h3>
-                  <p className="text-body-sm mt-3">{pillar.body}</p>
-                </Card>
-              ))}
-            </SectionReveal>
-          </div>
-        </div>
-      </section>
-
-      <section className="relative overflow-hidden border-y border-line bg-panel/40 py-20 md:py-28">
-        <JourneySceneClient />
-        <div className="container-aptrive relative z-10">
-          <Reveal>
-            <div className="max-w-2xl">
-              <span className="eyebrow">Student Success Journey</span>
-              <h2 className="text-display-2 mt-4 text-fg">
-                A clear progression from first diagnostic to final admission push.
-              </h2>
-            </div>
-          </Reveal>
-          <JourneyTimeline steps={journey} className="mt-16" />
-        </div>
-      </section>
-
-      <section className="container-aptrive py-20 md:py-28">
-        <Reveal>
-          <div className="flex flex-wrap items-end justify-between gap-5">
-            <div className="max-w-2xl">
-              <span className="eyebrow">University Roadmaps</span>
-              <h2 className="text-display-2 mt-4 text-fg">
-                Stay aligned with official institutions and merit pathways.
-              </h2>
-            </div>
-            <Link
-              href="/calculator"
-              className="inline-flex items-center gap-1.5 text-sm font-semibold text-teal transition hover:gap-2.5"
-            >
-              Open calculator <ArrowRight className="h-3.5 w-3.5" />
-            </Link>
-          </div>
-        </Reveal>
-        <Reveal delay={120} className="mt-10">
-          <PopularUniversities />
-        </Reveal>
-      </section>
-
-      <section className="border-y border-line">
-        <div className="container-aptrive py-20 md:py-28">
-          <Reveal>
-            <div className="flex flex-wrap items-end justify-between gap-5">
-              <div className="max-w-2xl">
-                <span className="eyebrow">Resource Library</span>
-                <h2 className="text-display-2 mt-4 text-fg">
-                  Notes, sheets, practice sets, and concept material in one place.
-                </h2>
-              </div>
-              <Link
-                href="/library"
-                className="inline-flex items-center gap-1.5 text-sm font-semibold text-teal transition hover:gap-2.5"
-              >
-                Browse all resources <ArrowRight className="h-3.5 w-3.5" />
-              </Link>
-            </div>
-          </Reveal>
-          <Reveal delay={120} className="mt-10">
-            <FeaturedLibrary />
-          </Reveal>
-        </div>
-      </section>
-
-      <section className="container-aptrive py-20 md:py-28">
-        <Reveal>
-          <div className="flex flex-wrap items-end justify-between gap-5">
-            <div className="max-w-2xl">
-              <span className="eyebrow">Latest Blogs</span>
-              <h2 className="text-display-2 mt-4 text-fg">
-                Practical, data-backed preparation guidance from the Aptrive team.
-              </h2>
-            </div>
-            <Link
-              href="/blog"
-              className="inline-flex items-center gap-1.5 text-sm font-semibold text-teal transition hover:gap-2.5"
-            >
-              View blog hub <ArrowRight className="h-3.5 w-3.5" />
-            </Link>
-          </div>
-        </Reveal>
-        <div className="mt-10 grid gap-5 md:grid-cols-3">
-          {blogPreview.map((post, index) => (
-            <Reveal key={post.title} delay={index * 80}>
-              <Card variant="interactive" padding="lg" className="flex h-full flex-col">
-                <p className="font-mono-data text-xs uppercase tracking-[0.14em] text-teal">{post.category}</p>
-                <h3 className="text-heading-2 mt-4 text-fg">{post.title}</h3>
-                <p className="text-body-sm mt-2 flex-1">{post.description}</p>
-                <div className="mt-5 flex items-center justify-between">
-                  <span className="text-caption">{post.readTime}</span>
-                  <Link href={post.href} className="text-sm font-semibold text-teal hover:underline">
-                    Read more
-                  </Link>
-                </div>
-              </Card>
-            </Reveal>
-          ))}
-        </div>
-      </section>
-
-      <section className="container-aptrive pb-20 md:pb-28">
-        <Reveal>
-          <div className="max-w-2xl">
-            <span className="eyebrow">FAQ</span>
-            <h2 className="text-display-2 mt-4 text-fg">
-              Questions students ask before they begin.
-            </h2>
-          </div>
-        </Reveal>
-        <Reveal delay={100} className="mt-10">
-          <FAQAccordion />
-        </Reveal>
-      </section>
-
-      <section className="border-t border-line bg-panel">
-        <div className="container-aptrive flex flex-col items-start justify-between gap-7 py-16 md:flex-row md:items-center">
+    <main className="min-h-[calc(100vh-4rem)] bg-graphite px-6 py-12">
+      <div className="container-aptrive">
+        <section className="grid gap-8 lg:grid-cols-[0.9fr_1.2fr] lg:items-end">
           <div>
-            <h2 className="text-heading-1 text-fg">
-              Ready to build your university admission edge?
-            </h2>
-            <p className="text-body mt-3">
-              Start with your first adaptive session and unlock your personalized roadmap.
+            <div className="eyebrow">Rankings</div>
+            <h1 className="font-display mt-3 text-4xl font-semibold tracking-tight text-fg md:text-5xl">
+              Performance rankings built for serious preparation.
+            </h1>
+            <p className="mt-4 max-w-xl text-sm leading-relaxed text-muted">
+              Rankings combine accuracy, XP, consistency, questions solved, and mock performance. The model is designed to shard by time window, subject, university, and cohort as Aptrive scales.
             </p>
           </div>
-          <Button href="/signup" variant="primary" size="lg">
-            Get started now
-          </Button>
+          <div className="grid grid-cols-3 gap-3">
+            <Stat label="Tracked signals" value={7} />
+            <Stat label="Ranking views" value={7} />
+            <Stat label="Scale target" value={1} suffix="M+" />
+          </div>
+        </section>
+
+        <div className="mt-10">
+          <Podium3DClient />
         </div>
-      </section>
-    </>
+
+        <div className="mt-8 flex gap-2 overflow-x-auto pb-2">
+          {tabs.map((tab, index) => (
+            <button
+              key={tab}
+              type="button"
+              className={`whitespace-nowrap rounded-sm border px-3 py-2 text-xs font-semibold ${index === 0 ? "border-teal bg-teal text-graphite" : "border-line-strong text-muted hover:text-fg"}`}
+            >
+              {tab}
+            </button>
+          ))}
+        </div>
+
+        <section className="mt-6 overflow-hidden rounded-md border border-line bg-panel">
+          <div className="grid grid-cols-[64px_1fr_120px_100px_100px] gap-4 border-b border-line px-5 py-3 text-xs uppercase tracking-wide text-muted-2 max-md:hidden">
+            <span>Rank</span>
+            <span>Student</span>
+            <span>Target</span>
+            <span>Accuracy</span>
+            <span>XP</span>
+          </div>
+          {students.map((student) => (
+            <div key={student.rank} className="grid gap-4 border-b border-line px-5 py-4 last:border-0 md:grid-cols-[64px_1fr_120px_100px_100px] md:items-center">
+              <div className="font-mono-data text-xl font-semibold text-teal">#{student.rank}</div>
+              <div className="flex items-center gap-3">
+                <div className="grid h-11 w-11 place-items-center rounded-full border border-teal/30 bg-teal-dim font-display text-sm font-semibold text-teal">
+                  {student.name.split(" ").map((part) => part[0]).join("").slice(0, 2)}
+                </div>
+                <div>
+                  <p className="font-medium text-fg">{student.name}</p>
+                  <p className="text-xs text-muted">{student.streak} day streak</p>
+                </div>
+              </div>
+              <p className="flex items-center gap-2 text-sm text-muted">
+                <UniversityLogo university={student.university} size={22} />
+                {student.university}
+              </p>
+              <p className="font-mono-data text-sm text-fg">
+                <AnimatedStat value={student.accuracy} suffix="%" />
+              </p>
+              <p className="font-mono-data text-sm text-gold">
+                <AnimatedStat value={student.xp} />
+              </p>
+            </div>
+          ))}
+        </section>
+      </div>
+    </main>
+  );
+}
+
+function Stat({ label, value, suffix = "" }: { label: string; value: number; suffix?: string }) {
+  return (
+    <div className="rounded-md border border-line bg-panel p-4">
+      <p className="text-xs uppercase tracking-wide text-muted-2">{label}</p>
+      <p className="font-display mt-2 text-2xl font-semibold text-fg">
+        <AnimatedStat value={value} suffix={suffix} />
+      </p>
+    </div>
   );
 }

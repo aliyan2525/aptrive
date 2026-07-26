@@ -6,26 +6,21 @@ import { universities } from "@/lib/universities";
 import RoadmapSection from "@/components/courses/RoadmapSection";
 import UniversityLogo from "@/components/UniversityLogo";
 
-// NOTE: the Phase 3 doc referred to this as adding a "uet" entry to
-// lib/universities.ts, but that data already exists under the id
-// "uet-lahore" (with a verified ECAT-based formula). Reusing it here
-// instead of creating a duplicate/inconsistent "uet" entry — see the
-// chat note for details.
-const uni = universities.find((u) => u.id === "uet-lahore")!;
+const uni = universities.find((u) => u.id === "pieas")!;
 
 export const metadata: Metadata = {
-  title: "UET Lahore ECAT Preparation — Aptrive",
+  title: "PIEAS Entry Test Preparation — Aptrive",
   description:
-    "Full UET Lahore ECAT preparation: physics, chemistry, and mathematics practice with diagnostics, analytics, and timed mock exams.",
+    "Full PIEAS entry test preparation: mathematics, physics, and English practice with diagnostics, analytics, and timed mock exams.",
 };
 
 const syllabus = [
   "Algebra & Calculus",
   "Trigonometry",
-  "Physics (Mechanics, Electricity, Waves)",
-  "Chemistry (Physical & Organic)",
-  "Coordinate Geometry",
+  "Physics (Mechanics, Waves, Electricity)",
   "Vectors & Matrices",
+  "English Comprehension",
+  "Analytical Reasoning",
 ];
 
 const included = [
@@ -50,11 +45,11 @@ const included = [
 const faqs = [
   {
     q: "Who is this track for?",
-    a: "Students preparing for UET Lahore's ECAT engineering entrance exam who want a structured, analytics-driven approach rather than generic practice books.",
+    a: "Students preparing for PIEAS's undergraduate entry test who want a structured, analytics-driven approach rather than generic practice books.",
   },
   {
-    q: "Does this apply to other UET campuses?",
-    a: "This track is built around UET Lahore's published ECAT merit formula. Other UET campuses may weight components differently — always confirm against the specific campus's admission portal.",
+    q: "Is this only mathematics?",
+    a: "The track covers mathematics and physics, which together carry the heaviest weight in PIEAS's entry test. Additional sections are being added as Aptrive expands.",
   },
   {
     q: "How is this different from a traditional academy?",
@@ -62,23 +57,23 @@ const faqs = [
   },
 ];
 
-export default function UetPage() {
+export default function PieasPage() {
   return (
     <>
       <CourseSchema
-        name="UET Lahore ECAT Preparation"
-        description="Physics, chemistry, and mathematics preparation for UET Lahore's ECAT, with diagnostics, adaptive practice, analytics, and timed mock exams."
+        name="PIEAS Entry Test Preparation"
+        description="Mathematics and physics preparation for the PIEAS entry test, with diagnostics, adaptive practice, analytics, and timed mock exams."
       />
       <section className="container-aptrive py-16 md:py-24">
         <div className="grid gap-12 md:grid-cols-2 md:items-start">
           <div>
-            <UniversityLogo university="uet" displayName="UET Lahore" size={48} className="mb-4" />
-            <div className="eyebrow">UET Lahore · ECAT Engineering</div>
+            <UniversityLogo university="pieas" displayName="PIEAS" size={48} className="mb-4" />
+            <div className="eyebrow">PIEAS · Engineering & Applied Sciences</div>
             <h1 className="font-display mt-3 text-4xl font-semibold tracking-tight text-fg md:text-5xl">
-              UET Lahore ECAT Preparation
+              PIEAS Entry Test Preparation
             </h1>
             <p className="mt-5 max-w-md text-sm leading-relaxed text-muted">
-              A complete preparation track for UET Lahore's ECAT, built on
+              A complete preparation track for PIEAS's entry test, built on
               Aptrive&apos;s diagnostic-and-analytics engine — for students
               aiming to rank, not just qualify.
             </p>
@@ -124,14 +119,14 @@ export default function UetPage() {
           {uni.formulaText}
         </h2>
         <p className="mt-4 max-w-2xl text-sm leading-relaxed text-muted">
-          Plug in your own Matric, FSc, and ECAT marks to see your
-          estimated UET Lahore aggregate.
+          Plug in your own Matric, FSc Part-I, and entry test marks to see
+          your estimated PIEAS aggregate.
         </p>
         <Link
           href={`/calculator?uni=${uni.id}`}
           className="mt-6 inline-block rounded-sm border border-teal/40 bg-teal-dim px-6 py-3 text-sm font-medium text-teal hover:bg-teal hover:text-graphite"
         >
-          Calculate your UET Lahore aggregate →
+          Calculate your PIEAS aggregate →
         </Link>
       </section>
 
@@ -168,8 +163,8 @@ export default function UetPage() {
         <div className="rounded-md border border-line bg-panel p-6 md:p-8">
           <div className="eyebrow">Keep practicing</div>
           <p className="mt-3 max-w-2xl text-sm leading-relaxed text-muted">
-            Browse the Question Library for physics, chemistry, and
-            mathematics practice sets, past papers, and formula sheets.
+            Browse the Question Library for mathematics and physics
+            practice sets, past papers, and formula sheets.
           </p>
           <div className="mt-4 flex flex-wrap gap-x-6 gap-y-2">
             <Link
@@ -183,12 +178,6 @@ export default function UetPage() {
               className="text-sm font-medium text-teal hover:underline"
             >
               Go to the Physics library →
-            </Link>
-            <Link
-              href="/library/chemistry"
-              className="text-sm font-medium text-teal hover:underline"
-            >
-              Go to the Chemistry library →
             </Link>
           </div>
         </div>
