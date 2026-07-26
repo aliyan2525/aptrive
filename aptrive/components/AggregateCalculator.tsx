@@ -66,7 +66,16 @@ function useAnimatedNumber(target: number, durationMs = 500) {
   return value;
 }
 
-export default function AggregateCalculator() {
+type AggregateCalculatorProps = {
+  /** Called whenever the computed aggregate changes — with `null` when
+   * there's no valid result (reset, university switched, fields
+   * edited since the last calculation). Lets a parent (e.g. the merit
+   * estimator below this tool) prefill from the latest number without
+   * the two components needing to know about each other directly. */
+  onResult?: (aggregate: number | null) => void;
+};
+
+export default function AggregateCalculator({ onResult }: AggregateCalculatorProps = {}) {
   const searchParams = useSearchParams();
   const requestedUni = searchParams.get("uni");
   const initialUniId =
@@ -116,6 +125,10 @@ export default function AggregateCalculator() {
   }, []);
 
   const animatedAggregate = useAnimatedNumber(result?.aggregate ?? 0);
+
+  useEffect(() => {
+    onResult?.(result?.aggregate ?? null);
+  }, [result, onResult]);
 
   function handleUniChange(id: string) {
     setUniId(id);
