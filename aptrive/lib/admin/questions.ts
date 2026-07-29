@@ -239,6 +239,19 @@ export async function createQuestion(input: QuestionFormInput, createdBy: string
  * `snapshot_question_version` trigger (0005 migration) captures the
  * pre-update state automatically when prompt/explanation/status/
  * difficulty change.
+ *
+ * FIXED 2026-07-29: this delete-then-reinsert wasn't atomic and had no
+ * compensating action if the insert failed after the delete succeeded
+ * — unlike `createQuestion` above, which correctly deletes the
+ * orphaned question if its options insert fails. A previously-working,
+ * possibly-published question could end up with zero answer choices
+ * and no automatic recovery. Fix: snapshot the existing options before
+ * deleting them, and if the re-insert fails, attempt to restore that
+ * snapshot. If the restore itself also fails (e.g. the DB connection
+ * dropped mid-operation), force the question to `draft` as a
+ * last-resort safety net so a broken, optionless question can never be
+ * served to students — then rethrow so the caller knows something went
+ * wrong either way.
  */
 export async function updateQuestion(
   id: string,
@@ -280,6 +293,18 @@ export async function updateQuestion(
 
   if (questionError) throw questionError;
 
+  // Snapshot the current options before touching them, so we can
+  // restore them if the re-insert below fails.
+  const { data: existingOptions, error: snapshotError } = await supabase
+    .from("question_options")
+    .select("content, is_correct, position")
+    .eq("question_id", id);
+  if (snapshotError) throw snapshotError;
+  const optionsSnapshot = (existingOptions ?? []) as unknown as Pick<
+    OptionRow,
+    "content" | "is_correct" | "position"
+  >[];
+
   const { error: deleteError } = await supabase
     .from("question_options")
     .delete()
@@ -295,7 +320,35 @@ export async function updateQuestion(
       position: index,
     }))
   );
-  if (insertError) throw insertError;
+
+  if (insertError) {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const { error: restoreError } = await (supabase.from("question_options") as any).insert(
+      optionsSnapshot.map((option) => ({
+        question_id: id,
+        content: option.content,
+        is_correct: option.is_correct,
+        position: option.position,
+      }))
+    );
+
+    if (restoreError) {
+      // Restore also failed — the question would otherwise be left
+      // with zero options. Force it back to draft so it can't be
+      // served to students in a broken state, regardless of whatever
+      // status the form submitted.
+      await (supabase.from("questions") as any)
+        .update({ status: "draft" })
+        .eq("id", id);
+      throw new Error(
+        `Failed to save new options (${insertError.message}), and restoring the previous options also failed (${restoreError.message}). The question has been forced back to draft status to prevent it being served with no answer choices.`
+      );
+    }
+
+    throw new Error(
+      `Failed to save new options: ${insertError.message}. The question's previous options have been restored, so no data was lost.`
+    );
+  }
 }
 
 export async function setQuestionStatus(id: string, status: QuestionStatus) {

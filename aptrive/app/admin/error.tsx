@@ -24,6 +24,16 @@ export default function AdminError({
         This admin action or page failed to load. No changes were made unless
         confirmed on screen.
       </p>
+      {/* FIXED 2026-07-29: error.message was only ever logged to the
+          console, never shown here — so the friendly messages thrown
+          by delete actions (e.g. "N questions still reference this")
+          never reached the admin, who just saw this generic screen
+          either way. */}
+      {error.message && (
+        <p className="mt-2 max-w-md rounded-sm border border-line bg-panel px-4 py-2 text-sm text-fg">
+          {error.message}
+        </p>
+      )}
       <div className="mt-6 flex flex-wrap justify-center gap-4">
         <button
           onClick={reset}

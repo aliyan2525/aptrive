@@ -4,6 +4,42 @@ import { revalidatePath } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
 import { requireStaff } from "@/lib/admin/auth";
 
+// FIXED 2026-07-29: every delete below used to just `if (error) throw
+// error`, letting a raw Postgres foreign-key-violation error (code
+// 23503) bubble straight into app/admin/error.tsx's generic "Something
+// went wrong" screen — confirmed live: `questions.chapter_id`,
+// `questions.topic_id`, and `questions.subtopic_id` are all `ON DELETE
+// RESTRICT`, so deleting a chapter/topic/subtopic that still has
+// questions attached always hits this. This helper turns that specific
+// case into a message that tells the admin exactly what's blocking the
+// delete and how many rows are involved, instead of a raw exception.
+async function deleteOrExplain(params: {
+  supabase: Awaited<ReturnType<typeof createClient>>;
+  table: "chapters" | "topics" | "subtopics";
+  id: string;
+  entityLabel: string;
+  questionsColumn: "chapter_id" | "topic_id" | "subtopic_id";
+}) {
+  const { supabase, table, id, entityLabel, questionsColumn } = params;
+  const { error } = await supabase.from(table).delete().eq("id", id);
+
+  if (error) {
+    if (error.code === "23503") {
+      const { count } = await supabase
+        .from("questions")
+        .select("id", { count: "exact", head: true })
+        .eq(questionsColumn, id);
+      const n = count ?? 0;
+      throw new Error(
+        n > 0
+          ? `Can't delete this ${entityLabel} — ${n} question${n === 1 ? "" : "s"} still reference${n === 1 ? "s" : ""} it. Reassign or delete ${n === 1 ? "it" : "them"} first.`
+          : `Can't delete this ${entityLabel} — other records still reference it.`
+      );
+    }
+    throw error;
+  }
+}
+
 // -- Universities ----------------------------------------------------
 export async function createUniversity(name: string, slug: string, logoUrl?: string, description?: string) {
   await requireStaff();
@@ -104,8 +140,13 @@ export async function updateChapter(id: string, subjectId: string, name: string,
 export async function deleteChapter(id: string) {
   await requireStaff();
   const supabase = await createClient();
-  const { error } = await supabase.from("chapters").delete().eq("id", id);
-  if (error) throw error;
+  await deleteOrExplain({
+    supabase,
+    table: "chapters",
+    id,
+    entityLabel: "chapter",
+    questionsColumn: "chapter_id",
+  });
   revalidatePath("/admin/catalog");
 }
 
@@ -139,8 +180,13 @@ export async function updateTopic(id: string, chapterId: string, name: string, s
 export async function deleteTopic(id: string) {
   await requireStaff();
   const supabase = await createClient();
-  const { error } = await supabase.from("topics").delete().eq("id", id);
-  if (error) throw error;
+  await deleteOrExplain({
+    supabase,
+    table: "topics",
+    id,
+    entityLabel: "topic",
+    questionsColumn: "topic_id",
+  });
   revalidatePath("/admin/catalog");
 }
 
@@ -174,7 +220,12 @@ export async function updateSubtopic(id: string, topicId: string, name: string, 
 export async function deleteSubtopic(id: string) {
   await requireStaff();
   const supabase = await createClient();
-  const { error } = await supabase.from("subtopics").delete().eq("id", id);
-  if (error) throw error;
+  await deleteOrExplain({
+    supabase,
+    table: "subtopics",
+    id,
+    entityLabel: "subtopic",
+    questionsColumn: "subtopic_id",
+  });
   revalidatePath("/admin/catalog");
 }

@@ -19,6 +19,7 @@ import {
   listTopicsForAdmin,
   listUniversitiesForAdmin,
 } from "@/lib/admin/catalog";
+import { ConfirmSubmitButton } from "@/components/admin/ConfirmSubmitButton";
 
 export default async function AdminCatalogPage() {
   const [universities, tests, subjects, chapters, topics, subtopics] = await Promise.all([
@@ -148,7 +149,12 @@ export default async function AdminCatalogPage() {
               <div className="text-sm text-fg">{u.name} <span className="text-xs text-muted">({u.slug})</span></div>
               <form action={removeUniversityAction}>
                 <input type="hidden" name="id" value={u.id} />
-                <button type="submit" className="text-xs text-muted hover:text-red-400">Delete</button>
+                <ConfirmSubmitButton
+                  className="text-xs text-muted hover:text-red-400"
+                  confirmMessage={`Delete "${u.name}"? Any tests and questions linked to this university will have that link cleared (set to none) — they won't be deleted, but the association is lost.`}
+                >
+                  Delete
+                </ConfirmSubmitButton>
               </form>
             </div>
           ))}
@@ -173,7 +179,12 @@ export default async function AdminCatalogPage() {
               <div className="text-sm text-fg">{t.name} <span className="text-xs text-muted">({t.slug})</span></div>
               <form action={removeTestAction}>
                 <input type="hidden" name="id" value={t.id} />
-                <button type="submit" className="text-xs text-muted hover:text-red-400">Delete</button>
+                <ConfirmSubmitButton
+                  className="text-xs text-muted hover:text-red-400"
+                  confirmMessage={`Delete "${t.name}"? Any subjects, questions, and mock exams linked to this test will have that link cleared (set to none) — they won't be deleted, but the association is lost.`}
+                >
+                  Delete
+                </ConfirmSubmitButton>
               </form>
             </div>
           ))}
@@ -198,7 +209,12 @@ export default async function AdminCatalogPage() {
               <div className="text-sm text-fg">{c.name} <span className="text-xs text-muted">({c.slug})</span></div>
               <form action={removeChapterAction}>
                 <input type="hidden" name="id" value={c.id} />
-                <button type="submit" className="text-xs text-muted hover:text-red-400">Delete</button>
+                <ConfirmSubmitButton
+                  className="text-xs text-muted hover:text-red-400"
+                  confirmMessage={`Delete "${c.name}"? This permanently deletes every topic and subtopic under this chapter too. This will be blocked if any question is still directly attached to the chapter.`}
+                >
+                  Delete
+                </ConfirmSubmitButton>
               </form>
             </div>
           ))}
@@ -223,7 +239,12 @@ export default async function AdminCatalogPage() {
               <div className="text-sm text-fg">{t.name} <span className="text-xs text-muted">({t.slug})</span></div>
               <form action={removeTopicAction}>
                 <input type="hidden" name="id" value={t.id} />
-                <button type="submit" className="text-xs text-muted hover:text-red-400">Delete</button>
+                <ConfirmSubmitButton
+                  className="text-xs text-muted hover:text-red-400"
+                  confirmMessage={`Delete "${t.name}"? This permanently deletes every subtopic under this topic too. This will be blocked if any question is still attached to the topic.`}
+                >
+                  Delete
+                </ConfirmSubmitButton>
               </form>
             </div>
           ))}
@@ -248,7 +269,12 @@ export default async function AdminCatalogPage() {
               <div className="text-sm text-fg">{s.name} <span className="text-xs text-muted">({s.slug})</span></div>
               <form action={removeSubtopicAction}>
                 <input type="hidden" name="id" value={s.id} />
-                <button type="submit" className="text-xs text-muted hover:text-red-400">Delete</button>
+                <ConfirmSubmitButton
+                  className="text-xs text-muted hover:text-red-400"
+                  confirmMessage={`Delete "${s.name}"? This will be blocked if any question is still attached to this subtopic.`}
+                >
+                  Delete
+                </ConfirmSubmitButton>
               </form>
             </div>
           ))}
