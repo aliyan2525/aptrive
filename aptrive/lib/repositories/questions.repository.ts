@@ -155,3 +155,62 @@ export async function getPublishedQuestionIdsForTopic(topicId: string): Promise<
   const rows = (data ?? []) as unknown as { id: string }[];
   return rows.map((row) => row.id);
 }
+
+export type CorrectAnswer = {
+  correctOptionIds: string[] | null;
+  correctNumericValue: number | null;
+};
+
+/**
+ * ADDED 2026-07-28, fixing `submitAnswer()`'s "reveal correct answer"
+ * bug in app/practice/actions.ts. `record_attempt_and_update_progress`
+ * returns a full `user_attempts` row (confirmed live via
+ * `supabase gen types typescript`), which has no correct-answer
+ * fields at all — so the old code's `result.correct_option_ids` /
+ * `result.correct_numeric_value` were always `undefined`, for every
+ * question, every time. Grading itself was unaffected (`is_correct`
+ * really is on `user_attempts` too), only the reveal-the-answer UI
+ * had nothing to show.
+ *
+ * This is a small, separate, read-only follow-up — called only AFTER
+ * `recordResponse()` has already graded and persisted the attempt
+ * server-side inside the SECURITY DEFINER RPC. It doesn't participate
+ * in grading, so it can't be used to game the score; it only answers
+ * "what should the UI show the student now that their attempt is
+ * already recorded."
+ *
+ * Relies on the same `question_options_select_published_or_staff` RLS
+ * policy `getQuestionRowsByIds` already depends on (published
+ * questions, or staff) — confirmed against the live policy, not
+ * assumed. No new access opened up.
+ */
+export async function getCorrectAnswerForQuestion(
+  questionId: string
+): Promise<CorrectAnswer> {
+  const supabase = await createClient();
+
+  const { data, error } = await supabase
+    .from("questions")
+    .select("numeric_answer_value, question_options(id, is_correct)")
+    .eq("id", questionId)
+    .maybeSingle();
+
+  if (error) throw error;
+  if (!data) return { correctOptionIds: null, correctNumericValue: null };
+
+  const row = data as unknown as {
+    numeric_answer_value: number | null;
+    question_options: { id: string; is_correct: boolean }[];
+  };
+
+  const correctOptionIds = row.question_options
+    .filter((o) => o.is_correct)
+    .map((o) => o.id);
+
+  return {
+    // Empty array (numeric questions have no options at all) is
+    // normalized to null, matching what SubmitAnswerResult expects.
+    correctOptionIds: correctOptionIds.length > 0 ? correctOptionIds : null,
+    correctNumericValue: row.numeric_answer_value ?? null,
+  };
+}

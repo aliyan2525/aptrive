@@ -3,7 +3,7 @@
 import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
-import { getPublishedQuestionIdsForTopic } from "@/lib/repositories/questions.repository";
+import { getPublishedQuestionIdsForTopic, getCorrectAnswerForQuestion } from "@/lib/repositories/questions.repository";
 import {
   completeSession as completeSessionRepo,
   createAdHocSession,
@@ -74,16 +74,30 @@ export async function submitAnswer(
     timeSpentSeconds: input.timeSpentSeconds,
   });
 
-  const correctOptionIds = result.correct_option_ids ?? null;
+  // FIXED 2026-07-28: `record_attempt_and_update_progress`'s live
+  // return value is a full `user_attempts` row (confirmed via
+  // `supabase gen types typescript`), not the jsonb
+  // { is_correct, correct_option_ids, correct_numeric_value } shape
+  // this code used to assume. `result.correct_option_ids` /
+  // `result.correct_numeric_value` were always `undefined` on the
+  // real RPC return — the "reveal correct answer" UI had nothing to
+  // show for every question, every time. `result.is_correct` was
+  // never affected — that field really is on `user_attempts` too, so
+  // grading itself was always correct.
+  //
+  // Fix: fetch the correct answer via a small, separate, read-only
+  // query (getCorrectAnswerForQuestion) AFTER the attempt is already
+  // graded and persisted server-side above — this can't be used to
+  // game the score, it only answers "what should the UI show now."
+  const correctAnswer = await getCorrectAnswerForQuestion(input.questionId);
 
   return {
     isCorrect: result.is_correct,
-    // Single-choice callers read `correctOptionId`; derive it from the
-    // (always single-element, for single_choice questions) array the
-    // RPC returns.
-    correctOptionId: correctOptionIds?.[0] ?? null,
-    correctOptionIds,
-    correctNumericValue: result.correct_numeric_value ?? null,
+    // Single-choice callers read `correctOptionId`; derive it from
+    // the (always single-element, for single_choice questions) array.
+    correctOptionId: correctAnswer.correctOptionIds?.[0] ?? null,
+    correctOptionIds: correctAnswer.correctOptionIds,
+    correctNumericValue: correctAnswer.correctNumericValue,
   };
 }
 

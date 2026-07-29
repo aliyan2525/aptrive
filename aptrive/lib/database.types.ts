@@ -1,9 +1,21 @@
-// Hand-authored types matching supabase/migrations/0001–0003.
-// Shaped like `supabase gen types typescript` output, so this can be
-// dropped in as-is now and replaced 1:1 by the CLI-generated file
-// later (`supabase gen types typescript --local > lib/database.types.ts`)
-// without touching any calling code.
+export type Json =
+  | string
+  | number
+  | boolean
+  | null
+  | { [key: string]: Json | undefined }
+  | Json[]
 
+// -- App-layer convenience type aliases ---------------------------
+// These are hand-authored string-literal unions, not part of the
+// Supabase-generated schema below — several columns they describe
+// (difficulty, content_type, status, etc.) are plain `string` in
+// Postgres, not real enums, so the app relies on these narrower
+// TS-only types for stricter typing at the call sites that import
+// them from "@/lib/database.types". Carried forward as-is from the
+// pre-regeneration file (2026-07-28) since dropping them would break
+// every admin/practice file that imports them; not derived from or
+// verified against live schema — same caveat as before.
 export type Difficulty = "Easy" | "Medium" | "Hard";
 export type Language = "English" | "Urdu";
 export type ContentType =
@@ -24,8 +36,6 @@ export type UserRole = "student" | "instructor" | "content_manager" | "administr
 export type SessionMode = "practice" | "mock" | "exam" | "daily-challenge";
 export type SessionStatus = "in_progress" | "completed" | "abandoned";
 export type RecentlyViewedType = "practice_set" | "question" | "video" | "pdf";
-
-// -- Admin CMS (0005_admin_cms_foundation) -----------------------
 export type QuestionStatus = "draft" | "in_review" | "published" | "archived";
 export type PracticeSetStatus = "draft" | "published" | "archived";
 export type ImportBatchStatus =
@@ -36,811 +46,2633 @@ export type ImportBatchStatus =
   | "failed"
   | "rolled_back";
 export type ImportRowStatus = "pending" | "valid" | "warning" | "error";
-
-// -- Phase 0 Custom Types ----------------------------------------
 export type BloomLevel = "remember" | "understand" | "apply" | "analyze" | "evaluate" | "create";
 export type QuestionType = "single_choice" | "multiple_choice" | "numeric";
 export type AdminRole = "super_admin" | "content_manager" | "moderator" | "content_creator" | "reviewer";
 
-export interface Database {
+export type Database = {
+  // Allows to automatically instantiate createClient with right options
+  // instead of createClient<Database, { PostgrestVersion: 'XX' }>(URL, KEY)
+  __InternalSupabase: {
+    PostgrestVersion: "14.5"
+  }
   public: {
     Tables: {
-      profiles: {
-        Row: {
-          id: string;
-          full_name: string | null;
-          avatar_url: string | null;
-          role: UserRole;
-          created_at: string;
-          updated_at: string;
-        };
-        Insert: Partial<Database["public"]["Tables"]["profiles"]["Row"]> & {
-          id: string;
-        };
-        Update: Partial<Database["public"]["Tables"]["profiles"]["Row"]>;
-      };
-
-      subjects: {
-        Row: {
-          id: string;
-          slug: string;
-          name: string;
-          description: string | null;
-          is_coming_soon: boolean;
-          created_at: string;
-          updated_at: string;
-        };
-        Insert: Partial<Database["public"]["Tables"]["subjects"]["Row"]> & {
-          slug: string;
-          name: string;
-        };
-        Update: Partial<Database["public"]["Tables"]["subjects"]["Row"]>;
-      };
-
-      practice_sets: {
-        Row: {
-          id: string;
-          slug: string;
-          subject_id: string;
-          title: string;
-          content_type: ContentType;
-          university: string | null;
-          exam_tag: string | null;
-          topic: string;
-          chapter: string | null;
-          difficulty: Difficulty;
-          year: number | null;
-          language: Language;
-          is_solved: boolean;
-          is_premium: boolean;
-          question_count: number;
-          estimated_minutes: number;
-          status: PracticeSetStatus;
-          created_at: string;
-          updated_at: string;
-        };
-        Insert: Partial<Database["public"]["Tables"]["practice_sets"]["Row"]> & {
-          slug: string;
-          subject_id: string;
-          title: string;
-          content_type: ContentType;
-          topic: string;
-          difficulty: Difficulty;
-        };
-        Update: Partial<Database["public"]["Tables"]["practice_sets"]["Row"]>;
-      };
-
-      questions: {
-        Row: {
-          id: string;
-          practice_set_id: string;
-          subject_id: string;
-          prompt: string;
-          explanation: string | null;
-          difficulty: Difficulty;
-          topic: string;
-          chapter: string | null;
-          time_estimate_seconds: number;
-          position: number;
-          status: QuestionStatus;
-          source: string | null;
-          source_year: number | null;
-          tags: string[];
-          ai_generated: boolean;
-          human_reviewed: boolean;
-          current_version: number;
-          created_by: string | null;
-          reviewed_by: string | null;
-          duplicated_from_id: string | null;
-          created_at: string;
-          updated_at: string;
-          // Relational Extensions (Phase 0)
-          university_id: string | null;
-          test_id: string | null;
-          chapter_id: string;
-          topic_id: string;
-          subtopic_id: string | null;
-          difficulty_level_id: string;
-          bloom_level: BloomLevel;
-          question_type: QuestionType;
-          numeric_answer_value: number | null;
-          numeric_answer_tolerance: number | null;
-        };
-        Insert: Partial<Database["public"]["Tables"]["questions"]["Row"]> & {
-          practice_set_id: string;
-          subject_id: string;
-          prompt: string;
-          difficulty: Difficulty;
-          topic: string;
-          chapter_id: string;
-          topic_id: string;
-          difficulty_level_id: string;
-        };
-        Update: Partial<Database["public"]["Tables"]["questions"]["Row"]>;
-      };
-
-      question_versions: {
-        Row: {
-          id: string;
-          question_id: string;
-          version_number: number;
-          snapshot: Record<string, unknown>;
-          changed_by: string | null;
-          change_summary: string | null;
-          created_at: string;
-        };
-        Insert: never; // system-maintained via trigger
-        Update: never;
-      };
-
-      question_options: {
-        Row: {
-          id: string;
-          question_id: string;
-          label: string | null;
-          content: string;
-          is_correct: boolean;
-          position: number;
-        };
-        Insert: Partial<Database["public"]["Tables"]["question_options"]["Row"]> & {
-          question_id: string;
-          content: string;
-        };
-        Update: Partial<Database["public"]["Tables"]["question_options"]["Row"]>;
-      };
-
-      practice_sessions: {
-        Row: {
-          id: string;
-          user_id: string;
-          practice_set_id: string | null;
-          subject_id: string | null;
-          mode: SessionMode;
-          status: SessionStatus;
-          total_questions: number;
-          correct_count: number;
-          incorrect_count: number;
-          skipped_count: number;
-          score_percent: number | null;
-          time_spent_seconds: number;
-          timer_enabled: boolean;
-          randomized: boolean;
-          started_at: string;
-          completed_at: string | null;
-          metadata: Record<string, unknown>;
-        };
-        Insert: Partial<Database["public"]["Tables"]["practice_sessions"]["Row"]> & {
-          user_id: string;
-        };
-        Update: Partial<Database["public"]["Tables"]["practice_sessions"]["Row"]>;
-      };
-
-      question_responses: {
-        Row: {
-          id: string;
-          session_id: string;
-          user_id: string;
-          question_id: string;
-          selected_option_id: string | null;
-          is_correct: boolean;
-          flagged_for_review: boolean;
-          time_spent_seconds: number;
-          answered_at: string;
-        };
-        Insert: Partial<Database["public"]["Tables"]["question_responses"]["Row"]> & {
-          session_id: string;
-          user_id: string;
-          question_id: string;
-        };
-        Update: Partial<Database["public"]["Tables"]["question_responses"]["Row"]>;
-      };
-
-      topic_mastery: {
-        Row: {
-          id: string;
-          user_id: string;
-          subject_id: string | null;
-          topic: string;
-          questions_attempted: number;
-          questions_correct: number;
-          mastery_percent: number;
-          last_practiced_at: string | null;
-          updated_at: string;
-        };
-        Insert: never; // system-maintained via trigger
-        Update: never;
-      };
-
-      daily_activity: {
-        Row: {
-          id: string;
-          user_id: string;
-          activity_date: string;
-          questions_attempted: number;
-          correct_count: number;
-          study_seconds: number;
-          sessions_completed: number;
-        };
-        Insert: never; // system-maintained via trigger
-        Update: never;
-      };
-
-      study_streaks: {
-        Row: {
-          user_id: string;
-          current_streak: number;
-          longest_streak: number;
-          last_active_date: string | null;
-          updated_at: string;
-        };
-        Insert: never; // system-maintained via trigger
-        Update: never;
-      };
-
-      bookmarks: {
-        Row: {
-          id: string;
-          user_id: string;
-          question_id: string | null;
-          practice_set_id: string | null;
-          created_at: string;
-        };
-        Insert: Partial<Database["public"]["Tables"]["bookmarks"]["Row"]> & {
-          user_id: string;
-        };
-        Update: Partial<Database["public"]["Tables"]["bookmarks"]["Row"]>;
-      };
-
-      recently_viewed: {
-        Row: {
-          id: string;
-          user_id: string;
-          resource_type: RecentlyViewedType;
-          resource_id: string;
-          viewed_at: string;
-        };
-        Insert: Partial<Database["public"]["Tables"]["recently_viewed"]["Row"]> & {
-          user_id: string;
-          resource_type: RecentlyViewedType;
-          resource_id: string;
-        };
-        Update: Partial<Database["public"]["Tables"]["recently_viewed"]["Row"]>;
-      };
-
       achievements: {
         Row: {
-          id: string;
-          slug: string;
-          name: string;
-          description: string | null;
-          icon: string | null;
-          criteria: Record<string, unknown>;
-          created_at: string;
-        };
-        Insert: Partial<Database["public"]["Tables"]["achievements"]["Row"]> & {
-          slug: string;
-          name: string;
-        };
-        Update: Partial<Database["public"]["Tables"]["achievements"]["Row"]>;
-      };
-
-      user_achievements: {
-        Row: {
-          id: string;
-          user_id: string;
-          achievement_id: string;
-          earned_at: string;
-        };
-        Insert: Partial<Database["public"]["Tables"]["user_achievements"]["Row"]> & {
-          user_id: string;
-          achievement_id: string;
-        };
-        Update: Partial<Database["public"]["Tables"]["user_achievements"]["Row"]>;
-      };
-
-      student_profiles: {
-        Row: {
-          id: string;
-          user_id: string;
-          display_name: string | null;
-          target_university: string | null;
-          target_program: string | null;
-          entry_test: string | null;
-          education_level: string | null;
-          matric_marks: number | null;
-          intermediate_marks: number | null;
-          expected_test_date: string | null;
-          preferred_study_schedule: string | null;
-          daily_study_target_minutes: number;
-          improvement_subjects: string[];
-          created_at: string;
-          updated_at: string;
-        };
-        Insert: Partial<Database["public"]["Tables"]["student_profiles"]["Row"]> & {
-          user_id: string;
-        };
-        Update: Partial<Database["public"]["Tables"]["student_profiles"]["Row"]>;
-      };
-
-      goal_progress: {
-        Row: {
-          id: string;
-          user_id: string;
-          period: "daily" | "weekly" | "monthly";
-          period_start: string;
-          target_questions: number;
-          completed_questions: number;
-          target_minutes: number;
-          completed_minutes: number;
-          created_at: string;
-          updated_at: string;
-        };
-        Insert: Partial<Database["public"]["Tables"]["goal_progress"]["Row"]> & {
-          user_id: string;
-          period: "daily" | "weekly" | "monthly";
-          period_start: string;
-        };
-        Update: Partial<Database["public"]["Tables"]["goal_progress"]["Row"]>;
-      };
-
-      admission_deadlines: {
-        Row: {
-          id: string;
-          university: string;
-          program: string | null;
-          deadline_date: string;
-          label: string;
-          source_url: string | null;
-          created_at: string;
-        };
-        Insert: Partial<Database["public"]["Tables"]["admission_deadlines"]["Row"]> & {
-          university: string;
-          deadline_date: string;
-          label: string;
-        };
-        Update: Partial<Database["public"]["Tables"]["admission_deadlines"]["Row"]>;
-      };
-
-      notifications: {
-        Row: {
-          id: string;
-          user_id: string;
-          title: string;
-          body: string;
-          notification_type: "reminder" | "deadline" | "achievement" | "material" | "system";
-          read_at: string | null;
-          action_url: string | null;
-          created_at: string;
-        };
-        Insert: Partial<Database["public"]["Tables"]["notifications"]["Row"]> & {
-          user_id: string;
-          title: string;
-          body: string;
-          notification_type: "reminder" | "deadline" | "achievement" | "material" | "system";
-        };
-        Update: Partial<Database["public"]["Tables"]["notifications"]["Row"]>;
-      };
-
-      import_batches: {
-        Row: {
-          id: string;
-          created_by: string | null;
-          file_name: string;
-          source_type: "csv";
-          target_practice_set_id: string;
-          status: ImportBatchStatus;
-          total_rows: number;
-          valid_rows: number;
-          warning_rows: number;
-          error_rows: number;
-          error_message: string | null;
-          created_at: string;
-          completed_at: string | null;
-        };
-        Insert: Partial<Database["public"]["Tables"]["import_batches"]["Row"]> & {
-          file_name: string;
-          target_practice_set_id: string;
-        };
-        Update: Partial<Database["public"]["Tables"]["import_batches"]["Row"]>;
-      };
-
-      import_batch_rows: {
-        Row: {
-          id: string;
-          batch_id: string;
-          row_number: number;
-          raw_data: Record<string, string>;
-          row_status: ImportRowStatus;
-          errors: string[];
-          warnings: string[];
-          question_id: string | null;
-          created_at: string;
-        };
-        Insert: Partial<Database["public"]["Tables"]["import_batch_rows"]["Row"]> & {
-          batch_id: string;
-          row_number: number;
-          raw_data: Record<string, string>;
-        };
-        Update: Partial<Database["public"]["Tables"]["import_batch_rows"]["Row"]>;
-      };
-
-      // -- Phase 0 Catalog & Question Metadata Tables ------------------
-      universities: {
-        Row: {
-          id: string;
-          name: string;
-          slug: string;
-          logo_url: string | null;
-          description: string | null;
-          is_active: boolean;
-          created_at: string;
-          updated_at: string;
-        };
-        Insert: Partial<Database["public"]["Tables"]["universities"]["Row"]> & {
-          name: string;
-          slug: string;
-        };
-        Update: Partial<Database["public"]["Tables"]["universities"]["Row"]>;
-      };
-
-      tests: {
-        Row: {
-          id: string;
-          university_id: string | null;
-          name: string;
-          slug: string;
-          description: string | null;
-          exam_pattern: Record<string, unknown>;
-          is_active: boolean;
-          created_at: string;
-          updated_at: string;
-        };
-        Insert: Partial<Database["public"]["Tables"]["tests"]["Row"]> & {
-          name: string;
-          slug: string;
-        };
-        Update: Partial<Database["public"]["Tables"]["tests"]["Row"]>;
-      };
-
-      difficulty_levels: {
-        Row: {
-          id: string;
-          label: string;
-          rank: number;
-          created_at: string;
-          updated_at: string;
-        };
-        Insert: Partial<Database["public"]["Tables"]["difficulty_levels"]["Row"]> & {
-          label: string;
-          rank: number;
-        };
-        Update: Partial<Database["public"]["Tables"]["difficulty_levels"]["Row"]>;
-      };
-
-      chapters: {
-        Row: {
-          id: string;
-          subject_id: string;
-          name: string;
-          slug: string;
-          order_index: number;
-          icon: string | null;
-          estimated_minutes: number | null;
-          is_active: boolean;
-          created_at: string;
-          updated_at: string;
-        };
-        Insert: Partial<Database["public"]["Tables"]["chapters"]["Row"]> & {
-          subject_id: string;
-          name: string;
-          slug: string;
-        };
-        Update: Partial<Database["public"]["Tables"]["chapters"]["Row"]>;
-      };
-
-      topics: {
-        Row: {
-          id: string;
-          chapter_id: string;
-          name: string;
-          slug: string;
-          order_index: number;
-          icon: string | null;
-          estimated_minutes: number | null;
-          is_active: boolean;
-          created_at: string;
-          updated_at: string;
-        };
-        Insert: Partial<Database["public"]["Tables"]["topics"]["Row"]> & {
-          chapter_id: string;
-          name: string;
-          slug: string;
-        };
-        Update: Partial<Database["public"]["Tables"]["topics"]["Row"]>;
-      };
-
-      subtopics: {
-        Row: {
-          id: string;
-          topic_id: string;
-          name: string;
-          slug: string;
-          order_index: number;
-          icon: string | null;
-          estimated_minutes: number | null;
-          is_active: boolean;
-          created_at: string;
-          updated_at: string;
-        };
-        Insert: Partial<Database["public"]["Tables"]["subtopics"]["Row"]> & {
-          topic_id: string;
-          name: string;
-          slug: string;
-        };
-        Update: Partial<Database["public"]["Tables"]["subtopics"]["Row"]>;
-      };
-
+          created_at: string
+          criteria: Json
+          description: string | null
+          icon: string | null
+          id: string
+          name: string
+          slug: string
+        }
+        Insert: {
+          created_at?: string
+          criteria?: Json
+          description?: string | null
+          icon?: string | null
+          id?: string
+          name: string
+          slug: string
+        }
+        Update: {
+          created_at?: string
+          criteria?: Json
+          description?: string | null
+          icon?: string | null
+          id?: string
+          name?: string
+          slug?: string
+        }
+        Relationships: []
+      }
       admin_users: {
         Row: {
-          user_id: string;
-          role: AdminRole;
-          permissions: Record<string, unknown>;
-          created_at: string;
-          updated_at: string;
-        };
-        Insert: Partial<Database["public"]["Tables"]["admin_users"]["Row"]> & {
-          user_id: string;
-          role: AdminRole;
-        };
-        Update: Partial<Database["public"]["Tables"]["admin_users"]["Row"]>;
-      };
-
-      question_images: {
-        Row: {
-          id: string;
-          question_id: string;
-          storage_path: string;
-          alt_text: string | null;
-          attached_to: "question" | "option" | "explanation";
-          related_option_id: string | null;
-          created_at: string;
-        };
-        Insert: Partial<Database["public"]["Tables"]["question_images"]["Row"]> & {
-          question_id: string;
-          storage_path: string;
-          attached_to: "question" | "option" | "explanation";
-        };
-        Update: Partial<Database["public"]["Tables"]["question_images"]["Row"]>;
-      };
-
-      question_tags: {
-        Row: {
-          id: string;
-          name: string;
-          created_at: string;
-        };
-        Insert: Partial<Database["public"]["Tables"]["question_tags"]["Row"]> & {
-          name: string;
-        };
-        Update: Partial<Database["public"]["Tables"]["question_tags"]["Row"]>;
-      };
-
-      question_tag_map: {
-        Row: {
-          question_id: string;
-          tag_id: string;
-        };
+          created_at: string
+          permissions: Json
+          role: string
+          updated_at: string
+          user_id: string
+        }
         Insert: {
-          question_id: string;
-          tag_id: string;
-        };
-        Update: Partial<Database["public"]["Tables"]["question_tag_map"]["Row"]>;
-      };
-
-      question_explanations: {
+          created_at?: string
+          permissions?: Json
+          role: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          permissions?: Json
+          role?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      admission_deadlines: {
         Row: {
-          id: string;
-          question_id: string;
-          content: string;
-          order_index: number;
-          created_at: string;
-        };
-        Insert: Partial<Database["public"]["Tables"]["question_explanations"]["Row"]> & {
-          question_id: string;
-          content: string;
-        };
-        Update: Partial<Database["public"]["Tables"]["question_explanations"]["Row"]>;
-      };
-
-      question_hints: {
+          application_url: string | null
+          created_at: string
+          deadline_date: string
+          entry_test: Database["public"]["Enums"]["entry_test"] | null
+          id: string
+          notes: string | null
+          program: string | null
+          university: string
+        }
+        Insert: {
+          application_url?: string | null
+          created_at?: string
+          deadline_date: string
+          entry_test?: Database["public"]["Enums"]["entry_test"] | null
+          id?: string
+          notes?: string | null
+          program?: string | null
+          university: string
+        }
+        Update: {
+          application_url?: string | null
+          created_at?: string
+          deadline_date?: string
+          entry_test?: Database["public"]["Enums"]["entry_test"] | null
+          id?: string
+          notes?: string | null
+          program?: string | null
+          university?: string
+        }
+        Relationships: []
+      }
+      ai_question_assets: {
         Row: {
-          id: string;
-          question_id: string;
-          content: string;
-          order_index: number;
-          created_at: string;
-        };
-        Insert: Partial<Database["public"]["Tables"]["question_hints"]["Row"]> & {
-          question_id: string;
-          content: string;
-        };
-        Update: Partial<Database["public"]["Tables"]["question_hints"]["Row"]>;
-      };
-
-      question_formulas: {
+          approved_by_human: boolean
+          asset_type: Database["public"]["Enums"]["ai_asset_type"]
+          content: Json
+          created_at: string
+          generated_at: string
+          id: string
+          model_used: string | null
+          question_id: string
+          updated_at: string
+        }
+        Insert: {
+          approved_by_human?: boolean
+          asset_type: Database["public"]["Enums"]["ai_asset_type"]
+          content?: Json
+          created_at?: string
+          generated_at?: string
+          id?: string
+          model_used?: string | null
+          question_id: string
+          updated_at?: string
+        }
+        Update: {
+          approved_by_human?: boolean
+          asset_type?: Database["public"]["Enums"]["ai_asset_type"]
+          content?: Json
+          created_at?: string
+          generated_at?: string
+          id?: string
+          model_used?: string | null
+          question_id?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ai_question_assets_question_id_fkey"
+            columns: ["question_id"]
+            isOneToOne: false
+            referencedRelation: "questions"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "ai_question_assets_question_id_fkey"
+            columns: ["question_id"]
+            isOneToOne: false
+            referencedRelation: "v_published_questions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      ai_study_plans: {
         Row: {
-          id: string;
-          question_id: string;
-          content: string;
-          order_index: number;
-          created_at: string;
-        };
-        Insert: Partial<Database["public"]["Tables"]["question_formulas"]["Row"]> & {
-          question_id: string;
-          content: string;
-        };
-        Update: Partial<Database["public"]["Tables"]["question_formulas"]["Row"]>;
-      };
-
-      question_references: {
+          created_at: string
+          generated_at: string
+          id: string
+          plan: Json
+          status: Database["public"]["Enums"]["ai_study_plan_status"]
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          generated_at?: string
+          id?: string
+          plan?: Json
+          status?: Database["public"]["Enums"]["ai_study_plan_status"]
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          generated_at?: string
+          id?: string
+          plan?: Json
+          status?: Database["public"]["Enums"]["ai_study_plan_status"]
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      badges: {
         Row: {
-          id: string;
-          question_id: string;
-          content: string;
-          order_index: number;
-          created_at: string;
-        };
-        Insert: Partial<Database["public"]["Tables"]["question_references"]["Row"]> & {
-          question_id: string;
-          content: string;
-        };
-        Update: Partial<Database["public"]["Tables"]["question_references"]["Row"]>;
-      };
-
-      question_reviews: {
+          created_at: string
+          criteria: Json
+          description: string | null
+          icon: string | null
+          id: string
+          name: string
+          slug: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          criteria?: Json
+          description?: string | null
+          icon?: string | null
+          id?: string
+          name: string
+          slug: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          criteria?: Json
+          description?: string | null
+          icon?: string | null
+          id?: string
+          name?: string
+          slug?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      bookmarks: {
         Row: {
-          id: string;
-          question_id: string;
-          reviewer_id: string;
-          decision: "approved" | "rejected" | "changes_requested";
-          comment: string | null;
-          created_at: string;
-        };
-        Insert: Partial<Database["public"]["Tables"]["question_reviews"]["Row"]> & {
-          question_id: string;
-          reviewer_id: string;
-          decision: "approved" | "rejected" | "changes_requested";
-        };
-        Update: Partial<Database["public"]["Tables"]["question_reviews"]["Row"]>;
-      };
-
-      // -- user_attempts new path (0008/0009) --------------------------
-      // NOTE: hand-authored against the ticket's description of
-      // already-existing infrastructure that wasn't present in the
-      // repo snapshot this was written against — see the header
-      // comment in 0008_user_attempts_foundation.sql. Re-generate this
-      // block from the real schema (`supabase gen types typescript`)
-      // once available rather than trusting it verbatim.
-      exam_sessions: {
+          created_at: string
+          id: string
+          practice_set_id: string | null
+          question_id: string | null
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          practice_set_id?: string | null
+          question_id?: string | null
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          practice_set_id?: string | null
+          question_id?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "bookmarks_practice_set_id_fkey"
+            columns: ["practice_set_id"]
+            isOneToOne: false
+            referencedRelation: "practice_sets"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "bookmarks_question_id_fkey"
+            columns: ["question_id"]
+            isOneToOne: false
+            referencedRelation: "questions"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "bookmarks_question_id_fkey"
+            columns: ["question_id"]
+            isOneToOne: false
+            referencedRelation: "v_published_questions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      chapters: {
         Row: {
-          id: string;
-          user_id: string;
-          test_id: string | null;
-          status: "in_progress" | "completed" | "abandoned";
-          total_questions: number;
-          started_at: string;
-          completed_at: string | null;
-          metadata: Record<string, unknown>;
-        };
-        Insert: Partial<Database["public"]["Tables"]["exam_sessions"]["Row"]> & {
-          user_id: string;
-        };
-        Update: Partial<Database["public"]["Tables"]["exam_sessions"]["Row"]>;
-      };
-
-      user_attempts: {
-        Row: {
-          id: string;
-          user_id: string;
-          exam_session_id: string | null;
-          practice_session_id: string | null;
-          question_id: string;
-          selected_option_ids: string[] | null;
-          numeric_answer_given: number | null;
-          is_correct: boolean;
-          time_taken_seconds: number;
-          xp_awarded: number;
-          attempted_at: string;
-        };
-        // No client-writable policy — every row is written exclusively
-        // through the record_attempt_and_update_progress RPC.
-        Insert: never;
-        Update: never;
-      };
-
-      user_topic_progress: {
-        Row: {
-          id: string;
-          user_id: string;
-          subject_id: string | null;
-          topic: string;
-          questions_attempted: number;
-          questions_correct: number;
-          mastery_percent: number;
-          last_practiced_at: string | null;
-          updated_at: string;
-        };
-        Insert: never; // system-maintained via record_attempt_and_update_progress
-        Update: never;
-      };
-
-      user_xp_ledger: {
-        Row: {
-          id: string;
-          user_id: string;
-          attempt_id: string | null;
-          source: "question_attempt" | "achievement" | "bonus";
-          xp_delta: number;
-          created_at: string;
-        };
-        Insert: never; // system-maintained via record_attempt_and_update_progress
-        Update: never;
-      };
-
-      user_streaks: {
-        Row: {
-          user_id: string;
-          current_streak: number;
-          longest_streak: number;
-          last_active_date: string | null;
-          updated_at: string;
-        };
-        Insert: never; // system-maintained via record_attempt_and_update_progress
-        Update: never;
-      };
-
+          created_at: string
+          estimated_minutes: number | null
+          icon: string | null
+          id: string
+          is_active: boolean
+          name: string
+          order_index: number
+          slug: string
+          subject_id: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          estimated_minutes?: number | null
+          icon?: string | null
+          id?: string
+          is_active?: boolean
+          name: string
+          order_index?: number
+          slug: string
+          subject_id: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          estimated_minutes?: number | null
+          icon?: string | null
+          id?: string
+          is_active?: boolean
+          name?: string
+          order_index?: number
+          slug?: string
+          subject_id?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "chapters_subject_id_fkey"
+            columns: ["subject_id"]
+            isOneToOne: false
+            referencedRelation: "subjects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       contact_messages: {
         Row: {
-          id: string;
-          name: string;
-          email: string;
-          exam_interest: string | null;
-          message: string;
-          status: "new" | "read" | "resolved";
-          created_at: string;
-        };
-        Insert: Partial<Database["public"]["Tables"]["contact_messages"]["Row"]> & {
-          name: string;
-          email: string;
-          message: string;
-        };
-        Update: Partial<Database["public"]["Tables"]["contact_messages"]["Row"]>;
-      };
-    };
+          created_at: string
+          email: string
+          exam_interest: string | null
+          id: string
+          message: string
+          name: string
+          status: string
+        }
+        Insert: {
+          created_at?: string
+          email: string
+          exam_interest?: string | null
+          id?: string
+          message: string
+          name: string
+          status?: string
+        }
+        Update: {
+          created_at?: string
+          email?: string
+          exam_interest?: string | null
+          id?: string
+          message?: string
+          name?: string
+          status?: string
+        }
+        Relationships: []
+      }
+      daily_activity: {
+        Row: {
+          activity_date: string
+          correct_count: number
+          id: string
+          questions_attempted: number
+          sessions_completed: number
+          study_seconds: number
+          user_id: string
+        }
+        Insert: {
+          activity_date?: string
+          correct_count?: number
+          id?: string
+          questions_attempted?: number
+          sessions_completed?: number
+          study_seconds?: number
+          user_id: string
+        }
+        Update: {
+          activity_date?: string
+          correct_count?: number
+          id?: string
+          questions_attempted?: number
+          sessions_completed?: number
+          study_seconds?: number
+          user_id?: string
+        }
+        Relationships: []
+      }
+      difficulty_levels: {
+        Row: {
+          created_at: string
+          id: string
+          label: string
+          rank: number
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          label: string
+          rank: number
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          label?: string
+          rank?: number
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      exam_questions: {
+        Row: {
+          created_at: string
+          id: string
+          marks: number
+          mock_exam_id: string
+          order_index: number
+          question_id: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          marks?: number
+          mock_exam_id: string
+          order_index?: number
+          question_id: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          marks?: number
+          mock_exam_id?: string
+          order_index?: number
+          question_id?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "exam_questions_mock_exam_id_fkey"
+            columns: ["mock_exam_id"]
+            isOneToOne: false
+            referencedRelation: "mock_exams"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "exam_questions_question_id_fkey"
+            columns: ["question_id"]
+            isOneToOne: false
+            referencedRelation: "questions"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "exam_questions_question_id_fkey"
+            columns: ["question_id"]
+            isOneToOne: false
+            referencedRelation: "v_published_questions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      exam_sessions: {
+        Row: {
+          created_at: string
+          id: string
+          mock_exam_id: string
+          score: number | null
+          started_at: string
+          status: Database["public"]["Enums"]["exam_session_status"]
+          submitted_at: string | null
+          total_time_seconds: number | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          mock_exam_id: string
+          score?: number | null
+          started_at?: string
+          status?: Database["public"]["Enums"]["exam_session_status"]
+          submitted_at?: string | null
+          total_time_seconds?: number | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          mock_exam_id?: string
+          score?: number | null
+          started_at?: string
+          status?: Database["public"]["Enums"]["exam_session_status"]
+          submitted_at?: string | null
+          total_time_seconds?: number | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "exam_sessions_mock_exam_id_fkey"
+            columns: ["mock_exam_id"]
+            isOneToOne: false
+            referencedRelation: "mock_exams"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      import_batch_rows: {
+        Row: {
+          batch_id: string
+          created_at: string
+          errors: string[]
+          id: string
+          question_id: string | null
+          raw_data: Json
+          row_number: number
+          row_status: string
+          warnings: string[]
+        }
+        Insert: {
+          batch_id: string
+          created_at?: string
+          errors?: string[]
+          id?: string
+          question_id?: string | null
+          raw_data: Json
+          row_number: number
+          row_status?: string
+          warnings?: string[]
+        }
+        Update: {
+          batch_id?: string
+          created_at?: string
+          errors?: string[]
+          id?: string
+          question_id?: string | null
+          raw_data?: Json
+          row_number?: number
+          row_status?: string
+          warnings?: string[]
+        }
+        Relationships: [
+          {
+            foreignKeyName: "import_batch_rows_batch_id_fkey"
+            columns: ["batch_id"]
+            isOneToOne: false
+            referencedRelation: "import_batches"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "import_batch_rows_question_id_fkey"
+            columns: ["question_id"]
+            isOneToOne: false
+            referencedRelation: "questions"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "import_batch_rows_question_id_fkey"
+            columns: ["question_id"]
+            isOneToOne: false
+            referencedRelation: "v_published_questions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      import_batches: {
+        Row: {
+          completed_at: string | null
+          created_at: string
+          created_by: string | null
+          error_message: string | null
+          error_rows: number
+          file_name: string
+          id: string
+          source_type: string
+          status: string
+          target_practice_set_id: string
+          total_rows: number
+          valid_rows: number
+          warning_rows: number
+        }
+        Insert: {
+          completed_at?: string | null
+          created_at?: string
+          created_by?: string | null
+          error_message?: string | null
+          error_rows?: number
+          file_name: string
+          id?: string
+          source_type?: string
+          status?: string
+          target_practice_set_id: string
+          total_rows?: number
+          valid_rows?: number
+          warning_rows?: number
+        }
+        Update: {
+          completed_at?: string | null
+          created_at?: string
+          created_by?: string | null
+          error_message?: string | null
+          error_rows?: number
+          file_name?: string
+          id?: string
+          source_type?: string
+          status?: string
+          target_practice_set_id?: string
+          total_rows?: number
+          valid_rows?: number
+          warning_rows?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "import_batches_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "import_batches_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "v_user_dashboard_summary"
+            referencedColumns: ["user_id"]
+          },
+          {
+            foreignKeyName: "import_batches_target_practice_set_id_fkey"
+            columns: ["target_practice_set_id"]
+            isOneToOne: false
+            referencedRelation: "practice_sets"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      leaderboard_snapshots: {
+        Row: {
+          created_at: string
+          id: string
+          period_end: string
+          period_start: string
+          rank: number
+          scope: string
+          scope_id: string | null
+          score: number
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          period_end: string
+          period_start: string
+          rank: number
+          scope: string
+          scope_id?: string | null
+          score: number
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          period_end?: string
+          period_start?: string
+          rank?: number
+          scope?: string
+          scope_id?: string | null
+          score?: number
+          user_id?: string
+        }
+        Relationships: []
+      }
+      mock_exams: {
+        Row: {
+          created_at: string
+          created_by: string | null
+          description: string | null
+          duration_minutes: number
+          id: string
+          negative_marking_ratio: number | null
+          status: Database["public"]["Enums"]["mock_exam_status"]
+          test_id: string | null
+          title: string
+          total_marks: number
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          created_by?: string | null
+          description?: string | null
+          duration_minutes: number
+          id?: string
+          negative_marking_ratio?: number | null
+          status?: Database["public"]["Enums"]["mock_exam_status"]
+          test_id?: string | null
+          title: string
+          total_marks: number
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          created_by?: string | null
+          description?: string | null
+          duration_minutes?: number
+          id?: string
+          negative_marking_ratio?: number | null
+          status?: Database["public"]["Enums"]["mock_exam_status"]
+          test_id?: string | null
+          title?: string
+          total_marks?: number
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "mock_exams_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "mock_exams_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "v_user_dashboard_summary"
+            referencedColumns: ["user_id"]
+          },
+          {
+            foreignKeyName: "mock_exams_test_id_fkey"
+            columns: ["test_id"]
+            isOneToOne: false
+            referencedRelation: "tests"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      notifications: {
+        Row: {
+          body: string | null
+          created_at: string
+          id: string
+          link_href: string | null
+          read_at: string | null
+          title: string
+          type: Database["public"]["Enums"]["notification_type"]
+          user_id: string
+        }
+        Insert: {
+          body?: string | null
+          created_at?: string
+          id?: string
+          link_href?: string | null
+          read_at?: string | null
+          title: string
+          type: Database["public"]["Enums"]["notification_type"]
+          user_id: string
+        }
+        Update: {
+          body?: string | null
+          created_at?: string
+          id?: string
+          link_href?: string | null
+          read_at?: string | null
+          title?: string
+          type?: Database["public"]["Enums"]["notification_type"]
+          user_id?: string
+        }
+        Relationships: []
+      }
+      practice_sessions: {
+        Row: {
+          completed_at: string | null
+          correct_count: number
+          id: string
+          incorrect_count: number
+          metadata: Json
+          mode: string
+          practice_set_id: string | null
+          randomized: boolean
+          score_percent: number | null
+          skipped_count: number
+          started_at: string
+          status: string
+          subject_id: string | null
+          time_spent_seconds: number
+          timer_enabled: boolean
+          total_questions: number
+          user_id: string
+        }
+        Insert: {
+          completed_at?: string | null
+          correct_count?: number
+          id?: string
+          incorrect_count?: number
+          metadata?: Json
+          mode?: string
+          practice_set_id?: string | null
+          randomized?: boolean
+          score_percent?: number | null
+          skipped_count?: number
+          started_at?: string
+          status?: string
+          subject_id?: string | null
+          time_spent_seconds?: number
+          timer_enabled?: boolean
+          total_questions?: number
+          user_id: string
+        }
+        Update: {
+          completed_at?: string | null
+          correct_count?: number
+          id?: string
+          incorrect_count?: number
+          metadata?: Json
+          mode?: string
+          practice_set_id?: string | null
+          randomized?: boolean
+          score_percent?: number | null
+          skipped_count?: number
+          started_at?: string
+          status?: string
+          subject_id?: string | null
+          time_spent_seconds?: number
+          timer_enabled?: boolean
+          total_questions?: number
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "practice_sessions_practice_set_id_fkey"
+            columns: ["practice_set_id"]
+            isOneToOne: false
+            referencedRelation: "practice_sets"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "practice_sessions_subject_id_fkey"
+            columns: ["subject_id"]
+            isOneToOne: false
+            referencedRelation: "subjects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      practice_sets: {
+        Row: {
+          chapter: string | null
+          content_type: string
+          created_at: string
+          difficulty: string
+          estimated_minutes: number
+          exam_tag: string | null
+          id: string
+          is_premium: boolean
+          is_solved: boolean
+          language: string
+          question_count: number
+          slug: string
+          status: string
+          subject_id: string
+          title: string
+          topic: string
+          university: string | null
+          updated_at: string
+          year: number | null
+        }
+        Insert: {
+          chapter?: string | null
+          content_type: string
+          created_at?: string
+          difficulty: string
+          estimated_minutes?: number
+          exam_tag?: string | null
+          id?: string
+          is_premium?: boolean
+          is_solved?: boolean
+          language?: string
+          question_count?: number
+          slug: string
+          status?: string
+          subject_id: string
+          title: string
+          topic: string
+          university?: string | null
+          updated_at?: string
+          year?: number | null
+        }
+        Update: {
+          chapter?: string | null
+          content_type?: string
+          created_at?: string
+          difficulty?: string
+          estimated_minutes?: number
+          exam_tag?: string | null
+          id?: string
+          is_premium?: boolean
+          is_solved?: boolean
+          language?: string
+          question_count?: number
+          slug?: string
+          status?: string
+          subject_id?: string
+          title?: string
+          topic?: string
+          university?: string | null
+          updated_at?: string
+          year?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "practice_sets_subject_id_fkey"
+            columns: ["subject_id"]
+            isOneToOne: false
+            referencedRelation: "subjects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      profiles: {
+        Row: {
+          avatar_url: string | null
+          created_at: string
+          full_name: string | null
+          id: string
+          role: string
+          updated_at: string
+        }
+        Insert: {
+          avatar_url?: string | null
+          created_at?: string
+          full_name?: string | null
+          id: string
+          role?: string
+          updated_at?: string
+        }
+        Update: {
+          avatar_url?: string | null
+          created_at?: string
+          full_name?: string | null
+          id?: string
+          role?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      question_explanations: {
+        Row: {
+          content: string
+          created_at: string
+          id: string
+          order_index: number
+          question_id: string
+        }
+        Insert: {
+          content: string
+          created_at?: string
+          id?: string
+          order_index?: number
+          question_id: string
+        }
+        Update: {
+          content?: string
+          created_at?: string
+          id?: string
+          order_index?: number
+          question_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "question_explanations_question_id_fkey"
+            columns: ["question_id"]
+            isOneToOne: false
+            referencedRelation: "questions"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "question_explanations_question_id_fkey"
+            columns: ["question_id"]
+            isOneToOne: false
+            referencedRelation: "v_published_questions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      question_formulas: {
+        Row: {
+          content: string
+          created_at: string
+          id: string
+          order_index: number
+          question_id: string
+        }
+        Insert: {
+          content: string
+          created_at?: string
+          id?: string
+          order_index?: number
+          question_id: string
+        }
+        Update: {
+          content?: string
+          created_at?: string
+          id?: string
+          order_index?: number
+          question_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "question_formulas_question_id_fkey"
+            columns: ["question_id"]
+            isOneToOne: false
+            referencedRelation: "questions"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "question_formulas_question_id_fkey"
+            columns: ["question_id"]
+            isOneToOne: false
+            referencedRelation: "v_published_questions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      question_hints: {
+        Row: {
+          content: string
+          created_at: string
+          id: string
+          order_index: number
+          question_id: string
+        }
+        Insert: {
+          content: string
+          created_at?: string
+          id?: string
+          order_index?: number
+          question_id: string
+        }
+        Update: {
+          content?: string
+          created_at?: string
+          id?: string
+          order_index?: number
+          question_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "question_hints_question_id_fkey"
+            columns: ["question_id"]
+            isOneToOne: false
+            referencedRelation: "questions"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "question_hints_question_id_fkey"
+            columns: ["question_id"]
+            isOneToOne: false
+            referencedRelation: "v_published_questions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      question_images: {
+        Row: {
+          alt_text: string | null
+          attached_to: string
+          created_at: string
+          id: string
+          question_id: string
+          related_option_id: string | null
+          storage_path: string
+        }
+        Insert: {
+          alt_text?: string | null
+          attached_to: string
+          created_at?: string
+          id?: string
+          question_id: string
+          related_option_id?: string | null
+          storage_path: string
+        }
+        Update: {
+          alt_text?: string | null
+          attached_to?: string
+          created_at?: string
+          id?: string
+          question_id?: string
+          related_option_id?: string | null
+          storage_path?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "question_images_question_id_fkey"
+            columns: ["question_id"]
+            isOneToOne: false
+            referencedRelation: "questions"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "question_images_question_id_fkey"
+            columns: ["question_id"]
+            isOneToOne: false
+            referencedRelation: "v_published_questions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      question_options: {
+        Row: {
+          content: string
+          id: string
+          is_correct: boolean
+          label: string | null
+          position: number
+          question_id: string
+        }
+        Insert: {
+          content: string
+          id?: string
+          is_correct?: boolean
+          label?: string | null
+          position?: number
+          question_id: string
+        }
+        Update: {
+          content?: string
+          id?: string
+          is_correct?: boolean
+          label?: string | null
+          position?: number
+          question_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "question_options_question_id_fkey"
+            columns: ["question_id"]
+            isOneToOne: false
+            referencedRelation: "questions"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "question_options_question_id_fkey"
+            columns: ["question_id"]
+            isOneToOne: false
+            referencedRelation: "v_published_questions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      question_references: {
+        Row: {
+          content: string
+          created_at: string
+          id: string
+          order_index: number
+          question_id: string
+        }
+        Insert: {
+          content: string
+          created_at?: string
+          id?: string
+          order_index?: number
+          question_id: string
+        }
+        Update: {
+          content?: string
+          created_at?: string
+          id?: string
+          order_index?: number
+          question_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "question_references_question_id_fkey"
+            columns: ["question_id"]
+            isOneToOne: false
+            referencedRelation: "questions"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "question_references_question_id_fkey"
+            columns: ["question_id"]
+            isOneToOne: false
+            referencedRelation: "v_published_questions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      question_reports: {
+        Row: {
+          created_at: string
+          id: string
+          question_id: string
+          reason: string
+          reported_by: string
+          status: Database["public"]["Enums"]["question_report_status"]
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          question_id: string
+          reason: string
+          reported_by: string
+          status?: Database["public"]["Enums"]["question_report_status"]
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          question_id?: string
+          reason?: string
+          reported_by?: string
+          status?: Database["public"]["Enums"]["question_report_status"]
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "question_reports_question_id_fkey"
+            columns: ["question_id"]
+            isOneToOne: false
+            referencedRelation: "questions"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "question_reports_question_id_fkey"
+            columns: ["question_id"]
+            isOneToOne: false
+            referencedRelation: "v_published_questions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      question_reviews: {
+        Row: {
+          comment: string | null
+          created_at: string
+          decision: string
+          id: string
+          question_id: string
+          reviewer_id: string
+        }
+        Insert: {
+          comment?: string | null
+          created_at?: string
+          decision: string
+          id?: string
+          question_id: string
+          reviewer_id: string
+        }
+        Update: {
+          comment?: string | null
+          created_at?: string
+          decision?: string
+          id?: string
+          question_id?: string
+          reviewer_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "question_reviews_question_id_fkey"
+            columns: ["question_id"]
+            isOneToOne: false
+            referencedRelation: "questions"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "question_reviews_question_id_fkey"
+            columns: ["question_id"]
+            isOneToOne: false
+            referencedRelation: "v_published_questions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      question_tag_map: {
+        Row: {
+          question_id: string
+          tag_id: string
+        }
+        Insert: {
+          question_id: string
+          tag_id: string
+        }
+        Update: {
+          question_id?: string
+          tag_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "question_tag_map_question_id_fkey"
+            columns: ["question_id"]
+            isOneToOne: false
+            referencedRelation: "questions"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "question_tag_map_question_id_fkey"
+            columns: ["question_id"]
+            isOneToOne: false
+            referencedRelation: "v_published_questions"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "question_tag_map_tag_id_fkey"
+            columns: ["tag_id"]
+            isOneToOne: false
+            referencedRelation: "question_tags"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      question_tags: {
+        Row: {
+          created_at: string
+          id: string
+          name: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          name: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          name?: string
+        }
+        Relationships: []
+      }
+      question_versions: {
+        Row: {
+          change_summary: string | null
+          changed_by: string | null
+          created_at: string
+          id: string
+          question_id: string
+          snapshot: Json
+          version_number: number
+        }
+        Insert: {
+          change_summary?: string | null
+          changed_by?: string | null
+          created_at?: string
+          id?: string
+          question_id: string
+          snapshot: Json
+          version_number: number
+        }
+        Update: {
+          change_summary?: string | null
+          changed_by?: string | null
+          created_at?: string
+          id?: string
+          question_id?: string
+          snapshot?: Json
+          version_number?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "question_versions_changed_by_fkey"
+            columns: ["changed_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "question_versions_changed_by_fkey"
+            columns: ["changed_by"]
+            isOneToOne: false
+            referencedRelation: "v_user_dashboard_summary"
+            referencedColumns: ["user_id"]
+          },
+          {
+            foreignKeyName: "question_versions_question_id_fkey"
+            columns: ["question_id"]
+            isOneToOne: false
+            referencedRelation: "questions"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "question_versions_question_id_fkey"
+            columns: ["question_id"]
+            isOneToOne: false
+            referencedRelation: "v_published_questions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      questions: {
+        Row: {
+          ai_generated: boolean
+          bloom_level: Database["public"]["Enums"]["bloom_level"] | null
+          chapter: string | null
+          chapter_id: string
+          created_at: string
+          created_by: string | null
+          current_version: number
+          difficulty: string
+          difficulty_level_id: string | null
+          duplicated_from_id: string | null
+          explanation: string | null
+          human_reviewed: boolean
+          id: string
+          numeric_answer_tolerance: number | null
+          numeric_answer_value: number | null
+          position: number
+          practice_set_id: string
+          prompt: string
+          question_type: Database["public"]["Enums"]["question_type"]
+          reviewed_by: string | null
+          source: string | null
+          source_year: number | null
+          status: string
+          subject_id: string
+          subtopic_id: string | null
+          tags: string[]
+          test_id: string | null
+          time_estimate_seconds: number
+          topic: string
+          topic_id: string
+          university_id: string | null
+          updated_at: string
+        }
+        Insert: {
+          ai_generated?: boolean
+          bloom_level?: Database["public"]["Enums"]["bloom_level"] | null
+          chapter?: string | null
+          chapter_id: string
+          created_at?: string
+          created_by?: string | null
+          current_version?: number
+          difficulty: string
+          difficulty_level_id?: string | null
+          duplicated_from_id?: string | null
+          explanation?: string | null
+          human_reviewed?: boolean
+          id?: string
+          numeric_answer_tolerance?: number | null
+          numeric_answer_value?: number | null
+          position?: number
+          practice_set_id: string
+          prompt: string
+          question_type?: Database["public"]["Enums"]["question_type"]
+          reviewed_by?: string | null
+          source?: string | null
+          source_year?: number | null
+          status?: string
+          subject_id: string
+          subtopic_id?: string | null
+          tags?: string[]
+          test_id?: string | null
+          time_estimate_seconds?: number
+          topic: string
+          topic_id: string
+          university_id?: string | null
+          updated_at?: string
+        }
+        Update: {
+          ai_generated?: boolean
+          bloom_level?: Database["public"]["Enums"]["bloom_level"] | null
+          chapter?: string | null
+          chapter_id?: string
+          created_at?: string
+          created_by?: string | null
+          current_version?: number
+          difficulty?: string
+          difficulty_level_id?: string | null
+          duplicated_from_id?: string | null
+          explanation?: string | null
+          human_reviewed?: boolean
+          id?: string
+          numeric_answer_tolerance?: number | null
+          numeric_answer_value?: number | null
+          position?: number
+          practice_set_id?: string
+          prompt?: string
+          question_type?: Database["public"]["Enums"]["question_type"]
+          reviewed_by?: string | null
+          source?: string | null
+          source_year?: number | null
+          status?: string
+          subject_id?: string
+          subtopic_id?: string | null
+          tags?: string[]
+          test_id?: string | null
+          time_estimate_seconds?: number
+          topic?: string
+          topic_id?: string
+          university_id?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "questions_chapter_id_fkey"
+            columns: ["chapter_id"]
+            isOneToOne: false
+            referencedRelation: "chapters"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "questions_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "questions_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "v_user_dashboard_summary"
+            referencedColumns: ["user_id"]
+          },
+          {
+            foreignKeyName: "questions_difficulty_level_id_fkey"
+            columns: ["difficulty_level_id"]
+            isOneToOne: false
+            referencedRelation: "difficulty_levels"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "questions_duplicated_from_id_fkey"
+            columns: ["duplicated_from_id"]
+            isOneToOne: false
+            referencedRelation: "questions"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "questions_duplicated_from_id_fkey"
+            columns: ["duplicated_from_id"]
+            isOneToOne: false
+            referencedRelation: "v_published_questions"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "questions_practice_set_id_fkey"
+            columns: ["practice_set_id"]
+            isOneToOne: false
+            referencedRelation: "practice_sets"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "questions_reviewed_by_fkey"
+            columns: ["reviewed_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "questions_reviewed_by_fkey"
+            columns: ["reviewed_by"]
+            isOneToOne: false
+            referencedRelation: "v_user_dashboard_summary"
+            referencedColumns: ["user_id"]
+          },
+          {
+            foreignKeyName: "questions_subject_id_fkey"
+            columns: ["subject_id"]
+            isOneToOne: false
+            referencedRelation: "subjects"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "questions_subtopic_id_fkey"
+            columns: ["subtopic_id"]
+            isOneToOne: false
+            referencedRelation: "subtopics"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "questions_test_id_fkey"
+            columns: ["test_id"]
+            isOneToOne: false
+            referencedRelation: "tests"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "questions_topic_id_fkey"
+            columns: ["topic_id"]
+            isOneToOne: false
+            referencedRelation: "topics"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "questions_university_id_fkey"
+            columns: ["university_id"]
+            isOneToOne: false
+            referencedRelation: "universities"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      recently_viewed: {
+        Row: {
+          id: string
+          resource_id: string
+          resource_type: string
+          user_id: string
+          viewed_at: string
+        }
+        Insert: {
+          id?: string
+          resource_id: string
+          resource_type: string
+          user_id: string
+          viewed_at?: string
+        }
+        Update: {
+          id?: string
+          resource_id?: string
+          resource_type?: string
+          user_id?: string
+          viewed_at?: string
+        }
+        Relationships: []
+      }
+      student_profiles: {
+        Row: {
+          created_at: string
+          daily_study_target_minutes: number
+          display_name: string | null
+          education_level: Database["public"]["Enums"]["education_level"] | null
+          entry_test: Database["public"]["Enums"]["entry_test"] | null
+          entry_test_other: string | null
+          expected_test_date: string | null
+          intermediate_marks: number | null
+          intermediate_total: number | null
+          matric_marks: number | null
+          matric_total: number | null
+          onboarding_completed_at: string | null
+          preferred_schedule:
+            | Database["public"]["Enums"]["study_schedule"]
+            | null
+          target_degree: string | null
+          target_university: string | null
+          updated_at: string
+          user_id: string
+          weak_subjects: string[]
+        }
+        Insert: {
+          created_at?: string
+          daily_study_target_minutes?: number
+          display_name?: string | null
+          education_level?:
+            | Database["public"]["Enums"]["education_level"]
+            | null
+          entry_test?: Database["public"]["Enums"]["entry_test"] | null
+          entry_test_other?: string | null
+          expected_test_date?: string | null
+          intermediate_marks?: number | null
+          intermediate_total?: number | null
+          matric_marks?: number | null
+          matric_total?: number | null
+          onboarding_completed_at?: string | null
+          preferred_schedule?:
+            | Database["public"]["Enums"]["study_schedule"]
+            | null
+          target_degree?: string | null
+          target_university?: string | null
+          updated_at?: string
+          user_id: string
+          weak_subjects?: string[]
+        }
+        Update: {
+          created_at?: string
+          daily_study_target_minutes?: number
+          display_name?: string | null
+          education_level?:
+            | Database["public"]["Enums"]["education_level"]
+            | null
+          entry_test?: Database["public"]["Enums"]["entry_test"] | null
+          entry_test_other?: string | null
+          expected_test_date?: string | null
+          intermediate_marks?: number | null
+          intermediate_total?: number | null
+          matric_marks?: number | null
+          matric_total?: number | null
+          onboarding_completed_at?: string | null
+          preferred_schedule?:
+            | Database["public"]["Enums"]["study_schedule"]
+            | null
+          target_degree?: string | null
+          target_university?: string | null
+          updated_at?: string
+          user_id?: string
+          weak_subjects?: string[]
+        }
+        Relationships: []
+      }
+      study_goals: {
+        Row: {
+          created_at: string
+          id: string
+          period: Database["public"]["Enums"]["goal_period"]
+          period_start: string
+          target_minutes: number
+          target_questions: number
+          target_sessions: number
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          period: Database["public"]["Enums"]["goal_period"]
+          period_start: string
+          target_minutes?: number
+          target_questions?: number
+          target_sessions?: number
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          period?: Database["public"]["Enums"]["goal_period"]
+          period_start?: string
+          target_minutes?: number
+          target_questions?: number
+          target_sessions?: number
+          user_id?: string
+        }
+        Relationships: []
+      }
+      study_streaks: {
+        Row: {
+          current_streak: number
+          last_active_date: string | null
+          longest_streak: number
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          current_streak?: number
+          last_active_date?: string | null
+          longest_streak?: number
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          current_streak?: number
+          last_active_date?: string | null
+          longest_streak?: number
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      subjects: {
+        Row: {
+          created_at: string
+          description: string | null
+          id: string
+          is_coming_soon: boolean
+          name: string
+          slug: string
+          test_id: string | null
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          is_coming_soon?: boolean
+          name: string
+          slug: string
+          test_id?: string | null
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          is_coming_soon?: boolean
+          name?: string
+          slug?: string
+          test_id?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "subjects_test_id_fkey"
+            columns: ["test_id"]
+            isOneToOne: false
+            referencedRelation: "tests"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      subtopics: {
+        Row: {
+          created_at: string
+          estimated_minutes: number | null
+          icon: string | null
+          id: string
+          is_active: boolean
+          name: string
+          order_index: number
+          slug: string
+          topic_id: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          estimated_minutes?: number | null
+          icon?: string | null
+          id?: string
+          is_active?: boolean
+          name: string
+          order_index?: number
+          slug: string
+          topic_id: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          estimated_minutes?: number | null
+          icon?: string | null
+          id?: string
+          is_active?: boolean
+          name?: string
+          order_index?: number
+          slug?: string
+          topic_id?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "subtopics_topic_id_fkey"
+            columns: ["topic_id"]
+            isOneToOne: false
+            referencedRelation: "topics"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      tests: {
+        Row: {
+          created_at: string
+          description: string | null
+          exam_pattern: Json
+          id: string
+          is_active: boolean
+          name: string
+          slug: string
+          university_id: string | null
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          exam_pattern?: Json
+          id?: string
+          is_active?: boolean
+          name: string
+          slug: string
+          university_id?: string | null
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          exam_pattern?: Json
+          id?: string
+          is_active?: boolean
+          name?: string
+          slug?: string
+          university_id?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "tests_university_id_fkey"
+            columns: ["university_id"]
+            isOneToOne: false
+            referencedRelation: "universities"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      topic_mastery: {
+        Row: {
+          id: string
+          last_practiced_at: string | null
+          mastery_percent: number
+          questions_attempted: number
+          questions_correct: number
+          subject_id: string | null
+          topic: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          id?: string
+          last_practiced_at?: string | null
+          mastery_percent?: number
+          questions_attempted?: number
+          questions_correct?: number
+          subject_id?: string | null
+          topic: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          id?: string
+          last_practiced_at?: string | null
+          mastery_percent?: number
+          questions_attempted?: number
+          questions_correct?: number
+          subject_id?: string | null
+          topic?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "topic_mastery_subject_id_fkey"
+            columns: ["subject_id"]
+            isOneToOne: false
+            referencedRelation: "subjects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      topics: {
+        Row: {
+          chapter_id: string
+          created_at: string
+          estimated_minutes: number | null
+          icon: string | null
+          id: string
+          is_active: boolean
+          name: string
+          order_index: number
+          slug: string
+          updated_at: string
+        }
+        Insert: {
+          chapter_id: string
+          created_at?: string
+          estimated_minutes?: number | null
+          icon?: string | null
+          id?: string
+          is_active?: boolean
+          name: string
+          order_index?: number
+          slug: string
+          updated_at?: string
+        }
+        Update: {
+          chapter_id?: string
+          created_at?: string
+          estimated_minutes?: number | null
+          icon?: string | null
+          id?: string
+          is_active?: boolean
+          name?: string
+          order_index?: number
+          slug?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "topics_chapter_id_fkey"
+            columns: ["chapter_id"]
+            isOneToOne: false
+            referencedRelation: "chapters"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      universities: {
+        Row: {
+          created_at: string
+          description: string | null
+          id: string
+          is_active: boolean
+          logo_url: string | null
+          name: string
+          slug: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          is_active?: boolean
+          logo_url?: string | null
+          name: string
+          slug: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          is_active?: boolean
+          logo_url?: string | null
+          name?: string
+          slug?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      university_test_configs: {
+        Row: {
+          accent_color: string
+          created_at: string
+          id: string
+          is_verified: boolean
+          navigation_style: string
+          negative_marking: boolean
+          negative_marking_fraction: number | null
+          sections: Json
+          slug: string
+          source_url: string | null
+          test_name: string
+          total_minutes: number
+          total_questions: number
+          university: string
+        }
+        Insert: {
+          accent_color?: string
+          created_at?: string
+          id?: string
+          is_verified?: boolean
+          navigation_style?: string
+          negative_marking?: boolean
+          negative_marking_fraction?: number | null
+          sections?: Json
+          slug: string
+          source_url?: string | null
+          test_name: string
+          total_minutes: number
+          total_questions: number
+          university: string
+        }
+        Update: {
+          accent_color?: string
+          created_at?: string
+          id?: string
+          is_verified?: boolean
+          navigation_style?: string
+          negative_marking?: boolean
+          negative_marking_fraction?: number | null
+          sections?: Json
+          slug?: string
+          source_url?: string | null
+          test_name?: string
+          total_minutes?: number
+          total_questions?: number
+          university?: string
+        }
+        Relationships: []
+      }
+      user_achievements: {
+        Row: {
+          achievement_id: string
+          earned_at: string
+          id: string
+          user_id: string
+        }
+        Insert: {
+          achievement_id: string
+          earned_at?: string
+          id?: string
+          user_id: string
+        }
+        Update: {
+          achievement_id?: string
+          earned_at?: string
+          id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_achievements_achievement_id_fkey"
+            columns: ["achievement_id"]
+            isOneToOne: false
+            referencedRelation: "achievements"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      user_attempts: {
+        Row: {
+          attempted_at: string
+          created_at: string
+          difficulty_at_attempt_id: string | null
+          exam_session_id: string | null
+          id: string
+          is_correct: boolean
+          mode: Database["public"]["Enums"]["attempt_mode"]
+          numeric_answer_given: number | null
+          practice_session_id: string | null
+          question_id: string
+          selected_option_ids: string[]
+          time_taken_seconds: number
+          user_id: string
+          was_flagged_guess: boolean
+          was_skipped: boolean
+        }
+        Insert: {
+          attempted_at?: string
+          created_at?: string
+          difficulty_at_attempt_id?: string | null
+          exam_session_id?: string | null
+          id?: string
+          is_correct: boolean
+          mode?: Database["public"]["Enums"]["attempt_mode"]
+          numeric_answer_given?: number | null
+          practice_session_id?: string | null
+          question_id: string
+          selected_option_ids?: string[]
+          time_taken_seconds?: number
+          user_id: string
+          was_flagged_guess?: boolean
+          was_skipped?: boolean
+        }
+        Update: {
+          attempted_at?: string
+          created_at?: string
+          difficulty_at_attempt_id?: string | null
+          exam_session_id?: string | null
+          id?: string
+          is_correct?: boolean
+          mode?: Database["public"]["Enums"]["attempt_mode"]
+          numeric_answer_given?: number | null
+          practice_session_id?: string | null
+          question_id?: string
+          selected_option_ids?: string[]
+          time_taken_seconds?: number
+          user_id?: string
+          was_flagged_guess?: boolean
+          was_skipped?: boolean
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_attempts_difficulty_at_attempt_id_fkey"
+            columns: ["difficulty_at_attempt_id"]
+            isOneToOne: false
+            referencedRelation: "difficulty_levels"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "user_attempts_exam_session_id_fkey"
+            columns: ["exam_session_id"]
+            isOneToOne: false
+            referencedRelation: "exam_sessions"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "user_attempts_practice_session_id_fkey"
+            columns: ["practice_session_id"]
+            isOneToOne: false
+            referencedRelation: "practice_sessions"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "user_attempts_question_id_fkey"
+            columns: ["question_id"]
+            isOneToOne: false
+            referencedRelation: "questions"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "user_attempts_question_id_fkey"
+            columns: ["question_id"]
+            isOneToOne: false
+            referencedRelation: "v_published_questions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      user_badges: {
+        Row: {
+          badge_id: string
+          id: string
+          unlocked_at: string
+          user_id: string
+        }
+        Insert: {
+          badge_id: string
+          id?: string
+          unlocked_at?: string
+          user_id: string
+        }
+        Update: {
+          badge_id?: string
+          id?: string
+          unlocked_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_badges_badge_id_fkey"
+            columns: ["badge_id"]
+            isOneToOne: false
+            referencedRelation: "badges"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      user_coins_ledger: {
+        Row: {
+          coins_amount: number
+          created_at: string
+          id: string
+          source_id: string | null
+          source_type: string
+          user_id: string
+        }
+        Insert: {
+          coins_amount: number
+          created_at?: string
+          id?: string
+          source_id?: string | null
+          source_type: string
+          user_id: string
+        }
+        Update: {
+          coins_amount?: number
+          created_at?: string
+          id?: string
+          source_id?: string | null
+          source_type?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      user_streaks: {
+        Row: {
+          current_streak: number
+          last_active_date: string | null
+          longest_streak: number
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          current_streak?: number
+          last_active_date?: string | null
+          longest_streak?: number
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          current_streak?: number
+          last_active_date?: string | null
+          longest_streak?: number
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      user_topic_progress: {
+        Row: {
+          accuracy_percent: number | null
+          created_at: string
+          last_practiced_at: string | null
+          mastery_score: number
+          questions_attempted: number
+          questions_correct: number
+          topic_id: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          accuracy_percent?: number | null
+          created_at?: string
+          last_practiced_at?: string | null
+          mastery_score?: number
+          questions_attempted?: number
+          questions_correct?: number
+          topic_id: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          accuracy_percent?: number | null
+          created_at?: string
+          last_practiced_at?: string | null
+          mastery_score?: number
+          questions_attempted?: number
+          questions_correct?: number
+          topic_id?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_topic_progress_topic_id_fkey"
+            columns: ["topic_id"]
+            isOneToOne: false
+            referencedRelation: "topics"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      user_xp_ledger: {
+        Row: {
+          created_at: string
+          id: string
+          source_id: string | null
+          source_type: string
+          user_id: string
+          xp_amount: number
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          source_id?: string | null
+          source_type: string
+          user_id: string
+          xp_amount: number
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          source_id?: string | null
+          source_type?: string
+          user_id?: string
+          xp_amount?: number
+        }
+        Relationships: []
+      }
+    }
     Views: {
+      goal_progress: {
+        Row: {
+          actual_minutes: number | null
+          actual_questions: number | null
+          actual_sessions: number | null
+          goal_id: string | null
+          period: Database["public"]["Enums"]["goal_period"] | null
+          period_start: string | null
+          target_minutes: number | null
+          target_questions: number | null
+          target_sessions: number | null
+          user_id: string | null
+        }
+        Relationships: []
+      }
+      v_published_questions: {
+        Row: {
+          chapter: string | null
+          difficulty: string | null
+          difficulty_rank: number | null
+          explanation: string | null
+          id: string | null
+          position: number | null
+          practice_set_id: string | null
+          prompt: string | null
+          question_type: Database["public"]["Enums"]["question_type"] | null
+          status: string | null
+          subject_id: string | null
+          time_estimate_seconds: number | null
+          topic: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "questions_practice_set_id_fkey"
+            columns: ["practice_set_id"]
+            isOneToOne: false
+            referencedRelation: "practice_sets"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "questions_subject_id_fkey"
+            columns: ["subject_id"]
+            isOneToOne: false
+            referencedRelation: "subjects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       v_user_dashboard_summary: {
         Row: {
-          user_id: string;
-          activity_date: string;
-          questions_attempted: number;
-          correct_count: number;
-          study_seconds: number;
-          sessions_completed: number;
-        };
-      };
-    };
+          attempts_last_7_days: number | null
+          correct_last_7_days: number | null
+          current_streak: number | null
+          longest_streak: number | null
+          total_xp: number | null
+          user_id: string | null
+        }
+        Relationships: []
+      }
+    }
     Functions: {
+      is_admin: { Args: never; Returns: boolean }
+      is_staff: { Args: never; Returns: boolean }
       record_attempt_and_update_progress: {
-        Args: { attempt: Record<string, unknown> };
+        Args: { attempt: Json }
         Returns: {
-          is_correct: boolean;
-          correct_option_ids: string[] | null;
-          correct_numeric_value: number | null;
-          xp_awarded: number;
-        };
-      };
-    };
-    Enums: Record<string, never>;
-    CompositeTypes: Record<string, never>;
-  };
+          attempted_at: string
+          created_at: string
+          difficulty_at_attempt_id: string | null
+          exam_session_id: string | null
+          id: string
+          is_correct: boolean
+          mode: Database["public"]["Enums"]["attempt_mode"]
+          numeric_answer_given: number | null
+          practice_session_id: string | null
+          question_id: string
+          selected_option_ids: string[]
+          time_taken_seconds: number
+          user_id: string
+          was_flagged_guess: boolean
+          was_skipped: boolean
+        }
+        SetofOptions: {
+          from: "*"
+          to: "user_attempts"
+          isOneToOne: true
+          isSetofReturn: false
+        }
+      }
+      refresh_leaderboard_snapshot: {
+        Args: { p_period_end: string; p_period_start: string; p_scope: string }
+        Returns: undefined
+      }
+    }
+    Enums: {
+      ai_asset_type:
+        | "ai_explanation"
+        | "ai_hint"
+        | "ai_similar_question"
+        | "ai_harder_version"
+        | "ai_easier_version"
+        | "ai_video_recommendation"
+      ai_study_plan_status: "active" | "completed" | "abandoned"
+      attempt_mode: "practice" | "mock_exam" | "revision" | "weak_topic"
+      bloom_level:
+        | "remember"
+        | "understand"
+        | "apply"
+        | "analyze"
+        | "evaluate"
+        | "create"
+      education_level:
+        | "matric"
+        | "intermediate"
+        | "a_levels"
+        | "undergraduate"
+        | "other"
+      entry_test: "NET" | "ECAT" | "MDCAT" | "NAT" | "SAT" | "GAT" | "OTHER"
+      exam_session_status:
+        | "in_progress"
+        | "submitted"
+        | "abandoned"
+        | "auto_submitted"
+      goal_period: "daily" | "weekly"
+      mock_exam_status: "draft" | "published" | "archived"
+      notification_type:
+        | "study_reminder"
+        | "admission_deadline"
+        | "new_material"
+        | "practice_milestone"
+        | "achievement_unlocked"
+        | "system_announcement"
+      question_report_status: "open" | "resolved" | "dismissed"
+      question_type: "single_choice" | "multiple_choice" | "numeric"
+      study_schedule:
+        | "early_morning"
+        | "morning"
+        | "afternoon"
+        | "evening"
+        | "night"
+        | "flexible"
+    }
+    CompositeTypes: {
+      [_ in never]: never
+    }
+  }
 }
+
+type DatabaseWithoutInternals = Omit<Database, "__InternalSupabase">
+
+type DefaultSchema = DatabaseWithoutInternals[Extract<keyof Database, "public">]
+
+export type Tables<
+  DefaultSchemaTableNameOrOptions extends
+    | keyof (DefaultSchema["Tables"] & DefaultSchema["Views"])
+    | { schema: keyof DatabaseWithoutInternals },
+  TableName extends DefaultSchemaTableNameOrOptions extends {
+    schema: keyof DatabaseWithoutInternals
+  }
+    ? keyof (DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"] &
+        DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Views"])
+    : never = never,
+> = DefaultSchemaTableNameOrOptions extends {
+  schema: keyof DatabaseWithoutInternals
+}
+  ? (DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"] &
+      DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Views"])[TableName] extends {
+      Row: infer R
+    }
+    ? R
+    : never
+  : DefaultSchemaTableNameOrOptions extends keyof (DefaultSchema["Tables"] &
+        DefaultSchema["Views"])
+    ? (DefaultSchema["Tables"] &
+        DefaultSchema["Views"])[DefaultSchemaTableNameOrOptions] extends {
+        Row: infer R
+      }
+      ? R
+      : never
+    : never
+
+export type TablesInsert<
+  DefaultSchemaTableNameOrOptions extends
+    | keyof DefaultSchema["Tables"]
+    | { schema: keyof DatabaseWithoutInternals },
+  TableName extends DefaultSchemaTableNameOrOptions extends {
+    schema: keyof DatabaseWithoutInternals
+  }
+    ? keyof DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"]
+    : never = never,
+> = DefaultSchemaTableNameOrOptions extends {
+  schema: keyof DatabaseWithoutInternals
+}
+  ? DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"][TableName] extends {
+      Insert: infer I
+    }
+    ? I
+    : never
+  : DefaultSchemaTableNameOrOptions extends keyof DefaultSchema["Tables"]
+    ? DefaultSchema["Tables"][DefaultSchemaTableNameOrOptions] extends {
+        Insert: infer I
+      }
+      ? I
+      : never
+    : never
+
+export type TablesUpdate<
+  DefaultSchemaTableNameOrOptions extends
+    | keyof DefaultSchema["Tables"]
+    | { schema: keyof DatabaseWithoutInternals },
+  TableName extends DefaultSchemaTableNameOrOptions extends {
+    schema: keyof DatabaseWithoutInternals
+  }
+    ? keyof DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"]
+    : never = never,
+> = DefaultSchemaTableNameOrOptions extends {
+  schema: keyof DatabaseWithoutInternals
+}
+  ? DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"][TableName] extends {
+      Update: infer U
+    }
+    ? U
+    : never
+  : DefaultSchemaTableNameOrOptions extends keyof DefaultSchema["Tables"]
+    ? DefaultSchema["Tables"][DefaultSchemaTableNameOrOptions] extends {
+        Update: infer U
+      }
+      ? U
+      : never
+    : never
+
+export type Enums<
+  DefaultSchemaEnumNameOrOptions extends
+    | keyof DefaultSchema["Enums"]
+    | { schema: keyof DatabaseWithoutInternals },
+  EnumName extends DefaultSchemaEnumNameOrOptions extends {
+    schema: keyof DatabaseWithoutInternals
+  }
+    ? keyof DatabaseWithoutInternals[DefaultSchemaEnumNameOrOptions["schema"]]["Enums"]
+    : never = never,
+> = DefaultSchemaEnumNameOrOptions extends {
+  schema: keyof DatabaseWithoutInternals
+}
+  ? DatabaseWithoutInternals[DefaultSchemaEnumNameOrOptions["schema"]]["Enums"][EnumName]
+  : DefaultSchemaEnumNameOrOptions extends keyof DefaultSchema["Enums"]
+    ? DefaultSchema["Enums"][DefaultSchemaEnumNameOrOptions]
+    : never
+
+export type CompositeTypes<
+  PublicCompositeTypeNameOrOptions extends
+    | keyof DefaultSchema["CompositeTypes"]
+    | { schema: keyof DatabaseWithoutInternals },
+  CompositeTypeName extends PublicCompositeTypeNameOrOptions extends {
+    schema: keyof DatabaseWithoutInternals
+  }
+    ? keyof DatabaseWithoutInternals[PublicCompositeTypeNameOrOptions["schema"]]["CompositeTypes"]
+    : never = never,
+> = PublicCompositeTypeNameOrOptions extends {
+  schema: keyof DatabaseWithoutInternals
+}
+  ? DatabaseWithoutInternals[PublicCompositeTypeNameOrOptions["schema"]]["CompositeTypes"][CompositeTypeName]
+  : PublicCompositeTypeNameOrOptions extends keyof DefaultSchema["CompositeTypes"]
+    ? DefaultSchema["CompositeTypes"][PublicCompositeTypeNameOrOptions]
+    : never
+
+export const Constants = {
+  public: {
+    Enums: {
+      ai_asset_type: [
+        "ai_explanation",
+        "ai_hint",
+        "ai_similar_question",
+        "ai_harder_version",
+        "ai_easier_version",
+        "ai_video_recommendation",
+      ],
+      ai_study_plan_status: ["active", "completed", "abandoned"],
+      attempt_mode: ["practice", "mock_exam", "revision", "weak_topic"],
+      bloom_level: [
+        "remember",
+        "understand",
+        "apply",
+        "analyze",
+        "evaluate",
+        "create",
+      ],
+      education_level: [
+        "matric",
+        "intermediate",
+        "a_levels",
+        "undergraduate",
+        "other",
+      ],
+      entry_test: ["NET", "ECAT", "MDCAT", "NAT", "SAT", "GAT", "OTHER"],
+      exam_session_status: [
+        "in_progress",
+        "submitted",
+        "abandoned",
+        "auto_submitted",
+      ],
+      goal_period: ["daily", "weekly"],
+      mock_exam_status: ["draft", "published", "archived"],
+      notification_type: [
+        "study_reminder",
+        "admission_deadline",
+        "new_material",
+        "practice_milestone",
+        "achievement_unlocked",
+        "system_announcement",
+      ],
+      question_report_status: ["open", "resolved", "dismissed"],
+      question_type: ["single_choice", "multiple_choice", "numeric"],
+      study_schedule: [
+        "early_morning",
+        "morning",
+        "afternoon",
+        "evening",
+        "night",
+        "flexible",
+      ],
+    },
+  },
+} as const

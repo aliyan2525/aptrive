@@ -128,14 +128,30 @@ export default function DashboardClient({
   );
   const activity = data.activity.slice(-28);
   const maxQuestions = Math.max(1, ...activity.map((day) => day.questions_attempted));
-  const strongTopics = data.topicMastery.slice(0, 3);
-  const weakTopics = data.weakTopics.slice(0, 3);
+  // getDashboardData now returns TopicMasterySummary ({ topicId, name,
+  // masteryScore, questionsAttempted }) instead of the raw table row —
+  // mapped here to the { topic, mastery_percent } shape TopicList and
+  // the fallback arrays below already expect, so neither needed to change.
+  const strongTopics = data.topicMastery
+    .slice(0, 3)
+    .map((t) => ({ topic: t.name, mastery_percent: t.masteryScore }));
+  const weakTopics = data.weakTopics
+    .slice(0, 3)
+    .map((t) => ({ topic: t.name, mastery_percent: t.masteryScore }));
+  // FIXED 2026-07-28: `goal_progress` (a view) has never had
+  // `completed_questions`/`completed_minutes` columns — the real
+  // fields are `actual_questions`/`actual_minutes`. Confirmed via
+  // `supabase gen types typescript` (2026-07-28). This wasn't a
+  // crash (both are nullable, so this used to silently divide by
+  // `undefined` and render "NaN% complete" on the daily-goal card
+  // any day a goal_progress row existed), unlike the dashboard/
+  // catalog bugs — flagging as a distinct, lower-severity case.
   const dailyGoalPercent = data.dailyGoal
     ? Math.min(
         100,
         Math.round(
-          ((data.dailyGoal.completed_questions / Math.max(1, data.dailyGoal.target_questions)) +
-            (data.dailyGoal.completed_minutes / Math.max(1, data.dailyGoal.target_minutes))) *
+          (((data.dailyGoal.actual_questions ?? 0) / Math.max(1, data.dailyGoal.target_questions ?? 1)) +
+            ((data.dailyGoal.actual_minutes ?? 0) / Math.max(1, data.dailyGoal.target_minutes ?? 1))) *
             50
         )
       )
@@ -179,8 +195,8 @@ export default function DashboardClient({
             <ProgressRing value={dailyGoalPercent} color="var(--teal)" />
           </div>
           <div className="mt-5 space-y-3 text-sm text-muted">
-            <GoalRow label="Questions" done={data.dailyGoal?.completed_questions ?? 18} total={data.dailyGoal?.target_questions ?? 40} />
-            <GoalRow label="Study minutes" done={data.dailyGoal?.completed_minutes ?? 35} total={data.dailyGoal?.target_minutes ?? 90} />
+            <GoalRow label="Questions" done={data.dailyGoal?.actual_questions ?? 18} total={data.dailyGoal?.target_questions ?? 40} />
+            <GoalRow label="Study minutes" done={data.dailyGoal?.actual_minutes ?? 35} total={data.dailyGoal?.target_minutes ?? 90} />
           </div>
         </BentoCard>
 

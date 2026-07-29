@@ -3,14 +3,61 @@ import type { Database } from "@/lib/database.types";
 
 type Tables = Database["public"]["Tables"];
 type Views = Database["public"]["Views"];
-// DailyActivity kept as the shape name for the heatmap/weekly-summary
-// data even though the source table changed — v_user_dashboard_summary
-// (derived from user_attempts) is shaped identically to the legacy
-// daily_activity row it replaces, so sampleActivity() and the
-// downstream weeklySummary reducer below needed no changes.
-type DailyActivity = Views["v_user_dashboard_summary"]["Row"];
-type TopicProgress = Tables["user_topic_progress"]["Row"];
-type GoalProgress = Tables["goal_progress"]["Row"];
+// FLAGGED 2026-07-28: the comment this replaces claimed
+// v_user_dashboard_summary is "shaped identically to the legacy
+// daily_activity row it replaces" — confirmed FALSE against the live
+// schema via `supabase gen types typescript`. The real view returns
+// ONE row per user with lifetime/7-day aggregates
+// (attempts_last_7_days, correct_last_7_days, current_streak,
+// longest_streak, total_xp) — there is no activity_date, no per-day
+// breakdown, and no study_seconds/sessions_completed at all. The old
+// query's `.gte("activity_date", ...).order("activity_date", ...)`
+// was a guaranteed PostgREST 400 on every dashboard load (a THIRD
+// live bug in this function, on top of the two user_topic_progress
+// ones — flagging this prominently rather than quietly patching it,
+// since fixing it for real means deciding how daily/heatmap activity
+// should be sourced now (e.g. a new view grouping user_attempts by
+// day), which is a product/data-design call, not a type fix).
+//
+// Interim fix below: query the view for what it actually contains
+// (a single per-user summary row), use its real fields for
+// weeklySummary, and keep the day-by-day calendar/heatmap on
+// sampleActivity() placeholder data until a real daily-granularity
+// source exists — instead of throwing on every load.
+type DashboardSummary = Views["v_user_dashboard_summary"]["Row"];
+// Local shape for the calendar/heatmap, matching what sampleActivity()
+// produces below (placeholder data until a real per-day source exists).
+type DailyActivity = {
+  user_id: string;
+  activity_date: string;
+  questions_attempted: number;
+  correct_count: number;
+  study_seconds: number;
+  sessions_completed: number;
+};
+type TopicProgress = Tables["user_topic_progress"]["Row"] & {
+  // From the `topics(name)` embed added below — nullable because a
+  // left-join-style embed returns null if the topic_id FK is ever null
+  // or the referenced topic was deleted.
+  topics: { name: string } | null;
+};
+// Clean shape actually returned to callers — deliberately doesn't leak
+// the raw joined TopicProgress row (with its embed-only `topics` shape)
+// into component props.
+export type TopicMasterySummary = {
+  topicId: string;
+  name: string;
+  masteryScore: number;
+  questionsAttempted: number;
+};
+// FIXED 2026-07-28: `goal_progress` is a Postgres view on the live
+// schema, not a table — indexing it via `Tables[...]` doesn't exist
+// on the real generated types (it happened to compile before only
+// because the hand-authored database.types.ts incorrectly listed it
+// under Tables too). No query behavior changes here, just the type
+// source, since `.from("goal_progress")` works identically for a
+// view at the PostgREST layer.
+type GoalProgress = Views["goal_progress"]["Row"];
 type UserStreak = Tables["user_streaks"]["Row"];
 type AdmissionDeadline = Tables["admission_deadlines"]["Row"];
 type RecentlyViewed = Tables["recently_viewed"]["Row"];
@@ -42,8 +89,6 @@ type UserAchievement = Tables["user_achievements"]["Row"] & {
 export async function getDashboardData(userId: string) {
   const supabase = await createClient();
   const today = new Date().toISOString().slice(0, 10);
-  const twelveWeeksAgo = new Date();
-  twelveWeeksAgo.setDate(twelveWeeksAgo.getDate() - 84);
 
   const [
     streakRes,
@@ -61,19 +106,33 @@ export async function getDashboardData(userId: string) {
       .from("v_user_dashboard_summary")
       .select("*")
       .eq("user_id", userId)
-      .gte("activity_date", twelveWeeksAgo.toISOString().slice(0, 10))
-      .order("activity_date", { ascending: true }),
+      .maybeSingle(),
+    // FIXED 2026-07-28: `user_topic_progress` on the live database is
+    // keyed by (user_id, topic_id uuid) with a `mastery_score` column —
+    // not the `topic` (text)/`mastery_percent` shape this query used to
+    // assume. Confirmed directly against the live schema via
+    // `supabase gen types typescript` (2026-07-28). Ordering by
+    // `mastery_percent` (a column that doesn't exist on this table) was
+    // a guaranteed PostgREST 400 on every single dashboard load, for
+    // every signed-in user — this function is called directly (no
+    // try/catch) from app/dashboard/page.tsx, so it wasn't silently
+    // degrading, it was surfacing the app/dashboard/error.tsx boundary
+    // ("We couldn't load your dashboard") in place of the real page.
+    //
+    // Also added a `topics(name)` embed here: `topic_id` is just a
+    // uuid, so without this join TopicList (below) has nothing to
+    // render as the topic's label.
     supabase
       .from("user_topic_progress")
-      .select("*")
+      .select("*, topics(name)")
       .eq("user_id", userId)
-      .order("mastery_percent", { ascending: false })
+      .order("mastery_score", { ascending: false })
       .limit(6),
     supabase
       .from("user_topic_progress")
-      .select("*")
+      .select("*, topics(name)")
       .eq("user_id", userId)
-      .order("mastery_percent", { ascending: true })
+      .order("mastery_score", { ascending: true })
       .limit(5),
     supabase
       .from("goal_progress")
@@ -103,28 +162,40 @@ export async function getDashboardData(userId: string) {
     supabase.from("student_profiles").select("*").eq("user_id", userId).maybeSingle(),
   ]);
 
-  const activity = ((activityRes.data ?? []) as DailyActivity[]).length
-    ? ((activityRes.data ?? []) as DailyActivity[])
-    : sampleActivity();
-  const totalsThisWeek = activity
-    .filter((d) => {
-      const diffDays = (Date.now() - new Date(d.activity_date).getTime()) / 86_400_000;
-      return diffDays <= 7;
-    })
-    .reduce(
-      (acc, d) => ({
-        questions: acc.questions + d.questions_attempted,
-        correct: acc.correct + d.correct_count,
-        seconds: acc.seconds + d.study_seconds,
-      }),
-      { questions: 0, correct: 0, seconds: 0 }
-    );
+  // The calendar/heatmap needs per-day data, which no live source
+  // currently provides (see the FLAGGED comment above) — placeholder
+  // data until that's designed, same as before when no rows came back.
+  const activity = sampleActivity();
+  const summary = activityRes.data as DashboardSummary | null;
+  const attemptsLast7Days = summary?.attempts_last_7_days ?? 0;
+  const correctLast7Days = summary?.correct_last_7_days ?? 0;
 
-  const strongTopics = (masteryRes.data ?? []) as TopicProgress[];
-  const strongTopicNames = new Set(strongTopics.map((t) => t.topic));
-  const weakTopics = ((weakTopicsRes.data ?? []) as TopicProgress[]).filter(
-    (t) => !strongTopicNames.has(t.topic)
-  );
+  // FIXED 2026-07-28: this was a second, separate reference to the
+  // dead `topic` (text) column used for dedup — same underlying live
+  // column is `topic_id` (uuid), so the dedup logic below is keyed by
+  // that instead. Also maps to the clean TopicMasterySummary shape
+  // here (name pulled from the topics(name) embed added above) rather
+  // than passing the raw table row on to the component — a mastery
+  // row whose topic_id is null or whose topic was deleted has nothing
+  // meaningful to show, so it's skipped entirely.
+  const toSummary = (t: TopicProgress): TopicMasterySummary | null => {
+    if (!t.topic_id || !t.topics?.name) return null;
+    return {
+      topicId: t.topic_id,
+      name: t.topics.name,
+      masteryScore: t.mastery_score,
+      questionsAttempted: t.questions_attempted,
+    };
+  };
+
+  const strongTopics = ((masteryRes.data ?? []) as TopicProgress[])
+    .map(toSummary)
+    .filter((t): t is TopicMasterySummary => t !== null);
+  const strongTopicIds = new Set(strongTopics.map((t) => t.topicId));
+  const weakTopics = ((weakTopicsRes.data ?? []) as TopicProgress[])
+    .map(toSummary)
+    .filter((t): t is TopicMasterySummary => t !== null)
+    .filter((t) => !strongTopicIds.has(t.topicId));
 
   return {
     streak: streakRes.data as UserStreak | null,
@@ -137,11 +208,14 @@ export async function getDashboardData(userId: string) {
     recentlyViewed: (recentRes.data ?? []) as RecentlyViewed[],
     studentProfile: studentProfileRes.data as StudentProfile | null,
     weeklySummary: {
-      questionsAttempted: totalsThisWeek.questions,
-      accuracyPercent: totalsThisWeek.questions
-        ? Math.round((totalsThisWeek.correct / totalsThisWeek.questions) * 100)
+      questionsAttempted: attemptsLast7Days,
+      accuracyPercent: attemptsLast7Days
+        ? Math.round((correctLast7Days / attemptsLast7Days) * 100)
         : 0,
-      studyHours: Math.round((totalsThisWeek.seconds / 3600) * 10) / 10,
+      // No live column currently tracks time spent
+      // (v_user_dashboard_summary has no study_seconds equivalent) —
+      // flagged as a gap rather than fabricated from placeholder data.
+      studyHours: 0,
     },
   };
 }

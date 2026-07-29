@@ -155,7 +155,13 @@ export async function listPracticeSetsForSubject(
     title: set.title,
     topic: set.topic,
     chapter: set.chapter,
-    difficulty: set.difficulty,
+    // FIXED 2026-07-28: `practice_sets.difficulty` is a plain text
+    // column on the live schema (no DB enum backs it), so the real
+    // generated type is `string`, not the app's narrower `Difficulty`
+    // union — this cast makes that business-invariant assumption
+    // explicit at the query boundary instead of relying on a
+    // (previously inaccurate) hand-authored type to paper over it.
+    difficulty: set.difficulty as PracticeSetSummary["difficulty"],
     questionCount: set.question_count,
     estimatedMinutes: set.estimated_minutes,
     isPremium: set.is_premium,
@@ -217,23 +223,51 @@ export async function listSubjectChaptersWithTopics(
     }
   }
 
-  const masteryByTopicName = new Map<string, Pick<TopicMasteryRow, "mastery_percent" | "questions_attempted">>();
-  if (userId) {
+  // FIXED 2026-07-28: `user_topic_progress` on the live database is
+  // keyed by (user_id, topic_id uuid) with a `mastery_score` column —
+  // not the (user_id, subject_id, topic text) + `mastery_percent`
+  // shape this query used to assume. Confirmed directly against the
+  // live schema via `supabase gen types typescript` (2026-07-28); the
+  // old query was a guaranteed PostgREST 400 ("column does not
+  // exist") on every /practice/subjects/[subjectSlug] page load, for
+  // every visitor — this function is called directly (no try/catch)
+  // from that page, so it surfaced the app/practice/error.tsx
+  // boundary ("Something interrupted your session") in place of the
+  // real page, not a silent degrade.
+  //
+  // Keying this map by topic_id (a real FK we already have on
+  // `topics`) is also strictly more correct than the old
+  // normalizeTopicKey(name) string-matching it replaces — no more
+  // risk of two differently-named topics colliding or a rename
+  // silently breaking the join.
+  //
+  // This also drops the `.eq("subject_id", subjectId)` filter that
+  // was here before: `user_topic_progress` has no `subject_id` column
+  // on the live table. Filtering by `.in("topic_id", topicIds)`
+  // instead is equivalent in effect (topicIds is already scoped to
+  // this subject's chapters) and doesn't depend on a column that
+  // doesn't exist.
+  const masteryByTopicId = new Map<
+    string,
+    Pick<TopicMasteryRow, "mastery_score" | "questions_attempted">
+  >();
+  if (userId && topicIds.length > 0) {
     const { data: masteryData, error: masteryError } = await supabase
       .from("user_topic_progress")
-      .select("topic, mastery_percent, questions_attempted")
+      .select("topic_id, mastery_score, questions_attempted")
       .eq("user_id", userId)
-      .eq("subject_id", subjectId);
+      .in("topic_id", topicIds);
     if (masteryError) throw masteryError;
 
     const masteryRows = (masteryData ?? []) as unknown as Pick<
       TopicMasteryRow,
-      "topic" | "mastery_percent" | "questions_attempted"
+      "topic_id" | "mastery_score" | "questions_attempted"
     >[];
 
     for (const row of masteryRows) {
-      masteryByTopicName.set(normalizeTopicKey(row.topic), {
-        mastery_percent: row.mastery_percent,
+      if (!row.topic_id) continue;
+      masteryByTopicId.set(row.topic_id, {
+        mastery_score: row.mastery_score,
         questions_attempted: row.questions_attempted,
       });
     }
@@ -241,13 +275,20 @@ export async function listSubjectChaptersWithTopics(
 
   const topicsByChapter = new Map<string, TopicPracticeSummary[]>();
   for (const topic of topics) {
-    const mastery = masteryByTopicName.get(normalizeTopicKey(topic.name));
+    const mastery = masteryByTopicId.get(topic.id);
     const topicSummary: TopicPracticeSummary = {
       id: topic.id,
       name: topic.name,
       slug: topic.slug,
       questionCount: questionCounts.get(topic.id) ?? 0,
-      masteryPercent: mastery?.mastery_percent ?? null,
+      // Renamed from the old `mastery_percent` (0-100 accuracy) to
+      // `mastery_score` (the live table's ELO-style +5/-2 clamped
+      // 0-100 metric — see record_attempt_and_update_progress). Same
+      // output field name/shape for the UI (masteryPercent), but the
+      // underlying number now means something different than it used
+      // to on paper — worth a quick check with whoever owns the UI
+      // copy on whether "mastery" framing still reads right here.
+      masteryPercent: mastery?.mastery_score ?? null,
       questionsAttempted: mastery?.questions_attempted ?? 0,
     };
 
