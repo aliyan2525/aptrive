@@ -99,7 +99,7 @@ export async function getQuestionRowsForPracticeSet(
   const rows = (data ?? []) as unknown as QuestionRow[];
   return rows.map((q) => ({
     ...q,
-    question_options: [...q.question_options].sort(
+    question_options: [...(q.question_options || [])].sort(
       (a, b) => a.position - b.position
     ),
   }));
@@ -118,7 +118,14 @@ export async function getQuestionRowsByIds(
     .in("id", questionIds);
 
   if (error) throw error;
-  return (data ?? []) as unknown as QuestionRow[];
+  
+  const rows = (data ?? []) as unknown as QuestionRow[];
+  return rows.map((q) => ({
+    ...q,
+    question_options: [...(q.question_options || [])].sort(
+      (a, b) => a.position - b.position
+    ),
+  }));
 }
 
 /** Strips `is_correct` before the question is handed to a Client Component. */
@@ -130,7 +137,7 @@ export function toClientQuestion(row: QuestionRow): ClientQuestion {
     topic: row.topic,
     chapter: row.chapter,
     timeEstimateSeconds: row.time_estimate_seconds,
-    options: row.question_options.map((o) => ({
+    options: (row.question_options || []).map((o) => ({
       id: o.id,
       label: o.label,
       content: o.content,

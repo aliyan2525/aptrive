@@ -116,7 +116,7 @@ export async function getSessionById(sessionId: string, userId: string) {
 
   if (error) throw error;
   return data as unknown as
-    | (SessionCore & { mode: string; metadata: Record<string, unknown> })
+    | (SessionCore & { mode: string; metadata: Record<string, unknown> | null })
     | null;
 }
 
