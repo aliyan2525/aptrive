@@ -4,7 +4,7 @@ import type { Database, QuestionStatus, Difficulty, BloomLevel, QuestionType } f
 // The hand-authored Database type lacks Supabase's Relationships
 // metadata, which causes .insert() / .update() argument types to
 // resolve to `never`.  The workaround is to cast the query-builder
-// itself — `(supabase.from(...) as any)` — so that every chained
+// itself — `supabase.from(...)` — so that every chained
 // call is untyped.  Results are still cast back to the correct row
 // types via `as unknown as T`.
 type QuestionRow = Database["public"]["Tables"]["questions"]["Row"];
@@ -186,8 +186,7 @@ export type QuestionFormInput = {
 export async function createQuestion(input: QuestionFormInput, createdBy: string) {
   const supabase = await createClient();
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const { data: question, error: questionError } = await (supabase.from("questions") as any)
+    const { data: question, error: questionError } = await supabase.from("questions")
     .insert({
       practice_set_id: input.practice_set_id,
       subject_id: input.subject_id,
@@ -221,8 +220,7 @@ export async function createQuestion(input: QuestionFormInput, createdBy: string
   if (questionError) throw questionError;
   const questionId = (question as unknown as { id: string }).id;
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const { error: optionsError } = await (supabase.from("question_options") as any).insert(
+    const { error: optionsError } = await supabase.from("question_options").insert(
     input.options.map((option, index) => ({
       question_id: questionId,
       content: option.content,
@@ -267,8 +265,7 @@ export async function updateQuestion(
 ) {
   const supabase = await createClient();
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const { error: questionError } = await (supabase.from("questions") as any)
+    const { error: questionError } = await supabase.from("questions")
     .update({
       practice_set_id: input.practice_set_id,
       subject_id: input.subject_id,
@@ -318,8 +315,7 @@ export async function updateQuestion(
     .eq("question_id", id);
   if (deleteError) throw deleteError;
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const { error: insertError } = await (supabase.from("question_options") as any).insert(
+    const { error: insertError } = await supabase.from("question_options").insert(
     input.options.map((option, index) => ({
       question_id: id,
       content: option.content,
@@ -329,8 +325,7 @@ export async function updateQuestion(
   );
 
   if (insertError) {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const { error: restoreError } = await (supabase.from("question_options") as any).insert(
+        const { error: restoreError } = await supabase.from("question_options").insert(
       optionsSnapshot.map((option) => ({
         question_id: id,
         content: option.content,
@@ -344,8 +339,7 @@ export async function updateQuestion(
       // with zero options. Force it back to draft so it can't be
       // served to students in a broken state, regardless of whatever
       // status the form submitted.
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      await (supabase.from("questions") as any)
+            await supabase.from("questions")
         .update({ status: "draft" })
         .eq("id", id);
       throw new Error(
@@ -361,8 +355,7 @@ export async function updateQuestion(
 
 export async function setQuestionStatus(id: string, status: QuestionStatus) {
   const supabase = await createClient();
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const { error } = await (supabase.from("questions") as any).update({ status }).eq("id", id);
+    const { error } = await supabase.from("questions").update({ status }).eq("id", id);
   if (error) throw error;
 }
 
@@ -408,8 +401,7 @@ export async function duplicateQuestion(id: string, createdBy: string) {
     createdBy
   );
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const { error } = await (supabase.from("questions") as any)
+    const { error } = await supabase.from("questions")
     .update({ duplicated_from_id: id })
     .eq("id", newId);
   if (error) throw error;

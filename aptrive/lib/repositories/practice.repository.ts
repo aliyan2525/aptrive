@@ -57,7 +57,7 @@ export async function getOrCreatePracticeSetSession(
   const { data: created, error: createError } = await supabase
     .from("practice_sessions")
     // eslint-disable-next-line @typescript-eslint/no-explicit-any -- postgrest-js resolves insert/update payload types to `never` here; see comment above.
-    .insert(payload as any)
+    .insert(payload)
     .select("id, total_questions, correct_count, incorrect_count, skipped_count, status")
     .single();
 
@@ -95,7 +95,7 @@ export async function createAdHocSession(
   const { data, error } = await supabase
     .from("practice_sessions")
     // eslint-disable-next-line @typescript-eslint/no-explicit-any -- postgrest-js resolves insert/update payload types to `never` here; see comment above.
-    .insert(payload as any)
+    .insert(payload)
     .select(
       "id, total_questions, correct_count, incorrect_count, skipped_count, status, metadata"
     )
@@ -194,7 +194,7 @@ export async function recordResponse(params: {
       time_taken_seconds: params.timeSpentSeconds,
     },
     // eslint-disable-next-line @typescript-eslint/no-explicit-any -- postgrest-js resolves this RPC's `attempt: Record<string, unknown>` arg to `never` against a specific object literal; see comment above.
-  } as any);
+  });
 
   if (error) throw error;
   return data as unknown as RecordAttemptResult;
@@ -238,7 +238,7 @@ export async function completeSession(sessionId: string, userId: string) {
   const scorePercent = answered > 0 ? Math.round((correct / answered) * 10000) / 100 : 0;
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any -- postgrest-js resolves insert/update payload types to `never` here; see comment above.
-  const { error } = await (supabase.from("practice_sessions") as any)
+  const { error } = await supabase.from("practice_sessions")
     .update({
       status: "completed",
       completed_at: new Date().toISOString(),

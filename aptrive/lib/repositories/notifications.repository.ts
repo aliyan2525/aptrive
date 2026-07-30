@@ -81,8 +81,7 @@ export async function toggleNotificationRead(
   notificationId: string,
   markAsRead: boolean
 ): Promise<void> {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const { error } = await (supabase.from("notifications") as any)
+    const { error } = await supabase.from("notifications")
     .update({ read_at: markAsRead ? new Date().toISOString() : null })
     .eq("id", notificationId)
     .eq("user_id", userId);
@@ -98,8 +97,7 @@ export async function markAllNotificationsRead(
   supabase: SupabaseClient<Database>,
   userId: string
 ): Promise<void> {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const { error } = await (supabase.from("notifications") as any)
+    const { error } = await supabase.from("notifications")
     .update({ read_at: new Date().toISOString() })
     .eq("user_id", userId)
     .is("read_at", null);

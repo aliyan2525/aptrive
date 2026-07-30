@@ -6,55 +6,36 @@ export type Json =
   | { [key: string]: Json | undefined }
   | Json[]
 
-// -- App-layer convenience type aliases ---------------------------
-// These are hand-authored string-literal unions, not part of the
-// Supabase-generated schema below — several columns they describe
-// (difficulty, content_type, status, etc.) are plain `string` in
-// Postgres, not real enums, so the app relies on these narrower
-// TS-only types for stricter typing at the call sites that import
-// them from "@/lib/database.types". Carried forward as-is from the
-// pre-regeneration file (2026-07-28) since dropping them would break
-// every admin/practice file that imports them; not derived from or
-// verified against live schema — same caveat as before.
-export type Difficulty = "Easy" | "Medium" | "Hard";
-export type Language = "English" | "Urdu";
-export type ContentType =
-  | "mcq"
-  | "topic-wise"
-  | "chapter-wise"
-  | "past-papers"
-  | "solved-papers"
-  | "mock-tests"
-  | "formula-sheets"
-  | "revision-notes"
-  | "pdf"
-  | "video"
-  | "flashcards"
-  | "ai-generated"
-  | "daily-challenge";
-export type UserRole = "student" | "instructor" | "content_manager" | "administrator";
-export type SessionMode = "practice" | "mock" | "exam" | "daily-challenge";
-export type SessionStatus = "in_progress" | "completed" | "abandoned";
-export type RecentlyViewedType = "practice_set" | "question" | "video" | "pdf";
-export type QuestionStatus = "draft" | "in_review" | "published" | "archived";
-export type PracticeSetStatus = "draft" | "published" | "archived";
-export type ImportBatchStatus =
-  | "validating"
-  | "ready"
-  | "importing"
-  | "completed"
-  | "failed"
-  | "rolled_back";
-export type ImportRowStatus = "pending" | "valid" | "warning" | "error";
-export type BloomLevel = "remember" | "understand" | "apply" | "analyze" | "evaluate" | "create";
-export type QuestionType = "single_choice" | "multiple_choice" | "numeric";
-export type AdminRole = "super_admin" | "content_manager" | "moderator" | "content_creator" | "reviewer";
-
 export type Database = {
   // Allows to automatically instantiate createClient with right options
   // instead of createClient<Database, { PostgrestVersion: 'XX' }>(URL, KEY)
   __InternalSupabase: {
     PostgrestVersion: "14.5"
+  }
+  graphql_public: {
+    Tables: {
+      [_ in never]: never
+    }
+    Views: {
+      [_ in never]: never
+    }
+    Functions: {
+      graphql: {
+        Args: {
+          extensions?: Json
+          operationName?: string
+          query?: string
+          variables?: Json
+        }
+        Returns: Json
+      }
+    }
+    Enums: {
+      [_ in never]: never
+    }
+    CompositeTypes: {
+      [_ in never]: never
+    }
   }
   public: {
     Tables: {
@@ -226,39 +207,6 @@ export type Database = {
         }
         Relationships: []
       }
-      badges: {
-        Row: {
-          created_at: string
-          criteria: Json
-          description: string | null
-          icon: string | null
-          id: string
-          name: string
-          slug: string
-          updated_at: string
-        }
-        Insert: {
-          created_at?: string
-          criteria?: Json
-          description?: string | null
-          icon?: string | null
-          id?: string
-          name: string
-          slug: string
-          updated_at?: string
-        }
-        Update: {
-          created_at?: string
-          criteria?: Json
-          description?: string | null
-          icon?: string | null
-          id?: string
-          name?: string
-          slug?: string
-          updated_at?: string
-        }
-        Relationships: []
-      }
       bookmarks: {
         Row: {
           created_at: string
@@ -379,36 +327,6 @@ export type Database = {
           message?: string
           name?: string
           status?: string
-        }
-        Relationships: []
-      }
-      daily_activity: {
-        Row: {
-          activity_date: string
-          correct_count: number
-          id: string
-          questions_attempted: number
-          sessions_completed: number
-          study_seconds: number
-          user_id: string
-        }
-        Insert: {
-          activity_date?: string
-          correct_count?: number
-          id?: string
-          questions_attempted?: number
-          sessions_completed?: number
-          study_seconds?: number
-          user_id: string
-        }
-        Update: {
-          activity_date?: string
-          correct_count?: number
-          id?: string
-          questions_attempted?: number
-          sessions_completed?: number
-          study_seconds?: number
-          user_id?: string
         }
         Relationships: []
       }
@@ -1750,30 +1668,6 @@ export type Database = {
         }
         Relationships: []
       }
-      study_streaks: {
-        Row: {
-          current_streak: number
-          last_active_date: string | null
-          longest_streak: number
-          updated_at: string
-          user_id: string
-        }
-        Insert: {
-          current_streak?: number
-          last_active_date?: string | null
-          longest_streak?: number
-          updated_at?: string
-          user_id: string
-        }
-        Update: {
-          current_streak?: number
-          last_active_date?: string | null
-          longest_streak?: number
-          updated_at?: string
-          user_id?: string
-        }
-        Relationships: []
-      }
       subjects: {
         Row: {
           created_at: string
@@ -1902,50 +1796,6 @@ export type Database = {
             columns: ["university_id"]
             isOneToOne: false
             referencedRelation: "universities"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      topic_mastery: {
-        Row: {
-          id: string
-          last_practiced_at: string | null
-          mastery_percent: number
-          questions_attempted: number
-          questions_correct: number
-          subject_id: string | null
-          topic: string
-          updated_at: string
-          user_id: string
-        }
-        Insert: {
-          id?: string
-          last_practiced_at?: string | null
-          mastery_percent?: number
-          questions_attempted?: number
-          questions_correct?: number
-          subject_id?: string | null
-          topic: string
-          updated_at?: string
-          user_id: string
-        }
-        Update: {
-          id?: string
-          last_practiced_at?: string | null
-          mastery_percent?: number
-          questions_attempted?: number
-          questions_correct?: number
-          subject_id?: string | null
-          topic?: string
-          updated_at?: string
-          user_id?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "topic_mastery_subject_id_fkey"
-            columns: ["subject_id"]
-            isOneToOne: false
-            referencedRelation: "subjects"
             referencedColumns: ["id"]
           },
         ]
@@ -2196,35 +2046,6 @@ export type Database = {
             columns: ["question_id"]
             isOneToOne: false
             referencedRelation: "v_published_questions"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      user_badges: {
-        Row: {
-          badge_id: string
-          id: string
-          unlocked_at: string
-          user_id: string
-        }
-        Insert: {
-          badge_id: string
-          id?: string
-          unlocked_at?: string
-          user_id: string
-        }
-        Update: {
-          badge_id?: string
-          id?: string
-          unlocked_at?: string
-          user_id?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "user_badges_badge_id_fkey"
-            columns: ["badge_id"]
-            isOneToOne: false
-            referencedRelation: "badges"
             referencedColumns: ["id"]
           },
         ]
@@ -2619,6 +2440,9 @@ export type CompositeTypes<
     : never
 
 export const Constants = {
+  graphql_public: {
+    Enums: {},
+  },
   public: {
     Enums: {
       ai_asset_type: [
@@ -2676,3 +2500,8 @@ export const Constants = {
     },
   },
 } as const
+
+export type QuestionStatus = "draft" | "in_review" | "published" | "archived";
+export type Difficulty = "Easy" | "Medium" | "Hard";
+export type BloomLevel = "remember" | "understand" | "apply" | "analyze" | "evaluate" | "create";
+export type QuestionType = "single_choice" | "multiple_choice" | "numeric";

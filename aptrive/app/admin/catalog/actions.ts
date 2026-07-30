@@ -53,8 +53,7 @@ export async function createUniversity(name: string, slug: string, logoUrl?: str
   await requireStaff();
   const input = parseOrThrow(universitySchema, { name, slug, logoUrl, description });
   const supabase = await createClient();
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const { error } = await (supabase.from("universities") as any).insert({
+    const { error } = await supabase.from("universities").insert({
     name: input.name,
     slug: input.slug,
     logo_url: input.logoUrl,
@@ -68,8 +67,7 @@ export async function updateUniversity(id: string, name: string, slug: string, l
   await requireStaff();
   const input = parseOrThrow(universitySchema, { name, slug, logoUrl, description });
   const supabase = await createClient();
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const { error } = await (supabase.from("universities") as any).update({
+    const { error } = await supabase.from("universities").update({
     name: input.name,
     slug: input.slug,
     logo_url: input.logoUrl,
@@ -92,8 +90,7 @@ export async function createTest(universityId: string | null, name: string, slug
   await requireStaff();
   const input = parseOrThrow(testSchema, { universityId, name, slug, description });
   const supabase = await createClient();
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const { error } = await (supabase.from("tests") as any).insert({
+    const { error } = await supabase.from("tests").insert({
     university_id: input.universityId,
     name: input.name,
     slug: input.slug,
@@ -107,8 +104,7 @@ export async function updateTest(id: string, universityId: string | null, name: 
   await requireStaff();
   const input = parseOrThrow(testSchema, { universityId, name, slug, description });
   const supabase = await createClient();
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const { error } = await (supabase.from("tests") as any).update({
+    const { error } = await supabase.from("tests").update({
     university_id: input.universityId,
     name: input.name,
     slug: input.slug,
@@ -131,8 +127,7 @@ export async function createChapter(subjectId: string, name: string, slug: strin
   await requireStaff();
   const input = parseOrThrow(chapterSchema, { subjectId, name, slug, orderIndex });
   const supabase = await createClient();
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const { error } = await (supabase.from("chapters") as any).insert({
+    const { error } = await supabase.from("chapters").insert({
     subject_id: input.subjectId,
     name: input.name,
     slug: input.slug,
@@ -146,8 +141,7 @@ export async function updateChapter(id: string, subjectId: string, name: string,
   await requireStaff();
   const input = parseOrThrow(chapterSchema, { subjectId, name, slug, orderIndex });
   const supabase = await createClient();
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const { error } = await (supabase.from("chapters") as any).update({
+    const { error } = await supabase.from("chapters").update({
     subject_id: input.subjectId,
     name: input.name,
     slug: input.slug,
@@ -175,8 +169,7 @@ export async function createTopic(chapterId: string, name: string, slug: string,
   await requireStaff();
   const input = parseOrThrow(topicSchema, { chapterId, name, slug, orderIndex });
   const supabase = await createClient();
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const { error } = await (supabase.from("topics") as any).insert({
+    const { error } = await supabase.from("topics").insert({
     chapter_id: input.chapterId,
     name: input.name,
     slug: input.slug,
@@ -190,8 +183,7 @@ export async function updateTopic(id: string, chapterId: string, name: string, s
   await requireStaff();
   const input = parseOrThrow(topicSchema, { chapterId, name, slug, orderIndex });
   const supabase = await createClient();
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const { error } = await (supabase.from("topics") as any).update({
+    const { error } = await supabase.from("topics").update({
     chapter_id: input.chapterId,
     name: input.name,
     slug: input.slug,
@@ -219,8 +211,7 @@ export async function createSubtopic(topicId: string, name: string, slug: string
   await requireStaff();
   const input = parseOrThrow(subtopicSchema, { topicId, name, slug, orderIndex });
   const supabase = await createClient();
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const { error } = await (supabase.from("subtopics") as any).insert({
+    const { error } = await supabase.from("subtopics").insert({
     topic_id: input.topicId,
     name: input.name,
     slug: input.slug,
@@ -234,8 +225,7 @@ export async function updateSubtopic(id: string, topicId: string, name: string, 
   await requireStaff();
   const input = parseOrThrow(subtopicSchema, { topicId, name, slug, orderIndex });
   const supabase = await createClient();
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const { error } = await (supabase.from("subtopics") as any).update({
+    const { error } = await supabase.from("subtopics").update({
     topic_id: input.topicId,
     name: input.name,
     slug: input.slug,

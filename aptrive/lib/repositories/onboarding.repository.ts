@@ -86,8 +86,7 @@ export async function saveOnboarding(
     weak_subjects: input.improvementSubjects,
   };
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const { data, error } = await (supabase.from("student_profiles") as any)
+    const { data, error } = await supabase.from("student_profiles")
     .upsert(profilePayload, { onConflict: "user_id" })
     .select("*")
     .single();
@@ -97,8 +96,7 @@ export async function saveOnboarding(
   }
 
   const today = new Date().toISOString().slice(0, 10);
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const { error: goalError } = await (supabase.from("goal_progress") as any).upsert(
+    const { error: goalError } = await supabase.from("study_goals").upsert(
     {
       user_id: userId,
       period: "daily",

@@ -12,7 +12,7 @@ import type { Database, Difficulty } from "@/lib/database.types";
 // The missing Relationships metadata also causes .insert() / .update()
 // argument types to resolve to `never`, which TypeScript rejects even
 // when the argument is cast `as unknown as any`.  The workaround is to
-// cast the query-builder itself — `(supabase.from(...) as any)` — so
+// cast the query-builder itself — `supabase.from(...)` — so
 // that every chained call is untyped.  Results are still cast back to
 // the correct row types via `as unknown as T`.
 type Tables = Database["public"]["Tables"];
@@ -170,8 +170,7 @@ export async function createImportBatch(params: {
     { valid: 0, warning: 0, error: 0 } as Record<"valid" | "warning" | "error", number>
   );
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const { data: batchData, error: batchError } = await (supabase.from("import_batches") as any)
+    const { data: batchData, error: batchError } = await supabase.from("import_batches")
     .insert({
       file_name: params.fileName,
       target_practice_set_id: params.targetPracticeSetId,
@@ -187,8 +186,7 @@ export async function createImportBatch(params: {
   if (batchError) throw batchError;
   const batchId = (batchData as unknown as QuestionIdRow).id;
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const { error: rowsError } = await (supabase.from("import_batch_rows") as any).insert(
+    const { error: rowsError } = await supabase.from("import_batch_rows").insert(
     validated.map((row) => ({
       batch_id: batchId,
       row_number: row.rowNumber,
@@ -277,8 +275,7 @@ export async function commitImportBatch(batchId: string, createdBy: string) {
     throw new Error(`Batch is "${batch.status}" and cannot be committed again`);
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  await (supabase.from("import_batches") as any).update({ status: "importing" }).eq("id", batchId);
+    await supabase.from("import_batches").update({ status: "importing" }).eq("id", batchId);
 
   const { data: rowsData, error: rowsError } = await supabase
     .from("import_batch_rows")
@@ -304,14 +301,15 @@ export async function commitImportBatch(batchId: string, createdBy: string) {
     const raw = row.raw_data as unknown as CsvRecord;
     const options = buildOptionsFromRow(raw);
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const { data: questionData, error: questionError } = await (supabase.from("questions") as any)
+        const { data: questionData, error: questionError } = await supabase.from("questions")
       .insert({
         practice_set_id: batch.target_practice_set_id,
         subject_id: subjectId,
         prompt: raw.prompt,
         explanation: raw.explanation || null,
         difficulty: raw.difficulty as Difficulty,
+        topic_id: raw.topic,
+        chapter_id: raw.chapter || "",
         topic: raw.topic,
         chapter: raw.chapter || null,
         time_estimate_seconds: raw.time_estimate_seconds ? Number(raw.time_estimate_seconds) : 60,
@@ -327,8 +325,7 @@ export async function commitImportBatch(batchId: string, createdBy: string) {
 
     if (questionError || !questionData) {
       failed++;
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      await (supabase.from("import_batch_rows") as any)
+            await supabase.from("import_batch_rows")
         .update({
           row_status: "error",
           errors: [...(row.errors ?? []), `Import failed: ${questionError?.message ?? "unknown error"}`],
@@ -339,16 +336,14 @@ export async function commitImportBatch(batchId: string, createdBy: string) {
 
     const questionId = (questionData as unknown as QuestionIdRow).id;
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const { error: optionsError } = await (supabase.from("question_options") as any).insert(
+        const { error: optionsError } = await supabase.from("question_options").insert(
       options.map((o) => ({ ...o, question_id: questionId }))
     );
 
     if (optionsError) {
       await supabase.from("questions").delete().eq("id", questionId);
       failed++;
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      await (supabase.from("import_batch_rows") as any)
+            await supabase.from("import_batch_rows")
         .update({
           row_status: "error",
           errors: [...(row.errors ?? []), `Options import failed: ${optionsError.message}`],
@@ -358,12 +353,10 @@ export async function commitImportBatch(batchId: string, createdBy: string) {
     }
 
     imported++;
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    await (supabase.from("import_batch_rows") as any).update({ question_id: questionId }).eq("id", row.id);
+        await supabase.from("import_batch_rows").update({ question_id: questionId }).eq("id", row.id);
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  await (supabase.from("import_batches") as any)
+    await supabase.from("import_batches")
     .update({
       status: failed > 0 && imported === 0 ? "failed" : "completed",
       valid_rows: imported,
@@ -406,8 +399,7 @@ export async function rollbackImportBatch(batchId: string) {
 
   const questionIds = rows.map((r) => r.question_id).filter((id): id is string => !!id);
   if (questionIds.length === 0) {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    await (supabase.from("import_batches") as any).update({ status: "rolled_back" }).eq("id", batchId);
+        await supabase.from("import_batches").update({ status: "rolled_back" }).eq("id", batchId);
     return { deleted: 0 };
   }
 
@@ -428,7 +420,6 @@ export async function rollbackImportBatch(batchId: string) {
   const { error: deleteError } = await supabase.from("questions").delete().in("id", questionIds);
   if (deleteError) throw deleteError;
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  await (supabase.from("import_batches") as any).update({ status: "rolled_back" }).eq("id", batchId);
+    await supabase.from("import_batches").update({ status: "rolled_back" }).eq("id", batchId);
   return { deleted: questionIds.length };
 }
