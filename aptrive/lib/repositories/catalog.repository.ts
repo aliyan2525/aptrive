@@ -168,10 +168,6 @@ export async function listPracticeSetsForSubject(
   }));
 }
 
-function normalizeTopicKey(value: string | null) {
-  return (value ?? "").trim().toLowerCase();
-}
-
 export async function listSubjectChaptersWithTopics(
   subjectId: string,
   userId?: string

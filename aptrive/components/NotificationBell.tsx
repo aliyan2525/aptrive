@@ -9,11 +9,13 @@ import {
   markAllNotificationsReadAction,
 } from "@/app/actions/notifications";
 
+import type { Database } from "@/lib/database.types";
+
 export type NotificationItem = {
   id: string;
   title: string;
-  body: string;
-  notification_type: "reminder" | "deadline" | "achievement" | "material" | "system";
+  body: string | null;
+  notification_type: Database["public"]["Enums"]["notification_type"];
   read_at: string | null;
   action_url: string | null;
   created_at: string;

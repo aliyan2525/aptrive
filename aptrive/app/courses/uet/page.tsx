@@ -50,7 +50,7 @@ const included = [
 const faqs = [
   {
     q: "Who is this track for?",
-    a: "Students preparing for UET Lahore's ECAT engineering entrance exam who want a structured, analytics-driven approach rather than generic practice books.",
+    a: "Students preparing for UET Lahore&apos;s ECAT engineering entrance exam who want a structured, analytics-driven approach rather than generic practice books.",
   },
   {
     q: "Does this apply to other UET campuses?",
@@ -78,7 +78,7 @@ export default function UetPage() {
               UET Lahore ECAT Preparation
             </h1>
             <p className="mt-5 max-w-md text-sm leading-relaxed text-muted">
-              A complete preparation track for UET Lahore's ECAT, built on
+              A complete preparation track for UET Lahore&apos;s ECAT, built on
               Aptrive&apos;s diagnostic-and-analytics engine — for students
               aiming to rank, not just qualify.
             </p>

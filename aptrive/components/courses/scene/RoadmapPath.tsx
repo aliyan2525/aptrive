@@ -88,7 +88,7 @@ function RoadmapScene({ milestoneCount, progressRef }: SceneProps) {
   );
 }
 
-interface RoadmapPathProps extends SceneProps {}
+type RoadmapPathProps = SceneProps;
 
 export default function RoadmapPath({ milestoneCount, progressRef }: RoadmapPathProps) {
   const { preset } = useScene3D();

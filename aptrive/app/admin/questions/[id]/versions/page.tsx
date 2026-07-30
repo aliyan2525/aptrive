@@ -28,7 +28,7 @@ export default async function QuestionVersionsPage({
       <div className="mt-8 space-y-4">
         {versions.length === 0 && (
           <p className="text-sm text-muted">
-            No prior versions yet — this question hasn't been edited since it was created.
+            No prior versions yet — this question hasn&apos;t been edited since it was created.
           </p>
         )}
         {versions.map((v) => (

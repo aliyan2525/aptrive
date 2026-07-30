@@ -11,7 +11,9 @@ type QuestionRow = Database["public"]["Tables"]["questions"]["Row"];
 type OptionRow = Database["public"]["Tables"]["question_options"]["Row"];
 type QuestionVersionRow = Database["public"]["Tables"]["question_versions"]["Row"];
 
-export type QuestionWithOptions = QuestionRow & {
+export type QuestionWithOptions = Omit<QuestionRow, "status" | "difficulty"> & {
+  status: QuestionStatus;
+  difficulty: Difficulty;
   options: OptionRow[];
   subjects: { name: string } | null;
   practice_sets: { title: string } | null;
@@ -29,20 +31,25 @@ export type QuestionListFilters = {
 
 const DEFAULT_PAGE_SIZE = 25;
 
-export type QuestionListRow = Pick<
-  QuestionRow,
-  | "id"
-  | "prompt"
-  | "difficulty"
-  | "topic"
-  | "chapter"
-  | "status"
-  | "tags"
-  | "ai_generated"
-  | "human_reviewed"
-  | "current_version"
-  | "updated_at"
+export type QuestionListRow = Omit<
+  Pick<
+    QuestionRow,
+    | "id"
+    | "prompt"
+    | "difficulty"
+    | "topic"
+    | "chapter"
+    | "status"
+    | "tags"
+    | "ai_generated"
+    | "human_reviewed"
+    | "current_version"
+    | "updated_at"
+  >,
+  "status" | "difficulty"
 > & {
+  status: QuestionStatus;
+  difficulty: Difficulty;
   subjects: { name: string } | null;
   practice_sets: { title: string } | null;
 };
@@ -120,7 +127,7 @@ export async function getQuestionForAdmin(id: string): Promise<QuestionWithOptio
     ),
     subjects: (data as unknown as { subjects: { name: string } | null }).subjects,
     practice_sets: (data as unknown as { practice_sets: { title: string } | null }).practice_sets,
-  };
+  } as unknown as QuestionWithOptions;
 }
 
 export async function listQuestionVersions(questionId: string): Promise<QuestionVersionRow[]> {
@@ -337,6 +344,7 @@ export async function updateQuestion(
       // with zero options. Force it back to draft so it can't be
       // served to students in a broken state, regardless of whatever
       // status the form submitted.
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       await (supabase.from("questions") as any)
         .update({ status: "draft" })
         .eq("id", id);
@@ -362,6 +370,12 @@ export async function duplicateQuestion(id: string, createdBy: string) {
   const supabase = await createClient();
   const original = await getQuestionForAdmin(id);
   if (!original) throw new Error("Question not found");
+  if (!original.difficulty_level_id) {
+    throw new Error("Cannot duplicate this question: it has no difficulty level assigned.");
+  }
+  if (!original.bloom_level) {
+    throw new Error("Cannot duplicate this question: it has no Bloom's level assigned.");
+  }
 
   const newId = await createQuestion(
     {

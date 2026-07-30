@@ -45,7 +45,7 @@ const included = [
 const faqs = [
   {
     q: "Who is this track for?",
-    a: "Students preparing for COMSATS's undergraduate entry test (NTS-NAT or equivalent) who want a structured, analytics-driven approach rather than generic practice books.",
+    a: "Students preparing for COMSATS&apos;s undergraduate entry test (NTS-NAT or equivalent) who want a structured, analytics-driven approach rather than generic practice books.",
   },
   {
     q: "Does this cover every COMSATS campus?",
@@ -73,7 +73,7 @@ export default function ComsatsPage() {
               COMSATS Entry Test Preparation
             </h1>
             <p className="mt-5 max-w-md text-sm leading-relaxed text-muted">
-              A complete preparation track for COMSATS's entry test, built
+              A complete preparation track for COMSATS&apos;s entry test, built
               on Aptrive&apos;s diagnostic-and-analytics engine — for
               students aiming to rank, not just qualify.
             </p>

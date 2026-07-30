@@ -68,7 +68,7 @@ export default async function ProfilePage() {
 
             <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
               <Metric label="Target university" value={dashboard.studentProfile?.target_university ?? "NUST"} />
-              <Metric label="Target program" value={dashboard.studentProfile?.target_program ?? "Computer Science"} />
+              <Metric label="Target program" value={dashboard.studentProfile?.target_degree ?? "Computer Science"} />
               <Metric label="Level" value={`Level ${level}`} />
               <Metric label="XP" value={xp.toLocaleString()} />
             </div>

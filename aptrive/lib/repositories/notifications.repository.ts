@@ -1,7 +1,20 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
 import type { Database } from "@/lib/database.types";
+import type { NotificationItem } from "@/components/NotificationBell";
 
 type Notification = Database["public"]["Tables"]["notifications"]["Row"];
+
+function toNotificationItem(row: Notification): NotificationItem {
+  return {
+    id: row.id,
+    title: row.title,
+    body: row.body,
+    notification_type: row.type,
+    read_at: row.read_at,
+    action_url: row.link_href,
+    created_at: row.created_at,
+  };
+}
 
 // This project's hand-authored Database type has no generated
 // Relationships metadata, which makes .update()'s argument type
@@ -19,7 +32,7 @@ export async function listNotifications(
   supabase: SupabaseClient<Database>,
   userId: string,
   limit = 15
-): Promise<Notification[]> {
+): Promise<NotificationItem[]> {
   const { data, error } = await supabase
     .from("notifications")
     .select("*")
@@ -31,7 +44,7 @@ export async function listNotifications(
     throw new Error(`Failed to load notifications: ${error.message}`);
   }
 
-  return data ?? [];
+  return (data ?? []).map(toNotificationItem);
 }
 
 export async function countUnreadNotifications(

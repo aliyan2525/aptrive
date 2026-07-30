@@ -30,7 +30,7 @@ const educationOptions = [
   { label: "Other", value: "other" },
 ];
 
-// value = student_profiles.preferred_study_schedule enum.
+// value = student_profiles.preferred_schedule enum.
 const scheduleOptions = [
   { label: "Early morning", value: "early_morning" },
   { label: "Morning", value: "morning" },
@@ -49,15 +49,15 @@ type OnboardingFlowProps = {
   existingProfile?: {
     display_name: string | null;
     target_university: string | null;
-    target_program: string | null;
+    target_degree: string | null;
     entry_test: string | null;
     education_level: string | null;
     matric_marks: number | null;
     intermediate_marks: number | null;
     expected_test_date: string | null;
-    preferred_study_schedule: string | null;
+    preferred_schedule: string | null;
     daily_study_target_minutes: number;
-    improvement_subjects: string[];
+    weak_subjects: string[];
   } | null;
 };
 
@@ -69,16 +69,16 @@ export default function OnboardingFlow({ existingProfile }: OnboardingFlowProps)
     fullName: existingProfile?.display_name ?? "",
     displayName: existingProfile?.display_name ?? "",
     university: existingProfile?.target_university ?? "NUST",
-    program: existingProfile?.target_program ?? "Computer Science",
+    program: existingProfile?.target_degree ?? "Computer Science",
     test: existingProfile?.entry_test ?? "NET",
     education: existingProfile?.education_level ?? "intermediate",
     matric: existingProfile?.matric_marks?.toString() ?? "",
     intermediate: existingProfile?.intermediate_marks?.toString() ?? "",
     testDate: existingProfile?.expected_test_date ?? "",
-    schedule: existingProfile?.preferred_study_schedule ?? "evening",
+    schedule: existingProfile?.preferred_schedule ?? "evening",
     dailyTarget: existingProfile?.daily_study_target_minutes?.toString() ?? "90",
-    improvement: existingProfile?.improvement_subjects?.length
-      ? existingProfile.improvement_subjects
+    improvement: existingProfile?.weak_subjects?.length
+      ? existingProfile.weak_subjects
       : ["Mathematics", "Physics"],
   });
 
@@ -99,12 +99,18 @@ export default function OnboardingFlow({ existingProfile }: OnboardingFlowProps)
       displayName: form.displayName || form.fullName,
       targetUniversity: form.university,
       targetProgram: form.program,
-      entryTest: form.test,
-      educationLevel: form.education,
+      // form.test/education/schedule are always set from the fixed
+      // testOptions/educationOptions/scheduleOptions value lists above,
+      // whose values are the exact members of these DB enums — but the
+      // `form` state itself is typed as plain `string` (its initial
+      // shape merges with the loosely-typed `existingProfile` prop), so
+      // TS can't infer the narrowing on its own.
+      entryTest: form.test as OnboardingInput["entryTest"],
+      educationLevel: form.education as OnboardingInput["educationLevel"],
       matricMarks: form.matric ? Number(form.matric) : null,
       intermediateMarks: form.intermediate ? Number(form.intermediate) : null,
       expectedTestDate: form.testDate || null,
-      preferredStudySchedule: form.schedule,
+      preferredStudySchedule: form.schedule as OnboardingInput["preferredStudySchedule"],
       dailyStudyTargetMinutes: Number(form.dailyTarget) || 90,
       improvementSubjects: form.improvement,
     };

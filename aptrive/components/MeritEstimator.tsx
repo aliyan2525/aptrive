@@ -37,13 +37,16 @@ export default function MeritEstimator({ calculatorAggregate }: MeritEstimatorPr
 
   // Auto-fill from the calculator the first time (or whenever) it
   // produces a new number — but never fight the user if they've since
-  // typed their own value in here.
-  useEffect(() => {
-    if (calculatorAggregate == null) return;
-    if (calculatorAggregate === lastAppliedFromCalculator) return;
+  // typed their own value in here. Adjusted directly during render
+  // (React's documented pattern for state that needs to react to a
+  // changed prop — see https://react.dev/learn/you-might-not-need-an-effect#adjusting-some-state-when-a-prop-changes)
+  // rather than in a useEffect, so the sync lands in the same render
+  // pass instead of committing a stale value and then correcting it
+  // one effect-driven re-render later.
+  if (calculatorAggregate != null && calculatorAggregate !== lastAppliedFromCalculator) {
     setAggregateInput(calculatorAggregate.toFixed(2));
     setLastAppliedFromCalculator(calculatorAggregate);
-  }, [calculatorAggregate, lastAppliedFromCalculator]);
+  }
 
   const aggregate = useMemo(() => {
     const n = Number(aggregateInput);

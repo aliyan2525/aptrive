@@ -53,7 +53,7 @@ export default function QuestionForm({
   const [practiceSetId, setPracticeSetId] = useState(existing?.practice_set_id ?? "");
   const [prompt, setPrompt] = useState(existing?.prompt ?? "");
   const [explanation, setExplanation] = useState(existing?.explanation ?? "");
-  const [difficulty, setDifficulty] = useState<Difficulty>(existing?.difficulty ?? "Medium");
+  const [difficulty] = useState<Difficulty>(existing?.difficulty ?? "Medium");
   const [timeEstimate, setTimeEstimate] = useState(existing?.time_estimate_seconds ?? 60);
   const [status, setStatus] = useState<QuestionStatus>(existing?.status ?? "draft");
   const [source, setSource] = useState(existing?.source ?? "");

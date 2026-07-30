@@ -53,6 +53,7 @@ export async function createUniversity(name: string, slug: string, logoUrl?: str
   await requireStaff();
   const input = parseOrThrow(universitySchema, { name, slug, logoUrl, description });
   const supabase = await createClient();
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const { error } = await (supabase.from("universities") as any).insert({
     name: input.name,
     slug: input.slug,
@@ -67,6 +68,7 @@ export async function updateUniversity(id: string, name: string, slug: string, l
   await requireStaff();
   const input = parseOrThrow(universitySchema, { name, slug, logoUrl, description });
   const supabase = await createClient();
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const { error } = await (supabase.from("universities") as any).update({
     name: input.name,
     slug: input.slug,
@@ -90,6 +92,7 @@ export async function createTest(universityId: string | null, name: string, slug
   await requireStaff();
   const input = parseOrThrow(testSchema, { universityId, name, slug, description });
   const supabase = await createClient();
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const { error } = await (supabase.from("tests") as any).insert({
     university_id: input.universityId,
     name: input.name,
@@ -104,6 +107,7 @@ export async function updateTest(id: string, universityId: string | null, name: 
   await requireStaff();
   const input = parseOrThrow(testSchema, { universityId, name, slug, description });
   const supabase = await createClient();
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const { error } = await (supabase.from("tests") as any).update({
     university_id: input.universityId,
     name: input.name,
@@ -127,6 +131,7 @@ export async function createChapter(subjectId: string, name: string, slug: strin
   await requireStaff();
   const input = parseOrThrow(chapterSchema, { subjectId, name, slug, orderIndex });
   const supabase = await createClient();
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const { error } = await (supabase.from("chapters") as any).insert({
     subject_id: input.subjectId,
     name: input.name,
@@ -141,6 +146,7 @@ export async function updateChapter(id: string, subjectId: string, name: string,
   await requireStaff();
   const input = parseOrThrow(chapterSchema, { subjectId, name, slug, orderIndex });
   const supabase = await createClient();
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const { error } = await (supabase.from("chapters") as any).update({
     subject_id: input.subjectId,
     name: input.name,
@@ -169,6 +175,7 @@ export async function createTopic(chapterId: string, name: string, slug: string,
   await requireStaff();
   const input = parseOrThrow(topicSchema, { chapterId, name, slug, orderIndex });
   const supabase = await createClient();
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const { error } = await (supabase.from("topics") as any).insert({
     chapter_id: input.chapterId,
     name: input.name,
@@ -183,6 +190,7 @@ export async function updateTopic(id: string, chapterId: string, name: string, s
   await requireStaff();
   const input = parseOrThrow(topicSchema, { chapterId, name, slug, orderIndex });
   const supabase = await createClient();
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const { error } = await (supabase.from("topics") as any).update({
     chapter_id: input.chapterId,
     name: input.name,
@@ -211,6 +219,7 @@ export async function createSubtopic(topicId: string, name: string, slug: string
   await requireStaff();
   const input = parseOrThrow(subtopicSchema, { topicId, name, slug, orderIndex });
   const supabase = await createClient();
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const { error } = await (supabase.from("subtopics") as any).insert({
     topic_id: input.topicId,
     name: input.name,
@@ -225,6 +234,7 @@ export async function updateSubtopic(id: string, topicId: string, name: string, 
   await requireStaff();
   const input = parseOrThrow(subtopicSchema, { topicId, name, slug, orderIndex });
   const supabase = await createClient();
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const { error } = await (supabase.from("subtopics") as any).update({
     topic_id: input.topicId,
     name: input.name,

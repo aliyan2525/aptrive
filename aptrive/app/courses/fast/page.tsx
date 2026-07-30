@@ -45,7 +45,7 @@ const included = [
 const faqs = [
   {
     q: "Who is this track for?",
-    a: "Students preparing for FAST-NUCES's undergraduate entry test who want a structured, analytics-driven approach rather than generic practice books.",
+    a: "Students preparing for FAST-NUCES&apos;s undergraduate entry test who want a structured, analytics-driven approach rather than generic practice books.",
   },
   {
     q: "Does this cover the Computer Science-specific sections?",
@@ -73,7 +73,7 @@ export default function FastPage() {
               FAST-NUCES Entry Test Preparation
             </h1>
             <p className="mt-5 max-w-md text-sm leading-relaxed text-muted">
-              A complete preparation track for FAST-NUCES's entry test, built
+              A complete preparation track for FAST-NUCES&apos;s entry test, built
               on Aptrive&apos;s diagnostic-and-analytics engine — for
               students aiming to rank, not just qualify.
             </p>

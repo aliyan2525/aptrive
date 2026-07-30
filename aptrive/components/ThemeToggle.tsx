@@ -11,7 +11,7 @@ export default function ThemeToggle() {
     try {
       const saved = localStorage.getItem(STORAGE_KEY);
       if (saved === "light" || saved === "dark") return saved;
-    } catch (e) {
+    } catch {
       // ignore
     }
     // fall back to system preference
@@ -24,7 +24,7 @@ export default function ThemeToggle() {
   useEffect(() => {
     try {
       localStorage.setItem(STORAGE_KEY, theme);
-    } catch (e) {
+    } catch {
       // ignore
     }
     document.documentElement.setAttribute("data-theme", theme === "light" ? "light" : "dark");

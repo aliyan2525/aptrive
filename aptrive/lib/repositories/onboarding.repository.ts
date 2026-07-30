@@ -3,6 +3,9 @@ import type { Database } from "@/lib/database.types";
 
 type StudentProfile = Database["public"]["Tables"]["student_profiles"]["Row"];
 type StudentProfileInsert = Database["public"]["Tables"]["student_profiles"]["Insert"];
+type EntryTest = Database["public"]["Enums"]["entry_test"];
+type EducationLevel = Database["public"]["Enums"]["education_level"];
+type StudySchedule = Database["public"]["Enums"]["study_schedule"];
 
 // This project's hand-authored Database type has no generated
 // Relationships metadata, which makes .upsert()'s argument type
@@ -14,14 +17,12 @@ export type OnboardingInput = {
   displayName: string;
   targetUniversity: string;
   targetProgram: string;
-  entryTest: string;
-  /** One of: matric | intermediate | a_levels | undergraduate | other */
-  educationLevel: string;
+  entryTest: EntryTest;
+  educationLevel: EducationLevel;
   matricMarks: number | null;
   intermediateMarks: number | null;
   expectedTestDate: string | null; // ISO date (yyyy-mm-dd) or null
-  /** One of: early_morning | morning | afternoon | evening | night | flexible */
-  preferredStudySchedule: string;
+  preferredStudySchedule: StudySchedule;
   dailyStudyTargetMinutes: number;
   improvementSubjects: string[];
 };
@@ -74,15 +75,15 @@ export async function saveOnboarding(
     user_id: userId,
     display_name: input.displayName || null,
     target_university: input.targetUniversity || null,
-    target_program: input.targetProgram || null,
+    target_degree: input.targetProgram || null,
     entry_test: input.entryTest || null,
     education_level: input.educationLevel || null,
     matric_marks: input.matricMarks,
     intermediate_marks: input.intermediateMarks,
     expected_test_date: input.expectedTestDate,
-    preferred_study_schedule: input.preferredStudySchedule || null,
+    preferred_schedule: input.preferredStudySchedule || null,
     daily_study_target_minutes: input.dailyStudyTargetMinutes,
-    improvement_subjects: input.improvementSubjects,
+    weak_subjects: input.improvementSubjects,
   };
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
