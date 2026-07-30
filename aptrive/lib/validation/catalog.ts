@@ -110,7 +110,10 @@ export const subtopicSchema = z.object({
  * surfaces to the admin (same pattern deleteOrExplain() uses for
  * FK-violation errors below).
  */
-export function parseOrThrow<T>(schema: z.ZodType<T>, input: unknown): T {
+export function parseOrThrow<Schema extends z.ZodTypeAny>(
+  schema: Schema,
+  input: unknown
+): z.infer<Schema> {
   const result = schema.safeParse(input);
   if (!result.success) {
     throw new Error(result.error.issues[0]?.message ?? "Invalid input");
