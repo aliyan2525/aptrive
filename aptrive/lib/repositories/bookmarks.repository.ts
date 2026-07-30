@@ -114,10 +114,6 @@ export async function toggleQuestionBookmark(
     question_id: questionId,
   };
 
-  // `.insert()`'s expected parameter type resolves to `never[]` in this
-  // project's postgrest-js version (see note above) — a same-shape cast
-  // can't satisfy that, so this is the one spot that needs `as any`.
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any -- postgrest-js resolves insert/update payload types to `never` here; see comment above.
   const { error } = await supabase.from("bookmarks").insert(payload);
   if (error) throw error;
   return true;

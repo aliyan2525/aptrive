@@ -46,7 +46,6 @@ export async function submitContactMessage(
 
   const { error } = await supabase
     .from("contact_messages")
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any -- postgrest-js resolves insert payload types to `never` here; see lib/repositories/practice.repository.ts.
     .insert(payload);
 
   if (error) {

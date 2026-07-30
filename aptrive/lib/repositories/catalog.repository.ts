@@ -1,5 +1,6 @@
 import "server-only";
-import { createClient } from "@/lib/supabase/server";
+import { unstable_cache } from "next/cache";
+import { createClient, createStaticClient } from "@/lib/supabase/server";
 import type { Database } from "@/lib/database.types";
 
 type SubjectRow = Database["public"]["Tables"]["subjects"]["Row"];
@@ -48,20 +49,8 @@ export type ChapterPracticeSummary = {
   topics: TopicPracticeSummary[];
 };
 
-/**
- * Catalog browsing: subjects with live counts pulled from the real
- * question bank (practice_sets / questions), replacing the static
- * lib/library-data.ts numbers for anything under /practice.
- *
- * Query results are cast to the hand-declared Row types immediately
- * after the Supabase call, matching the convention already used in
- * lib/dashboard-data.ts — the installed postgrest-js version doesn't
- * infer Row types from `.select()` strings against this hand-authored
- * Database type, so relying on inference resolves everything to
- * `never`.
- */
-export async function listSubjectsWithStats(): Promise<SubjectWithStats[]> {
-  const supabase = await createClient();
+export const listSubjectsWithStats = unstable_cache(async (): Promise<SubjectWithStats[]> => {
+  const supabase = createStaticClient();
 
   const { data: subjectsData, error } = await supabase
     .from("subjects")
@@ -105,10 +94,10 @@ export async function listSubjectsWithStats(): Promise<SubjectWithStats[]> {
       questionCount: stats.questions,
     };
   });
-}
+}, ["catalog-subjects"], { revalidate: 3600, tags: ["catalog-subjects"] });
 
-export async function getSubjectBySlug(slug: string) {
-  const supabase = await createClient();
+export const getSubjectBySlug = unstable_cache(async (slug: string) => {
+  const supabase = createStaticClient();
   const { data, error } = await supabase
     .from("subjects")
     .select("id, slug, name, description, is_coming_soon")
@@ -120,12 +109,12 @@ export async function getSubjectBySlug(slug: string) {
     SubjectRow,
     "id" | "slug" | "name" | "description" | "is_coming_soon"
   > | null;
-}
+}, ["catalog-subject"], { revalidate: 3600, tags: ["catalog-subject"] });
 
-export async function listPracticeSetsForSubject(
+export const listPracticeSetsForSubject = unstable_cache(async (
   subjectId: string
-): Promise<PracticeSetSummary[]> {
-  const supabase = await createClient();
+): Promise<PracticeSetSummary[]> => {
+  const supabase = createStaticClient();
   const { data, error } = await supabase
     .from("practice_sets")
     .select(
@@ -166,7 +155,7 @@ export async function listPracticeSetsForSubject(
     estimatedMinutes: set.estimated_minutes,
     isPremium: set.is_premium,
   }));
-}
+}, ["catalog-practice-sets"], { revalidate: 3600, tags: ["catalog-practice-sets"] });
 
 export async function listSubjectChaptersWithTopics(
   subjectId: string,

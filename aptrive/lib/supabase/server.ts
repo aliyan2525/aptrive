@@ -43,3 +43,21 @@ export async function createClient(options?: { persistSession?: boolean }) {
     }
   );
 }
+
+import { createClient as createSupabaseClient } from "@supabase/supabase-js";
+
+/**
+ * Supabase client for static generation and cached queries.
+ * Does NOT read cookies, so it doesn't opt routes into dynamic rendering.
+ */
+export function createStaticClient() {
+  return createSupabaseClient<Database>(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+    {
+      auth: {
+        persistSession: false,
+      }
+    }
+  );
+}

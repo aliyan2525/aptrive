@@ -192,7 +192,10 @@ export default async function AdminCatalogPage() {
       </section>
 
       <section className="rounded-md border border-line bg-panel p-5">
-        <h2 className="font-display text-lg text-fg">Chapters</h2>
+        <div className="flex items-baseline gap-3">
+          <h2 className="font-display text-lg text-fg">Chapters</h2>
+          {chapters.length >= 100 && <span className="text-xs text-muted">(Showing latest 100)</span>}
+        </div>
         <form action={createChapterAction} className="mt-4 grid gap-3 md:grid-cols-4">
           <select name="subjectId" className="rounded-sm border border-line-strong bg-graphite px-3 py-2 text-sm text-fg" required>
             <option value="">Select subject</option>
@@ -222,7 +225,10 @@ export default async function AdminCatalogPage() {
       </section>
 
       <section className="rounded-md border border-line bg-panel p-5">
-        <h2 className="font-display text-lg text-fg">Topics</h2>
+        <div className="flex items-baseline gap-3">
+          <h2 className="font-display text-lg text-fg">Topics</h2>
+          {topics.length >= 100 && <span className="text-xs text-muted">(Showing latest 100)</span>}
+        </div>
         <form action={createTopicAction} className="mt-4 grid gap-3 md:grid-cols-4">
           <select name="chapterId" className="rounded-sm border border-line-strong bg-graphite px-3 py-2 text-sm text-fg" required>
             <option value="">Select chapter</option>
@@ -252,7 +258,10 @@ export default async function AdminCatalogPage() {
       </section>
 
       <section className="rounded-md border border-line bg-panel p-5">
-        <h2 className="font-display text-lg text-fg">Subtopics</h2>
+        <div className="flex items-baseline gap-3">
+          <h2 className="font-display text-lg text-fg">Subtopics</h2>
+          {subtopics.length >= 100 && <span className="text-xs text-muted">(Showing latest 100)</span>}
+        </div>
         <form action={createSubtopicAction} className="mt-4 grid gap-3 md:grid-cols-4">
           <select name="topicId" className="rounded-sm border border-line-strong bg-graphite px-3 py-2 text-sm text-fg" required>
             <option value="">Select topic</option>

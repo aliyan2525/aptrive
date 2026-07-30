@@ -101,7 +101,8 @@ export async function listChaptersForAdmin(): Promise<ChapterRow[]> {
   const { data, error } = await supabase
     .from("chapters")
     .select("id, name, slug, subject_id")
-    .order("name", { ascending: true });
+    .order("name", { ascending: true })
+    .limit(100);
   if (error) throw error;
   return (data ?? []) as unknown as ChapterRow[];
 }
@@ -111,7 +112,8 @@ export async function listTopicsForAdmin(): Promise<TopicRow[]> {
   const { data, error } = await supabase
     .from("topics")
     .select("id, name, slug, chapter_id")
-    .order("name", { ascending: true });
+    .order("name", { ascending: true })
+    .limit(100);
   if (error) throw error;
   return (data ?? []) as unknown as TopicRow[];
 }
@@ -121,7 +123,8 @@ export async function listSubtopicsForAdmin(): Promise<SubtopicRow[]> {
   const { data, error } = await supabase
     .from("subtopics")
     .select("id, name, slug, topic_id")
-    .order("name", { ascending: true });
+    .order("name", { ascending: true })
+    .limit(100);
   if (error) throw error;
   return (data ?? []) as unknown as SubtopicRow[];
 }
