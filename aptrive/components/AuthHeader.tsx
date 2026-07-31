@@ -2,6 +2,7 @@ import { createClient } from "@/lib/supabase/server";
 import Header from "@/components/Header";
 import type { HeaderUser } from "@/components/UserMenu";
 import { listNotifications, countUnreadNotifications } from "@/lib/repositories/notifications.repository";
+import { STAFF_ROLES } from "@/lib/admin/auth";
 
 export default async function AuthHeader() {
   const supabase = await createClient();
@@ -30,7 +31,7 @@ export default async function AuthHeader() {
       email: user.email ?? "",
       avatarUrl: (user.user_metadata?.avatar_url as string | undefined) ?? null,
       isStaff: profile?.role
-        ? ["instructor", "content_manager", "administrator"].includes(profile.role)
+        ? STAFF_ROLES.includes(profile.role as any)
         : false,
     };
 

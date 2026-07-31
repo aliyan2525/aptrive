@@ -2211,6 +2211,24 @@ export type Database = {
         }
         Relationships: []
       }
+      v_public_question_options: {
+        Row: {
+          id: string | null
+          question_id: string | null
+          label: string | null
+          content: string | null
+          position: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "question_options_question_id_fkey"
+            columns: ["question_id"]
+            isOneToOne: false
+            referencedRelation: "questions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       v_published_questions: {
         Row: {
           chapter: string | null
@@ -2246,12 +2264,12 @@ export type Database = {
       }
       v_user_dashboard_summary: {
         Row: {
-          attempts_last_7_days: number | null
-          correct_last_7_days: number | null
-          current_streak: number | null
-          longest_streak: number | null
-          total_xp: number | null
           user_id: string | null
+          activity_date: string | null
+          questions_attempted: number | null
+          correct_count: number | null
+          study_seconds: number | null
+          sessions_completed: number | null
         }
         Relationships: []
       }

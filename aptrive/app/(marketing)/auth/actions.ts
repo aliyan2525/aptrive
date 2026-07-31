@@ -2,6 +2,7 @@
 
 import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
+import { STAFF_ROLES } from "@/lib/admin/auth";
 import { createClient } from "@/lib/supabase/server";
 
 export type AuthState = { error: string | null };
@@ -36,11 +37,11 @@ export async function signIn(
       .select("role")
       .maybeSingle();
     const profile = data as { role: string } | null;
-    const allowed = profile?.role
-      ? ["instructor", "content_manager", "administrator"].includes(profile.role)
+    const isStaff = profile?.role
+      ? STAFF_ROLES.includes(profile.role as any)
       : false;
 
-    if (!allowed) {
+    if (!isStaff) {
       await supabase.auth.signOut();
       return { error: "Admin access is restricted to staff accounts only." };
     }

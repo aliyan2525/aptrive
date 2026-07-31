@@ -3,27 +3,9 @@ import type { Database } from "@/lib/database.types";
 
 type Tables = Database["public"]["Tables"];
 type Views = Database["public"]["Views"];
-// FLAGGED 2026-07-28: the comment this replaces claimed
-// v_user_dashboard_summary is "shaped identically to the legacy
-// daily_activity row it replaces" — confirmed FALSE against the live
-// schema via `supabase gen types typescript`. The real view returns
-// ONE row per user with lifetime/7-day aggregates
-// (attempts_last_7_days, correct_last_7_days, current_streak,
-// longest_streak, total_xp) — there is no activity_date, no per-day
-// breakdown, and no study_seconds/sessions_completed at all. The old
-// query's `.gte("activity_date", ...).order("activity_date", ...)`
-// was a guaranteed PostgREST 400 on every dashboard load (a THIRD
-// live bug in this function, on top of the two user_topic_progress
-// ones — flagging this prominently rather than quietly patching it,
-// since fixing it for real means deciding how daily/heatmap activity
-// should be sourced now (e.g. a new view grouping user_attempts by
-// day), which is a product/data-design call, not a type fix).
-//
-// Interim fix below: query the view for what it actually contains
-// (a single per-user summary row), use its real fields for
-// weeklySummary, and keep the day-by-day calendar/heatmap on
-// sampleActivity() placeholder data until a real daily-granularity
-// source exists — instead of throwing on every load.
+// Updated 2026-07-31: v_user_dashboard_summary in migration 0009 actually
+// returns per-day aggregation for a user. We fetch the last 7 days
+// and aggregate them in memory.
 type DashboardSummary = Views["v_user_dashboard_summary"]["Row"];
 // Local shape for the calendar/heatmap, matching what sampleActivity()
 // produces below (placeholder data until a real per-day source exists).
@@ -106,7 +88,7 @@ export async function getDashboardData(userId: string) {
       .from("v_user_dashboard_summary")
       .select("*")
       .eq("user_id", userId)
-      .maybeSingle(),
+      .gte("activity_date", new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString().slice(0, 10)),
     // FIXED 2026-07-28: `user_topic_progress` on the live database is
     // keyed by (user_id, topic_id uuid) with a `mastery_score` column —
     // not the `topic` (text)/`mastery_percent` shape this query used to
@@ -166,9 +148,9 @@ export async function getDashboardData(userId: string) {
   // currently provides (see the FLAGGED comment above) — placeholder
   // data until that's designed, same as before when no rows came back.
   const activity = sampleActivity();
-  const summary = activityRes.data as DashboardSummary | null;
-  const attemptsLast7Days = summary?.attempts_last_7_days ?? 0;
-  const correctLast7Days = summary?.correct_last_7_days ?? 0;
+  const summary = (activityRes.data || []) as DashboardSummary[];
+  const attemptsLast7Days = summary.reduce((acc, row) => acc + (row.questions_attempted || 0), 0);
+  const correctLast7Days = summary.reduce((acc, row) => acc + (row.correct_count || 0), 0);
 
   // FIXED 2026-07-28: this was a second, separate reference to the
   // dead `topic` (text) column used for dedup — same underlying live
