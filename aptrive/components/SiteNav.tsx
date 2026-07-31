@@ -4,6 +4,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
+import { motion, AnimatePresence } from "framer-motion";
 import { BookOpen, ChevronDown, LayoutDashboard, LibraryBig, Trophy, UserRound } from "lucide-react";
 import UserMenu, { type HeaderUser } from "@/components/UserMenu";
 import ThemeToggle from "@/components/ThemeToggle";
@@ -44,12 +45,6 @@ const aboutMenu = [
   { href: "/terms", label: "Terms" },
 ];
 
-function navLinkClass(active: boolean) {
-  return active
-    ? "relative text-sm font-semibold text-fg after:absolute after:-bottom-2 after:left-0 after:h-0.5 after:w-full after:rounded-full after:bg-teal after:content-['']"
-    : "relative text-sm text-muted transition-colors hover:text-fg after:absolute after:-bottom-2 after:left-0 after:h-0.5 after:w-0 after:rounded-full after:bg-teal after:transition-all after:duration-300 after:[transition-timing-function:var(--ease-smooth)] after:content-[''] hover:after:w-full";
-}
-
 export default function SiteNav({
   user,
   notifications = [],
@@ -84,7 +79,7 @@ export default function SiteNav({
   useEffect(() => {
     function update() {
       const y = window.scrollY;
-      setScrolled(y > 8);
+      setScrolled(y > 20);
 
       if (mobileOpen) {
         lastY.current = y;
@@ -108,206 +103,167 @@ export default function SiteNav({
   return (
     <>
       <header
-        className={`sticky top-0 z-50 border-b border-line/70 bg-graphite/70 transition-transform duration-300 backdrop-blur-xl [transition-timing-function:var(--ease-smooth)] ${
+        className={`fixed left-0 right-0 top-0 z-50 transition-all duration-500 ease-out ${
           hidden ? "-translate-y-full" : "translate-y-0"
-        }`}
+        } ${scrolled ? "pt-4" : "pt-0"}`}
       >
-        <div className={`container-aptrive flex h-16 items-center justify-between ${scrolled ? "h-[62px]" : ""}`}>
-          <Link href={user ? "/dashboard" : "/"} className="flex items-center gap-2.5" aria-label="Aptrive">
-            <Image src="/logo-mark.png" alt="" width={34} height={38} priority className="h-9 w-auto" />
-            <span className="font-display text-lg font-semibold tracking-tight text-fg">Aptrive</span>
-          </Link>
+        <div className={`mx-auto flex transition-all duration-500 ${scrolled ? "max-w-[1200px] rounded-2xl border border-white/10 bg-black/40 px-4 py-2.5 shadow-2xl backdrop-blur-2xl" : "container-aptrive h-20 items-center bg-transparent border-transparent"}`}>
+          <div className="flex w-full items-center justify-between">
+            <Link href={user ? "/dashboard" : "/"} className="flex items-center gap-2.5 group" aria-label="Aptrive">
+              <div className="relative">
+                <Image src="/logo-mark.png" alt="" width={34} height={38} priority className="h-9 w-auto transition-transform duration-300 group-hover:scale-105" />
+                <div className="absolute inset-0 bg-teal/20 blur-xl opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
+              </div>
+              <span className="font-display text-lg font-semibold tracking-tight text-white transition-colors duration-300">Aptrive</span>
+            </Link>
 
-          <nav className="hidden items-center gap-7 lg:gap-8 md:flex" aria-label="Main">
-            {visibleLinks.map((link) => (
-              <Link
-                key={link.href}
-                href={link.href}
-                className={navLinkClass(link.match(pathname))}
-                aria-current={link.match(pathname) ? "page" : undefined}
+            <nav className="hidden items-center md:flex relative" aria-label="Main">
+              {visibleLinks.map((link) => {
+                const isActive = link.match(pathname);
+                return (
+                  <Link
+                    key={link.href}
+                    href={link.href}
+                    className="relative px-4 py-2 text-sm font-medium transition-colors text-white/70 hover:text-white"
+                    aria-current={isActive ? "page" : undefined}
+                  >
+                    {isActive && (
+                      <motion.div
+                        layoutId="nav-indicator"
+                        className="absolute inset-0 rounded-full bg-white/10 shadow-[0_0_20px_rgba(255,255,255,0.1)]"
+                        transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
+                      />
+                    )}
+                    <span className="relative z-10">{link.label}</span>
+                  </Link>
+                );
+              })}
+
+              <div className="group relative px-2">
+                <button type="button" className={`inline-flex items-center gap-1.5 px-3 py-2 text-sm font-medium transition-colors ${toolsActive ? "text-white" : "text-white/70 hover:text-white"}`}>
+                  Tools
+                  <ChevronDown className="h-3.5 w-3.5 transition-transform duration-300 group-hover:rotate-180" />
+                </button>
+                <div className="pointer-events-none invisible absolute left-1/2 top-[calc(100%+12px)] w-56 -translate-x-1/2 rounded-2xl border border-white/10 bg-black/80 p-2 opacity-0 shadow-2xl backdrop-blur-3xl transition-all duration-300 group-hover:pointer-events-auto group-hover:visible group-hover:top-full group-hover:opacity-100 group-focus-within:pointer-events-auto group-focus-within:visible group-focus-within:top-full group-focus-within:opacity-100">
+                  {toolsMenu.map((item) => (
+                    <Link key={item.href} href={item.href} className="block rounded-xl px-4 py-2.5 text-sm font-medium text-white/70 transition-all hover:bg-white/10 hover:text-white hover:pl-5">
+                      {item.label}
+                    </Link>
+                  ))}
+                </div>
+              </div>
+
+              <div className="group relative px-2">
+                <button type="button" className={`inline-flex items-center gap-1.5 px-3 py-2 text-sm font-medium transition-colors ${aboutActive ? "text-white" : "text-white/70 hover:text-white"}`}>
+                  About
+                  <ChevronDown className="h-3.5 w-3.5 transition-transform duration-300 group-hover:rotate-180" />
+                </button>
+                <div className="pointer-events-none invisible absolute left-1/2 top-[calc(100%+12px)] w-56 -translate-x-1/2 rounded-2xl border border-white/10 bg-black/80 p-2 opacity-0 shadow-2xl backdrop-blur-3xl transition-all duration-300 group-hover:pointer-events-auto group-hover:visible group-hover:top-full group-hover:opacity-100 group-focus-within:pointer-events-auto group-focus-within:visible group-focus-within:top-full group-focus-within:opacity-100">
+                  {aboutMenu.map((item) => (
+                    <Link key={item.href} href={item.href} className="block rounded-xl px-4 py-2.5 text-sm font-medium text-white/70 transition-all hover:bg-white/10 hover:text-white hover:pl-5">
+                      {item.label}
+                    </Link>
+                  ))}
+                </div>
+              </div>
+            </nav>
+
+            <div className="flex items-center gap-3">
+              <ThemeToggle />
+              {user ? (
+                <>
+                  <NotificationBell
+                    key={`${unreadCount}:${notifications.map((n) => n.id).join(",")}`}
+                    initialNotifications={notifications}
+                    initialUnreadCount={unreadCount}
+                  />
+                  <UserMenu user={user} />
+                </>
+              ) : (
+                <>
+                  <Button href="/login" variant="ghost" size="sm" ripple={false} className="hidden sm:inline-flex hover:bg-white/5">
+                    Login
+                  </Button>
+                  <Button href="/signup" variant="primary" size="sm" className="hidden sm:inline-flex bg-white text-black hover:bg-white/90 hover:scale-105 transition-transform">
+                    Create account
+                  </Button>
+                </>
+              )}
+
+              <button
+                type="button"
+                className="pressable flex h-10 w-10 items-center justify-center rounded-full border border-white/10 text-white md:hidden"
+                aria-expanded={mobileOpen}
+                aria-controls="mobile-nav"
+                aria-label={mobileOpen ? "Close menu" : "Open menu"}
+                onClick={() =>
+                  setMobileOpen((open) => {
+                    const next = !open;
+                    if (next) setHidden(false);
+                    return next;
+                  })
+                }
               >
-                {link.label}
-              </Link>
-            ))}
-
-            <div className="group relative">
-              <button type="button" className={`inline-flex items-center gap-1.5 ${navLinkClass(toolsActive)}`}>
-                Tools
-                <ChevronDown className="h-3.5 w-3.5" />
+                {mobileOpen ? "✕" : "☰"}
               </button>
-              <div className="pointer-events-none invisible absolute right-0 top-[calc(100%+12px)] w-52 rounded-xl border border-line bg-panel/95 p-2 opacity-0 shadow-2xl transition-all duration-200 group-hover:pointer-events-auto group-hover:visible group-hover:opacity-100 group-focus-within:pointer-events-auto group-focus-within:visible group-focus-within:opacity-100">
-                {toolsMenu.map((item) => (
-                  <Link key={item.href} href={item.href} className="block rounded-lg px-3 py-2 text-sm text-muted transition hover:bg-panel-2 hover:text-fg">
-                    {item.label}
-                  </Link>
-                ))}
-              </div>
             </div>
-
-            <div className="group relative">
-              <button type="button" className={`inline-flex items-center gap-1.5 ${navLinkClass(aboutActive)}`}>
-                About
-                <ChevronDown className="h-3.5 w-3.5" />
-              </button>
-              <div className="pointer-events-none invisible absolute right-0 top-[calc(100%+12px)] w-52 rounded-xl border border-line bg-panel/95 p-2 opacity-0 shadow-2xl transition-all duration-200 group-hover:pointer-events-auto group-hover:visible group-hover:opacity-100 group-focus-within:pointer-events-auto group-focus-within:visible group-focus-within:opacity-100">
-                {aboutMenu.map((item) => (
-                  <Link key={item.href} href={item.href} className="block rounded-lg px-3 py-2 text-sm text-muted transition hover:bg-panel-2 hover:text-fg">
-                    {item.label}
-                  </Link>
-                ))}
-              </div>
-            </div>
-          </nav>
-
-          <div className="flex items-center gap-3">
-            <ThemeToggle />
-            {user ? (
-              <>
-                <NotificationBell
-                  key={`${unreadCount}:${notifications.map((n) => n.id).join(",")}`}
-                  initialNotifications={notifications}
-                  initialUnreadCount={unreadCount}
-                />
-                <UserMenu user={user} />
-              </>
-            ) : (
-              <>
-                <Button href="/login" variant="ghost" size="sm" ripple={false} className="hidden sm:inline-flex">
-                  Login
-                </Button>
-                <Button href="/signup" variant="primary" size="sm" className="hidden sm:inline-flex">
-                  Create account
-                </Button>
-              </>
-            )}
-
-            <button
-              type="button"
-              className="pressable flex h-10 w-10 items-center justify-center rounded-full border border-line text-fg md:hidden"
-              aria-expanded={mobileOpen}
-              aria-controls="mobile-nav"
-              aria-label={mobileOpen ? "Close menu" : "Open menu"}
-              onClick={() =>
-                setMobileOpen((open) => {
-                  const next = !open;
-                  if (next) setHidden(false);
-                  return next;
-                })
-              }
-            >
-              {mobileOpen ? "✕" : "☰"}
-            </button>
           </div>
         </div>
       </header>
 
-      {mobileOpen && (
-        <div id="mobile-nav" className="fixed inset-0 top-16 z-40 bg-graphite/95 backdrop-blur md:hidden">
-          <nav className="container-aptrive flex animate-[enter-up_0.28s_ease_both] flex-col gap-1 py-6" aria-label="Mobile">
-            {visibleLinks.map((link) => (
-              <Link
-                key={link.href}
-                href={link.href}
-                onClick={() => setMobileOpen(false)}
-                className={`rounded-xl px-3 py-3 text-base transition-colors duration-200 ${
-                  link.match(pathname) ? "bg-teal-dim font-medium text-fg" : "text-muted hover:bg-panel hover:text-fg"
-                }`}
-                aria-current={link.match(pathname) ? "page" : undefined}
-              >
-                {link.label}
-              </Link>
-            ))}
-
-            <div className="mt-3 rounded-xl border border-line bg-panel p-2">
-              <p className="px-2 py-1 text-xs uppercase tracking-[0.14em] text-muted-2">Tools</p>
-              {toolsMenu.map((item) => (
+      {/* Mobile nav implementation remains mostly same but with motion presence if desired */}
+      <AnimatePresence>
+        {mobileOpen && (
+          <motion.div 
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -20 }}
+            id="mobile-nav" 
+            className="fixed inset-0 top-16 z-40 bg-black/95 backdrop-blur-2xl md:hidden"
+          >
+            <nav className="container-aptrive flex flex-col gap-1 py-6" aria-label="Mobile">
+              {visibleLinks.map((link) => (
                 <Link
-                  key={item.href}
-                  href={item.href}
+                  key={link.href}
+                  href={link.href}
                   onClick={() => setMobileOpen(false)}
-                  className={`block rounded-lg px-3 py-2 text-sm ${
-                    pathname.startsWith(item.href) ? "bg-teal-dim text-fg" : "text-muted"
+                  className={`rounded-xl px-3 py-3 text-base font-medium transition-colors duration-200 ${
+                    link.match(pathname) ? "bg-white/10 text-white" : "text-white/60 hover:bg-white/5 hover:text-white"
                   }`}
+                  aria-current={link.match(pathname) ? "page" : undefined}
                 >
-                  {item.label}
+                  {link.label}
                 </Link>
               ))}
-            </div>
 
-            <div className="mt-1 rounded-xl border border-line bg-panel p-2">
-              <p className="px-2 py-1 text-xs uppercase tracking-[0.14em] text-muted-2">About</p>
-              {aboutMenu.map((item) => (
-                <Link
-                  key={item.href}
-                  href={item.href}
-                  onClick={() => setMobileOpen(false)}
-                  className={`block rounded-lg px-3 py-2 text-sm ${
-                    pathname.startsWith(item.href) ? "bg-teal-dim text-fg" : "text-muted"
-                  }`}
-                >
-                  {item.label}
-                </Link>
-              ))}
-            </div>
-
-            {!user ? (
-              <div className="mt-6 space-y-3 border-t border-line pt-6">
-                <Button
-                  href="/login"
-                  variant="outline"
-                  size="md"
-                  fullWidth
-                  onClick={() => setMobileOpen(false)}
-                >
-                  Login
-                </Button>
-                <Button
-                  href="/signup"
-                  variant="primary"
-                  size="md"
-                  fullWidth
-                  onClick={() => setMobileOpen(false)}
-                >
-                  Create account
-                </Button>
+              <div className="mt-6 space-y-3 border-t border-white/10 pt-6">
+                {!user ? (
+                  <>
+                    <Button href="/login" variant="outline" size="md" fullWidth onClick={() => setMobileOpen(false)}>
+                      Login
+                    </Button>
+                    <Button href="/signup" variant="primary" size="md" fullWidth onClick={() => setMobileOpen(false)} className="bg-white text-black">
+                      Create account
+                    </Button>
+                  </>
+                ) : (
+                  <div className="grid grid-cols-3 gap-3">
+                    <Link href="/dashboard" onClick={() => setMobileOpen(false)} className="rounded-xl border border-white/10 px-3 py-2 text-center text-xs text-white/60">
+                      Dashboard
+                    </Link>
+                    <Link href="/profile" onClick={() => setMobileOpen(false)} className="rounded-xl border border-white/10 px-3 py-2 text-center text-xs text-white/60">
+                      Profile
+                    </Link>
+                    <Link href="/leaderboard" onClick={() => setMobileOpen(false)} className="rounded-xl bg-white px-3 py-2 text-center text-xs font-semibold text-black">
+                      Rankings
+                    </Link>
+                  </div>
+                )}
               </div>
-            ) : (
-              <div className="mt-6 grid grid-cols-3 gap-3 border-t border-line pt-6">
-                <Link href="/dashboard" onClick={() => setMobileOpen(false)} className="rounded-xl border border-line px-3 py-2 text-center text-xs text-muted">
-                  Dashboard
-                </Link>
-                <Link href="/profile" onClick={() => setMobileOpen(false)} className="rounded-xl border border-line px-3 py-2 text-center text-xs text-muted">
-                  Profile
-                </Link>
-                <Link href="/leaderboard" onClick={() => setMobileOpen(false)} className="rounded-xl bg-teal px-3 py-2 text-center text-xs font-semibold text-graphite">
-                  Rankings
-                </Link>
-              </div>
-            )}
-          </nav>
-        </div>
-      )}
-
-      {user && (
-        <nav className="fixed inset-x-3 bottom-3 z-30 grid grid-cols-5 rounded-2xl border border-line bg-panel/95 p-1.5 shadow-2xl backdrop-blur md:hidden" aria-label="Mobile primary">
-          {[
-            { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
-            { href: "/practice", label: "Practice", icon: BookOpen },
-            { href: "/library", label: "Library", icon: LibraryBig },
-            { href: "/leaderboard", label: "Ranks", icon: Trophy },
-            { href: "/profile", label: "Profile", icon: UserRound },
-          ].map((item) => {
-            const active = pathname.startsWith(item.href);
-            const Icon = item.icon;
-            return (
-              <Link key={item.href} href={item.href} className={`rounded-xl px-2 py-1.5 text-center text-[10px] transition-colors ${active ? "bg-teal text-graphite" : "text-muted"}`} aria-current={active ? "page" : undefined}>
-                <Icon className="mx-auto h-3.5 w-3.5" />
-                <span className="mt-1 block">{item.label}</span>
-              </Link>
-            );
-          })}
-        </nav>
-      )}
+            </nav>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </>
   );
 }

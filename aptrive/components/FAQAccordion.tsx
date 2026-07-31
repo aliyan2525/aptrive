@@ -1,3 +1,9 @@
+"use client";
+
+import { useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import { ChevronDown } from "lucide-react";
+
 const faqs = [
   {
     q: "Is Aptrive only for NUST NET?",
@@ -22,23 +28,57 @@ const faqs = [
 ];
 
 export default function FAQAccordion() {
+  const [openIndex, setOpenIndex] = useState<number | null>(null);
+
+  const toggle = (index: number) => {
+    setOpenIndex(openIndex === index ? null : index);
+  };
+
   return (
-    <div className="divide-y divide-line border-y border-line">
-      {faqs.map((item) => (
-        <details key={item.q} className="faq-item group py-5">
-          <summary className="flex items-center justify-between gap-6">
-            <span className="font-display text-base font-medium text-fg md:text-lg">
-              {item.q}
-            </span>
-            <span className="faq-chevron font-mono-data shrink-0 text-xl text-teal">
-              +
-            </span>
-          </summary>
-          <p className="mt-3 max-w-2xl text-sm leading-relaxed text-muted">
-            {item.a}
-          </p>
-        </details>
-      ))}
+    <div className="mx-auto max-w-3xl space-y-4">
+      {faqs.map((item, index) => {
+        const isOpen = openIndex === index;
+        return (
+          <div 
+            key={item.q}
+            className={`group rounded-2xl border transition-colors duration-300 ${isOpen ? "bg-white/10 border-white/20" : "bg-white/[0.02] border-white/5 hover:border-white/10 hover:bg-white/[0.04]"}`}
+          >
+            <button
+              onClick={() => toggle(index)}
+              className="flex w-full items-center justify-between gap-6 p-6 text-left focus:outline-none"
+              aria-expanded={isOpen}
+            >
+              <span className={`font-display text-lg font-medium transition-colors duration-300 ${isOpen ? "text-white" : "text-white/80 group-hover:text-white"}`}>
+                {item.q}
+              </span>
+              <motion.div
+                animate={{ rotate: isOpen ? 180 : 0 }}
+                transition={{ duration: 0.3, type: "spring", bounce: 0.4 }}
+                className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-full transition-colors duration-300 ${isOpen ? "bg-teal text-black" : "bg-white/5 text-white/50 group-hover:bg-white/10 group-hover:text-white"}`}
+              >
+                <ChevronDown className="h-4 w-4" />
+              </motion.div>
+            </button>
+            <AnimatePresence initial={false}>
+              {isOpen && (
+                <motion.div
+                  initial={{ height: 0, opacity: 0 }}
+                  animate={{ height: "auto", opacity: 1 }}
+                  exit={{ height: 0, opacity: 0 }}
+                  transition={{ duration: 0.4, type: "spring", bounce: 0.2 }}
+                  className="overflow-hidden"
+                >
+                  <div className="px-6 pb-6 pt-2">
+                    <p className="text-white/60 leading-relaxed">
+                      {item.a}
+                    </p>
+                  </div>
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </div>
+        );
+      })}
     </div>
   );
 }

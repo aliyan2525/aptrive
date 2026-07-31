@@ -12,6 +12,10 @@ import HeadlineReveal from "@/components/transitions/HeadlineReveal";
 import Button from "@/components/ui/Button";
 import Card from "@/components/ui/Card";
 import { createClient } from "@/lib/supabase/server";
+import FloatingStats from "@/components/hero/FloatingStats";
+import PremiumFeatureCard from "@/components/features/PremiumFeatureCard";
+import AnimatedJourney from "@/components/journey/AnimatedJourney";
+import { BrainCircuit, Timer, LineChart, MapIcon } from "lucide-react";
 
 export const metadata: Metadata = {
   title: "Aptrive — Premium AI Prep for University Entrance Exams",
@@ -19,22 +23,32 @@ export const metadata: Metadata = {
     "Aptrive helps students prepare for NUST, FAST, PIEAS, GIKI, COMSATS, UET, AIR, IST, and Bahria through adaptive AI practice and real progress analytics.",
 };
 
+type PillarColor = "blue" | "teal" | "purple" | "orange";
+
 const pillars = [
   {
     title: "Adaptive AI Learning",
     body: "Your next question is selected from your weakest concepts, not a fixed chapter order.",
+    icon: <BrainCircuit strokeWidth={1.5} className="h-7 w-7" />,
+    color: "blue" as PillarColor,
   },
   {
     title: "Mock Testing Engine",
     body: "Timed sessions with exam-like pressure, clean review workflows, and focused post-test feedback.",
+    icon: <Timer strokeWidth={1.5} className="h-7 w-7" />,
+    color: "orange" as PillarColor,
   },
   {
     title: "Personalized Analytics",
     body: "Topic mastery, speed trends, and consistency signals designed for decision-making.",
+    icon: <LineChart strokeWidth={1.5} className="h-7 w-7" />,
+    color: "purple" as PillarColor,
   },
   {
     title: "University Roadmaps",
     body: "Preparation tracks aligned with Pakistan's leading entrance exams and merit expectations.",
+    icon: <MapIcon strokeWidth={1.5} className="h-7 w-7" />,
+    color: "teal" as PillarColor,
   },
 ];
 
@@ -95,78 +109,93 @@ export default async function Home() {
     <>
       <HeroSceneClient />
 
-      <section className="relative overflow-hidden border-b border-line">
-        <div className="container-aptrive relative py-24 md:py-32">
-          <div className="mx-auto max-w-2xl">
-            {/* Glass panel: translucent + blurred so the cosmic background
-                behind it still reads through, per the "glassmorphism where
-                appropriate" brief — used once, on the hero, not scattered
-                everywhere. */}
-            <div className="rounded-3xl border border-line/60 bg-panel/40 p-8 backdrop-blur-xl md:p-10">
-              <span className="eyebrow">AI-Powered Entrance Preparation</span>
-              <HeadlineReveal
-                lines={["Learn like a top scorer.", "Prepare with precision."]}
-                className="text-display-1 mt-5 text-fg"
-              />
-              <p className="text-body-lg mt-6 max-w-xl">
-                Aptrive combines adaptive practice, premium analytics, and exam-focused pathways
-                so every study hour compounds toward your target university.
-              </p>
-              <div className="mt-9 flex flex-wrap gap-4">
-                <Button href="/signup" variant="primary" size="lg" magnetic>
-                  Create account
-                </Button>
-                <Button href="/practice" variant="glass" size="lg" magnetic>
-                  Explore practice
-                </Button>
-              </div>
+      <section className="relative min-h-[90vh] flex items-center justify-center overflow-hidden border-b border-line/40 pt-20">
+        <FloatingStats />
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-teal/10 via-transparent to-transparent opacity-50 pointer-events-none" />
+        
+        <div className="container-aptrive relative z-10 py-24 md:py-32">
+          <div className="mx-auto max-w-4xl text-center">
+            <div className="inline-flex items-center gap-2 rounded-full border border-teal/20 bg-teal/5 px-4 py-1.5 backdrop-blur-md mb-8">
+              <span className="flex h-2 w-2 rounded-full bg-teal shadow-[0_0_8px_rgba(20,184,166,1)] animate-pulse" />
+              <span className="font-mono-data text-xs font-semibold uppercase tracking-widest text-teal">
+                AI-Powered Entrance Preparation
+              </span>
+            </div>
+            
+            <HeadlineReveal
+              lines={["Learn like a top scorer.", "Prepare with precision."]}
+              className="text-[3.5rem] leading-[1.1] md:text-[5rem] lg:text-[6rem] font-display font-bold tracking-tight text-white drop-shadow-2xl"
+            />
+            
+            <p className="mx-auto mt-8 max-w-2xl text-lg md:text-xl text-white/70 leading-relaxed font-light">
+              Aptrive combines adaptive practice, premium analytics, and exam-focused pathways
+              so every study hour compounds toward your target university.
+            </p>
+            
+            <div className="mt-12 flex flex-wrap items-center justify-center gap-6 relative">
+              {/* Massive ambient glow behind buttons */}
+              <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-64 h-32 bg-teal/30 blur-[100px] pointer-events-none" />
+              
+              <Button href="/signup" variant="primary" size="lg" magnetic className="relative z-10 bg-white text-black hover:bg-white/90 hover:scale-105 transition-transform shadow-[0_0_40px_rgba(255,255,255,0.2)]">
+                Create account
+              </Button>
+              <Button href="/practice" variant="glass" size="lg" magnetic className="relative z-10 border-white/20 bg-white/5 hover:bg-white/10 text-white backdrop-blur-xl">
+                Explore practice
+              </Button>
             </div>
           </div>
         </div>
       </section>
 
-      <section className="container-aptrive py-20 md:py-28">
-        <Reveal>
-          <div className="max-w-2xl">
-            <span className="eyebrow">Why Aptrive</span>
-            <h2 className="text-display-2 mt-4 text-fg">
-              Built for high-stakes admissions, not generic test prep.
-            </h2>
-          </div>
-        </Reveal>
-        <div className="mt-12 grid gap-5 md:grid-cols-2 xl:grid-cols-4">
-          <SectionReveal stagger className="contents">
-            {pillars.map((pillar) => (
-              <Card key={pillar.title} variant="interactive" padding="lg" className="h-full">
-                <h3 className="text-heading-2 text-fg">{pillar.title}</h3>
-                <p className="text-body-sm mt-3">{pillar.body}</p>
-              </Card>
+      <section className="relative overflow-hidden bg-black py-24 md:py-32">
+        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-5xl h-[1px] bg-gradient-to-r from-transparent via-white/10 to-transparent" />
+        
+        <div className="container-aptrive relative z-10">
+          <Reveal>
+            <div className="mx-auto max-w-3xl text-center">
+              <span className="font-mono-data text-xs font-semibold uppercase tracking-widest text-teal">
+                Why Aptrive
+              </span>
+              <h2 className="text-[2.5rem] leading-[1.1] md:text-[4rem] font-display font-bold tracking-tight text-white mt-6">
+                Built for high-stakes admissions.
+              </h2>
+              <p className="mt-6 text-lg text-white/60 font-light leading-relaxed max-w-2xl mx-auto">
+                Move beyond generic test prep with precision-engineered tools designed exclusively for Pakistan's top engineering and medical entry tests.
+              </p>
+            </div>
+          </Reveal>
+          
+          <div className="mt-20 grid gap-6 md:grid-cols-2 lg:grid-cols-4">
+            {pillars.map((pillar, index) => (
+              <PremiumFeatureCard 
+                key={pillar.title}
+                title={pillar.title}
+                body={pillar.body}
+                icon={pillar.icon}
+                color={pillar.color}
+                delay={index * 0.1}
+              />
             ))}
-          </SectionReveal>
+          </div>
         </div>
       </section>
 
-      <section className="border-y border-line bg-panel/40">
-        <div className="container-aptrive py-20 md:py-28">
+      <section className="relative overflow-hidden bg-black py-24 md:py-32">
+        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[300px] bg-teal/5 blur-[120px] rounded-full pointer-events-none" />
+        
+        <div className="container-aptrive relative z-10">
           <Reveal>
-            <div className="max-w-2xl">
-              <span className="eyebrow">Student Success Journey</span>
-              <h2 className="text-display-2 mt-4 text-fg">
-                A clear progression from first diagnostic to final admission push.
+            <div className="mx-auto max-w-3xl text-center">
+              <span className="font-mono-data text-xs font-semibold uppercase tracking-widest text-teal">
+                Student Success Journey
+              </span>
+              <h2 className="text-[2.5rem] leading-[1.1] md:text-[4rem] font-display font-bold tracking-tight text-white mt-6">
+                A clear progression to the finish line.
               </h2>
             </div>
           </Reveal>
-          <div className="mt-12 grid gap-px overflow-hidden rounded-3xl border border-line bg-line md:grid-cols-2 lg:grid-cols-4">
-            {journey.map((step, index) => (
-              <Reveal key={step.title} delay={index * 90} className="bg-panel p-6">
-                <p className="font-mono-data text-xs uppercase tracking-[0.14em] text-teal">
-                  Step {String(index + 1).padStart(2, "0")}
-                </p>
-                <h3 className="text-heading-3 mt-3 text-fg">{step.title}</h3>
-                <p className="text-body-sm mt-2">{step.body}</p>
-              </Reveal>
-            ))}
-          </div>
+          
+          <AnimatedJourney />
         </div>
       </section>
 
@@ -293,33 +322,44 @@ export default async function Home() {
         </div>
       </section>
 
-      <section className="container-aptrive pb-20 md:pb-28">
-        <Reveal>
-          <div className="max-w-2xl">
-            <span className="eyebrow">FAQ</span>
-            <h2 className="text-display-2 mt-4 text-fg">
-              Questions students ask before they begin.
-            </h2>
-          </div>
-        </Reveal>
-        <Reveal delay={100} className="mt-10">
-          <FAQAccordion />
-        </Reveal>
+      <section className="relative overflow-hidden bg-black py-24 md:py-32">
+        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-5xl h-[1px] bg-gradient-to-r from-transparent via-white/10 to-transparent" />
+        <div className="container-aptrive relative z-10">
+          <Reveal>
+            <div className="mx-auto max-w-2xl text-center">
+              <span className="font-mono-data text-xs font-semibold uppercase tracking-widest text-teal">
+                FAQ
+              </span>
+              <h2 className="text-[2.5rem] leading-[1.1] md:text-[3.5rem] font-display font-bold tracking-tight text-white mt-6">
+                Questions students ask before they begin.
+              </h2>
+            </div>
+          </Reveal>
+          <Reveal delay={100} className="mt-16">
+            <FAQAccordion />
+          </Reveal>
+        </div>
       </section>
 
-      <section className="border-t border-line bg-panel">
-        <div className="container-aptrive flex flex-col items-start justify-between gap-7 py-16 md:flex-row md:items-center">
-          <div>
-            <h2 className="text-heading-1 text-fg">
+      <section className="relative overflow-hidden bg-black py-32 md:py-48">
+        {/* Massive ambient glow */}
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[400px] bg-teal/10 blur-[150px] rounded-full pointer-events-none" />
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[400px] h-[200px] bg-blue-500/10 blur-[100px] rounded-full pointer-events-none" />
+        
+        <div className="container-aptrive relative z-10 text-center">
+          <Reveal>
+            <h2 className="text-[3rem] leading-[1.1] md:text-[5rem] font-display font-bold tracking-tight text-white drop-shadow-2xl max-w-4xl mx-auto">
               Ready to build your university admission edge?
             </h2>
-            <p className="text-body mt-3">
-              Start with your first adaptive session and unlock your personalized roadmap.
+            <p className="mt-8 text-xl text-white/60 font-light leading-relaxed max-w-2xl mx-auto">
+              Start with your first adaptive session and unlock your personalized roadmap to Pakistan's top universities.
             </p>
-          </div>
-          <Button href="/signup" variant="primary" size="lg">
-            Get started now
-          </Button>
+          </Reveal>
+          <Reveal delay={100} className="mt-12 relative">
+            <Button href="/signup" variant="primary" size="lg" magnetic className="bg-white text-black hover:bg-white/90 hover:scale-105 transition-transform shadow-[0_0_40px_rgba(255,255,255,0.2)]">
+              Get started now
+            </Button>
+          </Reveal>
         </div>
       </section>
     </>
