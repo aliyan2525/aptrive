@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useTransition } from "react";
-import { toggleBookmarkAction } from "@/app/practice/actions";
+import { toggleBookmarkAction } from "@/app/(app)/practice/actions";
 
 type Props = {
   questionId: string;

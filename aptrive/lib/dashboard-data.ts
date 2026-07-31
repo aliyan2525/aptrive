@@ -35,7 +35,7 @@ type DailyActivity = {
   study_seconds: number;
   sessions_completed: number;
 };
-type TopicProgress = Tables["user_topic_progress"]["Row"] & {
+type TopicMasteryRow = Views["v_user_topic_progress"]["Row"] & {
   // From the `topics(name)` embed added below — nullable because a
   // left-join-style embed returns null if the topic_id FK is ever null
   // or the referenced topic was deleted.
@@ -123,13 +123,13 @@ export async function getDashboardData(userId: string) {
     // uuid, so without this join TopicList (below) has nothing to
     // render as the topic's label.
     supabase
-      .from("user_topic_progress")
+      .from("v_user_topic_progress")
       .select("*, topics(name)")
       .eq("user_id", userId)
       .order("mastery_score", { ascending: false })
       .limit(6),
     supabase
-      .from("user_topic_progress")
+      .from("v_user_topic_progress")
       .select("*, topics(name)")
       .eq("user_id", userId)
       .order("mastery_score", { ascending: true })
@@ -178,7 +178,7 @@ export async function getDashboardData(userId: string) {
   // than passing the raw table row on to the component — a mastery
   // row whose topic_id is null or whose topic was deleted has nothing
   // meaningful to show, so it's skipped entirely.
-  const toSummary = (t: TopicProgress): TopicMasterySummary | null => {
+  const toSummary = (t: TopicMasteryRow): TopicMasterySummary | null => {
     if (!t.topic_id || !t.topics?.name) return null;
     return {
       topicId: t.topic_id,
@@ -188,11 +188,11 @@ export async function getDashboardData(userId: string) {
     };
   };
 
-  const strongTopics = ((masteryRes.data ?? []) as TopicProgress[])
+  const strongTopics = ((masteryRes.data ?? []) as TopicMasteryRow[])
     .map(toSummary)
     .filter((t): t is TopicMasterySummary => t !== null);
   const strongTopicIds = new Set(strongTopics.map((t) => t.topicId));
-  const weakTopics = ((weakTopicsRes.data ?? []) as TopicProgress[])
+  const weakTopics = ((weakTopicsRes.data ?? []) as TopicMasteryRow[])
     .map(toSummary)
     .filter((t): t is TopicMasterySummary => t !== null)
     .filter((t) => !strongTopicIds.has(t.topicId));

@@ -2,7 +2,7 @@
 
 import { useMemo, useState, useTransition } from "react";
 import UniversityLogo from "@/components/UniversityLogo";
-import { completeOnboardingAction } from "@/app/onboarding/actions";
+import { completeOnboardingAction } from "@/app/(app)/onboarding/actions";
 import type { OnboardingInput } from "@/lib/repositories/onboarding.repository";
 
 const steps = ["Identity", "Target", "Academics", "Schedule", "Plan"];

@@ -5,8 +5,7 @@ import { Analytics } from "@vercel/analytics/react";
 
 import "./globals.css";
 
-import Header from "@/components/Header";
-import Footer from "@/components/Footer";
+
 import { OrganizationSchema } from "@/components/StructuredData";
 import GoogleAnalytics from "@/components/analytics/GoogleAnalytics";
 import { Scene3DProvider } from "@/components/three/Scene3DProvider";
@@ -113,13 +112,9 @@ export default function RootLayout({
 
         <SmoothScrollProvider>
           <Scene3DProvider>
-            <Header />
-
             <main className="flex-1">
               <PageTransition>{children}</PageTransition>
             </main>
-
-            <Footer />
           </Scene3DProvider>
         </SmoothScrollProvider>
 

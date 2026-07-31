@@ -10,7 +10,7 @@ import {
   deleteTest,
   deleteTopic,
   deleteUniversity,
-} from "@/app/admin/catalog/actions";
+} from "@/app/(app)/admin/catalog/actions";
 import {
   listChaptersForAdmin,
   listSubjectsForAdmin,

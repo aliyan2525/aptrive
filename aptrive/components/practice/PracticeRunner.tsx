@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useMemo, useState, useTransition } from "react";
-import { submitAnswer, completeSessionAction } from "@/app/practice/actions";
+import { submitAnswer, completeSessionAction } from "@/app/(app)/practice/actions";
 import type { ClientQuestion } from "@/lib/repositories/questions.repository";
 import BookmarkButton from "./BookmarkButton";
 

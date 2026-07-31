@@ -1,41 +1,40 @@
 import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
-import { listIncorrectQuestions } from "@/lib/repositories/progress.repository";
-import { startAdHocSession } from "@/app/practice/actions";
+import { listBookmarkedQuestionsWithDetails } from "@/lib/repositories/bookmarks.repository";
+import { startAdHocSession } from "@/app/(app)/practice/actions";
 
 export const metadata: Metadata = {
-  title: "Revision — Aptrive",
-  description: "Every question you've gotten wrong, in one place.",
+  title: "Bookmarks — Aptrive",
+  description: "Questions you've saved for later.",
 };
 
-export default async function RevisionPage() {
+export default async function BookmarksPage() {
   const supabase = await createClient();
   const {
     data: { user },
   } = await supabase.auth.getUser();
 
-  if (!user) redirect("/login?next=/practice/revision");
+  if (!user) redirect("/login?next=/practice/bookmarks");
 
-  const incorrectQuestions = await listIncorrectQuestions(user.id);
-  const questionIds = incorrectQuestions.map((q) => q.questionId);
+  const bookmarks = await listBookmarkedQuestionsWithDetails(user.id);
+  const questionIds = bookmarks.map((b) => b.questionId);
 
   async function practiceAll() {
     "use server";
-    await startAdHocSession("revision", questionIds);
+    await startAdHocSession("bookmarks", questionIds);
   }
 
   return (
     <section className="container-aptrive py-16 md:py-24">
       <div className="flex flex-wrap items-end justify-between gap-4">
         <div className="max-w-xl">
-          <div className="eyebrow">Revision</div>
+          <div className="eyebrow">Bookmarks</div>
           <h1 className="font-display mt-3 text-4xl font-semibold tracking-tight text-fg md:text-5xl">
-            Questions you&apos;ve gotten wrong
+            Saved questions
           </h1>
           <p className="mt-4 text-sm leading-relaxed text-muted">
-            Pulled straight from your attempt history — a question drops off
-            this list the moment you answer it correctly.
+            Questions you saved mid-session, all in one list.
           </p>
         </div>
 
@@ -52,7 +51,7 @@ export default async function RevisionPage() {
       </div>
 
       <div className="mt-10 divide-y divide-line border-y border-line">
-        {incorrectQuestions.map((q) => (
+        {bookmarks.map((q) => (
           <div key={q.questionId} className="flex items-center justify-between py-4">
             <div>
               <div className="text-xs uppercase tracking-[0.1em] text-muted">
@@ -67,10 +66,10 @@ export default async function RevisionPage() {
           </div>
         ))}
 
-        {incorrectQuestions.length === 0 ? (
+        {bookmarks.length === 0 ? (
           <p className="py-10 text-center text-sm text-muted">
-            Nothing here yet — questions you miss during practice will show
-            up for revision.
+            Nothing saved yet — tap the star on any question during practice
+            to bookmark it.
           </p>
         ) : null}
       </div>

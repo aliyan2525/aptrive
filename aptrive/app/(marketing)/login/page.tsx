@@ -8,7 +8,7 @@ import AuthShell from "@/components/auth/AuthShell";
 import AuthModeToggle, { type AuthMode } from "@/components/auth/AuthModeToggle";
 import GoogleIcon from "@/components/auth/GoogleIcon";
 import Button from "@/components/ui/Button";
-import { signIn, signInWithGoogle, type AuthState } from "@/app/auth/actions";
+import { signIn, signInWithGoogle, type AuthState } from "@/app/(marketing)/auth/actions";
 
 const initialState: AuthState = { error: null };
 

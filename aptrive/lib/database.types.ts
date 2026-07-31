@@ -2174,6 +2174,28 @@ export type Database = {
       }
     }
     Views: {
+      v_user_topic_progress: {
+        Row: {
+          accuracy_percent: number | null
+          created_at: string
+          last_practiced_at: string | null
+          mastery_score: number
+          questions_attempted: number
+          questions_correct: number
+          topic_id: string
+          updated_at: string
+          user_id: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_topic_progress_topic_id_fkey"
+            columns: ["topic_id"]
+            isOneToOne: false
+            referencedRelation: "topics"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       goal_progress: {
         Row: {
           actual_minutes: number | null

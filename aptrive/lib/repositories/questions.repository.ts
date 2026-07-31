@@ -1,5 +1,7 @@
 import "server-only";
 import { createClient } from "@/lib/supabase/server";
+import { createClient as createSupabaseClient } from "@supabase/supabase-js";
+import type { Database } from "@/lib/database.types";
 
 export type ClientOption = {
   id: string;
@@ -36,11 +38,10 @@ type QuestionRow = {
   question_type?: "single_choice" | "multiple_choice" | "numeric" | null;
   numeric_answer_value?: number | null;
   numeric_answer_tolerance?: number | null;
-  question_options: {
+  v_public_question_options: {
     id: string;
     label: string | null;
     content: string;
-    is_correct: boolean;
     position: number;
   }[];
 };
@@ -89,7 +90,7 @@ export async function getQuestionRowsForPracticeSet(
   const { data, error } = await supabase
     .from("questions")
     .select(
-      "id, prompt, difficulty, topic, chapter, time_estimate_seconds, position, question_type, numeric_answer_value, numeric_answer_tolerance, question_options(id, label, content, is_correct, position)"
+      "id, prompt, difficulty, topic, chapter, time_estimate_seconds, position, question_type, numeric_answer_value, numeric_answer_tolerance, v_public_question_options(id, label, content, position)"
     )
     .eq("practice_set_id", practiceSetId)
     .order("position", { ascending: true });
@@ -99,7 +100,7 @@ export async function getQuestionRowsForPracticeSet(
   const rows = (data ?? []) as unknown as QuestionRow[];
   return rows.map((q) => ({
     ...q,
-    question_options: [...(q.question_options || [])].sort(
+    question_options: [...(q.v_public_question_options || [])].sort(
       (a, b) => a.position - b.position
     ),
   }));
@@ -113,7 +114,7 @@ export async function getQuestionRowsByIds(
   const { data, error } = await supabase
     .from("questions")
     .select(
-      "id, prompt, difficulty, topic, chapter, time_estimate_seconds, position, question_type, numeric_answer_value, numeric_answer_tolerance, question_options(id, label, content, is_correct, position)"
+      "id, prompt, difficulty, topic, chapter, time_estimate_seconds, position, question_type, numeric_answer_value, numeric_answer_tolerance, v_public_question_options(id, label, content, position)"
     )
     .in("id", questionIds);
 
@@ -122,7 +123,7 @@ export async function getQuestionRowsByIds(
   const rows = (data ?? []) as unknown as QuestionRow[];
   return rows.map((q) => ({
     ...q,
-    question_options: [...(q.question_options || [])].sort(
+    question_options: [...(q.v_public_question_options || [])].sort(
       (a, b) => a.position - b.position
     ),
   }));
@@ -137,7 +138,7 @@ export function toClientQuestion(row: QuestionRow): ClientQuestion {
     topic: row.topic,
     chapter: row.chapter,
     timeEstimateSeconds: row.time_estimate_seconds,
-    options: (row.question_options || []).map((o) => ({
+    options: (row.v_public_question_options || []).map((o) => ({
       id: o.id,
       label: o.label,
       content: o.content,
@@ -194,9 +195,16 @@ export type CorrectAnswer = {
 export async function getCorrectAnswerForQuestion(
   questionId: string
 ): Promise<CorrectAnswer> {
-  const supabase = await createClient();
+  // Use the service role client here to bypass RLS, because question_options
+  // is now staff-only to prevent answer keys leaking to the public client.
+  // This is safe because this function is only called server-side AFTER
+  // an attempt is graded and recorded.
+  const supabaseAdmin = createSupabaseClient<Database>(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.SUPABASE_SERVICE_ROLE_KEY!
+  );
 
-  const { data, error } = await supabase
+  const { data, error } = await supabaseAdmin
     .from("questions")
     .select("numeric_answer_value, question_options(id, is_correct)")
     .eq("id", questionId)

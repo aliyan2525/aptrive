@@ -3,7 +3,7 @@
 import { useMemo, useState, useTransition } from "react";
 import type { Difficulty, QuestionStatus, BloomLevel, QuestionType } from "@/lib/database.types";
 import type { QuestionFormInput, QuestionWithOptions } from "@/lib/admin/questions";
-import { createQuestionAction, updateQuestionAction } from "@/app/admin/actions";
+import { createQuestionAction, updateQuestionAction } from "@/app/(app)/admin/actions";
 
 type CatalogItem = { id: string; name: string };
 type UniversityOption = { id: string; name: string };

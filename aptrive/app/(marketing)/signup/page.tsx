@@ -5,7 +5,7 @@ import { useState } from "react";
 import Link from "next/link";
 import AuthShell from "@/components/auth/AuthShell";
 import GoogleIcon from "@/components/auth/GoogleIcon";
-import { signUp, signInWithGoogle, type AuthState } from "@/app/auth/actions";
+import { signUp, signInWithGoogle, type AuthState } from "@/app/(marketing)/auth/actions";
 
 const initialState: AuthState = { error: null };
 

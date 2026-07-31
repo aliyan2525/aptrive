@@ -2,7 +2,7 @@
 
 import { useActionState } from "react";
 import AuthShell from "@/components/auth/AuthShell";
-import { updatePassword, type AuthState } from "@/app/auth/actions";
+import { updatePassword, type AuthState } from "@/app/(marketing)/auth/actions";
 
 const initialState: AuthState = { error: null };
 

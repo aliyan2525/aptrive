@@ -2,7 +2,7 @@
 
 import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
-import { commitImportBatchAction, rollbackImportBatchAction } from "@/app/admin/actions";
+import { commitImportBatchAction, rollbackImportBatchAction } from "@/app/(app)/admin/actions";
 
 export default function ImportBatchActions({
   batchId,

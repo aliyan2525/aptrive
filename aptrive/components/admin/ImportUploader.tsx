@@ -1,7 +1,7 @@
 "use client";
 
 import { useActionState } from "react";
-import { uploadImportAction, type ActionState } from "@/app/admin/actions";
+import { uploadImportAction, type ActionState } from "@/app/(app)/admin/actions";
 
 type PracticeSetOption = { id: string; title: string; subject_id: string };
 type SubjectOption = { id: string; name: string };

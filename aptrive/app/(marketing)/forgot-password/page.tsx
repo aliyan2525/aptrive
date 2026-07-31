@@ -3,7 +3,7 @@
 import { useActionState } from "react";
 import Link from "next/link";
 import AuthShell from "@/components/auth/AuthShell";
-import { requestPasswordReset, type AuthState } from "@/app/auth/actions";
+import { requestPasswordReset, type AuthState } from "@/app/(marketing)/auth/actions";
 
 const initialState: AuthState = { error: null };
 

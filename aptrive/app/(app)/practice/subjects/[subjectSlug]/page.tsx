@@ -6,7 +6,7 @@ import {
   getSubjectBySlug,
   listSubjectChaptersWithTopics,
 } from "@/lib/repositories/catalog.repository";
-import { startTopicPractice } from "@/app/practice/actions";
+import { startTopicPractice } from "@/app/(app)/practice/actions";
 
 export async function generateMetadata({
   params,

@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
-import { signOut } from "@/app/auth/actions";
+import { signOut } from "@/app/(marketing)/auth/actions";
 
 export type HeaderUser = {
   fullName: string;

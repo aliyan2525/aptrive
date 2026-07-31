@@ -3,7 +3,7 @@
 import { useTransition } from "react";
 import { useRouter } from "next/navigation";
 import type { QuestionStatus } from "@/lib/database.types";
-import { setQuestionStatusAction, duplicateQuestionAction } from "@/app/admin/actions";
+import { setQuestionStatusAction, duplicateQuestionAction } from "@/app/(app)/admin/actions";
 
 export default function QuestionStatusActions({
   questionId,
