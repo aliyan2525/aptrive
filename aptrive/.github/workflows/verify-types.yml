@@ -1,0 +1,35 @@
+name: Verify Database Types
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+    paths:
+      - "supabase/migrations/**"
+      - "lib/database.types.ts"
+
+jobs:
+  verify-types:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Supabase CLI
+        uses: supabase/setup-cli@v1
+        with:
+          version: latest
+
+      - name: Start Supabase Local
+        run: supabase start
+
+      - name: Generate Types
+        run: supabase gen types typescript --local > generated.types.ts
+
+      - name: Compare Types
+        run: |
+          if ! cmp -s generated.types.ts lib/database.types.ts; then
+            echo "::error::Generated database types are out of sync with lib/database.types.ts. Run 'supabase gen types typescript --local > lib/database.types.ts' locally and commit the changes."
+            diff -u lib/database.types.ts generated.types.ts
+            exit 1
+          fi

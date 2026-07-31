@@ -2,6 +2,7 @@ import "server-only";
 import { createClient } from "@/lib/supabase/server";
 import { createClient as createSupabaseClient } from "@supabase/supabase-js";
 import type { Database } from "@/lib/database.types";
+import { z } from "zod";
 
 export type ClientOption = {
   id: string;
@@ -27,37 +28,42 @@ export type ClientQuestion = {
   numericAnswerTolerance?: number | null;
 };
 
-type QuestionRow = {
-  id: string;
-  prompt: string;
-  difficulty: "Easy" | "Medium" | "Hard";
-  topic: string;
-  chapter: string | null;
-  time_estimate_seconds: number;
-  position: number;
-  question_type?: "single_choice" | "multiple_choice" | "numeric" | null;
-  numeric_answer_value?: number | null;
-  numeric_answer_tolerance?: number | null;
-  v_public_question_options: {
-    id: string;
-    label: string | null;
-    content: string;
-    position: number;
-  }[];
-};
+const QuestionRowSchema = z.object({
+  id: z.string(),
+  prompt: z.string(),
+  difficulty: z.enum(["Easy", "Medium", "Hard"]),
+  topic: z.string(),
+  chapter: z.string().nullable(),
+  time_estimate_seconds: z.number(),
+  position: z.number(),
+  question_type: z.enum(["single_choice", "multiple_choice", "numeric"]).nullable().optional(),
+  numeric_answer_value: z.number().nullable().optional(),
+  numeric_answer_tolerance: z.number().nullable().optional(),
+  v_public_question_options: z.array(z.object({
+    id: z.string(),
+    label: z.string().nullable(),
+    content: z.string(),
+    position: z.number()
+  }))
+});
+type QuestionRow = z.infer<typeof QuestionRowSchema>;
 
-export type PracticeSetDetail = {
-  id: string;
-  slug: string;
-  title: string;
-  subject_id: string;
-  topic: string;
-  chapter: string | null;
-  difficulty: "Easy" | "Medium" | "Hard";
-  question_count: number;
-  estimated_minutes: number;
-  subjects: { name: string; slug: string } | null;
-};
+export const PracticeSetDetailSchema = z.object({
+  id: z.string(),
+  slug: z.string(),
+  title: z.string(),
+  subject_id: z.string(),
+  topic: z.string(),
+  chapter: z.string().nullable(),
+  difficulty: z.enum(["Easy", "Medium", "Hard"]),
+  question_count: z.number(),
+  estimated_minutes: z.number(),
+  subjects: z.object({
+    name: z.string(),
+    slug: z.string()
+  }).nullable()
+});
+export type PracticeSetDetail = z.infer<typeof PracticeSetDetailSchema>;
 
 export async function getPracticeSetBySlug(
   slug: string
@@ -72,10 +78,13 @@ export async function getPracticeSetBySlug(
     .maybeSingle();
 
   if (error) throw error;
-  // Nested/embedded selects aren't typed by database.types.ts yet (no
-  // Relationships metadata) — safe to assert since the shape is fixed
-  // by the `.select()` string above.
-  return data as unknown as PracticeSetDetail | null;
+  if (!data) return null;
+  const parsed = PracticeSetDetailSchema.safeParse(data);
+  if (!parsed.success) {
+    console.error("Zod validation failed for PracticeSetDetail", parsed.error);
+    return null; // Or throw depending on preferred error handling
+  }
+  return parsed.data;
 }
 
 /**
@@ -97,7 +106,12 @@ export async function getQuestionRowsForPracticeSet(
 
   if (error) throw error;
 
-  const rows = (data ?? []) as unknown as QuestionRow[];
+  const parsed = QuestionRowSchema.array().safeParse(data ?? []);
+  if (!parsed.success) {
+    console.error("Zod validation failed for QuestionRows", parsed.error);
+    return [];
+  }
+  const rows = parsed.data;
   return rows.map((q) => ({
     ...q,
     question_options: [...(q.v_public_question_options || [])].sort(
@@ -120,7 +134,12 @@ export async function getQuestionRowsByIds(
 
   if (error) throw error;
   
-  const rows = (data ?? []) as unknown as QuestionRow[];
+  const parsed = QuestionRowSchema.array().safeParse(data ?? []);
+  if (!parsed.success) {
+    console.error("Zod validation failed for getQuestionRowsByIds", parsed.error);
+    return [];
+  }
+  const rows = parsed.data;
   return rows.map((q) => ({
     ...q,
     question_options: [...(q.v_public_question_options || [])].sort(

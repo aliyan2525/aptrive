@@ -1,12 +1,21 @@
 import { createClient } from "@/lib/supabase/server";
 import type { Database } from "@/lib/database.types";
+import { z } from "zod";
 
 type Tables = Database["public"]["Tables"];
 type Views = Database["public"]["Views"];
 // Updated 2026-07-31: v_user_dashboard_summary in migration 0009 actually
 // returns per-day aggregation for a user. We fetch the last 7 days
 // and aggregate them in memory.
-type DashboardSummary = Views["v_user_dashboard_summary"]["Row"];
+const DashboardSummarySchema = z.object({
+  user_id: z.string().nullable(),
+  activity_date: z.string().nullable(),
+  questions_attempted: z.number().nullable(),
+  correct_count: z.number().nullable(),
+  study_seconds: z.number().nullable(),
+  sessions_completed: z.number().nullable(),
+});
+type DashboardSummary = z.infer<typeof DashboardSummarySchema>;
 // Local shape for the calendar/heatmap, matching what sampleActivity()
 // produces below (placeholder data until a real per-day source exists).
 type DailyActivity = {
@@ -17,12 +26,16 @@ type DailyActivity = {
   study_seconds: number;
   sessions_completed: number;
 };
-type TopicMasteryRow = Views["v_user_topic_progress"]["Row"] & {
-  // From the `topics(name)` embed added below — nullable because a
-  // left-join-style embed returns null if the topic_id FK is ever null
-  // or the referenced topic was deleted.
-  topics: { name: string } | null;
-};
+const TopicMasteryRowSchema = z.object({
+  user_id: z.string(),
+  topic_id: z.string(),
+  mastery_score: z.number().nullable(),
+  questions_attempted: z.number().nullable(),
+  topics: z.object({
+    name: z.string()
+  }).nullable()
+});
+type TopicMasteryRow = z.infer<typeof TopicMasteryRowSchema>;
 // Clean shape actually returned to callers — deliberately doesn't leak
 // the raw joined TopicProgress row (with its embed-only `topics` shape)
 // into component props.
@@ -148,7 +161,8 @@ export async function getDashboardData(userId: string) {
   // currently provides (see the FLAGGED comment above) — placeholder
   // data until that's designed, same as before when no rows came back.
   const activity = sampleActivity();
-  const summary = (activityRes.data || []) as DashboardSummary[];
+  const activityResData = DashboardSummarySchema.array().safeParse(activityRes.data);
+  const summary = activityResData.success ? activityResData.data : [];
   const attemptsLast7Days = summary.reduce((acc, row) => acc + (row.questions_attempted || 0), 0);
   const correctLast7Days = summary.reduce((acc, row) => acc + (row.correct_count || 0), 0);
 
@@ -160,24 +174,20 @@ export async function getDashboardData(userId: string) {
   // than passing the raw table row on to the component — a mastery
   // row whose topic_id is null or whose topic was deleted has nothing
   // meaningful to show, so it's skipped entirely.
-  const toSummary = (t: TopicMasteryRow): TopicMasterySummary | null => {
-    if (!t.topic_id || !t.topics?.name) return null;
-    return {
-      topicId: t.topic_id,
-      name: t.topics.name,
-      masteryScore: t.mastery_score,
-      questionsAttempted: t.questions_attempted,
-    };
+  const parseTopics = (data: unknown) => {
+    const parsed = TopicMasteryRowSchema.array().safeParse(data);
+    if (!parsed.success) return [];
+    return parsed.data.map((row) => ({
+      topicId: row.topic_id,
+      name: row.topics?.name ?? "Unknown Topic",
+      masteryScore: row.mastery_score ?? 0,
+      questionsAttempted: row.questions_attempted ?? 0,
+    })).filter((t) => t.topicId);
   };
 
-  const strongTopics = ((masteryRes.data ?? []) as TopicMasteryRow[])
-    .map(toSummary)
-    .filter((t): t is TopicMasterySummary => t !== null);
+  const strongTopics = parseTopics(masteryRes.data);
   const strongTopicIds = new Set(strongTopics.map((t) => t.topicId));
-  const weakTopics = ((weakTopicsRes.data ?? []) as TopicMasteryRow[])
-    .map(toSummary)
-    .filter((t): t is TopicMasterySummary => t !== null)
-    .filter((t) => !strongTopicIds.has(t.topicId));
+  const weakTopics = parseTopics(weakTopicsRes.data).filter((t) => !strongTopicIds.has(t.topicId));
 
   return {
     streak: streakRes.data as UserStreak | null,
