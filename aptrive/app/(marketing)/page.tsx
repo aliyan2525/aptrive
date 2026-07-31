@@ -190,6 +190,47 @@ export default async function Home() {
         <Reveal delay={120} className="mt-10">
           <PopularUniversities />
         </Reveal>
+
+        <Reveal delay={200} className="mt-12 border-t border-line pt-8">
+          <div className="grid grid-cols-2 gap-4 md:grid-cols-4 md:gap-8">
+            <div className="flex items-center gap-3">
+              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-teal/10 text-teal">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10"/><path d="m9 12 2 2 4-4"/></svg>
+              </div>
+              <div>
+                <h4 className="text-sm font-semibold text-fg">Official & Verified</h4>
+                <p className="text-xs text-muted-2 mt-0.5">Data from official sources</p>
+              </div>
+            </div>
+            <div className="flex items-center gap-3">
+              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-blue-500/10 text-blue-500">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 2v6h-6"/><path d="M3 12a9 9 0 0 1 15-6.7L21 8"/><path d="M3 22v-6h6"/><path d="M21 12a9 9 0 0 1-15 6.7L3 16"/></svg>
+              </div>
+              <div>
+                <h4 className="text-sm font-semibold text-fg">Regularly Updated</h4>
+                <p className="text-xs text-muted-2 mt-0.5">Stay informed always</p>
+              </div>
+            </div>
+            <div className="flex items-center gap-3">
+              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-purple-500/10 text-purple-500">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M18 20V10"/><path d="M12 20V4"/><path d="M6 20v-4"/></svg>
+              </div>
+              <div>
+                <h4 className="text-sm font-semibold text-fg">Merit Made Easy</h4>
+                <p className="text-xs text-muted-2 mt-0.5">Compare and plan better</p>
+              </div>
+            </div>
+            <div className="flex items-center gap-3">
+              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-orange-500/10 text-orange-500">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect width="18" height="11" x="3" y="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+              </div>
+              <div>
+                <h4 className="text-sm font-semibold text-fg">Trust & Transparency</h4>
+                <p className="text-xs text-muted-2 mt-0.5">Accurate, reliable, and clear</p>
+              </div>
+            </div>
+          </div>
+        </Reveal>
       </section>
 
       <section className="border-y border-line">
