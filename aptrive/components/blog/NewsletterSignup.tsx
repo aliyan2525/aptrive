@@ -35,6 +35,7 @@ export default function NewsletterSignup() {
           type="email"
           name="email"
           required
+          aria-label="Email address"
           placeholder="you@example.com"
           className="w-full min-w-0 rounded-sm border border-line bg-graphite px-4 py-2.5 text-sm text-fg outline-none placeholder:text-muted-2 focus:border-teal/50 sm:w-64"
         />

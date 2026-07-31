@@ -284,6 +284,7 @@ export default function AggregateCalculator({ onResult }: AggregateCalculatorPro
                       placeholder={String(comp.maxMarks)}
                       value={marks[comp.key]?.total ?? ""}
                       onChange={(e) => updateField(comp.key, "total", e.target.value)}
+                      aria-label={`Total marks for ${comp.label}`}
                       aria-invalid={hasError}
                       className={`w-32 rounded-sm border bg-panel-2 px-3 py-2 text-sm text-fg outline-none transition-colors duration-200 placeholder:text-muted-2 ${
                         hasError

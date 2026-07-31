@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { signOut } from "@/app/(marketing)/auth/actions";
 
 export type HeaderUser = {
@@ -44,11 +45,11 @@ export default function UserMenu({ user }: { user: HeaderUser }) {
         className="flex h-9 w-9 items-center justify-center overflow-hidden rounded-full border border-line-strong bg-teal-dim text-xs font-semibold text-teal transition-colors hover:border-teal/50"
       >
         {user.avatarUrl ? (
-          // eslint-disable-next-line @next/next/no-img-element
-          <img
+          <Image
             src={user.avatarUrl}
             alt={user.fullName}
-            className="h-full w-full object-cover"
+            fill
+            className="object-cover"
           />
         ) : (
           initials
