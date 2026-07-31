@@ -30,7 +30,8 @@ export default function Footer() {
             <li><Link href="/library" className="hover:text-fg">Library</Link></li>
             <li><Link href="/courses" className="hover:text-fg">Courses</Link></li>
             <li><Link href="/courses/nust-net" className="hover:text-fg">NUST NET Prep</Link></li>
-            <li><Link href="/calculator" className="hover:text-fg">Aggregate Calculator</Link></li>
+            <li><Link href="/tools/calculator" className="hover:text-fg">Aggregate Calculator</Link></li>
+            <li><Link href="/tools/estimator" className="hover:text-fg">Merit Estimator</Link></li>
             <li><Link href="/about" className="hover:text-fg">About Aptrive</Link></li>
           </ul>
         </div>

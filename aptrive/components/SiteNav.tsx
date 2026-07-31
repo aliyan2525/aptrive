@@ -21,7 +21,6 @@ const publicLinks: NavItem[] = [
   { href: "/library", label: "Library", match: (path) => path.startsWith("/library") },
   { href: "/leaderboard", label: "Rankings", match: (path) => path.startsWith("/leaderboard") },
   { href: "/courses", label: "Courses", match: (path) => path.startsWith("/courses") },
-  { href: "/calculator", label: "Calculator", match: (path) => path.startsWith("/calculator") },
 ];
 
 const authLinks: NavItem[] = [
@@ -29,8 +28,11 @@ const authLinks: NavItem[] = [
   { href: "/practice", label: "Practice", match: (path) => path.startsWith("/practice") },
   { href: "/library", label: "Library", match: (path) => path.startsWith("/library") },
   { href: "/leaderboard", label: "Rankings", match: (path) => path.startsWith("/leaderboard") },
-  { href: "/courses", label: "Courses", match: (path) => path.startsWith("/courses") },
-  { href: "/calculator", label: "Calculator", match: (path) => path.startsWith("/calculator") },
+];
+
+const toolsMenu = [
+  { href: "/tools/calculator", label: "Aggregate Calculator" },
+  { href: "/tools/estimator", label: "Merit Estimator" },
 ];
 
 const aboutMenu = [
@@ -64,6 +66,7 @@ export default function SiteNav({
   const lastY = useRef(0);
 
   const visibleLinks = useMemo(() => (user ? authLinks : publicLinks), [user]);
+  const toolsActive = pathname.startsWith("/tools");
   const aboutActive = pathname.startsWith("/about")
     || pathname.startsWith("/contact")
     || pathname.startsWith("/blog")
@@ -126,6 +129,20 @@ export default function SiteNav({
                 {link.label}
               </Link>
             ))}
+
+            <div className="group relative">
+              <button type="button" className={`inline-flex items-center gap-1.5 ${navLinkClass(toolsActive)}`}>
+                Tools
+                <ChevronDown className="h-3.5 w-3.5" />
+              </button>
+              <div className="pointer-events-none invisible absolute right-0 top-[calc(100%+12px)] w-52 rounded-xl border border-line bg-panel/95 p-2 opacity-0 shadow-2xl transition-all duration-200 group-hover:pointer-events-auto group-hover:visible group-hover:opacity-100 group-focus-within:pointer-events-auto group-focus-within:visible group-focus-within:opacity-100">
+                {toolsMenu.map((item) => (
+                  <Link key={item.href} href={item.href} className="block rounded-lg px-3 py-2 text-sm text-muted transition hover:bg-panel-2 hover:text-fg">
+                    {item.label}
+                  </Link>
+                ))}
+              </div>
+            </div>
 
             <div className="group relative">
               <button type="button" className={`inline-flex items-center gap-1.5 ${navLinkClass(aboutActive)}`}>
@@ -202,6 +219,22 @@ export default function SiteNav({
             ))}
 
             <div className="mt-3 rounded-xl border border-line bg-panel p-2">
+              <p className="px-2 py-1 text-xs uppercase tracking-[0.14em] text-muted-2">Tools</p>
+              {toolsMenu.map((item) => (
+                <Link
+                  key={item.href}
+                  href={item.href}
+                  onClick={() => setMobileOpen(false)}
+                  className={`block rounded-lg px-3 py-2 text-sm ${
+                    pathname.startsWith(item.href) ? "bg-teal-dim text-fg" : "text-muted"
+                  }`}
+                >
+                  {item.label}
+                </Link>
+              ))}
+            </div>
+
+            <div className="mt-1 rounded-xl border border-line bg-panel p-2">
               <p className="px-2 py-1 text-xs uppercase tracking-[0.14em] text-muted-2">About</p>
               {aboutMenu.map((item) => (
                 <Link

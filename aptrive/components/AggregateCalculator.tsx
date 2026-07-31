@@ -401,82 +401,17 @@ export default function AggregateCalculator({ onResult }: AggregateCalculatorPro
               official admission portal before making decisions.
             </p>
 
-            {hasProgramData ? (
-              <div className="mt-10 border-t border-line pt-8">
-                <div className="eyebrow">Merit estimator</div>
-                <label htmlFor="program" className="mt-4 block text-sm text-fg">
-                  Target program
-                </label>
-                <select
-                  id="program"
-                  value={programCode}
-                  onChange={(e) => setProgramCode(e.target.value)}
-                  className="pressable mt-2 w-full rounded-sm border border-line bg-panel-2 px-4 py-3 text-sm text-fg outline-none focus:border-teal/50"
-                >
-                  <option value="">Select a program…</option>
-                  {groupedNustPrograms.map((group) => (
-                    <optgroup key={group.category} label={group.category}>
-                      {group.programs.map((program) => (
-                        <option key={program.code} value={program.code}>
-                          {program.name} — {program.code}
-                        </option>
-                      ))}
-                    </optgroup>
-                  ))}
-                </select>
-
-                {selectedProgram && chanceResult ? (
-                  <div className="motion-card mt-5 rounded-md border border-line bg-panel-2 p-5">
-                    <div className="flex items-center gap-3">
-                      <span
-                        className="h-2.5 w-2.5 shrink-0 rounded-full"
-                        style={{ backgroundColor: CHANCE_COLORS[chanceResult.chance] }}
-                        aria-hidden="true"
-                      />
-                      <span
-                        className="font-display text-lg font-semibold"
-                        style={{ color: CHANCE_COLORS[chanceResult.chance] }}
-                      >
-                        {chanceResult.label} chance
-                      </span>
-                    </div>
-                    <p className="mt-2 text-xs leading-relaxed text-muted">
-                      {chanceResult.description}
-                    </p>
-
-                    <div className="mt-4 grid grid-cols-2 gap-4 text-xs">
-                      <div>
-                        <div className="text-muted-2">Top merit (last cycle)</div>
-                        <div className="mt-1 font-mono-data text-fg">
-                          {selectedProgram.topMerit.cummAggregate.toFixed(2)}%
-                        </div>
-                      </div>
-                      <div>
-                        <div className="text-muted-2">Closing merit (last cycle)</div>
-                        <div className="mt-1 font-mono-data text-fg">
-                          {selectedProgram.lastMerit.cummAggregate.toFixed(2)}%
-                        </div>
-                      </div>
-                    </div>
-
-                    <p className="mt-4 text-xs leading-relaxed text-muted-2">
-                      Chance is an estimate based on last cycle&apos;s closing merit
-                      for this program, not a guarantee — cutoffs shift every
-                      admission cycle. {NUST_MERIT_SOURCE_NOTE}
-                    </p>
-                  </div>
-                ) : (
-                  <p className="mt-3 text-xs leading-relaxed text-muted-2">
-                    Pick a program above to see your estimated chance of
-                    admission against last cycle&apos;s closing merit.
-                  </p>
-                )}
-              </div>
-            ) : (
-              <p className="mt-6 text-xs leading-relaxed text-muted-2">
-                Program-level chance estimation is available for NUST for now.
+            <div className="mt-8 border-t border-line pt-6">
+              <p className="text-sm text-fg">
+                Want to see if this is enough for admission?
               </p>
-            )}
+              <a
+                href="/tools/estimator"
+                className="mt-3 inline-flex items-center gap-1.5 rounded-lg bg-teal px-4 py-2 text-sm font-semibold text-graphite transition-transform hover:scale-105 active:scale-95"
+              >
+                Check chances in Merit Estimator →
+              </a>
+            </div>
           </div>
         )}
       </div>
