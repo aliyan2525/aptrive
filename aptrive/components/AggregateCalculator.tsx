@@ -206,7 +206,7 @@ export default function AggregateCalculator({ onResult }: AggregateCalculatorPro
   return (
     <div className="grid gap-8 md:grid-cols-2 md:gap-10">
       {/* INPUT PANEL */}
-      <div className="motion-card rounded-md border border-line bg-panel p-6 md:p-8">
+      <div className="glass-panel rounded-[2rem] p-8 lg:p-10 relative overflow-hidden before:absolute before:inset-0 before:ring-1 before:ring-inset before:ring-white/5 shadow-2xl">
         <label htmlFor="university" className="eyebrow">
           University
         </label>
@@ -326,7 +326,7 @@ export default function AggregateCalculator({ onResult }: AggregateCalculatorPro
       </div>
 
       {/* RESULT PANEL */}
-      <div className="motion-card rounded-md border border-line bg-panel p-6 md:p-8">
+      <div className="glass-panel rounded-[2rem] p-8 lg:p-10 relative overflow-hidden before:absolute before:inset-0 before:ring-1 before:ring-inset before:ring-white/5 shadow-2xl">
         <div className="eyebrow">Result</div>
 
         {!isUnavailable && (

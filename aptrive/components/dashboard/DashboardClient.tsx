@@ -168,19 +168,20 @@ export default function DashboardClient({
     <main className="min-h-[calc(100vh-4rem)] bg-graphite px-4 py-8 pb-24 md:px-6 md:py-10">
       <div className="container-aptrive grid grid-cols-1 gap-6 lg:grid-cols-12">
         {/* Row 1 — Welcome card + Daily goal */}
-        <div className="motion-card rounded-md border border-line bg-[linear-gradient(135deg,rgba(35,213,196,0.16),rgba(201,162,75,0.08),rgba(18,22,29,0.9))] p-6 md:p-8 lg:col-span-8">
-          <div className="eyebrow">Learning command center</div>
-          <h1 className="font-display mt-3 text-3xl font-semibold tracking-tight text-fg md:text-5xl">
+        <div className="motion-card glass-panel rounded-[2rem] p-8 lg:p-12 lg:col-span-8 relative overflow-hidden before:absolute before:inset-0 before:ring-1 before:ring-inset before:ring-white/5 transition-all duration-500 hover:shadow-2xl">
+          <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-teal-dim blur-[100px] rounded-full pointer-events-none -translate-y-1/2 translate-x-1/4 opacity-60" />
+          <div className="eyebrow relative z-10">Learning command center</div>
+          <h1 className="font-display mt-4 text-4xl lg:text-5xl font-bold tracking-tight text-fg relative z-10">
             {greeting}, {firstName}
           </h1>
           <p className="mt-4 max-w-2xl text-sm leading-relaxed text-muted">
             {getStreakLine(streak)} {quote}
           </p>
-          <div className="mt-6 flex flex-wrap gap-3">
-            <Link href="/practice" className="pressable glow-on-hover rounded-sm bg-teal px-4 py-2 text-sm font-semibold text-graphite">
+          <div className="mt-8 flex flex-wrap gap-4 relative z-10">
+            <Link href="/practice" className="pressable rounded-full bg-teal px-6 py-3 text-sm font-semibold text-graphite shadow-[0_0_20px_rgba(35,213,196,0.4)] hover:shadow-[0_0_30px_rgba(35,213,196,0.6)]">
               Continue studying
             </Link>
-            <Link href="/onboarding" className="pressable rounded-sm border border-line-strong px-4 py-2 text-sm font-semibold text-fg hover:border-teal/50">
+            <Link href="/onboarding" className="pressable rounded-full border border-line-strong px-6 py-3 text-sm font-semibold text-fg hover:bg-white/5">
               Personalize plan
             </Link>
           </div>
@@ -398,10 +399,10 @@ export default function DashboardClient({
             >
               <div className="flex items-start justify-between gap-4">
                 <div>
-                  <p className="font-display text-lg font-semibold text-fg">{action.title}</p>
+                  <p className="font-display text-xl font-bold text-fg">{action.title}</p>
                   <p className="mt-2 text-sm text-muted">{action.meta}</p>
                 </div>
-                <span className="text-teal transition-transform group-hover:translate-x-1" aria-hidden="true">-&gt;</span>
+                <span className="text-teal transition-transform group-hover:translate-x-2" aria-hidden="true">-&gt;</span>
               </div>
             </Link>
           ))}

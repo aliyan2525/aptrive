@@ -5,17 +5,14 @@ export type CardVariant = "default" | "interactive" | "gradient" | "sunken";
 
 const variantClass: Record<CardVariant, string> = {
   // Static content grouping — no hover behavior.
-  default: "border border-line bg-panel",
-  // Adds the existing lift/glow-border hover treatment (.motion-card
-  // already defines the enter + hover animation in globals.css).
-  interactive: "motion-card border border-line bg-panel",
-  // For a card that should stand out as a highlighted/featured item
-  // (e.g. a recommended plan, an AI-recommendation card).
+  default: "border border-line bg-[var(--surface-elevated)] shadow-sm relative overflow-hidden before:absolute before:inset-0 before:ring-1 before:ring-inset before:ring-white/5",
+  // Adds the existing lift/glow-border hover treatment.
+  interactive: "motion-card border border-line bg-[var(--surface-elevated)] relative overflow-hidden before:absolute before:inset-0 before:ring-1 before:ring-inset before:ring-white/5",
+  // Premium glass treatment for featured content.
   gradient:
-    "border border-teal/30 bg-gradient-to-b from-teal-dim to-panel shadow-[0_18px_55px_rgba(0,0,0,0.24)]",
-  // Recessed panel, for content nested inside another card (e.g. a
-  // stat block inside a dashboard bento cell).
-  sunken: "border border-line bg-surface-sunken",
+    "glass-panel relative overflow-hidden before:absolute before:inset-0 before:bg-gradient-to-br before:from-white/5 before:to-transparent before:pointer-events-none border-t-white/10 shadow-lg",
+  // Recessed panel, for content nested inside another card.
+  sunken: "border border-black/20 bg-[var(--surface-sunken)] shadow-inner",
 };
 
 type CardProps = HTMLAttributes<HTMLDivElement> & {

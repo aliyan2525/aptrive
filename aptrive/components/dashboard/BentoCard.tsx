@@ -27,7 +27,7 @@ export default function BentoCard({
 }) {
   return (
     <div
-      className={cn("motion-card rounded-md border border-line bg-panel p-6", className)}
+      className={cn("motion-card glass-panel rounded-[2rem] p-6 lg:p-8 relative overflow-hidden before:absolute before:inset-0 before:ring-1 before:ring-inset before:ring-white/5 transition-all duration-500 hover:shadow-2xl hover:-translate-y-1", className)}
       style={style}
     >
       {(title || action) && (
