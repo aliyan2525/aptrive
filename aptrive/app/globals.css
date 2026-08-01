@@ -1,64 +1,38 @@
 @import "tailwindcss";
 
 :root {
-  --graphite: #0b0e13;
-  --panel: #12161d;
-  --panel-2: #171c25;
-  --line: rgba(243, 245, 242, 0.1);
-  --line-strong: rgba(243, 245, 242, 0.18);
-  --fg: #f3f5f2;
-  --muted: #8a93a0;
-  --muted-2: #5c6472;
-  --teal: #23d5c4;
-  --teal-dim: rgba(35, 213, 196, 0.14);
-  --gold: #c9a24b;
-  --gold-dim: rgba(201, 162, 75, 0.14);
+  /* OKLCH Color System for Premium Gradients & Dynamic Lightness */
+  --graphite: oklch(20% 0.02 260); /* Deep cool black */
+  --panel: oklch(25% 0.01 260);
+  --panel-2: oklch(30% 0.01 260);
+  
+  --fg: oklch(98% 0.01 260); /* Crisp off-white */
+  --muted: oklch(65% 0.02 260);
+  --muted-2: oklch(50% 0.02 260);
+  
+  --line: oklch(40% 0.02 260 / 0.2);
+  --line-strong: oklch(40% 0.02 260 / 0.4);
+  
+  /* Primary Brands */
+  --teal: oklch(75% 0.15 180);
+  --teal-dim: oklch(75% 0.15 180 / 0.15);
+  
+  --gold: oklch(75% 0.15 70);
+  --gold-dim: oklch(75% 0.15 70 / 0.15);
 
-  /* Shared easing for scroll/hover/parallax motion — keeps every
-     hand-rolled transition (nav hide, hero parallax, card lift)
-     moving on the same curve instead of each picking its own. */
+  --surface-elevated: oklch(35% 0.01 260);
+  --surface-sunken: oklch(15% 0.02 260);
+  
+  --success: oklch(75% 0.15 140);
+  --warning: oklch(80% 0.15 75);
+  --danger: oklch(65% 0.2 25);
+
+  /* Apple-inspired Motion Engine */
+  --ease-apple: cubic-bezier(0.25, 1, 0.5, 1);
+  --ease-spring: cubic-bezier(0.175, 0.885, 0.32, 1.275);
   --ease-smooth: cubic-bezier(0.16, 1, 0.3, 1);
 
-  /* --- Design system additions (Phase 1) --- */
-
-  /* Surfaces: one extra step above --panel for stacked/elevated
-     content (modals, popovers, dropdown menus) so elevation reads
-     as a lighter surface rather than only a bigger shadow. */
-  --surface-elevated: #1c2129;
-  --surface-sunken: #080a0e;
-
-  /* Status colors — used sparingly (form errors, warnings, success
-     toasts). Kept desaturated so they sit quietly next to teal/gold. */
-  --success: #34d399;
-  --success-dim: rgba(52, 211, 153, 0.14);
-  --warning: #f4b740;
-  --warning-dim: rgba(244, 183, 64, 0.14);
-  --danger: #f2685c;
-  --danger-dim: rgba(242, 104, 92, 0.14);
-
-  /* Radius scale — every rounded corner in the product should map to
-     one of these instead of a one-off value. */
-  --radius-sm: 8px;
-  --radius-md: 12px;
-  --radius-lg: 16px;
-  --radius-xl: 24px;
-  --radius-full: 9999px;
-
-  /* Shadow scale — soft, low-opacity, teal-tinted at the top of the
-     stack so elevated panels feel like they belong to this palette
-     instead of a generic drop shadow. */
-  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.16);
-  --shadow-md: 0 8px 24px rgba(0, 0, 0, 0.22);
-  --shadow-lg: 0 18px 55px rgba(0, 0, 0, 0.28);
-  --shadow-glow: 0 10px 30px rgba(35, 213, 196, 0.28);
-
-  /* 8px spacing scale, exposed as variables for the rare place that
-     needs a raw value (SVG, inline style, non-Tailwind CSS). Tailwind
-     utilities (p-2, gap-4, etc.) already land on multiples of 4px —
-     the convention going forward is to only use the *even* steps
-     (2, 4, 6, 8, 10, 12, 16, 20, 24...) so everything still lines up
-     on an 8px grid.
-  */
+  /* Spacing Grid (8px baseline) */
   --space-1: 4px;
   --space-2: 8px;
   --space-3: 16px;
@@ -69,27 +43,23 @@
   --space-8: 96px;
 }
 
-@theme inline {
-  /* Light theme override when [data-theme="light"] is set on <html> */
-}
-
-/* Theme overrides based on data-theme attribute */
 :root[data-theme="light"], html[data-theme="light"] {
-  --graphite: #fbfdff;
-  --panel: #ffffff;
-  --panel-2: #f7fafc;
-  --line: rgba(15, 23, 42, 0.06);
-  --line-strong: rgba(15, 23, 42, 0.12);
-  --fg: #071126;
-  --muted: #475569;
-  --muted-2: #6b7280;
-  --teal: #0ea5a4; /* slightly darker teal on light */
-  --teal-dim: rgba(14, 165, 164, 0.12);
-  --gold: #b8862b;
-  --gold-dim: rgba(184, 134, 43, 0.12);
-
-  --surface-elevated: #ffffff;
-  --surface-sunken: #eef2f6;
+  --graphite: oklch(98% 0.01 260);
+  --panel: oklch(100% 0 0);
+  --panel-2: oklch(96% 0.01 260);
+  
+  --fg: oklch(20% 0.02 260);
+  --muted: oklch(45% 0.02 260);
+  --muted-2: oklch(60% 0.02 260);
+  
+  --line: oklch(40% 0.02 260 / 0.08);
+  --line-strong: oklch(40% 0.02 260 / 0.15);
+  
+  --teal: oklch(60% 0.15 180);
+  --gold: oklch(65% 0.15 70);
+  
+  --surface-elevated: oklch(100% 0 0);
+  --surface-sunken: oklch(92% 0.01 260);
 }
 
 @theme inline {
@@ -99,21 +69,8 @@
   --color-line: var(--line);
   --color-fg: var(--fg);
   --color-muted: var(--muted);
-  --color-muted-2: var(--muted-2);
   --color-teal: var(--teal);
-  --color-teal-dim: var(--teal-dim);
-  --color-gold: var(--gold);
-  --color-gold-dim: var(--gold-dim);
-
-  --color-surface-elevated: var(--surface-elevated);
-  --color-surface-sunken: var(--surface-sunken);
-  --color-success: var(--success);
-  --color-success-dim: var(--success-dim);
-  --color-warning: var(--warning);
-  --color-warning-dim: var(--warning-dim);
-  --color-danger: var(--danger);
-  --color-danger-dim: var(--danger-dim);
-
+  
   --font-display: var(--font-space-grotesk);
   --font-body: var(--font-inter);
   --font-mono: var(--font-ibm-plex-mono);
@@ -124,7 +81,7 @@
 }
 
 html {
-  scroll-behavior: smooth;
+  scroll-behavior: auto; /* Handled by Lenis for smooth scrolling */
   overflow-x: hidden;
 }
 
@@ -134,61 +91,17 @@ body {
   font-family: var(--font-body);
   -webkit-font-smoothing: antialiased;
   overflow-x: hidden;
+  overscroll-behavior-y: none;
 }
 
-@media (prefers-reduced-motion: reduce) {
-  html {
-    scroll-behavior: auto;
-  }
-  * {
-    animation-duration: 0.001ms !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: 0.001ms !important;
-  }
-}
-
-a:focus-visible,
-button:focus-visible,
-input:focus-visible,
-textarea:focus-visible,
-select:focus-visible {
-  outline: 2px solid var(--teal);
-  outline-offset: 3px;
-  border-radius: 2px;
-}
-
-.tick-rule {
-  position: relative;
-  height: 1px;
-  background: repeating-linear-gradient(
-    to right,
-    var(--line-strong) 0,
-    var(--line-strong) 1px,
-    transparent 1px,
-    transparent 24px
-  );
-}
-
-.tick-rule::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(to right, var(--teal) 0%, transparent 8%);
-  opacity: 0.5;
-}
-
-.font-display {
+/* Fluid Typography Scales */
+.text-hero {
   font-family: var(--font-display);
+  font-size: clamp(3.5rem, 5vw + 1rem, 7rem);
+  line-height: 0.95;
+  letter-spacing: -0.03em;
+  font-weight: 700;
 }
-
-.font-mono-data {
-  font-family: var(--font-mono);
-}
-
-/* --- Typography scale ---
-   One named scale for the whole product. Prefer these over raw
-   text-4xl/text-6xl utilities so hero, section, and card headings
-   stay consistent across pages instead of drifting per-author. */
 
 .text-display-1 {
   font-family: var(--font-display);
@@ -206,53 +119,9 @@ select:focus-visible {
   font-weight: 600;
 }
 
-.text-heading-1 {
-  font-family: var(--font-display);
-  font-size: clamp(1.75rem, 1.5rem + 1vw, 2.5rem);
-  line-height: 1.15;
-  letter-spacing: -0.01em;
-  font-weight: 600;
-}
-
-.text-heading-2 {
-  font-family: var(--font-display);
-  font-size: clamp(1.375rem, 1.25rem + 0.5vw, 1.75rem);
-  line-height: 1.2;
-  font-weight: 600;
-}
-
-.text-heading-3 {
-  font-family: var(--font-display);
-  font-size: 1.125rem;
-  line-height: 1.3;
-  font-weight: 600;
-}
-
-.text-body-lg {
-  font-size: 1.125rem;
-  line-height: 1.65;
-  color: var(--muted);
-}
-
-.text-body {
-  font-size: 1rem;
-  line-height: 1.65;
-  color: var(--muted);
-}
-
-.text-body-sm {
-  font-size: 0.875rem;
-  line-height: 1.55;
-  color: var(--muted-2);
-}
-
-.text-caption {
-  font-family: var(--font-mono);
-  font-size: 0.75rem;
-  line-height: 1.4;
-  letter-spacing: 0.06em;
-  color: var(--muted-2);
-}
+.text-body-lg { font-size: 1.125rem; line-height: 1.65; color: var(--muted); font-weight: 400; }
+.text-body { font-size: 1rem; line-height: 1.65; color: var(--muted); font-weight: 400; }
+.text-caption { font-family: var(--font-mono); font-size: 0.75rem; letter-spacing: 0.06em; color: var(--muted-2); }
 
 .eyebrow {
   font-family: var(--font-body);
@@ -262,276 +131,44 @@ select:focus-visible {
   text-transform: uppercase;
   color: var(--muted);
 }
-
 .eyebrow::before {
   content: "";
   display: inline-block;
-  width: 5px;
-  height: 5px;
-  margin-right: 0.55em;
-  margin-bottom: 1px;
+  width: 5px; height: 5px;
+  margin-right: 0.55em; margin-bottom: 1px;
   border-radius: 50%;
   background: var(--teal);
   vertical-align: middle;
 }
 
 .container-aptrive {
-  max-width: 1200px;
+  max-width: 1400px;
   margin-inline: auto;
-  padding-inline: 1rem;
+  padding-inline: 1.5rem;
   width: 100%;
 }
+@media (min-width: 768px) { .container-aptrive { padding-inline: 4rem; } }
 
-@media (min-width: 768px) {
-  .container-aptrive {
-    padding-inline: 2.5rem;
-  }
-}
-
-@keyframes marquee {
-  from {
-    transform: translateX(0);
-  }
-  to {
-    transform: translateX(-50%);
-  }
-}
-
-.marquee-track {
-  animation: marquee 32s linear infinite;
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .marquee-track {
-    animation: none;
-  }
-}
-
-/* Scroll-reveal (fade-in / slide-up) */
+/* Global Motion Primitives */
 .reveal {
   opacity: 0;
-  transform: translateY(18px);
-  transition: opacity 0.7s var(--ease-smooth), transform 0.7s var(--ease-smooth);
+  transform: translateY(24px);
+  transition: opacity 1.2s var(--ease-apple), transform 1.2s var(--ease-apple);
   will-change: opacity, transform;
 }
-
 .reveal.is-visible {
   opacity: 1;
   transform: translateY(0);
 }
 
-@media (prefers-reduced-motion: reduce) {
-  .reveal {
-    opacity: 1;
-    transform: none;
-    transition: none;
-  }
+.glass-panel {
+  background: color-mix(in oklch, var(--panel) 60%, transparent);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border: 1px solid var(--line);
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.2);
 }
 
-/* Floating background shapes */
-@keyframes float-slow {
-  0%,
-  100% {
-    transform: translate(0, 0) rotate(0deg);
-  }
-  50% {
-    transform: translate(14px, -18px) rotate(6deg);
-  }
-}
-
-@keyframes float-slower {
-  0%,
-  100% {
-    transform: translate(0, 0) rotate(0deg);
-  }
-  50% {
-    transform: translate(-16px, 14px) rotate(-5deg);
-  }
-}
-
-.float-a {
-  animation: float-slow 9s ease-in-out infinite;
-}
-
-.float-b {
-  animation: float-slower 12s ease-in-out infinite;
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .float-a,
-  .float-b {
-    animation: none;
-  }
-}
-
-/* FAQ accordion chevron */
-details.faq-item summary {
-  cursor: pointer;
-  list-style: none;
-}
-
-details.faq-item summary::-webkit-details-marker {
-  display: none;
-}
-
-details.faq-item .faq-chevron {
-  transition: transform 0.25s ease;
-}
-
-details.faq-item[open] .faq-chevron {
-  transform: rotate(45deg);
-}
-
-/* Skeleton loading state */
-@keyframes skeleton-pulse {
-  0%,
-  100% {
-    opacity: 0.5;
-  }
-  50% {
-    opacity: 0.9;
-  }
-}
-
-.skeleton {
-  animation: skeleton-pulse 1.6s ease-in-out infinite;
-  background: var(--panel-2);
-}
-
-/* Shimmer sweep — a moving highlight band, distinct from the plain
-   opacity pulse above. Used for the larger/hero loading cells so the
-   loading state reads as more "alive" than a uniform pulse. */
-@keyframes shimmer-sweep {
-  from {
-    background-position: -150% 0;
-  }
-  to {
-    background-position: 150% 0;
-  }
-}
-
-.shimmer {
-  background: linear-gradient(
-    100deg,
-    var(--panel-2) 40%,
-    var(--surface-elevated) 50%,
-    var(--panel-2) 60%
-  );
-  background-size: 250% 100%;
-  animation: shimmer-sweep 1.8s ease-in-out infinite;
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .shimmer {
-    animation: none;
-    background: var(--panel-2);
-  }
-}
-
-@keyframes enter-up {
-  from {
-    opacity: 0;
-    transform: translateY(14px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-@keyframes soft-glow {
-  0%,
-  100% {
-    box-shadow: 0 0 0 rgba(35, 213, 196, 0);
-  }
-  50% {
-    box-shadow: 0 0 26px rgba(35, 213, 196, 0.16);
-  }
-}
-
-.motion-card {
-  animation: enter-up 0.55s var(--ease-smooth) both;
-  transition:
-    transform 0.22s var(--ease-smooth),
-    border-color 0.22s ease,
-    box-shadow 0.22s ease,
-    background-color 0.22s ease;
-}
-
-.motion-card:hover {
-  transform: translateY(-3px);
-  border-color: rgba(35, 213, 196, 0.35);
-  box-shadow: 0 18px 55px rgba(0, 0, 0, 0.24);
-}
-
-.pressable {
-  transition:
-    transform 0.16s var(--ease-smooth),
-    box-shadow 0.16s ease,
-    background-color 0.16s ease,
-    border-color 0.16s ease;
-}
-
-.pressable:active {
-  transform: scale(0.98);
-}
-
-.glow-on-hover:hover {
-  animation: soft-glow 1.6s ease-in-out infinite;
-}
-
-.no-scrollbar {
-  scrollbar-width: none;
-}
-
-.no-scrollbar::-webkit-scrollbar {
-  display: none;
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .motion-card,
-  .glow-on-hover:hover {
-    animation: none;
-  }
-
-  .motion-card:hover {
-    transform: none;
-  }
-}
-
-.sr-only {
-  position: absolute;
-  width: 1px;
-  height: 1px;
-  padding: 0;
-  margin: -1px;
-  overflow: hidden;
-  clip: rect(0, 0, 0, 0);
-  white-space: nowrap;
-  border-width: 0;
-}
-
-/* Button ripple — spawned/removed by components/ui/Button.tsx.
-   Starts at 0 scale under the click point, expands to fully cover
-   the button, and fades out over the same span. */
-@keyframes btn-ripple {
-  0% {
-    transform: scale(0);
-    opacity: 0.55;
-  }
-  100% {
-    transform: scale(1);
-    opacity: 0;
-  }
-}
-
-.btn-ripple {
-  transform: scale(0);
-  animation: btn-ripple 0.6s var(--ease-smooth) forwards;
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .btn-ripple {
-    display: none;
-  }
-}
+/* Utilities */
+.no-scrollbar { scrollbar-width: none; }
+.no-scrollbar::-webkit-scrollbar { display: none; }

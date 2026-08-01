@@ -1,106 +1,64 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { redirect } from "next/navigation";
-import { ArrowRight } from "lucide-react";
+import { ArrowRight, BrainCircuit, Timer, LineChart, MapIcon, Compass } from "lucide-react";
+import dynamic from 'next/dynamic';
+
 import Reveal from "@/components/Reveal";
-import SectionReveal from "@/components/transitions/SectionReveal";
 import PopularUniversities from "@/components/PopularUniversities";
 import FeaturedLibrary from "@/components/FeaturedLibrary";
 import FAQAccordion from "@/components/FAQAccordion";
-import HeroSceneClient from "@/components/hero/HeroSceneClient";
 import HeadlineReveal from "@/components/transitions/HeadlineReveal";
 import Button from "@/components/ui/Button";
 import Card from "@/components/ui/Card";
 import Eyebrow from "@/components/ui/Eyebrow";
 import { createClient } from "@/lib/supabase/server";
-import FloatingStats from "@/components/hero/FloatingStats";
 import PremiumFeatureCard from "@/components/features/PremiumFeatureCard";
 import AnimatedJourney from "@/components/journey/AnimatedJourney";
-import { BrainCircuit, Timer, LineChart, MapIcon } from "lucide-react";
+
+// Dynamically import the 3D scene to prevent SSR mismatches and reduce initial bundle size
+const HeroScene = dynamic(() => import("@/components/three/HeroScene"), { 
+  ssr: false,
+  loading: () => <div className="absolute inset-0 bg-transparent" />
+});
 
 export const metadata: Metadata = {
-  title: "Aptrive — Premium AI Prep for University Entrance Exams",
-  description:
-    "Aptrive helps students prepare for NUST, FAST, PIEAS, GIKI, COMSATS, UET, AIR, IST, and Bahria through adaptive AI practice and real progress analytics.",
+  title: "Aptrive — The Global Standard for Entrance Prep",
+  description: "A beautifully engineered platform to master your university entrance exams.",
 };
 
 type PillarColor = "blue" | "teal" | "purple" | "orange";
 
 const pillars = [
   {
-    title: "Adaptive AI Learning",
-    body: "Your next question is selected from your weakest concepts, not a fixed chapter order.",
+    title: "Dynamic Intelligence",
+    body: "An engine that maps your weakest links in real time and rewrites your path accordingly.",
     icon: <BrainCircuit strokeWidth={1.5} className="h-7 w-7" />,
     color: "blue" as PillarColor,
   },
   {
-    title: "Mock Testing Engine",
-    body: "Timed sessions with exam-like pressure, clean review workflows, and focused post-test feedback.",
+    title: "Precision Simulation",
+    body: "Experience the true velocity of exam day in a high-fidelity mock environment.",
     icon: <Timer strokeWidth={1.5} className="h-7 w-7" />,
     color: "orange" as PillarColor,
   },
   {
-    title: "Personalized Analytics",
-    body: "Topic mastery, speed trends, and consistency signals designed for decision-making.",
+    title: "Deep Analytics",
+    body: "Granular insights into your topic mastery and cognitive load during testing.",
     icon: <LineChart strokeWidth={1.5} className="h-7 w-7" />,
     color: "purple" as PillarColor,
   },
   {
-    title: "University Roadmaps",
-    body: "Preparation tracks aligned with Pakistan's leading entrance exams and merit expectations.",
-    icon: <MapIcon strokeWidth={1.5} className="h-7 w-7" />,
+    title: "Official Pathways",
+    body: "Navigate the complex landscape of Pakistan's elite universities with absolute clarity.",
+    icon: <Compass strokeWidth={1.5} className="h-7 w-7" />,
     color: "teal" as PillarColor,
-  },
-];
-
-const journey = [
-  {
-    title: "Diagnostic Baseline",
-    body: "Start with a quick calibration to map current strengths and weak areas.",
-  },
-  {
-    title: "Structured Daily Practice",
-    body: "Follow smart practice sets with gradual difficulty progression and revision loops.",
-  },
-  {
-    title: "Mock + Feedback",
-    body: "Simulate the exam, then close gaps with targeted follow-up sessions.",
-  },
-  {
-    title: "Admission Readiness",
-    body: "Track progress against your target university and keep refining until ready.",
-  },
-];
-
-const blogPreview = [
-  {
-    title: "How to Build a 12-Week NET Prep Strategy",
-    category: "Study Strategy",
-    description: "A week-by-week structure for turning a fixed syllabus into a compounding daily practice habit.",
-    readTime: "8 min read",
-    href: "/blog",
-  },
-  {
-    title: "Topic Mastery vs Random Practice: What Works Better?",
-    category: "Learning Science",
-    description: "Why chapter-order practice under-serves your weakest topics, and what to do instead.",
-    readTime: "6 min read",
-    href: "/blog",
-  },
-  {
-    title: "Avoid These 7 Mistakes in Last-Month Preparation",
-    category: "Exam Prep",
-    description: "The most common last-month errors that quietly cost students marks on test day.",
-    readTime: "5 min read",
-    href: "/blog",
   },
 ];
 
 export default async function Home() {
   const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  const { data: { user } } = await supabase.auth.getUser();
 
   if (user) {
     redirect("/dashboard");
@@ -108,65 +66,60 @@ export default async function Home() {
 
   return (
     <>
-      <HeroSceneClient />
-
-      <section className="relative min-h-[90vh] flex items-center justify-center overflow-hidden border-b border-line/40 pt-20">
-        <FloatingStats />
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-teal/10 via-transparent to-transparent opacity-50 pointer-events-none" />
+      <section className="relative min-h-screen flex items-center justify-center overflow-hidden border-b border-line/10 bg-graphite pt-20 perspective-1000">
+        <HeroScene />
         
-        <div className="container-aptrive relative z-10 py-24 md:py-32">
-          <div className="mx-auto max-w-4xl text-center">
-            <div className="inline-flex items-center gap-2 rounded-full border border-teal/20 bg-teal/5 px-4 py-1.5 backdrop-blur-md mb-8">
-              <span className="flex h-2 w-2 rounded-full bg-teal shadow-[0_0_8px_rgba(20,184,166,1)] animate-pulse" />
-              <Eyebrow className="text-teal">
-                AI-Powered Entrance Preparation
-              </Eyebrow>
-            </div>
+        <div className="container-aptrive relative z-10 py-32 md:py-48">
+          <div className="mx-auto max-w-5xl text-center flex flex-col items-center">
+            
+            <Reveal>
+              <div className="glass-panel inline-flex items-center gap-3 rounded-full px-5 py-2 mb-12 transform-gpu">
+                <span className="flex h-2.5 w-2.5 rounded-full bg-teal shadow-[0_0_12px_rgba(35,213,196,0.8)] animate-pulse" />
+                <Eyebrow className="text-teal tracking-widest text-[10px]">
+                  The New Standard in EdTech
+                </Eyebrow>
+              </div>
+            </Reveal>
             
             <HeadlineReveal
-              lines={["Learn like a top scorer.", "Prepare with precision."]}
-              className="text-display-1 text-black dark:text-white drop-shadow-sm dark:drop-shadow-2xl transition-colors"
+              lines={["Master your future.", "With beautiful precision."]}
+              className="text-hero text-fg mix-blend-plus-lighter"
             />
             
-            <p className="mx-auto mt-8 max-w-2xl text-lg md:text-xl text-black/70 dark:text-white/70 leading-relaxed font-normal transition-colors">
-              Aptrive combines adaptive practice, premium analytics, and exam-focused pathways
-              so every study hour compounds toward your target university.
-            </p>
+            <Reveal delay={200}>
+              <p className="mx-auto mt-10 max-w-2xl text-body-lg md:text-xl text-muted leading-relaxed">
+                Aptrive combines responsive 3D intelligence, elite analytics, and officially aligned pathways to transform your raw potential into an admission letter.
+              </p>
+            </Reveal>
             
-            <div className="mt-12 flex flex-wrap items-center justify-center gap-6 relative">
-              {/* Massive ambient glow behind buttons */}
-              <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-64 h-32 bg-teal/30 blur-3xl pointer-events-none" />
-              
-              <Button href="/signup" variant="primary" size="lg" magnetic className="relative z-10 bg-black text-white hover:bg-black/90 dark:bg-white dark:text-black dark:hover:bg-white/90 shadow-lg dark:shadow-[0_0_40px_rgba(255,255,255,0.2)]">
-                Create account
-              </Button>
-              <Button href="/practice" variant="glass" size="lg" magnetic className="relative z-10 border-black/20 bg-black/5 hover:bg-black/10 text-black dark:border-white/20 dark:bg-white/5 dark:hover:bg-white/10 dark:text-white backdrop-blur-xl">
-                Explore practice
-              </Button>
-            </div>
+            <Reveal delay={400} className="w-full">
+              <div className="mt-14 flex flex-col sm:flex-row items-center justify-center gap-6 relative">
+                <Button href="/signup" variant="primary" size="lg" className="w-full sm:w-auto shadow-lg shadow-teal/20 text-[15px] px-8 h-14">
+                  Start Your Journey
+                </Button>
+                <Button href="/practice" variant="glass" size="lg" className="w-full sm:w-auto text-[15px] px-8 h-14">
+                  Experience Practice
+                </Button>
+              </div>
+            </Reveal>
           </div>
         </div>
       </section>
 
-      <section className="relative overflow-hidden bg-white dark:bg-black py-24 md:py-32 transition-colors">
-        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-5xl h-[1px] bg-gradient-to-r from-transparent via-black/10 dark:via-white/10 to-transparent" />
+      <section className="relative overflow-hidden bg-panel py-32 md:py-48 z-10">
+        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-6xl h-[1px] bg-gradient-to-r from-transparent via-line-strong to-transparent" />
         
-        <div className="container-aptrive relative z-10">
+        <div className="container-aptrive relative">
           <Reveal>
-            <div className="mx-auto max-w-3xl text-center">
-              <Eyebrow className="text-teal">
-                Why Aptrive
-              </Eyebrow>
-              <h2 className="text-display-2 text-black dark:text-white mt-6 transition-colors">
-                Built for high-stakes admissions.
+            <div className="mx-auto max-w-4xl text-center">
+              <Eyebrow className="text-gold">Engineering Excellence</Eyebrow>
+              <h2 className="text-display-2 text-fg mt-8">
+                Built to be the most sophisticated educational tool in existence.
               </h2>
-              <p className="mt-6 text-lg text-black/60 dark:text-white/60 font-normal leading-relaxed max-w-2xl mx-auto transition-colors">
-                Move beyond generic test prep with precision-engineered tools designed exclusively for Pakistan's top engineering and medical entry tests.
-              </p>
             </div>
           </Reveal>
           
-          <div className="mt-20 grid gap-6 md:grid-cols-2 lg:grid-cols-4">
+          <div className="mt-24 grid gap-8 md:grid-cols-2 lg:grid-cols-4">
             {pillars.map((pillar, index) => (
               <PremiumFeatureCard 
                 key={pillar.title}
@@ -181,17 +134,15 @@ export default async function Home() {
         </div>
       </section>
 
-      <section className="relative overflow-hidden bg-white dark:bg-black py-24 md:py-32 transition-colors">
-        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[300px] bg-teal/5 blur-3xl rounded-full pointer-events-none" />
+      <section className="relative overflow-hidden bg-panel-2 py-32 md:py-48 z-10">
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[1000px] h-[500px] bg-teal-dim blur-3xl rounded-[100%] pointer-events-none opacity-50" />
         
-        <div className="container-aptrive relative z-10">
+        <div className="container-aptrive relative">
           <Reveal>
             <div className="mx-auto max-w-3xl text-center">
-              <Eyebrow className="text-teal">
-                Student Success Journey
-              </Eyebrow>
-              <h2 className="text-display-2 text-black dark:text-white mt-6 transition-colors">
-                A clear progression to the finish line.
+              <Eyebrow className="text-teal">Cognitive Path</Eyebrow>
+              <h2 className="text-display-2 text-fg mt-8">
+                A seamless progression to the finish line.
               </h2>
             </div>
           </Reveal>
@@ -200,166 +151,40 @@ export default async function Home() {
         </div>
       </section>
 
-      <section className="container-aptrive py-20 md:py-28">
+      <section className="container-aptrive py-32 md:py-48 z-10 relative">
         <Reveal>
-          <div className="flex flex-wrap items-end justify-between gap-5">
+          <div className="flex flex-col md:flex-row md:items-end justify-between gap-8 border-b border-line pb-12">
             <div className="max-w-2xl">
-              <Eyebrow>University Roadmaps</Eyebrow>
-              <h2 className="text-display-2 mt-4 text-fg">
-                Stay aligned with official institutions and merit pathways.
+              <Eyebrow>Official Integration</Eyebrow>
+              <h2 className="text-display-1 mt-6 text-fg">
+                Aligned with elite merit pathways.
               </h2>
             </div>
             <Link
               href="/calculator"
-              className="inline-flex items-center gap-1.5 text-sm font-semibold text-teal transition hover:gap-2.5"
+              className="inline-flex items-center gap-2 text-sm font-semibold text-teal transition hover:gap-3 hover:text-fg"
             >
-              Open calculator <ArrowRight className="h-3.5 w-3.5" />
+              Access Calculator <ArrowRight className="h-4 w-4" />
             </Link>
           </div>
         </Reveal>
-        <Reveal delay={120} className="mt-10">
+        <Reveal delay={100} className="mt-16">
           <PopularUniversities />
         </Reveal>
-
-        <Reveal delay={200} className="mt-12 border-t border-line pt-8">
-          <div className="grid grid-cols-2 gap-4 md:grid-cols-4 md:gap-8">
-            <div className="flex items-center gap-3">
-              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-teal/10 text-teal">
-                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10"/><path d="m9 12 2 2 4-4"/></svg>
-              </div>
-              <div>
-                <h4 className="text-sm font-semibold text-fg">Official & Verified</h4>
-                <p className="text-xs text-muted-2 mt-0.5">Data from official sources</p>
-              </div>
-            </div>
-            <div className="flex items-center gap-3">
-              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-blue-500/10 text-blue-500">
-                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 2v6h-6"/><path d="M3 12a9 9 0 0 1 15-6.7L21 8"/><path d="M3 22v-6h6"/><path d="M21 12a9 9 0 0 1-15 6.7L3 16"/></svg>
-              </div>
-              <div>
-                <h4 className="text-sm font-semibold text-fg">Regularly Updated</h4>
-                <p className="text-xs text-muted-2 mt-0.5">Stay informed always</p>
-              </div>
-            </div>
-            <div className="flex items-center gap-3">
-              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-purple-500/10 text-purple-500">
-                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M18 20V10"/><path d="M12 20V4"/><path d="M6 20v-4"/></svg>
-              </div>
-              <div>
-                <h4 className="text-sm font-semibold text-fg">Merit Made Easy</h4>
-                <p className="text-xs text-muted-2 mt-0.5">Compare and plan better</p>
-              </div>
-            </div>
-            <div className="flex items-center gap-3">
-              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-orange-500/10 text-orange-500">
-                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect width="18" height="11" x="3" y="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
-              </div>
-              <div>
-                <h4 className="text-sm font-semibold text-fg">Trust & Transparency</h4>
-                <p className="text-xs text-muted-2 mt-0.5">Accurate, reliable, and clear</p>
-              </div>
-            </div>
-          </div>
-        </Reveal>
       </section>
 
-      <section className="border-y border-line">
-        <div className="container-aptrive py-20 md:py-28">
+      <section className="bg-panel py-32 md:py-48 z-10 relative border-t border-line">
+        <div className="container-aptrive text-center">
           <Reveal>
-            <div className="flex flex-wrap items-end justify-between gap-5">
-              <div className="max-w-2xl">
-                <Eyebrow>Resource Library</Eyebrow>
-                <h2 className="text-display-2 mt-4 text-fg">
-                  Notes, sheets, practice sets, and concept material in one place.
-                </h2>
-              </div>
-              <Link
-                href="/library"
-                className="inline-flex items-center gap-1.5 text-sm font-semibold text-teal transition hover:gap-2.5"
-              >
-                Browse all resources <ArrowRight className="h-3.5 w-3.5" />
-              </Link>
-            </div>
-          </Reveal>
-          <Reveal delay={120} className="mt-10">
-            <FeaturedLibrary />
-          </Reveal>
-        </div>
-      </section>
-
-      <section className="container-aptrive py-20 md:py-28">
-        <Reveal>
-          <div className="flex flex-wrap items-end justify-between gap-5">
-            <div className="max-w-2xl">
-              <Eyebrow>Latest Blogs</Eyebrow>
-              <h2 className="text-display-2 mt-4 text-fg">
-                Practical, data-backed preparation guidance from the Aptrive team.
-              </h2>
-            </div>
-            <Link
-              href="/blog"
-              className="inline-flex items-center gap-1.5 text-sm font-semibold text-teal transition hover:gap-2.5"
-            >
-              View blog hub <ArrowRight className="h-3.5 w-3.5" />
-            </Link>
-          </div>
-        </Reveal>
-        <div className="mt-10 grid gap-5 md:grid-cols-3">
-          {blogPreview.map((post, index) => (
-            <Reveal key={post.title} delay={index * 80}>
-              <Card variant="interactive" padding="lg" className="flex h-full flex-col">
-                <p className="font-mono-data text-xs uppercase tracking-[0.14em] text-teal">{post.category}</p>
-                <h3 className="text-heading-2 mt-4 text-fg">{post.title}</h3>
-                <p className="text-body-sm mt-2 flex-1">{post.description}</p>
-                <div className="mt-5 flex items-center justify-between">
-                  <span className="text-caption">{post.readTime}</span>
-                  <Link href={post.href} className="text-sm font-semibold text-teal hover:underline">
-                    Read more
-                  </Link>
-                </div>
-              </Card>
-            </Reveal>
-          ))}
-        </div>
-      </section>
-
-      <section className="relative overflow-hidden bg-white dark:bg-black py-24 md:py-32 transition-colors">
-        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-5xl h-[1px] bg-gradient-to-r from-transparent via-black/10 dark:via-white/10 to-transparent" />
-        <div className="container-aptrive relative z-10">
-          <Reveal>
-            <div className="mx-auto max-w-2xl text-center">
-              <Eyebrow className="text-teal">
-                FAQ
-              </Eyebrow>
-              <h2 className="text-display-2 text-black dark:text-white mt-6 transition-colors">
-                Questions students ask before they begin.
-              </h2>
-            </div>
-          </Reveal>
-          <Reveal delay={100} className="mt-16">
-            <FAQAccordion />
-          </Reveal>
-        </div>
-      </section>
-
-      <section className="relative overflow-hidden bg-white dark:bg-black py-32 md:py-48 transition-colors">
-        {/* Massive ambient glow */}
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[400px] bg-teal/10 blur-3xl rounded-full pointer-events-none" />
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[400px] h-[200px] bg-blue-500/10 blur-3xl rounded-full pointer-events-none" />
-        
-        <div className="container-aptrive relative z-10 text-center">
-          <Reveal>
-            <h2 className="text-display-1 text-black dark:text-white drop-shadow-sm dark:drop-shadow-2xl max-w-4xl mx-auto transition-colors">
-              Ready to build your university admission edge?
+            <Eyebrow className="text-teal">The Final Step</Eyebrow>
+            <h2 className="text-hero text-fg mt-8 max-w-5xl mx-auto mix-blend-plus-lighter">
+              It's time to realize your true potential.
             </h2>
-            <p className="mt-8 text-xl text-black/60 dark:text-white/60 font-normal leading-relaxed max-w-2xl mx-auto transition-colors">
-              Start with your first adaptive session and unlock your personalized roadmap to Pakistan's top universities.
-            </p>
-          </Reveal>
-          <Reveal delay={100} className="mt-12 relative">
-            <Button href="/signup" variant="primary" size="lg" magnetic className="bg-black text-white hover:bg-black/90 dark:bg-white dark:text-black dark:hover:bg-white/90 shadow-lg dark:shadow-[0_0_40px_rgba(255,255,255,0.2)]">
-              Get started now
-            </Button>
+            <div className="mt-16">
+              <Button href="/signup" variant="primary" size="lg" className="h-16 px-12 text-lg shadow-[0_0_40px_rgba(35,213,196,0.3)] hover:shadow-[0_0_60px_rgba(35,213,196,0.5)]">
+                Begin The Journey
+              </Button>
+            </div>
           </Reveal>
         </div>
       </section>
