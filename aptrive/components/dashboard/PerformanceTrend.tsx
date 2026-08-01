@@ -112,6 +112,8 @@ export default function PerformanceTrend({ activity }: { activity: DayActivity[]
           viewBox={`0 0 100 ${CHART_HEIGHT}`}
           preserveAspectRatio="none"
           className="absolute inset-0 h-full w-full"
+          width="100%"
+          height="100%"
           aria-hidden="true"
         >
           <polyline

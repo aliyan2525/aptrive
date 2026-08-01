@@ -27,7 +27,7 @@ export default function BentoCard({
 }) {
   return (
     <div
-      className={cn("motion-card glass-panel rounded-[2rem] p-6 lg:p-8 relative overflow-hidden before:absolute before:inset-0 before:ring-1 before:ring-inset before:ring-white/5 transition-all duration-500 hover:shadow-2xl hover:-translate-y-1", className)}
+      className={cn("flex flex-col justify-between h-full motion-card glass-panel rounded-[2rem] p-6 lg:p-8 relative overflow-hidden before:absolute before:inset-0 before:ring-1 before:ring-inset before:ring-white/5 transition-all duration-500 hover:shadow-2xl hover:-translate-y-1", className)}
       style={style}
     >
       {(title || action) && (
@@ -40,7 +40,7 @@ export default function BentoCard({
         </div>
       )}
       {!title && subtitle && <p className="text-xs leading-relaxed text-muted">{subtitle}</p>}
-      <div className={cn(title || subtitle ? "mt-5" : undefined, bodyClassName)}>{children}</div>
+      <div className={cn("flex flex-col flex-1", title || subtitle ? "mt-5" : undefined, bodyClassName)}>{children}</div>
     </div>
   );
 }

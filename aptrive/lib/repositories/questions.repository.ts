@@ -217,9 +217,15 @@ export async function getCorrectAnswerForQuestion(
   // is now staff-only to prevent answer keys leaking to the public client.
   // This is safe because this function is only called server-side AFTER
   // an attempt is graded and recorded.
+  
+  if (!process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.SUPABASE_SERVICE_ROLE_KEY) {
+    console.warn("Missing SUPABASE_SERVICE_ROLE_KEY. Unable to fetch correct answer for UI reveal.");
+    return { correctOptionIds: null, correctNumericValue: null };
+  }
+
   const supabaseAdmin = createSupabaseClient<Database>(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.SUPABASE_SERVICE_ROLE_KEY!
+    process.env.NEXT_PUBLIC_SUPABASE_URL,
+    process.env.SUPABASE_SERVICE_ROLE_KEY
   );
 
   const { data, error } = await supabaseAdmin

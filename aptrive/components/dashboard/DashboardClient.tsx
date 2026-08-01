@@ -166,9 +166,9 @@ export default function DashboardClient({
 
   return (
     <main className="min-h-[calc(100vh-4rem)] bg-graphite px-4 py-8 pb-24 md:px-6 md:py-10">
-      <div className="container-aptrive grid grid-cols-1 gap-6 lg:grid-cols-12">
+      <div className="container-aptrive grid grid-cols-1 md:grid-cols-6 lg:grid-cols-12 gap-6">
         {/* Row 1 — Welcome card + Daily goal */}
-        <div className="motion-card glass-panel rounded-[2rem] p-8 lg:p-12 lg:col-span-8 relative overflow-hidden before:absolute before:inset-0 before:ring-1 before:ring-inset before:ring-white/5 transition-all duration-500 hover:shadow-2xl">
+        <div className="motion-card glass-panel rounded-[2rem] p-8 lg:p-12 lg:col-span-8 md:col-span-6 relative overflow-hidden before:absolute before:inset-0 before:ring-1 before:ring-inset before:ring-white/5 transition-all duration-500 hover:shadow-2xl">
           <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-teal-dim blur-[100px] rounded-full pointer-events-none -translate-y-1/2 translate-x-1/4 opacity-60" />
           <div className="eyebrow relative z-10">Learning command center</div>
           <h1 className="font-display mt-4 text-4xl lg:text-5xl font-bold tracking-tight text-fg relative z-10">
@@ -187,7 +187,7 @@ export default function DashboardClient({
           </div>
         </div>
 
-        <BentoCard className="lg:col-span-4" bodyClassName="mt-0">
+        <BentoCard className="md:col-span-6 lg:col-span-4" bodyClassName="mt-0">
           <div className="flex items-center justify-between">
             <div>
               <p className="text-xs uppercase tracking-[0.14em] text-muted-2">Today&apos;s goal</p>
@@ -205,7 +205,7 @@ export default function DashboardClient({
         {kpis.map((kpi, index) => (
           <BentoCard
             key={kpi.label}
-            className="col-span-1 sm:col-span-6 lg:col-span-3"
+            className="col-span-1 md:col-span-3 lg:col-span-3"
             style={{ animationDelay: `${index * 35}ms` }}
           >
             <p className="text-xs uppercase tracking-wide text-muted-2">{kpi.label}</p>
@@ -218,7 +218,7 @@ export default function DashboardClient({
         {/* Row 3 — Performance trends + exam readiness */}
         <PerformanceTrend activity={activity} />
 
-        <BentoCard title="Exam readiness" subtitle="Blended score from volume, accuracy, and streak" className="lg:col-span-5">
+        <BentoCard title="Exam readiness" subtitle="Blended score from volume, accuracy, and streak" className="md:col-span-6 lg:col-span-5">
           <div className="flex items-center gap-6">
             <ProgressRing value={prepPercent} color="var(--gold)" size={88} />
             <p className="text-sm leading-relaxed text-muted">
@@ -232,15 +232,15 @@ export default function DashboardClient({
         </BentoCard>
 
         {/* Row 4 — Strong / weak topics + university goal */}
-        <BentoCard title="Strong topics" subtitle="Where you're performing best right now" className="lg:col-span-4">
+        <BentoCard title="Strong topics" subtitle="Where you're performing best right now" className="md:col-span-3 lg:col-span-4">
           <TopicList topics={strongTopics.length ? strongTopics : fallbackStrong} tone="teal" />
         </BentoCard>
 
-        <BentoCard title="Weak topics" subtitle="Where the next study block pays off most" className="lg:col-span-4">
+        <BentoCard title="Weak topics" subtitle="Where the next study block pays off most" className="md:col-span-3 lg:col-span-4">
           <TopicList topics={weakTopics.length ? weakTopics : fallbackWeak} tone="gold" />
         </BentoCard>
 
-        <BentoCard title="University goal" subtitle="Your target, set in onboarding" className="lg:col-span-4">
+        <BentoCard title="University goal" subtitle="Your target, set in onboarding" className="md:col-span-6 lg:col-span-4">
           <div className="flex h-full flex-col justify-between">
             <div className="flex items-start gap-3">
               {data.studentProfile?.target_university && (
@@ -264,7 +264,7 @@ export default function DashboardClient({
         </BentoCard>
 
         {/* Row 5 — Recommended practice + rankings */}
-        <BentoCard title="Recommended for you" subtitle="Where to spend your next session" className="lg:col-span-6">
+        <BentoCard title="Recommended for you" subtitle="Where to spend your next session" className="md:col-span-6 lg:col-span-6">
           <Link
             href="/practice"
             className="group flex items-center justify-between rounded-sm border border-teal/30 bg-teal-dim p-4"
@@ -292,11 +292,11 @@ export default function DashboardClient({
           icon={Trophy}
           message="Live rankings and a projected rank unlock once graded mock tests are available for every student — this won't show placeholder numbers in the meantime."
           cta={{ href: "/rankings", label: "See how rankings will work" }}
-          className="lg:col-span-6"
+          className="md:col-span-6 lg:col-span-6"
         />
 
         {/* Row 6 — Study calendar + upcoming exams */}
-        <BentoCard title="Study calendar" subtitle="Days with a completed session this month" className="lg:col-span-5">
+        <BentoCard title="Study calendar" subtitle="Days with a completed session this month" className="md:col-span-3 lg:col-span-5">
           <div className="grid grid-cols-7 gap-2 text-center text-[10px] uppercase tracking-wide text-muted-2">
             {weekdayLabels.map((label, i) => (
               <span key={`${label}-${i}`}>{label}</span>
@@ -319,7 +319,7 @@ export default function DashboardClient({
           </div>
         </BentoCard>
 
-        <BentoCard title="Upcoming exams" subtitle="Keep application dates visible" className="lg:col-span-7">
+        <BentoCard title="Upcoming exams" subtitle="Keep application dates visible" className="md:col-span-3 lg:col-span-7">
           <div className="space-y-3">
             {(data.upcomingDeadlines.length ? data.upcomingDeadlines : fallbackDeadlines).map((item) => (
               <div key={`${item.university}-${item.deadline_date}`} className="flex items-center justify-between gap-4 border-b border-line pb-3 text-sm last:border-0">
@@ -334,7 +334,7 @@ export default function DashboardClient({
         </BentoCard>
 
         {/* Row 7 — Weekly heatmap */}
-        <BentoCard title="Weekly activity heatmap" subtitle="Questions attempted over the last 28 active days" className="lg:col-span-12">
+        <BentoCard title="Weekly activity heatmap" subtitle="Questions attempted over the last 28 active days" className="md:col-span-6 lg:col-span-12">
           <div className="grid grid-cols-7 gap-2 text-center text-[10px] uppercase tracking-wide text-muted-2 sm:grid-cols-14 lg:grid-cols-28">
             {activity.map((day) => (
               <div
@@ -367,10 +367,10 @@ export default function DashboardClient({
           icon={ClipboardList}
           message="Mock exams aren't live yet, so there's no history to show honestly. This card will fill in with your last few attempts once mock tests launch."
           cta={{ href: "/mock-tests", label: "See what's planned" }}
-          className="lg:col-span-6"
+          className="md:col-span-6 lg:col-span-6"
         />
 
-        <BentoCard title="Recent activity" subtitle="Latest learning events and account context" className="lg:col-span-6">
+        <BentoCard title="Recent activity" subtitle="Latest learning events and account context" className="md:col-span-6 lg:col-span-6">
           <div className="grid gap-4 md:grid-cols-2">
             <dl className="space-y-3 text-sm">
               <Info label="Email" value={email} />
@@ -389,7 +389,7 @@ export default function DashboardClient({
         </BentoCard>
 
         {/* Row 9 — Quick actions */}
-        <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4 lg:col-span-12">
+        <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4 md:col-span-6 lg:col-span-12">
           {quickActions.map((action, index) => (
             <Link
               key={action.title}
