@@ -11,6 +11,7 @@ import HeroSceneClient from "@/components/hero/HeroSceneClient";
 import HeadlineReveal from "@/components/transitions/HeadlineReveal";
 import Button from "@/components/ui/Button";
 import Card from "@/components/ui/Card";
+import Eyebrow from "@/components/ui/Eyebrow";
 import { createClient } from "@/lib/supabase/server";
 import FloatingStats from "@/components/hero/FloatingStats";
 import PremiumFeatureCard from "@/components/features/PremiumFeatureCard";
@@ -117,26 +118,26 @@ export default async function Home() {
           <div className="mx-auto max-w-4xl text-center">
             <div className="inline-flex items-center gap-2 rounded-full border border-teal/20 bg-teal/5 px-4 py-1.5 backdrop-blur-md mb-8">
               <span className="flex h-2 w-2 rounded-full bg-teal shadow-[0_0_8px_rgba(20,184,166,1)] animate-pulse" />
-              <span className="font-mono-data text-xs font-semibold uppercase tracking-widest text-teal">
+              <Eyebrow className="text-teal">
                 AI-Powered Entrance Preparation
-              </span>
+              </Eyebrow>
             </div>
             
             <HeadlineReveal
               lines={["Learn like a top scorer.", "Prepare with precision."]}
-              className="text-[3.5rem] leading-[1.1] md:text-[5rem] lg:text-[6rem] font-display font-bold tracking-tight text-black dark:text-white drop-shadow-sm dark:drop-shadow-2xl transition-colors"
+              className="text-display-1 text-black dark:text-white drop-shadow-sm dark:drop-shadow-2xl transition-colors"
             />
             
-            <p className="mx-auto mt-8 max-w-2xl text-lg md:text-xl text-black/70 dark:text-white/70 leading-relaxed font-light transition-colors">
+            <p className="mx-auto mt-8 max-w-2xl text-lg md:text-xl text-black/70 dark:text-white/70 leading-relaxed font-normal transition-colors">
               Aptrive combines adaptive practice, premium analytics, and exam-focused pathways
               so every study hour compounds toward your target university.
             </p>
             
             <div className="mt-12 flex flex-wrap items-center justify-center gap-6 relative">
               {/* Massive ambient glow behind buttons */}
-              <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-64 h-32 bg-teal/30 blur-[100px] pointer-events-none" />
+              <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-64 h-32 bg-teal/30 blur-3xl pointer-events-none" />
               
-              <Button href="/signup" variant="primary" size="lg" magnetic className="relative z-10 bg-black text-white hover:bg-black/90 dark:bg-white dark:text-black dark:hover:bg-white/90 hover:scale-105 transition-transform shadow-lg dark:shadow-[0_0_40px_rgba(255,255,255,0.2)]">
+              <Button href="/signup" variant="primary" size="lg" magnetic className="relative z-10 bg-black text-white hover:bg-black/90 dark:bg-white dark:text-black dark:hover:bg-white/90 shadow-lg dark:shadow-[0_0_40px_rgba(255,255,255,0.2)]">
                 Create account
               </Button>
               <Button href="/practice" variant="glass" size="lg" magnetic className="relative z-10 border-black/20 bg-black/5 hover:bg-black/10 text-black dark:border-white/20 dark:bg-white/5 dark:hover:bg-white/10 dark:text-white backdrop-blur-xl">
@@ -153,13 +154,13 @@ export default async function Home() {
         <div className="container-aptrive relative z-10">
           <Reveal>
             <div className="mx-auto max-w-3xl text-center">
-              <span className="font-mono-data text-xs font-semibold uppercase tracking-widest text-teal">
+              <Eyebrow className="text-teal">
                 Why Aptrive
-              </span>
-              <h2 className="text-[2.5rem] leading-[1.1] md:text-[4rem] font-display font-bold tracking-tight text-black dark:text-white mt-6 transition-colors">
+              </Eyebrow>
+              <h2 className="text-display-2 text-black dark:text-white mt-6 transition-colors">
                 Built for high-stakes admissions.
               </h2>
-              <p className="mt-6 text-lg text-black/60 dark:text-white/60 font-light leading-relaxed max-w-2xl mx-auto transition-colors">
+              <p className="mt-6 text-lg text-black/60 dark:text-white/60 font-normal leading-relaxed max-w-2xl mx-auto transition-colors">
                 Move beyond generic test prep with precision-engineered tools designed exclusively for Pakistan's top engineering and medical entry tests.
               </p>
             </div>
@@ -181,15 +182,15 @@ export default async function Home() {
       </section>
 
       <section className="relative overflow-hidden bg-white dark:bg-black py-24 md:py-32 transition-colors">
-        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[300px] bg-teal/5 blur-[120px] rounded-full pointer-events-none" />
+        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[300px] bg-teal/5 blur-3xl rounded-full pointer-events-none" />
         
         <div className="container-aptrive relative z-10">
           <Reveal>
             <div className="mx-auto max-w-3xl text-center">
-              <span className="font-mono-data text-xs font-semibold uppercase tracking-widest text-teal">
+              <Eyebrow className="text-teal">
                 Student Success Journey
-              </span>
-              <h2 className="text-[2.5rem] leading-[1.1] md:text-[4rem] font-display font-bold tracking-tight text-black dark:text-white mt-6 transition-colors">
+              </Eyebrow>
+              <h2 className="text-display-2 text-black dark:text-white mt-6 transition-colors">
                 A clear progression to the finish line.
               </h2>
             </div>
@@ -203,7 +204,7 @@ export default async function Home() {
         <Reveal>
           <div className="flex flex-wrap items-end justify-between gap-5">
             <div className="max-w-2xl">
-              <span className="eyebrow">University Roadmaps</span>
+              <Eyebrow>University Roadmaps</Eyebrow>
               <h2 className="text-display-2 mt-4 text-fg">
                 Stay aligned with official institutions and merit pathways.
               </h2>
@@ -267,7 +268,7 @@ export default async function Home() {
           <Reveal>
             <div className="flex flex-wrap items-end justify-between gap-5">
               <div className="max-w-2xl">
-                <span className="eyebrow">Resource Library</span>
+                <Eyebrow>Resource Library</Eyebrow>
                 <h2 className="text-display-2 mt-4 text-fg">
                   Notes, sheets, practice sets, and concept material in one place.
                 </h2>
@@ -290,7 +291,7 @@ export default async function Home() {
         <Reveal>
           <div className="flex flex-wrap items-end justify-between gap-5">
             <div className="max-w-2xl">
-              <span className="eyebrow">Latest Blogs</span>
+              <Eyebrow>Latest Blogs</Eyebrow>
               <h2 className="text-display-2 mt-4 text-fg">
                 Practical, data-backed preparation guidance from the Aptrive team.
               </h2>
@@ -327,10 +328,10 @@ export default async function Home() {
         <div className="container-aptrive relative z-10">
           <Reveal>
             <div className="mx-auto max-w-2xl text-center">
-              <span className="font-mono-data text-xs font-semibold uppercase tracking-widest text-teal">
+              <Eyebrow className="text-teal">
                 FAQ
-              </span>
-              <h2 className="text-[2.5rem] leading-[1.1] md:text-[3.5rem] font-display font-bold tracking-tight text-black dark:text-white mt-6 transition-colors">
+              </Eyebrow>
+              <h2 className="text-display-2 text-black dark:text-white mt-6 transition-colors">
                 Questions students ask before they begin.
               </h2>
             </div>
@@ -343,20 +344,20 @@ export default async function Home() {
 
       <section className="relative overflow-hidden bg-white dark:bg-black py-32 md:py-48 transition-colors">
         {/* Massive ambient glow */}
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[400px] bg-teal/10 blur-[150px] rounded-full pointer-events-none" />
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[400px] h-[200px] bg-blue-500/10 blur-[100px] rounded-full pointer-events-none" />
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[400px] bg-teal/10 blur-3xl rounded-full pointer-events-none" />
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[400px] h-[200px] bg-blue-500/10 blur-3xl rounded-full pointer-events-none" />
         
         <div className="container-aptrive relative z-10 text-center">
           <Reveal>
-            <h2 className="text-[3rem] leading-[1.1] md:text-[5rem] font-display font-bold tracking-tight text-black dark:text-white drop-shadow-sm dark:drop-shadow-2xl max-w-4xl mx-auto transition-colors">
+            <h2 className="text-display-1 text-black dark:text-white drop-shadow-sm dark:drop-shadow-2xl max-w-4xl mx-auto transition-colors">
               Ready to build your university admission edge?
             </h2>
-            <p className="mt-8 text-xl text-black/60 dark:text-white/60 font-light leading-relaxed max-w-2xl mx-auto transition-colors">
+            <p className="mt-8 text-xl text-black/60 dark:text-white/60 font-normal leading-relaxed max-w-2xl mx-auto transition-colors">
               Start with your first adaptive session and unlock your personalized roadmap to Pakistan's top universities.
             </p>
           </Reveal>
           <Reveal delay={100} className="mt-12 relative">
-            <Button href="/signup" variant="primary" size="lg" magnetic className="bg-black text-white hover:bg-black/90 dark:bg-white dark:text-black dark:hover:bg-white/90 hover:scale-105 transition-transform shadow-lg dark:shadow-[0_0_40px_rgba(255,255,255,0.2)]">
+            <Button href="/signup" variant="primary" size="lg" magnetic className="bg-black text-white hover:bg-black/90 dark:bg-white dark:text-black dark:hover:bg-white/90 shadow-lg dark:shadow-[0_0_40px_rgba(255,255,255,0.2)]">
               Get started now
             </Button>
           </Reveal>

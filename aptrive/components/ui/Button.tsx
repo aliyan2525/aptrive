@@ -184,8 +184,9 @@ const Button = forwardRef<HTMLButtonElement | HTMLAnchorElement, ButtonProps>(fu
     if (!ripple || loading) return;
     const target = event.currentTarget;
     const rect = target.getBoundingClientRect();
-    const x = event.clientX - rect.left;
-    const y = event.clientY - rect.top;
+    // Use page coordinates to avoid scroll jitter on rapidly moving elements
+    const x = event.pageX - (rect.left + window.scrollX);
+    const y = event.pageY - (rect.top + window.scrollY);
     // Size to reach the farthest corner from the click point so the
     // ripple always fully covers the button by the time it fades.
     const size = Math.hypot(Math.max(x, rect.width - x), Math.max(y, rect.height - y)) * 2;

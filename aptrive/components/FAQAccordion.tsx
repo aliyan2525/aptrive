@@ -47,6 +47,7 @@ export default function FAQAccordion() {
               onClick={() => toggle(index)}
               className="flex w-full items-center justify-between gap-6 p-6 text-left focus:outline-none"
               aria-expanded={isOpen}
+              aria-controls={`faq-answer-${index}`}
             >
               <span className={`font-display text-lg font-medium transition-colors duration-300 ${isOpen ? "text-black dark:text-white" : "text-black/80 dark:text-white/80 group-hover:text-black dark:group-hover:text-white"}`}>
                 {item.q}
@@ -67,6 +68,7 @@ export default function FAQAccordion() {
                   exit={{ height: 0, opacity: 0 }}
                   transition={{ duration: 0.4, type: "spring", bounce: 0.2 }}
                   className="overflow-hidden"
+                  id={`faq-answer-${index}`}
                 >
                   <div className="px-6 pb-6 pt-2">
                     <p className="text-black/60 dark:text-white/60 leading-relaxed transition-colors">
