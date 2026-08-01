@@ -173,6 +173,32 @@ body {
 .no-scrollbar { scrollbar-width: none; }
 .no-scrollbar::-webkit-scrollbar { display: none; }
 
+/* Hero decorative motion (orbit rings + floating accent dots) */
+@keyframes float-slow {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+}
+@keyframes float-slower {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-16px); }
+}
+@keyframes spin-slow {
+  to { transform: rotate(360deg); }
+}
+@keyframes spin-slow-reverse {
+  to { transform: rotate(-360deg); }
+}
+.animate-float-slow { animation: float-slow 5s ease-in-out infinite; }
+.animate-float-slower { animation: float-slower 7s ease-in-out infinite 0.4s; }
+.animate-orbit-slow { animation: spin-slow 70s linear infinite; }
+.animate-orbit-slower { animation: spin-slow-reverse 95s linear infinite; }
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-float-slow, .animate-float-slower, .animate-orbit-slow, .animate-orbit-slower {
+    animation: none;
+  }
+}
+
 /* Premium Loading Animations */
 @keyframes skeleton-pulse {
   0% { opacity: 0.3; }
