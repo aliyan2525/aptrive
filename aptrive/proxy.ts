@@ -2,14 +2,13 @@ import { NextResponse, type NextRequest } from "next/server";
 import { updateSession } from "@/lib/supabase/middleware";
 
 export async function proxy(request: NextRequest) {
-  let response = await updateSession(request);
+  const response = await updateSession(request);
 
-  const nonce = crypto.randomUUID().replace(/-/g, "");
   const isProd = process.env.NODE_ENV === "production";
   
   const cspHeader = `
     default-src 'self';
-    script-src 'self' 'nonce-${nonce}' 'strict-dynamic' https: http: 'unsafe-inline' ${isProd ? '' : "'unsafe-eval'"};
+    script-src 'self' https: http: 'unsafe-inline' ${isProd ? "" : "'unsafe-eval'"};
     style-src 'self' 'unsafe-inline';
     img-src 'self' blob: data: https:;
     font-src 'self' data:;
@@ -19,16 +18,28 @@ export async function proxy(request: NextRequest) {
     form-action 'self';
   `.replace(/\s{2,}/g, ' ').trim();
 
-  request.headers.set("x-nonce", nonce);
-  request.headers.set("Content-Security-Policy", cspHeader);
-
   if (response.status >= 300 && response.status < 400) {
+    response.headers.set("Content-Security-Policy", cspHeader);
+    response.headers.set("X-Frame-Options", "DENY");
+    response.headers.set("X-Content-Type-Options", "nosniff");
+    response.headers.set("Referrer-Policy", "origin-when-cross-origin");
+    response.headers.set(
+      "Strict-Transport-Security",
+      "max-age=63072000; includeSubDomains; preload"
+    );
+    response.headers.set(
+      "Permissions-Policy",
+      "camera=(), microphone=(), geolocation=(), browsing-topics=()"
+    );
     return response;
   }
 
+  const requestHeaders = new Headers(request.headers);
+  requestHeaders.set("Content-Security-Policy", cspHeader);
+
   const newResponse = NextResponse.next({
     request: {
-      headers: request.headers,
+      headers: requestHeaders,
     },
   });
 

@@ -7,28 +7,39 @@ const STORAGE_KEY = "aptrive-theme";
 type Theme = "dark" | "light";
 
 export default function ThemeToggle() {
-  const [theme, setTheme] = useState<Theme>(() => {
-    try {
-      const saved = localStorage.getItem(STORAGE_KEY);
-      if (saved === "light" || saved === "dark") return saved;
-    } catch {
-      // ignore
-    }
-    // fall back to system preference
-    if (typeof window !== "undefined" && window.matchMedia && window.matchMedia("(prefers-color-scheme: light)").matches) {
-      return "light";
-    }
-    return "dark";
-  });
+  const [theme, setTheme] = useState<Theme>("dark");
+  const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
+    let nextTheme: Theme = "dark";
+    try {
+      const saved = localStorage.getItem(STORAGE_KEY);
+      if (saved === "light" || saved === "dark") {
+        nextTheme = saved;
+      } else if (
+        window.matchMedia &&
+        window.matchMedia("(prefers-color-scheme: light)").matches
+      ) {
+        nextTheme = "light";
+      }
+    } catch {
+      nextTheme = "dark";
+    }
+    // Theme preference is resolved from browser APIs after mount.
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setTheme(nextTheme);
+    setMounted(true);
+  }, []);
+
+  useEffect(() => {
+    if (!mounted) return;
     try {
       localStorage.setItem(STORAGE_KEY, theme);
     } catch {
       // ignore
     }
     document.documentElement.setAttribute("data-theme", theme === "light" ? "light" : "dark");
-  }, [theme]);
+  }, [mounted, theme]);
 
   function toggle() {
     setTheme((t) => (t === "dark" ? "light" : "dark"));

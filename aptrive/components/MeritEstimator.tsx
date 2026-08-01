@@ -7,6 +7,7 @@ import { estimateNustAdmissionChance, CHANCE_COLORS } from "@/lib/merit-chance";
 export default function MeritEstimator() {
   const [aggregate, setAggregate] = useState<string>("");
   const [programCode, setProgramCode] = useState<string>("");
+  const [hasSubmitted, setHasSubmitted] = useState(false);
 
   const groupedNustPrograms = useMemo(() => {
     const groups: Record<string, typeof nustPrograms> = {};
@@ -37,6 +38,8 @@ export default function MeritEstimator() {
     return estimateNustAdmissionChance(parsedAggregate, selectedProgram);
   }, [selectedProgram, isValidAggregate, parsedAggregate]);
 
+  const canEstimate = isValidAggregate && Boolean(selectedProgram);
+
   return (
     <div className="mx-auto w-full max-w-xl">
       <div className="rounded-xl border border-line bg-panel p-6 md:p-8">
@@ -47,7 +50,13 @@ export default function MeritEstimator() {
           Enter your estimated aggregate to see your chances of admission for a specific program.
         </p>
 
-        <div className="mt-8">
+        <form
+          className="mt-8"
+          onSubmit={(event) => {
+            event.preventDefault();
+            setHasSubmitted(true);
+          }}
+        >
           <label htmlFor="aggregate" className="block text-sm text-fg">
             Your Aggregate (%)
           </label>
@@ -60,32 +69,39 @@ export default function MeritEstimator() {
             onChange={(e) => setAggregate(e.target.value)}
             className="mt-2 w-full rounded-sm border border-line bg-panel-2 px-4 py-3 text-sm text-fg outline-none transition-colors duration-200 placeholder:text-muted-2 focus:border-teal/50"
           />
-        </div>
 
-        <div className="mt-6">
-          <label htmlFor="program" className="block text-sm text-fg">
-            Target program
-          </label>
-          <select
-            id="program"
-            value={programCode}
-            onChange={(e) => setProgramCode(e.target.value)}
-            className="pressable mt-2 w-full rounded-sm border border-line bg-panel-2 px-4 py-3 text-sm text-fg outline-none focus:border-teal/50"
+          <div className="mt-6">
+            <label htmlFor="program" className="block text-sm text-fg">
+              Target program
+            </label>
+            <select
+              id="program"
+              value={programCode}
+              onChange={(e) => setProgramCode(e.target.value)}
+              className="pressable mt-2 w-full rounded-sm border border-line bg-panel-2 px-4 py-3 text-sm text-fg outline-none focus:border-teal/50"
+            >
+              <option value="">Select a program…</option>
+              {groupedNustPrograms.map((group) => (
+                <optgroup key={group.category} label={group.category}>
+                  {group.programs.map((program) => (
+                    <option key={program.code} value={program.code}>
+                      {program.name} — {program.code}
+                    </option>
+                  ))}
+                </optgroup>
+              ))}
+            </select>
+          </div>
+
+          <button
+            type="submit"
+            className="mt-6 rounded-sm bg-teal px-5 py-2.5 text-sm font-semibold text-graphite hover:opacity-90"
           >
-            <option value="">Select a program…</option>
-            {groupedNustPrograms.map((group) => (
-              <optgroup key={group.category} label={group.category}>
-                {group.programs.map((program) => (
-                  <option key={program.code} value={program.code}>
-                    {program.name} — {program.code}
-                  </option>
-                ))}
-              </optgroup>
-            ))}
-          </select>
-        </div>
+            Estimate chance
+          </button>
+        </form>
 
-        {selectedProgram && isValidAggregate && chanceResult ? (
+        {hasSubmitted && selectedProgram && canEstimate && chanceResult ? (
           <div className="motion-card mt-8 rounded-md border border-line bg-panel-2 p-5">
             <div className="flex items-center gap-3">
               <span
@@ -127,8 +143,9 @@ export default function MeritEstimator() {
           </div>
         ) : (
           <p className="mt-6 text-xs leading-relaxed text-muted-2">
-            Enter your aggregate and pick a program above to see your estimated chance of
-            admission against last cycle&apos;s closing merit.
+            {hasSubmitted && !canEstimate
+              ? "Enter a valid aggregate (0–100) and select a target program before estimating."
+              : "Enter your aggregate and pick a program above, then click Estimate chance."}
           </p>
         )}
       </div>

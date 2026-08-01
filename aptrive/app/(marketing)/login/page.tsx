@@ -1,8 +1,7 @@
 "use client";
 
-import { Suspense, useActionState, useState } from "react";
+import { useActionState, useEffect, useState } from "react";
 import Link from "next/link";
-import { useSearchParams } from "next/navigation";
 import { ShieldAlert } from "lucide-react";
 import AuthShell from "@/components/auth/AuthShell";
 import AuthModeToggle, { type AuthMode } from "@/components/auth/AuthModeToggle";
@@ -19,19 +18,16 @@ const labelClass =
   "mb-1.5 block text-xs font-medium uppercase tracking-wide text-muted";
 
 export default function LoginPage() {
-  // useSearchParams requires a Suspense boundary in the App Router.
-  return (
-    <Suspense fallback={null}>
-      <LoginForm />
-    </Suspense>
-  );
-}
-
-function LoginForm() {
   const [mode, setMode] = useState<AuthMode>("student");
   const [state, formAction, isPending] = useActionState(signIn, initialState);
-  const searchParams = useSearchParams();
-  const next = searchParams.get("next");
+  const [next, setNext] = useState<string | null>(null);
+
+  useEffect(() => {
+    const nextParam = new URLSearchParams(window.location.search).get("next");
+    // Query-string data is only available in the browser runtime.
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setNext(nextParam);
+  }, []);
 
   return (
     <AuthShell

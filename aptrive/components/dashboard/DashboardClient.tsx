@@ -27,7 +27,7 @@ const quickActions = [
   { href: "/practice", title: "Resume Last Practice", meta: "Mixed STEM set - 18 min" },
   { href: "/library/mathematics", title: "Continue Learning", meta: "Algebra mastery path" },
   { href: "/leaderboard", title: "Check Ranking", meta: "Weekly leaderboard" },
-  { href: "/calculator", title: "Estimate Merit", meta: "University aggregate" },
+  { href: "/tools/calculator", title: "Estimate Merit", meta: "University aggregate" },
 ];
 
 const weekdayLabels = ["S", "M", "T", "W", "T", "F", "S"];

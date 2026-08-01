@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState } from "react";
-import { useSearchParams } from "next/navigation";
 import { universities } from "@/lib/universities";
 import { nustPrograms, NUST_MERIT_SOURCE_NOTE } from "@/lib/nust-programs";
 import { estimateNustAdmissionChance, CHANCE_COLORS } from "@/lib/merit-chance";
@@ -76,14 +75,7 @@ type AggregateCalculatorProps = {
 };
 
 export default function AggregateCalculator({ onResult }: AggregateCalculatorProps = {}) {
-  const searchParams = useSearchParams();
-  const requestedUni = searchParams.get("uni");
-  const initialUniId =
-    requestedUni && universities.some((u) => u.id === requestedUni)
-      ? requestedUni
-      : universities[0].id;
-
-  const [uniId, setUniId] = useState(initialUniId);
+  const [uniId, setUniId] = useState(universities[0].id);
   const [marks, setMarks] = useState<MarksState>({});
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [result, setResult] = useState<null | {
@@ -129,6 +121,15 @@ export default function AggregateCalculator({ onResult }: AggregateCalculatorPro
   useEffect(() => {
     onResult?.(result?.aggregate ?? null);
   }, [result, onResult]);
+
+  useEffect(() => {
+    const requestedUni = new URLSearchParams(window.location.search).get("uni");
+    if (requestedUni && universities.some((university) => university.id === requestedUni)) {
+      // URL params can only be read client-side after mount.
+      // eslint-disable-next-line react-hooks/set-state-in-effect
+      setUniId(requestedUni);
+    }
+  }, []);
 
   function handleUniChange(id: string) {
     setUniId(id);

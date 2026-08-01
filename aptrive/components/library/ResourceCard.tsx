@@ -2,6 +2,7 @@ import { contentTypeLabels, type LibraryResource } from "@/lib/library-data";
 import DifficultyBadge from "./DifficultyBadge";
 import { motion } from "framer-motion";
 import { ArrowRight, PlayCircle, FileText, CheckCircle2 } from "lucide-react";
+import Link from "next/link";
 
 export default function ResourceCard({
   resource,
@@ -19,7 +20,10 @@ export default function ResourceCard({
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5, delay: index * 0.1, ease: [0.16, 1, 0.3, 1] }}
     >
-      <div className="group relative flex h-full flex-col overflow-hidden rounded-2xl border border-line bg-panel p-6 shadow-sm transition-all duration-500 hover:-translate-y-1 hover:shadow-xl hover:shadow-black/5 hover:border-line-strong cursor-pointer">
+      <Link
+        href={`/library/${resource.categorySlug}/${resource.id}`}
+        className="group relative flex h-full flex-col overflow-hidden rounded-2xl border border-line bg-panel p-6 shadow-sm transition-all duration-500 hover:-translate-y-1 hover:shadow-xl hover:shadow-black/5 hover:border-line-strong cursor-pointer"
+      >
         {/* Soft Background Gradient */}
         <div className="absolute inset-0 bg-gradient-to-br from-teal/10 to-transparent opacity-0 transition-opacity duration-700 group-hover:opacity-100 pointer-events-none mix-blend-plus-lighter dark:mix-blend-overlay" />
 
@@ -84,7 +88,7 @@ export default function ResourceCard({
             <ArrowRight className="h-4 w-4 text-teal opacity-0 transition-all duration-300 group-hover:opacity-100 group-hover:translate-x-1 -ml-2 group-hover:ml-0" />
           </div>
         </div>
-      </div>
+      </Link>
     </motion.div>
   );
 }

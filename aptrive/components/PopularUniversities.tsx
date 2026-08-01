@@ -95,7 +95,7 @@ export default function PopularUniversities() {
             className="group relative"
           >
             <Link
-              href="/calculator"
+              href={`/tools/calculator?uni=${uni.id}`}
               className={`relative flex h-full flex-col overflow-hidden rounded-2xl border border-line bg-panel transition-all duration-500 hover:-translate-y-1.5 hover:shadow-2xl hover:border-line-strong ${theme.shadow}`}
             >
               {/* Animated Background Gradient */}

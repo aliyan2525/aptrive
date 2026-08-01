@@ -1,4 +1,3 @@
-import { Suspense } from "react";
 import type { Metadata } from "next";
 import MeritEstimator from "@/components/MeritEstimator";
 import TickDivider from "@/components/TickDivider";
@@ -25,9 +24,7 @@ export default function EstimatorPage() {
         </div>
 
         <div className="mt-14">
-          <Suspense fallback={null}>
-            <MeritEstimator />
-          </Suspense>
+          <MeritEstimator />
         </div>
       </section>
 

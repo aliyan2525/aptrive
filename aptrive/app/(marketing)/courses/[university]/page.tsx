@@ -5,21 +5,21 @@ import TickDivider from "@/components/TickDivider";
 import { CourseSchema } from "@/components/StructuredData";
 import RoadmapSection from "@/components/courses/RoadmapSection";
 import UniversityLogo from "@/components/UniversityLogo";
-import { universities } from "@/lib/universities";
+import { getAllCourseSlugs, resolveUniversityByCourseSlug } from "@/lib/universities";
 
 type Props = {
   params: Promise<{ university: string }>;
 };
 
 export async function generateStaticParams() {
-  return universities.map((u) => ({
-    university: u.id,
+  return getAllCourseSlugs().map((slug) => ({
+    university: slug,
   }));
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const p = await params;
-  const uni = universities.find((u) => u.id === p.university);
+  const uni = resolveUniversityByCourseSlug(p.university);
   if (!uni) return {};
   
   return {
@@ -49,7 +49,7 @@ const included = [
 
 export default async function UniversityCoursePage({ params }: Props) {
   const p = await params;
-  const uni = universities.find((u) => u.id === p.university);
+  const uni = resolveUniversityByCourseSlug(p.university);
   if (!uni) notFound();
 
   return (
@@ -93,7 +93,7 @@ export default async function UniversityCoursePage({ params }: Props) {
             
             <div className="eyebrow">Try out the aggregate calculator</div>
             <Link
-              href={`/calculator?uni=${uni.id}`}
+              href={`/tools/calculator?uni=${uni.id}`}
               className="mt-4 inline-block rounded-sm border border-teal/40 bg-teal-dim px-6 py-3 text-sm font-medium text-teal hover:bg-teal/10"
             >
               Calculate your {uni.name} aggregate →

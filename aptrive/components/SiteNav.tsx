@@ -40,7 +40,6 @@ const aboutMenu = [
   { href: "/about", label: "About Us" },
   { href: "/contact", label: "Contact" },
   { href: "/blog", label: "Blogs" },
-  { href: "/careers", label: "Careers" },
   { href: "/privacy", label: "Privacy Policy" },
   { href: "/terms", label: "Terms" },
 ];
@@ -65,7 +64,6 @@ export default function SiteNav({
   const aboutActive = pathname.startsWith("/about")
     || pathname.startsWith("/contact")
     || pathname.startsWith("/blog")
-    || pathname.startsWith("/careers")
     || pathname.startsWith("/privacy")
     || pathname.startsWith("/terms");
 

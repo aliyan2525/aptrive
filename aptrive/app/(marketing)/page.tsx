@@ -218,7 +218,7 @@ export default async function Home() {
               </h2>
             </div>
             <Link
-              href="/calculator"
+              href="/tools/calculator"
               className="inline-flex items-center gap-2 text-sm font-semibold text-teal transition hover:gap-3 hover:text-fg"
             >
               Access Calculator <ArrowRight className="h-4 w-4" />
@@ -235,7 +235,7 @@ export default async function Home() {
           <Reveal>
             <Eyebrow className="text-teal">The Final Step</Eyebrow>
             <h2 className="text-hero text-fg mt-8 max-w-5xl mx-auto mix-blend-plus-lighter">
-              It's time to realize your true potential.
+              It&apos;s time to realize your true potential.
             </h2>
             <div className="mt-16">
               <Button href="/signup" variant="primary" size="lg" className="h-16 px-12 text-lg shadow-[0_0_40px_rgba(35,213,196,0.3)] hover:shadow-[0_0_60px_rgba(35,213,196,0.5)]">

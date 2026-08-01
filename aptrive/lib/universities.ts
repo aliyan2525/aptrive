@@ -192,3 +192,25 @@ export const universities: University[] = [
     sourceNote: "Aptrive hasn't yet confirmed UCP's official merit formula. Check ucp.edu.pk before relying on any third-party figure.",
   },
 ];
+
+const COURSE_SLUG_ALIASES: Record<string, string> = {
+  "nust-net": "nust",
+  uet: "uet-lahore",
+};
+
+export function resolveUniversityByCourseSlug(slug: string): University | undefined {
+  const canonical = COURSE_SLUG_ALIASES[slug] ?? slug;
+  return universities.find((university) => university.id === canonical);
+}
+
+export function getCourseSlugForUniversity(universityId: string): string {
+  if (universityId === "nust") return "nust-net";
+  if (universityId === "uet-lahore") return "uet";
+  return universityId;
+}
+
+export function getAllCourseSlugs(): string[] {
+  const slugs = new Set<string>(universities.map((university) => university.id));
+  Object.keys(COURSE_SLUG_ALIASES).forEach((slug) => slugs.add(slug));
+  return Array.from(slugs);
+}
