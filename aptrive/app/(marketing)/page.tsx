@@ -124,10 +124,10 @@ export default async function Home() {
             
             <HeadlineReveal
               lines={["Learn like a top scorer.", "Prepare with precision."]}
-              className="text-[3.5rem] leading-[1.1] md:text-[5rem] lg:text-[6rem] font-display font-bold tracking-tight text-white drop-shadow-2xl"
+              className="text-[3.5rem] leading-[1.1] md:text-[5rem] lg:text-[6rem] font-display font-bold tracking-tight text-black dark:text-white drop-shadow-sm dark:drop-shadow-2xl transition-colors"
             />
             
-            <p className="mx-auto mt-8 max-w-2xl text-lg md:text-xl text-white/70 leading-relaxed font-light">
+            <p className="mx-auto mt-8 max-w-2xl text-lg md:text-xl text-black/70 dark:text-white/70 leading-relaxed font-light transition-colors">
               Aptrive combines adaptive practice, premium analytics, and exam-focused pathways
               so every study hour compounds toward your target university.
             </p>
@@ -136,10 +136,10 @@ export default async function Home() {
               {/* Massive ambient glow behind buttons */}
               <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-64 h-32 bg-teal/30 blur-[100px] pointer-events-none" />
               
-              <Button href="/signup" variant="primary" size="lg" magnetic className="relative z-10 bg-white text-black hover:bg-white/90 hover:scale-105 transition-transform shadow-[0_0_40px_rgba(255,255,255,0.2)]">
+              <Button href="/signup" variant="primary" size="lg" magnetic className="relative z-10 bg-black text-white hover:bg-black/90 dark:bg-white dark:text-black dark:hover:bg-white/90 hover:scale-105 transition-transform shadow-lg dark:shadow-[0_0_40px_rgba(255,255,255,0.2)]">
                 Create account
               </Button>
-              <Button href="/practice" variant="glass" size="lg" magnetic className="relative z-10 border-white/20 bg-white/5 hover:bg-white/10 text-white backdrop-blur-xl">
+              <Button href="/practice" variant="glass" size="lg" magnetic className="relative z-10 border-black/20 bg-black/5 hover:bg-black/10 text-black dark:border-white/20 dark:bg-white/5 dark:hover:bg-white/10 dark:text-white backdrop-blur-xl">
                 Explore practice
               </Button>
             </div>
@@ -147,8 +147,8 @@ export default async function Home() {
         </div>
       </section>
 
-      <section className="relative overflow-hidden bg-black py-24 md:py-32">
-        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-5xl h-[1px] bg-gradient-to-r from-transparent via-white/10 to-transparent" />
+      <section className="relative overflow-hidden bg-white dark:bg-black py-24 md:py-32 transition-colors">
+        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-5xl h-[1px] bg-gradient-to-r from-transparent via-black/10 dark:via-white/10 to-transparent" />
         
         <div className="container-aptrive relative z-10">
           <Reveal>
@@ -156,10 +156,10 @@ export default async function Home() {
               <span className="font-mono-data text-xs font-semibold uppercase tracking-widest text-teal">
                 Why Aptrive
               </span>
-              <h2 className="text-[2.5rem] leading-[1.1] md:text-[4rem] font-display font-bold tracking-tight text-white mt-6">
+              <h2 className="text-[2.5rem] leading-[1.1] md:text-[4rem] font-display font-bold tracking-tight text-black dark:text-white mt-6 transition-colors">
                 Built for high-stakes admissions.
               </h2>
-              <p className="mt-6 text-lg text-white/60 font-light leading-relaxed max-w-2xl mx-auto">
+              <p className="mt-6 text-lg text-black/60 dark:text-white/60 font-light leading-relaxed max-w-2xl mx-auto transition-colors">
                 Move beyond generic test prep with precision-engineered tools designed exclusively for Pakistan's top engineering and medical entry tests.
               </p>
             </div>
@@ -180,7 +180,7 @@ export default async function Home() {
         </div>
       </section>
 
-      <section className="relative overflow-hidden bg-black py-24 md:py-32">
+      <section className="relative overflow-hidden bg-white dark:bg-black py-24 md:py-32 transition-colors">
         <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[300px] bg-teal/5 blur-[120px] rounded-full pointer-events-none" />
         
         <div className="container-aptrive relative z-10">
@@ -189,7 +189,7 @@ export default async function Home() {
               <span className="font-mono-data text-xs font-semibold uppercase tracking-widest text-teal">
                 Student Success Journey
               </span>
-              <h2 className="text-[2.5rem] leading-[1.1] md:text-[4rem] font-display font-bold tracking-tight text-white mt-6">
+              <h2 className="text-[2.5rem] leading-[1.1] md:text-[4rem] font-display font-bold tracking-tight text-black dark:text-white mt-6 transition-colors">
                 A clear progression to the finish line.
               </h2>
             </div>
@@ -322,15 +322,15 @@ export default async function Home() {
         </div>
       </section>
 
-      <section className="relative overflow-hidden bg-black py-24 md:py-32">
-        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-5xl h-[1px] bg-gradient-to-r from-transparent via-white/10 to-transparent" />
+      <section className="relative overflow-hidden bg-white dark:bg-black py-24 md:py-32 transition-colors">
+        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-5xl h-[1px] bg-gradient-to-r from-transparent via-black/10 dark:via-white/10 to-transparent" />
         <div className="container-aptrive relative z-10">
           <Reveal>
             <div className="mx-auto max-w-2xl text-center">
               <span className="font-mono-data text-xs font-semibold uppercase tracking-widest text-teal">
                 FAQ
               </span>
-              <h2 className="text-[2.5rem] leading-[1.1] md:text-[3.5rem] font-display font-bold tracking-tight text-white mt-6">
+              <h2 className="text-[2.5rem] leading-[1.1] md:text-[3.5rem] font-display font-bold tracking-tight text-black dark:text-white mt-6 transition-colors">
                 Questions students ask before they begin.
               </h2>
             </div>
@@ -341,22 +341,22 @@ export default async function Home() {
         </div>
       </section>
 
-      <section className="relative overflow-hidden bg-black py-32 md:py-48">
+      <section className="relative overflow-hidden bg-white dark:bg-black py-32 md:py-48 transition-colors">
         {/* Massive ambient glow */}
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[400px] bg-teal/10 blur-[150px] rounded-full pointer-events-none" />
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[400px] h-[200px] bg-blue-500/10 blur-[100px] rounded-full pointer-events-none" />
         
         <div className="container-aptrive relative z-10 text-center">
           <Reveal>
-            <h2 className="text-[3rem] leading-[1.1] md:text-[5rem] font-display font-bold tracking-tight text-white drop-shadow-2xl max-w-4xl mx-auto">
+            <h2 className="text-[3rem] leading-[1.1] md:text-[5rem] font-display font-bold tracking-tight text-black dark:text-white drop-shadow-sm dark:drop-shadow-2xl max-w-4xl mx-auto transition-colors">
               Ready to build your university admission edge?
             </h2>
-            <p className="mt-8 text-xl text-white/60 font-light leading-relaxed max-w-2xl mx-auto">
+            <p className="mt-8 text-xl text-black/60 dark:text-white/60 font-light leading-relaxed max-w-2xl mx-auto transition-colors">
               Start with your first adaptive session and unlock your personalized roadmap to Pakistan's top universities.
             </p>
           </Reveal>
           <Reveal delay={100} className="mt-12 relative">
-            <Button href="/signup" variant="primary" size="lg" magnetic className="bg-white text-black hover:bg-white/90 hover:scale-105 transition-transform shadow-[0_0_40px_rgba(255,255,255,0.2)]">
+            <Button href="/signup" variant="primary" size="lg" magnetic className="bg-black text-white hover:bg-black/90 dark:bg-white dark:text-black dark:hover:bg-white/90 hover:scale-105 transition-transform shadow-lg dark:shadow-[0_0_40px_rgba(255,255,255,0.2)]">
               Get started now
             </Button>
           </Reveal>

@@ -41,20 +41,20 @@ export default function FAQAccordion() {
         return (
           <div 
             key={item.q}
-            className={`group rounded-2xl border transition-colors duration-300 ${isOpen ? "bg-white/10 border-white/20" : "bg-white/[0.02] border-white/5 hover:border-white/10 hover:bg-white/[0.04]"}`}
+            className={`group rounded-2xl border transition-colors duration-300 ${isOpen ? "bg-black/5 border-black/10 dark:bg-white/10 dark:border-white/20" : "bg-white dark:bg-white/[0.02] border-black/5 dark:border-white/5 hover:border-black/10 dark:hover:border-white/10 hover:bg-black/5 dark:hover:bg-white/[0.04]"}`}
           >
             <button
               onClick={() => toggle(index)}
               className="flex w-full items-center justify-between gap-6 p-6 text-left focus:outline-none"
               aria-expanded={isOpen}
             >
-              <span className={`font-display text-lg font-medium transition-colors duration-300 ${isOpen ? "text-white" : "text-white/80 group-hover:text-white"}`}>
+              <span className={`font-display text-lg font-medium transition-colors duration-300 ${isOpen ? "text-black dark:text-white" : "text-black/80 dark:text-white/80 group-hover:text-black dark:group-hover:text-white"}`}>
                 {item.q}
               </span>
               <motion.div
                 animate={{ rotate: isOpen ? 180 : 0 }}
                 transition={{ duration: 0.3, type: "spring", bounce: 0.4 }}
-                className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-full transition-colors duration-300 ${isOpen ? "bg-teal text-black" : "bg-white/5 text-white/50 group-hover:bg-white/10 group-hover:text-white"}`}
+                className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-full transition-colors duration-300 ${isOpen ? "bg-teal-500 text-white dark:bg-teal dark:text-black" : "bg-black/5 text-black/50 dark:bg-white/5 dark:text-white/50 group-hover:bg-black/10 group-hover:text-black dark:group-hover:bg-white/10 dark:group-hover:text-white"}`}
               >
                 <ChevronDown className="h-4 w-4" />
               </motion.div>
@@ -69,7 +69,7 @@ export default function FAQAccordion() {
                   className="overflow-hidden"
                 >
                   <div className="px-6 pb-6 pt-2">
-                    <p className="text-white/60 leading-relaxed">
+                    <p className="text-black/60 dark:text-white/60 leading-relaxed transition-colors">
                       {item.a}
                     </p>
                   </div>

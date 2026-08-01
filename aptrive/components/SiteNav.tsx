@@ -107,14 +107,14 @@ export default function SiteNav({
           hidden ? "-translate-y-full" : "translate-y-0"
         } ${scrolled ? "pt-4" : "pt-0"}`}
       >
-        <div className={`mx-auto flex transition-all duration-500 ${scrolled ? "max-w-[1200px] rounded-2xl border border-white/10 bg-black/40 px-4 py-2.5 shadow-2xl backdrop-blur-2xl" : "container-aptrive h-20 items-center bg-transparent border-transparent"}`}>
+        <div className={`mx-auto flex transition-all duration-500 ${scrolled ? "max-w-[1200px] rounded-2xl border border-black/10 dark:border-white/10 bg-white/40 dark:bg-black/40 px-4 py-2.5 shadow-2xl backdrop-blur-2xl" : "container-aptrive h-20 items-center bg-transparent border-transparent"}`}>
           <div className="flex w-full items-center justify-between">
             <Link href={user ? "/dashboard" : "/"} className="flex items-center gap-2.5 group" aria-label="Aptrive">
               <div className="relative">
                 <Image src="/logo-mark.png" alt="" width={34} height={38} priority className="h-9 w-auto transition-transform duration-300 group-hover:scale-105" />
                 <div className="absolute inset-0 bg-teal/20 blur-xl opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
               </div>
-              <span className="font-display text-lg font-semibold tracking-tight text-white transition-colors duration-300">Aptrive</span>
+              <span className="font-display text-lg font-semibold tracking-tight text-black dark:text-white transition-colors duration-300">Aptrive</span>
             </Link>
 
             <nav className="hidden items-center md:flex relative" aria-label="Main">
@@ -124,13 +124,13 @@ export default function SiteNav({
                   <Link
                     key={link.href}
                     href={link.href}
-                    className="relative px-4 py-2 text-sm font-medium transition-colors text-white/70 hover:text-white"
+                    className="relative px-4 py-2 text-sm font-medium transition-colors text-black/70 hover:text-black dark:text-white/70 dark:hover:text-white"
                     aria-current={isActive ? "page" : undefined}
                   >
                     {isActive && (
                       <motion.div
                         layoutId="nav-indicator"
-                        className="absolute inset-0 rounded-full bg-white/10 shadow-[0_0_20px_rgba(255,255,255,0.1)]"
+                        className="absolute inset-0 rounded-full bg-black/5 shadow-[0_0_20px_rgba(0,0,0,0.05)] dark:bg-white/10 dark:shadow-[0_0_20px_rgba(255,255,255,0.1)]"
                         transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
                       />
                     )}
@@ -140,13 +140,13 @@ export default function SiteNav({
               })}
 
               <div className="group relative px-2">
-                <button type="button" className={`inline-flex items-center gap-1.5 px-3 py-2 text-sm font-medium transition-colors ${toolsActive ? "text-white" : "text-white/70 hover:text-white"}`}>
+                <button type="button" className={`inline-flex items-center gap-1.5 px-3 py-2 text-sm font-medium transition-colors ${toolsActive ? "text-black dark:text-white" : "text-black/70 hover:text-black dark:text-white/70 dark:hover:text-white"}`}>
                   Tools
                   <ChevronDown className="h-3.5 w-3.5 transition-transform duration-300 group-hover:rotate-180" />
                 </button>
-                <div className="pointer-events-none invisible absolute left-1/2 top-[calc(100%+12px)] w-56 -translate-x-1/2 rounded-2xl border border-white/10 bg-black/80 p-2 opacity-0 shadow-2xl backdrop-blur-3xl transition-all duration-300 group-hover:pointer-events-auto group-hover:visible group-hover:top-full group-hover:opacity-100 group-focus-within:pointer-events-auto group-focus-within:visible group-focus-within:top-full group-focus-within:opacity-100">
+                <div className="pointer-events-none invisible absolute left-1/2 top-[calc(100%+12px)] w-56 -translate-x-1/2 rounded-2xl border border-black/10 dark:border-white/10 bg-white/95 dark:bg-black/80 p-2 opacity-0 shadow-2xl backdrop-blur-3xl transition-all duration-300 group-hover:pointer-events-auto group-hover:visible group-hover:top-full group-hover:opacity-100 group-focus-within:pointer-events-auto group-focus-within:visible group-focus-within:top-full group-focus-within:opacity-100">
                   {toolsMenu.map((item) => (
-                    <Link key={item.href} href={item.href} className="block rounded-xl px-4 py-2.5 text-sm font-medium text-white/70 transition-all hover:bg-white/10 hover:text-white hover:pl-5">
+                    <Link key={item.href} href={item.href} className="block rounded-xl px-4 py-2.5 text-sm font-medium text-black/70 transition-all hover:bg-black/5 hover:text-black dark:text-white/70 dark:hover:bg-white/10 dark:hover:text-white hover:pl-5">
                       {item.label}
                     </Link>
                   ))}
@@ -154,13 +154,13 @@ export default function SiteNav({
               </div>
 
               <div className="group relative px-2">
-                <button type="button" className={`inline-flex items-center gap-1.5 px-3 py-2 text-sm font-medium transition-colors ${aboutActive ? "text-white" : "text-white/70 hover:text-white"}`}>
+                <button type="button" className={`inline-flex items-center gap-1.5 px-3 py-2 text-sm font-medium transition-colors ${aboutActive ? "text-black dark:text-white" : "text-black/70 hover:text-black dark:text-white/70 dark:hover:text-white"}`}>
                   About
                   <ChevronDown className="h-3.5 w-3.5 transition-transform duration-300 group-hover:rotate-180" />
                 </button>
-                <div className="pointer-events-none invisible absolute left-1/2 top-[calc(100%+12px)] w-56 -translate-x-1/2 rounded-2xl border border-white/10 bg-black/80 p-2 opacity-0 shadow-2xl backdrop-blur-3xl transition-all duration-300 group-hover:pointer-events-auto group-hover:visible group-hover:top-full group-hover:opacity-100 group-focus-within:pointer-events-auto group-focus-within:visible group-focus-within:top-full group-focus-within:opacity-100">
+                <div className="pointer-events-none invisible absolute left-1/2 top-[calc(100%+12px)] w-56 -translate-x-1/2 rounded-2xl border border-black/10 dark:border-white/10 bg-white/95 dark:bg-black/80 p-2 opacity-0 shadow-2xl backdrop-blur-3xl transition-all duration-300 group-hover:pointer-events-auto group-hover:visible group-hover:top-full group-hover:opacity-100 group-focus-within:pointer-events-auto group-focus-within:visible group-focus-within:top-full group-focus-within:opacity-100">
                   {aboutMenu.map((item) => (
-                    <Link key={item.href} href={item.href} className="block rounded-xl px-4 py-2.5 text-sm font-medium text-white/70 transition-all hover:bg-white/10 hover:text-white hover:pl-5">
+                    <Link key={item.href} href={item.href} className="block rounded-xl px-4 py-2.5 text-sm font-medium text-black/70 transition-all hover:bg-black/5 hover:text-black dark:text-white/70 dark:hover:bg-white/10 dark:hover:text-white hover:pl-5">
                       {item.label}
                     </Link>
                   ))}
@@ -181,10 +181,10 @@ export default function SiteNav({
                 </>
               ) : (
                 <>
-                  <Button href="/login" variant="ghost" size="sm" ripple={false} className="hidden sm:inline-flex hover:bg-white/5">
+                  <Button href="/login" variant="ghost" size="sm" ripple={false} className="hidden sm:inline-flex hover:bg-black/5 dark:hover:bg-white/5 text-black dark:text-white">
                     Login
                   </Button>
-                  <Button href="/signup" variant="primary" size="sm" className="hidden sm:inline-flex bg-white text-black hover:bg-white/90 hover:scale-105 transition-transform">
+                  <Button href="/signup" variant="primary" size="sm" className="hidden sm:inline-flex bg-black text-white hover:bg-black/90 dark:bg-white dark:text-black dark:hover:bg-white/90 hover:scale-105 transition-transform">
                     Create account
                   </Button>
                 </>
@@ -192,7 +192,7 @@ export default function SiteNav({
 
               <button
                 type="button"
-                className="pressable flex h-10 w-10 items-center justify-center rounded-full border border-white/10 text-white md:hidden"
+                className="pressable flex h-10 w-10 items-center justify-center rounded-full border border-black/10 dark:border-white/10 text-black dark:text-white md:hidden"
                 aria-expanded={mobileOpen}
                 aria-controls="mobile-nav"
                 aria-label={mobileOpen ? "Close menu" : "Open menu"}
@@ -211,7 +211,7 @@ export default function SiteNav({
         </div>
       </header>
 
-      {/* Mobile nav implementation remains mostly same but with motion presence if desired */}
+      {/* Mobile nav */}
       <AnimatePresence>
         {mobileOpen && (
           <motion.div 
@@ -219,7 +219,7 @@ export default function SiteNav({
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -20 }}
             id="mobile-nav" 
-            className="fixed inset-0 top-16 z-40 bg-black/95 backdrop-blur-2xl md:hidden"
+            className="fixed inset-0 top-16 z-40 bg-white/95 dark:bg-black/95 backdrop-blur-2xl md:hidden"
           >
             <nav className="container-aptrive flex flex-col gap-1 py-6" aria-label="Mobile">
               {visibleLinks.map((link) => (
@@ -228,7 +228,7 @@ export default function SiteNav({
                   href={link.href}
                   onClick={() => setMobileOpen(false)}
                   className={`rounded-xl px-3 py-3 text-base font-medium transition-colors duration-200 ${
-                    link.match(pathname) ? "bg-white/10 text-white" : "text-white/60 hover:bg-white/5 hover:text-white"
+                    link.match(pathname) ? "bg-black/5 text-black dark:bg-white/10 dark:text-white" : "text-black/60 hover:bg-black/5 hover:text-black dark:text-white/60 dark:hover:bg-white/5 dark:hover:text-white"
                   }`}
                   aria-current={link.match(pathname) ? "page" : undefined}
                 >
@@ -236,25 +236,25 @@ export default function SiteNav({
                 </Link>
               ))}
 
-              <div className="mt-6 space-y-3 border-t border-white/10 pt-6">
+              <div className="mt-6 space-y-3 border-t border-black/10 dark:border-white/10 pt-6">
                 {!user ? (
                   <>
                     <Button href="/login" variant="outline" size="md" fullWidth onClick={() => setMobileOpen(false)}>
                       Login
                     </Button>
-                    <Button href="/signup" variant="primary" size="md" fullWidth onClick={() => setMobileOpen(false)} className="bg-white text-black">
+                    <Button href="/signup" variant="primary" size="md" fullWidth onClick={() => setMobileOpen(false)} className="bg-black text-white dark:bg-white dark:text-black">
                       Create account
                     </Button>
                   </>
                 ) : (
                   <div className="grid grid-cols-3 gap-3">
-                    <Link href="/dashboard" onClick={() => setMobileOpen(false)} className="rounded-xl border border-white/10 px-3 py-2 text-center text-xs text-white/60">
+                    <Link href="/dashboard" onClick={() => setMobileOpen(false)} className="rounded-xl border border-black/10 dark:border-white/10 px-3 py-2 text-center text-xs text-black/60 dark:text-white/60">
                       Dashboard
                     </Link>
-                    <Link href="/profile" onClick={() => setMobileOpen(false)} className="rounded-xl border border-white/10 px-3 py-2 text-center text-xs text-white/60">
+                    <Link href="/profile" onClick={() => setMobileOpen(false)} className="rounded-xl border border-black/10 dark:border-white/10 px-3 py-2 text-center text-xs text-black/60 dark:text-white/60">
                       Profile
                     </Link>
-                    <Link href="/leaderboard" onClick={() => setMobileOpen(false)} className="rounded-xl bg-white px-3 py-2 text-center text-xs font-semibold text-black">
+                    <Link href="/leaderboard" onClick={() => setMobileOpen(false)} className="rounded-xl bg-black px-3 py-2 text-center text-xs font-semibold text-white dark:bg-white dark:text-black">
                       Rankings
                     </Link>
                   </div>
