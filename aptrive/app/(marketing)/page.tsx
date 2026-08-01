@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { ArrowRight, BrainCircuit, Timer, LineChart, MapIcon, Compass } from "lucide-react";
-import dynamic from 'next/dynamic';
+
 
 import Reveal from "@/components/Reveal";
 import PopularUniversities from "@/components/PopularUniversities";
@@ -16,11 +16,7 @@ import { createClient } from "@/lib/supabase/server";
 import PremiumFeatureCard from "@/components/features/PremiumFeatureCard";
 import AnimatedJourney from "@/components/journey/AnimatedJourney";
 
-// Dynamically import the 3D scene to prevent SSR mismatches and reduce initial bundle size
-const HeroScene = dynamic(() => import("@/components/three/HeroScene"), { 
-  ssr: false,
-  loading: () => <div className="absolute inset-0 bg-transparent" />
-});
+import HeroSceneWrapper from "@/components/three/HeroSceneWrapper";
 
 export const metadata: Metadata = {
   title: "Aptrive — The Global Standard for Entrance Prep",
@@ -67,7 +63,7 @@ export default async function Home() {
   return (
     <>
       <section className="relative min-h-screen flex items-center justify-center overflow-hidden border-b border-line/10 bg-graphite pt-20 perspective-1000">
-        <HeroScene />
+        <HeroSceneWrapper />
         
         <div className="container-aptrive relative z-10 py-32 md:py-48">
           <div className="mx-auto max-w-5xl text-center flex flex-col items-center">
