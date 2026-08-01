@@ -72,7 +72,7 @@ export default function HeroScene() {
         dpr={[1, 2]}
       >
         <SceneContent />
-        <EffectComposer disableNormalPass multisampling={4}>
+        <EffectComposer multisampling={4}>
           <Bloom luminanceThreshold={0.5} mipmapBlur intensity={1.2} />
           <Noise opacity={0.03} />
         </EffectComposer>
