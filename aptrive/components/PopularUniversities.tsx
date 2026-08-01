@@ -107,14 +107,12 @@ export default function PopularUniversities() {
               <div className="relative z-10 flex flex-col h-full p-6 pb-20">
                 <div className="flex items-start justify-between gap-4">
                   <div className="flex items-center gap-4">
-                    <div className="rounded-xl border border-line/50 bg-white p-1.5 shadow-sm">
-                      <UniversityLogo university={uni.id} displayName={uni.name} size={48} />
-                    </div>
+                    <UniversityLogo university={uni.id} displayName={uni.name} size={64} />
                     <div>
-                      <h3 className="font-display text-xl font-bold text-fg tracking-tight group-hover:text-fg">
+                      <h3 className="font-display text-2xl font-bold text-fg tracking-tight group-hover:text-fg">
                         {uni.name}
                       </h3>
-                      <p className="mt-0.5 text-xs font-medium text-muted-2">
+                      <p className="mt-1 text-sm font-medium text-muted-2">
                         {uni.location}
                       </p>
                     </div>

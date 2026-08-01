@@ -39,7 +39,7 @@ export default function UniversityLogo({
 
   return (
     <div
-      className={`flex shrink-0 items-center justify-center overflow-hidden rounded-md border border-line-strong bg-white/95 ${padding} ${className}`}
+      className={`flex shrink-0 items-center justify-center overflow-hidden ${className}`}
       style={{ width: size, height: size }}
     >
       {logo.available ? (
@@ -52,7 +52,7 @@ export default function UniversityLogo({
         />
       ) : (
         <span
-          className="font-display font-semibold text-graphite"
+          className="font-display font-semibold text-fg"
           style={{ fontSize: Math.max(10, Math.round(size * 0.32)) }}
           aria-label={`${displayName ?? university} logo`}
         >
