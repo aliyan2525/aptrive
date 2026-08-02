@@ -4,59 +4,66 @@ import { motion } from "framer-motion";
 
 interface BadgeConfig {
   label: string;
-  top: string;
-  left: string;
-  size: number; // px, both width and height
-  floatDuration: number;
-  floatDelay: number;
+  full: string;
+  radiusX: number;
+  radiusY: number;
+  phase: number;
+  duration: number;
+  delay: number;
+  accent: string;
 }
 
-// Positions/sizes approximate the reference composition: a large
-// badge upper-right, a mid-sized one at the right edge, and two
-// smaller ones clustered lower-center — a scattered, not gridded,
-// arrangement so they read as "orbiting" rather than a list.
 const BADGES: BadgeConfig[] = [
-  { label: "NUST", top: "8%", left: "80%", size: 104, floatDuration: 7, floatDelay: 0 },
-  { label: "FAST", top: "54%", left: "89%", size: 86, floatDuration: 6, floatDelay: 1.1 },
-  { label: "LUMS", top: "75%", left: "58%", size: 78, floatDuration: 7.5, floatDelay: 0.6 },
-  { label: "LUMS", top: "88%", left: "76%", size: 70, floatDuration: 6.5, floatDelay: 1.6 },
+  { label: "NUST", full: "Islamabad", radiusX: 292, radiusY: 150, phase: 18, duration: 34, delay: 0.1, accent: "from-cyan-300/35" },
+  { label: "FAST", full: "CS Path", radiusX: 318, radiusY: 108, phase: 78, duration: 30, delay: 0.55, accent: "from-blue-300/35" },
+  { label: "LUMS", full: "Merit", radiusX: 254, radiusY: 196, phase: 316, duration: 36, delay: 0.35, accent: "from-violet-300/35" },
+  { label: "GIKI", full: "Topi", radiusX: 220, radiusY: 224, phase: 252, duration: 40, delay: 0.75, accent: "from-emerald-300/35" },
 ];
 
-/**
- * Glass "recognized institution" badges — a text abbreviation inside
- * a glassmorphic circle, rather than a reproduced university logo.
- * Real institutional logos are trademarked artwork this decorative
- * composition shouldn't reproduce; the intended reading ("recognized
- * institutions orbit this platform") survives fine as styled text.
- *
- * Gated to `lg` and up for the same reason as HeroOrbitIcons — these
- * are absolutely positioned against the two-column hero layout.
- */
+function badgePath(config: BadgeConfig) {
+  return Array.from({ length: 9 }, (_, index) => {
+    const angle = ((config.phase + index * 45) * Math.PI) / 180;
+    return {
+      x: Math.cos(angle) * config.radiusX,
+      y: Math.sin(angle) * config.radiusY,
+      scale: 0.88 + (Math.sin(angle) + 1) * 0.1,
+      opacity: 0.62 + (Math.sin(angle) + 1) * 0.16,
+    };
+  });
+}
+
 export default function HeroUniversityBadges() {
   return (
-    <div className="pointer-events-none absolute inset-0 z-10 hidden lg:block" aria-hidden="true">
-      {BADGES.map((badge, i) => (
-        <motion.div
-          key={i}
-          className="absolute flex items-center justify-center rounded-full border border-white/70 bg-white/75 text-center font-display font-semibold leading-none text-neutral-700 shadow-[0_12px_40px_-12px_rgba(30,41,59,0.3)] backdrop-blur-xl"
-          style={{
-            top: badge.top,
-            left: badge.left,
-            width: badge.size,
-            height: badge.size,
-            fontSize: badge.size * 0.16,
-          }}
-          animate={{ y: [0, -12, 0] }}
-          transition={{
-            duration: badge.floatDuration,
-            delay: badge.floatDelay,
-            repeat: Infinity,
-            ease: "easeInOut",
-          }}
-        >
-          {badge.label}
-        </motion.div>
-      ))}
+    <div className="pointer-events-none absolute inset-0 z-20 hidden lg:block" aria-hidden="true">
+      <div className="absolute left-1/2 top-1/2">
+        {BADGES.map((badge) => {
+          const path = badgePath(badge);
+          return (
+            <motion.div
+              key={badge.label}
+              className={`absolute flex min-w-[116px] items-center gap-2 rounded-full border border-white/70 bg-gradient-to-br ${badge.accent} to-white/62 px-4 py-3 text-neutral-800 shadow-[0_20px_55px_-22px_rgba(30,41,59,0.38),inset_0_1px_0_rgba(255,255,255,0.92)] backdrop-blur-2xl`}
+              style={{ marginLeft: -58, marginTop: -24 }}
+              initial={{ opacity: 0, scale: 0.74, y: 8 }}
+              animate={{
+                x: path.map((point) => point.x),
+                y: path.map((point) => point.y),
+                scale: path.map((point) => point.scale),
+                opacity: path.map((point) => point.opacity),
+              }}
+              transition={{
+                duration: badge.duration,
+                delay: badge.delay,
+                repeat: Infinity,
+                ease: "easeInOut",
+              }}
+            >
+              <span className="h-2.5 w-2.5 rounded-full bg-teal-400 shadow-[0_0_14px_rgba(45,212,191,0.8)]" />
+              <span className="font-display text-sm font-bold leading-none">{badge.label}</span>
+              <span className="text-[10px] font-semibold leading-none text-neutral-500">{badge.full}</span>
+            </motion.div>
+          );
+        })}
+      </div>
     </div>
   );
 }

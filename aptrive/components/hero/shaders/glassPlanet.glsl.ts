@@ -100,8 +100,9 @@ export function createGlassPlanetCoreMaterial() {
         // Very small breathing displacement — same "never completely
         // static" principle as the rest of the hero, kept subtle
         // enough that the sphere still reads as a solid glass object.
-        float n = snoise(position * 1.6 + uTime * 0.05);
-        vec3 displaced = position + normal * n * 0.018;
+        float slow = snoise(position * 1.45 + uTime * 0.06);
+        float ripple = snoise(position * 4.2 - vec3(uTime * 0.18, uTime * 0.06, 0.0));
+        vec3 displaced = position + normal * (slow * 0.024 + ripple * 0.008);
 
         vec4 worldPosition = modelMatrix * vec4(displaced, 1.0);
         vec4 viewPosition = viewMatrix * worldPosition;
@@ -148,9 +149,10 @@ export function createGlassPlanetCoreMaterial() {
         // Two noise fields at different frequencies/drift rates,
         // blended, so the swirl reads as marbled bands rather than a
         // single uniform cloud.
-        float swirl = fbm(vWorldPos * 1.1 + vec3(0.0, uTime * 0.03, 0.0));
-        float bands = fbm(vWorldPos * 2.3 - vec3(uTime * 0.015, 0.0, 0.0));
-        float mixVal = clamp(swirl * 0.6 + bands * 0.4, -1.0, 1.0);
+        float swirl = fbm(vWorldPos * 1.08 + vec3(0.0, uTime * 0.035, 0.0));
+        float bands = fbm(vWorldPos * 2.45 - vec3(uTime * 0.018, 0.0, uTime * 0.012));
+        float caustic = sin((vWorldPos.x * 5.5 + vWorldPos.y * 3.2 + bands * 2.4) + uTime * 0.75);
+        float mixVal = clamp(swirl * 0.54 + bands * 0.34 + caustic * 0.12, -1.0, 1.0);
 
         vec3 base = mix(uDeepColor, uMidColor, smoothstep(-0.55, 0.34, mixVal));
         base = mix(base, uLightColor, smoothstep(0.18, 0.86, mixVal));
@@ -160,7 +162,8 @@ export function createGlassPlanetCoreMaterial() {
         float twinkle = 0.5 + 0.5 * sin(uTime * (1.5 + cell * 3.0) + cell * 40.0);
         float sparkle = smoothstep(0.965, 1.0, cell) * twinkle;
 
-        float fresnel = pow(1.0 - max(dot(normal, viewDir), 0.0), 2.4);
+        float fresnel = pow(1.0 - max(dot(normal, viewDir), 0.0), 2.18);
+        float innerGlow = pow(max(dot(normalize(vec3(-0.35, 0.5, 0.78)), normal), 0.0), 2.8);
 
         // Fixed key light, upper-left — a soft studio specular hotspot
         // rather than physically simulated refraction.
@@ -168,11 +171,20 @@ export function createGlassPlanetCoreMaterial() {
         vec3 reflectDir = reflect(-lightDir, normal);
         float specular = pow(max(dot(reflectDir, viewDir), 0.0), 46.0);
 
+        vec3 dispersion = vec3(
+          smoothstep(0.18, 0.92, mixVal + 0.08),
+          smoothstep(0.18, 0.92, mixVal),
+          smoothstep(0.18, 0.92, mixVal - 0.08)
+        );
+
         vec3 color = base;
+        color = mix(color, vec3(0.75, 0.95, 1.0) * dispersion, 0.16);
         color += uSparkColor * sparkle * 1.65;
-        color += vec3(0.62, 0.82, 1.0) * fresnel * 0.82;
+        color += vec3(0.62, 0.82, 1.0) * fresnel * 0.92;
+        color += vec3(0.45, 0.95, 1.0) * innerGlow * 0.14;
+        color += vec3(1.0, 0.86, 0.62) * smoothstep(0.72, 1.0, caustic) * 0.08;
         color += vec3(1.0) * specular * 1.15;
-        color = mix(color, vec3(1.0), 0.18);
+        color = mix(color, vec3(1.0), 0.22);
 
         gl_FragColor = vec4(color, 1.0);
       }
