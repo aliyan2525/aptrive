@@ -30,13 +30,13 @@ export const universities: University[] = [
     website: "nust.edu.pk",
     location: "Islamabad (+ campuses)",
     verified: true,
-    formulaText: "Matric 10% + FSc 15% + NET 75%",
+    formulaText: "SSC/O Level 10% + HSSC/A Level 15% + NET/ACT/SAT 75%",
     components: [
-      { key: "matric", label: "Matric / SSC", weight: 0.10, maxMarks: 1100 },
-      { key: "fsc", label: "FSc Part-I (Intermediate)", weight: 0.15, maxMarks: 1100 },
-      { key: "test", label: "NET Score", weight: 0.75, maxMarks: 200 },
+      { key: "matric", label: "SSC / O Level equivalence", weight: 0.10, maxMarks: 1100 },
+      { key: "fsc", label: "HSSC / A Level equivalence", weight: 0.15, maxMarks: 1100 },
+      { key: "test", label: "NET / ACT / SAT score", weight: 0.75, maxMarks: 200 },
     ],
-    sourceNote: "NUST undergraduate merit criteria (NET basis) — ugadmissions.nust.edu.pk",
+    sourceNote: "NUST undergraduate merit criteria: NET/ACT/SAT 75%, SSC/O Level 10%, HSSC/A Level 15%. Final-year A Level candidates use O Level equivalence for the 25% academic weight.",
   },
   {
     id: "fast",
