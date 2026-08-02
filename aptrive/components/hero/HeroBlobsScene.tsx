@@ -109,6 +109,22 @@ function SceneContent() {
   );
 }
 
+function SafeEffectComposer({ children, ...props }: any) {
+  // EffectComposer depends on a working WebGL context. In some
+  // environments (context loss, initialization race), the renderer's
+  // GL context may be null — guard and skip postprocessing instead of
+  // throwing, which causes the whole client render to fail.
+  const { gl } = useThree();
+  if (!gl) return null;
+  try {
+    const ctx = gl.getContext();
+    if (!ctx) return null;
+  } catch (e) {
+    return null;
+  }
+  return <EffectComposer {...props}>{children}</EffectComposer>;
+}
+
 export default function HeroBlobsScene() {
   return (
     <div className="absolute inset-0" aria-hidden="true">
@@ -118,9 +134,9 @@ export default function HeroBlobsScene() {
         dpr={[1, 2]}
       >
         <SceneContent />
-        <EffectComposer multisampling={4}>
+        <SafeEffectComposer multisampling={4}>
           <Bloom luminanceThreshold={0.65} mipmapBlur intensity={0.55} />
-        </EffectComposer>
+        </SafeEffectComposer>
       </Canvas>
     </div>
   );
