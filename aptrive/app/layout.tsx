@@ -108,6 +108,7 @@ export default function RootLayout({
   return (
     <html
       lang="en"
+      data-theme="light"
       className={`${spaceGrotesk.variable} ${inter.variable} ${ibmPlexMono.variable} h-full`}
       suppressHydrationWarning
     >

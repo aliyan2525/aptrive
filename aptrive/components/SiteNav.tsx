@@ -7,7 +7,6 @@ import { usePathname } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import { BookOpen, ChevronDown, LayoutDashboard, LibraryBig, Trophy, UserRound } from "lucide-react";
 import UserMenu, { type HeaderUser } from "@/components/UserMenu";
-import ThemeToggle from "@/components/ThemeToggle";
 import Button from "@/components/ui/Button";
 import NotificationBell, { type NotificationItem } from "@/components/NotificationBell";
 
@@ -167,7 +166,6 @@ export default function SiteNav({
             </nav>
 
             <div className="flex items-center gap-3">
-              <ThemeToggle />
               {user ? (
                 <>
                   <NotificationBell

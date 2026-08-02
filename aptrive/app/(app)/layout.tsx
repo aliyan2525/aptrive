@@ -9,6 +9,8 @@ export default function AppLayout({
   return (
     <>
       <AuthHeader />
+      {/* Spacer matching the fixed header height to prevent content overlap */}
+      <div className="h-20" aria-hidden />
       {children}
       <Footer />
     </>
