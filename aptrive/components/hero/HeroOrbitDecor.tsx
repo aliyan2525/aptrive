@@ -13,7 +13,7 @@ export default function HeroOrbitDecor() {
           fill="none"
           stroke="currentColor"
           strokeWidth="1"
-          className="text-neutral-900/10"
+          className="text-blue-500/14"
           transform="rotate(-8 300 300)"
         />
       </svg>
@@ -31,8 +31,26 @@ export default function HeroOrbitDecor() {
           fill="none"
           stroke="currentColor"
           strokeWidth="1"
-          className="text-neutral-900/[0.07]"
+          className="text-violet-500/10"
           transform="rotate(14 300 300)"
+        />
+      </svg>
+
+      <svg
+        viewBox="0 0 600 600"
+        className="absolute inset-0 h-full w-full animate-orbit-slower"
+        style={{ transformOrigin: "50% 50%", animationDuration: "120s" }}
+      >
+        <ellipse
+          cx="300"
+          cy="300"
+          rx="270"
+          ry="186"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="1"
+          className="text-cyan-500/12"
+          transform="rotate(-22 300 300)"
         />
       </svg>
 

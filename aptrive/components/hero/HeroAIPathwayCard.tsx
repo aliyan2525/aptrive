@@ -18,7 +18,7 @@ export default function HeroAIPathwayCard() {
         opacity: { duration: 0.6, delay: 0.9 },
         y: { duration: 6, delay: 1, repeat: Infinity, ease: "easeInOut" },
       }}
-      className="pointer-events-none absolute bottom-[6%] left-[6%] z-10 hidden w-[230px] rounded-3xl border border-white/70 bg-white/85 p-5 shadow-[0_20px_60px_-15px_rgba(30,41,59,0.35)] backdrop-blur-xl lg:block"
+      className="pointer-events-none absolute bottom-[8%] left-[8%] z-10 hidden w-[250px] rounded-[1.35rem] border border-white/75 bg-white/72 p-5 shadow-[0_22px_70px_-18px_rgba(30,41,59,0.34)] backdrop-blur-2xl lg:block"
       aria-hidden="true"
     >
       <p className="text-xs font-medium text-neutral-500">AI Pathway</p>

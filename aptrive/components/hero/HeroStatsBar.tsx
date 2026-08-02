@@ -1,41 +1,47 @@
-import { Users, BookOpenCheck, TrendingUp, GraduationCap } from "lucide-react";
+import { Star, Sparkles, BadgeCheck, Box, Users } from "lucide-react";
 import { formatStat, siteStats } from "@/lib/site-stats";
 import { universities } from "@/lib/universities";
 
 const stats = [
   {
-    icon: Users,
+    icon: Star,
     value: `${siteStats.activeStudents}+`,
     label: "Active Students",
-    tint: "bg-indigo-500/10 text-indigo-600",
+    tint: "bg-cyan-500/10 text-cyan-600",
   },
   {
-    icon: BookOpenCheck,
-    value: `${formatStat(siteStats.totalQuestions)}+`,
-    label: "Practice Questions",
-    tint: "bg-teal-500/10 text-teal-600",
-  },
-  {
-    icon: TrendingUp,
-    value: `${siteStats.satisfactionRate}%`,
-    label: "Report Improved Accuracy",
+    icon: Sparkles,
+    value: "95%",
+    label: "Success Rate",
     tint: "bg-violet-500/10 text-violet-600",
   },
   {
-    icon: GraduationCap,
-    value: `${universities.length}+`,
-    label: "Top University Pathways",
-    tint: "bg-amber-500/10 text-amber-600",
+    icon: BadgeCheck,
+    value: `${universities.length * 25}+`,
+    label: "Universities",
+    tint: "bg-rose-500/10 text-rose-500",
+  },
+  {
+    icon: Box,
+    value: `${formatStat(siteStats.totalQuestions)}+`,
+    label: "Questions Solved",
+    tint: "bg-fuchsia-500/10 text-fuchsia-500",
+  },
+  {
+    icon: Users,
+    value: "4.9/5",
+    label: "Student Rating",
+    tint: "bg-indigo-500/10 text-indigo-500",
   },
 ];
 
 export default function HeroStatsBar() {
   return (
-    <div className="rounded-3xl border border-black/[0.06] bg-white/70 px-6 py-8 shadow-[0_20px_60px_-30px_rgba(15,23,42,0.25)] backdrop-blur-sm sm:px-10">
-      <div className="grid grid-cols-2 gap-8 md:grid-cols-4 md:gap-6">
+    <div className="rounded-[1.35rem] border border-white/75 bg-white/64 px-6 py-8 shadow-[0_22px_70px_-36px_rgba(15,23,42,0.28)] backdrop-blur-2xl sm:px-10">
+      <div className="grid grid-cols-2 gap-8 md:grid-cols-5 md:gap-0">
         {stats.map(({ icon: Icon, value, label, tint }) => (
-          <div key={label} className="flex items-center gap-4">
-            <div className={`flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl ${tint}`}>
+          <div key={label} className="flex items-center gap-4 md:border-r md:border-black/[0.06] md:px-8 md:last:border-r-0">
+            <div className={`flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl ${tint}`}>
               <Icon strokeWidth={1.75} className="h-5 w-5" />
             </div>
             <div>

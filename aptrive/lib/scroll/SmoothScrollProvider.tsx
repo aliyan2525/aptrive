@@ -94,9 +94,14 @@ export function SmoothScrollProvider({ children }: { children: React.ReactNode }
   useEffect(() => {
     if (lenisRef.current) {
       lenisRef.current.scrollTo(0, { immediate: true });
+      requestAnimationFrame(() => {
+        lenisRef.current?.resize();
+        ScrollTrigger.refresh();
+      });
     } else {
       // Reduced-motion path: no Lenis instance exists, reset native scroll.
       window.scrollTo(0, 0);
+      requestAnimationFrame(() => ScrollTrigger.refresh());
     }
   }, [pathname]);
 

@@ -4,6 +4,7 @@ import { useRef } from "react";
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
 import { EffectComposer, Bloom } from "@react-three/postprocessing";
 import * as THREE from "three";
+import type { ComponentProps, ReactNode } from "react";
 import GlassPlanet from "./GlassPlanet";
 
 function SceneContent() {
@@ -25,7 +26,9 @@ function SceneContent() {
   );
 }
 
-function SafeEffectComposer({ children, ...props }: any) {
+type EffectComposerProps = ComponentProps<typeof EffectComposer>;
+
+function SafeEffectComposer({ children, ...props }: EffectComposerProps & { children: ReactNode }) {
   // EffectComposer depends on a working WebGL context. In some
   // environments (context loss, initialization race), the renderer's
   // GL context may be null — guard and skip postprocessing instead of
@@ -35,7 +38,7 @@ function SafeEffectComposer({ children, ...props }: any) {
   try {
     const ctx = gl.getContext();
     if (!ctx) return null;
-  } catch (e) {
+  } catch {
     return null;
   }
   return <EffectComposer {...props}>{children}</EffectComposer>;
@@ -45,7 +48,7 @@ export default function HeroBlobsScene() {
   return (
     <div className="absolute inset-0" aria-hidden="true">
       <Canvas
-        camera={{ position: [0, 0, 6.4], fov: 40 }}
+        camera={{ position: [0, 0, 6.1], fov: 38 }}
         gl={{ alpha: true, antialias: true, powerPreference: "high-performance" }}
         dpr={[1, 2]}
       >

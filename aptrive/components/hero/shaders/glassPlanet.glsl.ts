@@ -83,9 +83,9 @@ export function createGlassPlanetCoreMaterial() {
   return new THREE.ShaderMaterial({
     uniforms: {
       uTime: { value: 0 },
-      uDeepColor: { value: new THREE.Color("#050b1f") },
-      uMidColor: { value: new THREE.Color("#1c3f7a") },
-      uLightColor: { value: new THREE.Color("#a9d4ff") },
+      uDeepColor: { value: new THREE.Color("#d8ecff") },
+      uMidColor: { value: new THREE.Color("#78aef5") },
+      uLightColor: { value: new THREE.Color("#ffffff") },
       uSparkColor: { value: new THREE.Color("#ffffff") },
     },
     vertexShader: /* glsl */ `
@@ -152,8 +152,8 @@ export function createGlassPlanetCoreMaterial() {
         float bands = fbm(vWorldPos * 2.3 - vec3(uTime * 0.015, 0.0, 0.0));
         float mixVal = clamp(swirl * 0.6 + bands * 0.4, -1.0, 1.0);
 
-        vec3 base = mix(uDeepColor, uMidColor, smoothstep(-0.4, 0.3, mixVal));
-        base = mix(base, uLightColor, smoothstep(0.35, 0.85, mixVal));
+        vec3 base = mix(uDeepColor, uMidColor, smoothstep(-0.55, 0.34, mixVal));
+        base = mix(base, uLightColor, smoothstep(0.18, 0.86, mixVal));
 
         // Sparse twinkling specks — "city lights suspended in glass".
         float cell = hash(floor(vWorldPos * 34.0));
@@ -164,14 +164,15 @@ export function createGlassPlanetCoreMaterial() {
 
         // Fixed key light, upper-left — a soft studio specular hotspot
         // rather than physically simulated refraction.
-        vec3 lightDir = normalize(vec3(-0.6, 0.8, 0.5));
+        vec3 lightDir = normalize(vec3(-0.72, 0.82, 0.42));
         vec3 reflectDir = reflect(-lightDir, normal);
         float specular = pow(max(dot(reflectDir, viewDir), 0.0), 46.0);
 
         vec3 color = base;
-        color += uSparkColor * sparkle * 1.4;
-        color += uLightColor * fresnel * 0.55;
-        color += vec3(1.0) * specular * 0.9;
+        color += uSparkColor * sparkle * 1.65;
+        color += vec3(0.62, 0.82, 1.0) * fresnel * 0.82;
+        color += vec3(1.0) * specular * 1.15;
+        color = mix(color, vec3(1.0), 0.18);
 
         gl_FragColor = vec4(color, 1.0);
       }

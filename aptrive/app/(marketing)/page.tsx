@@ -66,11 +66,11 @@ export default async function Home() {
 
   return (
     <>
-      <section className="relative overflow-hidden bg-gradient-to-b from-white via-[#f5f8fc] to-[#eef1fb] pt-20">
+      <section className="relative overflow-hidden bg-[radial-gradient(circle_at_82%_34%,rgba(191,246,239,0.72),transparent_31rem),radial-gradient(circle_at_66%_18%,rgba(231,237,255,0.84),transparent_30rem),linear-gradient(180deg,#ffffff_0%,#f7faff_62%,#eef3ff_100%)] pt-20">
         {/* Ambient color glows behind the composition */}
-        <div className="pointer-events-none absolute -top-32 right-[-10%] h-[560px] w-[560px] rounded-full bg-teal-300/25 blur-[120px]" />
-        <div className="pointer-events-none absolute bottom-[-10%] right-[8%] h-[460px] w-[460px] rounded-full bg-amber-300/20 blur-[120px]" />
-        <div className="pointer-events-none absolute left-[-15%] top-1/3 h-[420px] w-[420px] rounded-full bg-violet-200/25 blur-[120px]" />
+        <div className="pointer-events-none absolute -top-32 right-[-8%] h-[640px] w-[640px] rounded-full bg-cyan-200/35 blur-[130px]" />
+        <div className="pointer-events-none absolute bottom-[-14%] right-[8%] h-[520px] w-[520px] rounded-full bg-violet-200/24 blur-[130px]" />
+        <div className="pointer-events-none absolute left-[-15%] top-1/3 h-[440px] w-[440px] rounded-full bg-sky-100/50 blur-[120px]" />
 
         <div className="container-aptrive relative z-10 pb-20 pt-14 md:pb-28 md:pt-20">
           <div className="grid items-center gap-14 lg:grid-cols-[1.05fr_1fr] lg:gap-8">
@@ -147,7 +147,7 @@ export default async function Home() {
             </div>
 
             {/* Right column — liquid-glass 3D composition */}
-            <div className="relative h-[380px] sm:h-[460px] lg:h-[600px]">
+            <div className="relative h-[420px] sm:h-[520px] lg:-ml-12 lg:h-[650px] xl:-ml-20">
               <HeroOrbitDecor />
               <HeroBlobsSceneWrapper />
               <HeroOrbitIcons />
