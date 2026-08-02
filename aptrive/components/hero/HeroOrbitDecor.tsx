@@ -4,44 +4,41 @@ export default function HeroOrbitDecor() {
       <svg
         viewBox="0 0 600 600"
         className="absolute inset-0 h-full w-full animate-orbit-slow"
-        style={{ transformOrigin: "62% 42%" }}
+        style={{ transformOrigin: "50% 50%" }}
       >
-        <ellipse
-          cx="360"
-          cy="250"
-          rx="230"
-          ry="150"
+        <circle
+          cx="300"
+          cy="300"
+          r="240"
           fill="none"
           stroke="currentColor"
           strokeWidth="1"
           className="text-neutral-900/10"
-          transform="rotate(-18 360 250)"
+          transform="rotate(-8 300 300)"
         />
       </svg>
 
       <svg
         viewBox="0 0 600 600"
         className="absolute inset-0 h-full w-full animate-orbit-slower"
-        style={{ transformOrigin: "40% 68%" }}
+        style={{ transformOrigin: "50% 50%" }}
       >
         <ellipse
-          cx="230"
-          cy="380"
-          rx="160"
-          ry="105"
+          cx="300"
+          cy="300"
+          rx="205"
+          ry="235"
           fill="none"
           stroke="currentColor"
           strokeWidth="1"
-          className="text-neutral-900/10"
-          transform="rotate(12 230 380)"
+          className="text-neutral-900/[0.07]"
+          transform="rotate(14 300 300)"
         />
       </svg>
 
-      {/* Floating accent dots */}
-      <span className="absolute left-[6%] top-[46%] h-2 w-2 rounded-full bg-fuchsia-400/70 shadow-[0_0_10px_rgba(217,70,239,0.5)] animate-float-slow" />
-      <span className="absolute right-[10%] top-[12%] h-1.5 w-1.5 rounded-full bg-teal-500/80 shadow-[0_0_10px_rgba(20,184,166,0.5)] animate-float-slower" />
-      <span className="absolute right-[26%] top-[63%] h-2.5 w-2.5 rounded-full bg-amber-400/80 shadow-[0_0_12px_rgba(251,191,36,0.55)] animate-float-slow" />
-      <span className="absolute left-[16%] bottom-[10%] h-1.5 w-1.5 rounded-full bg-indigo-400/70 shadow-[0_0_10px_rgba(129,140,248,0.5)] animate-float-slower" />
+      {/* A couple of stray glints — sparkle, not full orbit chips (those live in HeroOrbitIcons/HeroUniversityBadges now). */}
+      <span className="absolute right-[6%] top-[16%] h-1.5 w-1.5 rounded-full bg-white shadow-[0_0_10px_rgba(255,255,255,0.9)] animate-float-slow" />
+      <span className="absolute right-[8%] bottom-[10%] h-1 w-1 rounded-full bg-amber-300/90 shadow-[0_0_8px_rgba(251,191,36,0.6)] animate-float-slower" />
     </div>
   );
 }

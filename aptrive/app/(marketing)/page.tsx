@@ -14,6 +14,9 @@ import AnimatedJourney from "@/components/journey/AnimatedJourney";
 
 import HeroBlobsSceneWrapper from "@/components/hero/HeroBlobsSceneWrapper";
 import HeroOrbitDecor from "@/components/hero/HeroOrbitDecor";
+import HeroOrbitIcons from "@/components/hero/HeroOrbitIcons";
+import HeroUniversityBadges from "@/components/hero/HeroUniversityBadges";
+import HeroAIPathwayCard from "@/components/hero/HeroAIPathwayCard";
 import HeroAvatarStack from "@/components/hero/HeroAvatarStack";
 import HeroStatsBar from "@/components/hero/HeroStatsBar";
 import HeroTrustedBy from "@/components/hero/HeroTrustedBy";
@@ -147,6 +150,9 @@ export default async function Home() {
             <div className="relative h-[380px] sm:h-[460px] lg:h-[600px]">
               <HeroOrbitDecor />
               <HeroBlobsSceneWrapper />
+              <HeroOrbitIcons />
+              <HeroUniversityBadges />
+              <HeroAIPathwayCard />
             </div>
           </div>
 
