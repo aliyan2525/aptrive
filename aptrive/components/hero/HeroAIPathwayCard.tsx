@@ -2,6 +2,7 @@
 
 import { motion } from "framer-motion";
 import { Activity, Sparkles, TrendingUp } from "lucide-react";
+import { emitHeroSignal } from "./heroSignal";
 
 const recommended = ["FAST", "NUST", "LUMS", "GIKI"];
 
@@ -11,12 +12,14 @@ export default function HeroAIPathwayCard() {
       initial={{ opacity: 0, y: 18, scale: 0.96 }}
       animate={{ opacity: 1, y: [0, -9, 0], scale: 1 }}
       whileHover={{ y: -14, scale: 1.025 }}
+      onMouseEnter={() => emitHeroSignal({ active: true, source: "dashboard" })}
+      onMouseLeave={() => emitHeroSignal({ active: false, source: "dashboard" })}
       transition={{
         opacity: { duration: 0.7, delay: 0.8 },
         scale: { duration: 0.7, delay: 0.8 },
         y: { duration: 6.5, delay: 1, repeat: Infinity, ease: "easeInOut" },
       }}
-      className="pointer-events-auto absolute bottom-[7%] left-[8%] z-30 hidden w-[292px] rounded-[1.4rem] border border-white/75 bg-white/68 p-5 text-neutral-900 shadow-[0_26px_80px_-26px_rgba(30,41,59,0.46),inset_0_1px_0_rgba(255,255,255,0.95)] backdrop-blur-2xl lg:block"
+      className="pointer-events-auto absolute bottom-[7%] left-[8%] z-30 hidden w-[292px] rounded-[1.4rem] border border-white/75 bg-white/66 p-5 text-neutral-900 shadow-[0_28px_90px_-28px_rgba(30,41,59,0.5),inset_0_1px_0_rgba(255,255,255,0.95)] backdrop-blur-2xl transition-shadow hover:shadow-[0_34px_110px_-30px_rgba(20,184,166,0.34),inset_0_1px_0_rgba(255,255,255,0.98)] lg:block"
       aria-hidden="true"
     >
       <div className="pointer-events-none absolute inset-0 rounded-[1.4rem] bg-[radial-gradient(circle_at_82%_12%,rgba(45,212,191,0.22),transparent_8rem)]" />

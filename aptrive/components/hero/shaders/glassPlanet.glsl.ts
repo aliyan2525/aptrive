@@ -83,6 +83,7 @@ export function createGlassPlanetCoreMaterial() {
   return new THREE.ShaderMaterial({
     uniforms: {
       uTime: { value: 0 },
+      uPulse: { value: 0 },
       uDeepColor: { value: new THREE.Color("#d8ecff") },
       uMidColor: { value: new THREE.Color("#78aef5") },
       uLightColor: { value: new THREE.Color("#ffffff") },
@@ -90,6 +91,7 @@ export function createGlassPlanetCoreMaterial() {
     },
     vertexShader: /* glsl */ `
       uniform float uTime;
+      uniform float uPulse;
       varying vec3 vNormal;
       varying vec3 vViewDir;
       varying vec3 vWorldPos;
@@ -102,7 +104,7 @@ export function createGlassPlanetCoreMaterial() {
         // enough that the sphere still reads as a solid glass object.
         float slow = snoise(position * 1.45 + uTime * 0.06);
         float ripple = snoise(position * 4.2 - vec3(uTime * 0.18, uTime * 0.06, 0.0));
-        vec3 displaced = position + normal * (slow * 0.024 + ripple * 0.008);
+        vec3 displaced = position + normal * (slow * 0.024 + ripple * 0.008 + uPulse * 0.026);
 
         vec4 worldPosition = modelMatrix * vec4(displaced, 1.0);
         vec4 viewPosition = viewMatrix * worldPosition;
@@ -115,6 +117,7 @@ export function createGlassPlanetCoreMaterial() {
     `,
     fragmentShader: /* glsl */ `
       uniform float uTime;
+      uniform float uPulse;
       uniform vec3 uDeepColor;
       uniform vec3 uMidColor;
       uniform vec3 uLightColor;
@@ -151,7 +154,7 @@ export function createGlassPlanetCoreMaterial() {
         // single uniform cloud.
         float swirl = fbm(vWorldPos * 1.08 + vec3(0.0, uTime * 0.035, 0.0));
         float bands = fbm(vWorldPos * 2.45 - vec3(uTime * 0.018, 0.0, uTime * 0.012));
-        float caustic = sin((vWorldPos.x * 5.5 + vWorldPos.y * 3.2 + bands * 2.4) + uTime * 0.75);
+        float caustic = sin((vWorldPos.x * 5.5 + vWorldPos.y * 3.2 + bands * 2.4) + uTime * (0.75 + uPulse * 0.9));
         float mixVal = clamp(swirl * 0.54 + bands * 0.34 + caustic * 0.12, -1.0, 1.0);
 
         vec3 base = mix(uDeepColor, uMidColor, smoothstep(-0.55, 0.34, mixVal));
@@ -179,12 +182,12 @@ export function createGlassPlanetCoreMaterial() {
 
         vec3 color = base;
         color = mix(color, vec3(0.75, 0.95, 1.0) * dispersion, 0.16);
-        color += uSparkColor * sparkle * 1.65;
-        color += vec3(0.62, 0.82, 1.0) * fresnel * 0.92;
-        color += vec3(0.45, 0.95, 1.0) * innerGlow * 0.14;
+        color += uSparkColor * sparkle * (1.65 + uPulse * 1.2);
+        color += vec3(0.62, 0.82, 1.0) * fresnel * (0.92 + uPulse * 0.5);
+        color += vec3(0.45, 0.95, 1.0) * innerGlow * (0.14 + uPulse * 0.24);
         color += vec3(1.0, 0.86, 0.62) * smoothstep(0.72, 1.0, caustic) * 0.08;
         color += vec3(1.0) * specular * 1.15;
-        color = mix(color, vec3(1.0), 0.22);
+        color = mix(color, vec3(1.0), 0.22 + uPulse * 0.08);
 
         gl_FragColor = vec4(color, 1.0);
       }

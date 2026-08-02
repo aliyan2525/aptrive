@@ -1,6 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
+import { emitHeroSignal } from "./heroSignal";
 
 interface BadgeConfig {
   label: string;
@@ -41,9 +42,12 @@ export default function HeroUniversityBadges() {
           return (
             <motion.div
               key={badge.label}
-              className={`absolute flex min-w-[116px] items-center gap-2 rounded-full border border-white/70 bg-gradient-to-br ${badge.accent} to-white/62 px-4 py-3 text-neutral-800 shadow-[0_20px_55px_-22px_rgba(30,41,59,0.38),inset_0_1px_0_rgba(255,255,255,0.92)] backdrop-blur-2xl`}
+              className={`pointer-events-auto absolute flex min-w-[116px] items-center gap-2 rounded-full border border-white/70 bg-gradient-to-br ${badge.accent} to-white/60 px-4 py-3 text-neutral-800 shadow-[0_22px_64px_-24px_rgba(30,41,59,0.42),inset_0_1px_0_rgba(255,255,255,0.94)] backdrop-blur-2xl`}
               style={{ marginLeft: -58, marginTop: -24 }}
               initial={{ opacity: 0, scale: 0.74, y: 8 }}
+              whileHover={{ scale: 1.08, filter: "saturate(1.2) brightness(1.04)" }}
+              onMouseEnter={() => emitHeroSignal({ active: true, source: "university" })}
+              onMouseLeave={() => emitHeroSignal({ active: false, source: "university" })}
               animate={{
                 x: path.map((point) => point.x),
                 y: path.map((point) => point.y),
