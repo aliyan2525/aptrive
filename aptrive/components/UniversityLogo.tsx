@@ -39,7 +39,7 @@ export default function UniversityLogo({
 
   return (
     <div
-      className={`flex shrink-0 items-center justify-center overflow-hidden ${className}`}
+      className={`flex shrink-0 items-center justify-center overflow-hidden rounded-2xl border border-black/[0.06] bg-white shadow-[0_8px_24px_-16px_rgba(15,23,42,0.35),inset_0_1px_0_rgba(255,255,255,0.9)] ${padding} ${className}`}
       style={{ width: size, height: size }}
     >
       {logo.available ? (

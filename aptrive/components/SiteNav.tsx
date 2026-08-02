@@ -21,7 +21,7 @@ const publicLinks: NavItem[] = [
   { href: "/library", label: "Library", match: (path) => path.startsWith("/library") },
   { href: "/practice", label: "Practice", match: (path) => path.startsWith("/practice") },
   { href: "/leaderboard", label: "Rankings", match: (path) => path.startsWith("/leaderboard") },
-  { href: "/courses", label: "Courses", match: (path) => path.startsWith("/courses") },
+  { href: "/courses", label: "Courses", match: (path) => path.startsWith("/courses") || path.startsWith("/universities") },
 ];
 
 const authLinks: NavItem[] = [

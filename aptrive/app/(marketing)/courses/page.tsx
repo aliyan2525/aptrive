@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import UniversityLogo from "@/components/UniversityLogo";
-import { universities, getCourseSlugForUniversity } from "@/lib/universities";
+import { universityExperiences } from "@/lib/university-experiences";
 
 export const metadata: Metadata = {
   title: "Courses — Aptrive",
@@ -24,14 +24,15 @@ export default function CoursesPage() {
       </div>
 
       <div className="mt-12 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-        {universities.map((university) => {
-          const courseSlug = getCourseSlugForUniversity(university.id);
+        {universityExperiences.map((experience) => {
+          const university = experience.university;
           return (
             <Link
               key={university.id}
-              href={`/courses/${courseSlug}`}
-              className="group premium-shell motion-card rounded-[1.35rem] p-5"
+              href={`/universities/${experience.slug}`}
+              className="group premium-shell motion-card relative overflow-hidden rounded-[1.35rem] p-5"
             >
+              <div className={`pointer-events-none absolute inset-x-0 top-0 h-28 bg-gradient-to-br ${experience.identity.gradient} opacity-[0.08] transition-opacity group-hover:opacity-[0.14]`} />
               <div className="flex items-start justify-between gap-3">
                 <div className="flex items-center gap-3">
                   <UniversityLogo
@@ -51,6 +52,7 @@ export default function CoursesPage() {
                 </span>
               </div>
 
+              <p className="mt-4 text-sm font-semibold text-fg">{experience.identity.signal}</p>
               <p className="mt-4 text-xs text-muted">{university.formulaText}</p>
             </Link>
           );

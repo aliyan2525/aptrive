@@ -1,5 +1,6 @@
 import type { MetadataRoute } from "next";
 import { categories } from "@/lib/library-data";
+import { universityExperiences } from "@/lib/university-experiences";
 
 export default function sitemap(): MetadataRoute.Sitemap {
   const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "https://aptrive.com";
@@ -34,5 +35,10 @@ export default function sitemap(): MetadataRoute.Sitemap {
       lastModified: new Date(),
     }));
 
-  return [...staticRoutes, ...libraryRoutes];
+  const universityRoutes = universityExperiences.map((experience) => ({
+    url: `${siteUrl}/universities/${experience.slug}`,
+    lastModified: new Date(),
+  }));
+
+  return [...staticRoutes, ...universityRoutes, ...libraryRoutes];
 }

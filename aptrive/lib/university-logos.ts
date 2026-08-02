@@ -11,7 +11,7 @@
  *
  * and the actual uploaded logo files use a fourth, simplest scheme:
  * `public/logos/universities/<key>.svg` (nust, fast, comsats, giki, ned,
- * pieas, uet).
+ * pieas, uet, air, bahria, umt, ucp).
  *
  * Rather than repeating id-guessing logic at every call site (and
  * silently breaking whenever one of those naming schemes drifts —
@@ -26,7 +26,11 @@ export type UniversityLogoKey =
   | "giki"
   | "pieas"
   | "ned"
-  | "uet";
+  | "uet"
+  | "air"
+  | "bahria"
+  | "umt"
+  | "ucp";
 
 /** Universities we have an uploaded SVG for, in `public/logos/universities/`. */
 const AVAILABLE_LOGOS: ReadonlySet<UniversityLogoKey> = new Set([
@@ -37,6 +41,10 @@ const AVAILABLE_LOGOS: ReadonlySet<UniversityLogoKey> = new Set([
   "pieas",
   "ned",
   "uet",
+  "air",
+  "bahria",
+  "umt",
+  "ucp",
 ]);
 
 /**
@@ -53,18 +61,36 @@ const ALIASES: Record<string, UniversityLogoKey> = {
   giki: "giki",
   pieas: "pieas",
   ned: "ned",
+  air: "air",
+  bahria: "bahria",
+  umt: "umt",
+  ucp: "ucp",
 
   // /courses/[slug] route slugs
   "nust-net": "nust",
   uet: "uet",
+  nedu: "ned",
 
   // Free-text display names used in dashboard/leaderboard/onboarding
   // demo data — lowercased and stripped of non-alphanumerics before
   // lookup (see normalizeKey), so this list only needs the canonical
   // lowercase form of each variant actually in use.
   "fast-nuces": "fast",
+  "national university of computer & emerging sciences": "fast",
+  "national university of computer and emerging sciences": "fast",
+  "comsats university islamabad": "comsats",
+  "ghulam ishak khan institute of engineering sciences & technology": "giki",
+  "ghulam ishaq khan institute of engineering sciences & technology": "giki",
+  "pakistan institute of engineering & applied sciences": "pieas",
+  "ned university of engineering & technology": "ned",
   "uet lahore": "uet",
   "university of engineering  technology lahore": "uet",
+  "university of engineering & technology lahore": "uet",
+  "air university": "air",
+  "bahria university": "bahria",
+  "university of management  technology": "umt",
+  "university of management & technology": "umt",
+  "university of central punjab": "ucp",
 };
 
 function normalizeKey(value: string): string {

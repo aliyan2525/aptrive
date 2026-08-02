@@ -4,6 +4,7 @@ import Link from "next/link";
 import { motion } from "framer-motion";
 import { CheckCircle2, GraduationCap } from "lucide-react";
 import { universities } from "@/lib/universities";
+import { getUniversityExperienceSlug } from "@/lib/university-experiences";
 import UniversityLogo from "@/components/UniversityLogo";
 
 const featured = ["nust", "fast", "giki", "pieas", "comsats", "ned"];
@@ -95,7 +96,7 @@ export default function PopularUniversities() {
             className="group relative"
           >
             <Link
-              href={`/tools/calculator?uni=${uni.id}`}
+              href={`/universities/${getUniversityExperienceSlug(uni.id)}`}
               className={`relative flex h-full flex-col overflow-hidden rounded-2xl border border-line bg-panel transition-all duration-500 hover:-translate-y-1.5 hover:shadow-2xl hover:border-line-strong ${theme.shadow}`}
             >
               {/* Animated Background Gradient */}
