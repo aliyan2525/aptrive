@@ -27,7 +27,7 @@ export default function BentoCard({
 }) {
   return (
     <div
-      className={cn("flex flex-col justify-between h-full motion-card glass-panel rounded-[2rem] p-6 lg:p-8 relative overflow-hidden before:absolute before:inset-0 before:ring-1 before:ring-inset before:ring-white/5 transition-all duration-500 hover:shadow-2xl hover:-translate-y-1", className)}
+      className={cn("flex h-full flex-col justify-between overflow-hidden rounded-[1.5rem] p-6 lg:p-8 premium-shell motion-card", className)}
       style={style}
     >
       {(title || action) && (

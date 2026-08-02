@@ -5,14 +5,14 @@ export type CardVariant = "default" | "interactive" | "gradient" | "sunken";
 
 const variantClass: Record<CardVariant, string> = {
   // Static content grouping — no hover behavior.
-  default: "border border-line bg-[var(--surface-elevated)] shadow-sm relative overflow-hidden before:absolute before:inset-0 before:ring-1 before:ring-inset before:ring-white/5",
+  default: "premium-shell relative overflow-hidden",
   // Adds the existing lift/glow-border hover treatment.
-  interactive: "motion-card border border-line bg-[var(--surface-elevated)] relative overflow-hidden before:absolute before:inset-0 before:ring-1 before:ring-inset before:ring-white/5",
+  interactive: "motion-card premium-shell relative overflow-hidden",
   // Premium glass treatment for featured content.
   gradient:
-    "glass-panel relative overflow-hidden before:absolute before:inset-0 before:bg-gradient-to-br before:from-white/5 before:to-transparent before:pointer-events-none border-t-white/10 shadow-lg",
+    "glass-panel relative overflow-hidden before:absolute before:inset-0 before:bg-gradient-to-br before:from-white/70 before:to-transparent before:pointer-events-none",
   // Recessed panel, for content nested inside another card.
-  sunken: "border border-black/20 bg-[var(--surface-sunken)] shadow-inner",
+  sunken: "border border-line bg-[var(--surface-sunken)] shadow-inner",
 };
 
 type CardProps = HTMLAttributes<HTMLDivElement> & {
@@ -30,7 +30,7 @@ const paddingClass: Record<NonNullable<CardProps["padding"]>, string> = {
 
 export default function Card({ variant = "default", padding = "md", className, children, ...rest }: CardProps) {
   return (
-    <div className={cn("rounded-2xl", variantClass[variant], paddingClass[padding], className)} {...rest}>
+    <div className={cn("rounded-[1.5rem]", variantClass[variant], paddingClass[padding], className)} {...rest}>
       {children}
     </div>
   );

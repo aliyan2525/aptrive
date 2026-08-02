@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { BarChart3, Eye, Flag, GraduationCap, Rocket, ShieldCheck, Target } from "lucide-react";
 import ContactForm from "@/components/ContactForm";
 import FAQAccordion from "@/components/FAQAccordion";
 import TickDivider from "@/components/TickDivider";
@@ -22,23 +23,26 @@ export default function AboutPage() {
   return (
     <>
       <section className="container-aptrive py-16 md:py-24">
-        <div className="grid gap-10 lg:grid-cols-[1.1fr_0.9fr] lg:items-end">
+        <div className="grid gap-10 lg:grid-cols-[1.05fr_0.95fr] lg:items-center">
           <div>
             <div className="eyebrow">About Aptrive</div>
             <h1 className="font-display mt-3 text-4xl font-semibold tracking-tight text-fg md:text-6xl">
-              Pakistan&apos;s intelligent learning command center.
+              Pakistan&apos;s intelligent <span className="aurora-text">learning</span> command center.
             </h1>
             <p className="mt-6 max-w-2xl text-base leading-relaxed text-muted">
               Aptrive helps ambitious students prepare for competitive university entrance examinations with structured content, analytics, gamified progress, and future-ready AI personalization.
             </p>
           </div>
-          <div className="rounded-md border border-line bg-panel p-6">
-            <p className="text-xs uppercase tracking-wide text-muted-2">Company snapshot</p>
+          <div className="premium-shell rounded-[1.75rem] p-7">
+            <div className="flex items-center gap-3">
+              <BarChart3 className="h-5 w-5 text-violet-600" />
+              <p className="text-xs font-semibold uppercase tracking-[0.16em] text-muted">Company snapshot</p>
+            </div>
             <div className="mt-5 grid grid-cols-2 gap-4">
-              <MiniStat label="Focus" value="EdTech" />
-              <MiniStat label="Market" value="Pakistan" />
-              <MiniStat label="Core exam" value="NUST NET" />
-              <MiniStat label="Expansion" value="ECAT/MDCAT" />
+              <MiniStat icon={GraduationCap} label="Focus" value="EdTech" />
+              <MiniStat icon={Flag} label="Market" value="Pakistan" />
+              <MiniStat icon={ShieldCheck} label="Core exam" value="NUST NET" />
+              <MiniStat icon={Rocket} label="Expansion" value="ECAT/MDCAT" />
             </div>
           </div>
         </div>
@@ -48,8 +52,8 @@ export default function AboutPage() {
 
       <section className="container-aptrive py-16 md:py-24">
         <div className="grid gap-8 md:grid-cols-2">
-          <Statement title="Mission" body="Give every serious student a precise, measurable, and motivating path from uncertainty to exam readiness." />
-          <Statement title="Vision" body="Become Pakistan's most trusted AI-powered entrance preparation platform, scaling from NUST NET into every major academic gateway." />
+          <Statement icon={Target} title="Mission" body="Give every serious student a precise, measurable, and motivating path from uncertainty to exam readiness." />
+          <Statement icon={Eye} title="Vision" body="Become Pakistan's most trusted AI-powered entrance preparation platform, scaling from NUST NET into every major academic gateway." />
         </div>
       </section>
 
@@ -60,9 +64,9 @@ export default function AboutPage() {
         <h2 className="font-display mt-3 max-w-2xl text-3xl font-semibold tracking-tight text-fg md:text-4xl">
           Traditional prep gives every student the same plan. Aptrive adapts the plan to the student.
         </h2>
-        <div className="mt-10 grid gap-px overflow-hidden rounded-md border border-line bg-line md:grid-cols-3">
+        <div className="mt-10 grid gap-4 md:grid-cols-3">
           {values.map(([name, body]) => (
-            <div key={name} className="bg-panel p-6 transition-colors hover:bg-panel-2">
+            <div key={name} className="motion-card premium-shell rounded-2xl p-6">
               <h3 className="font-display text-lg font-semibold text-fg">{name}</h3>
               <p className="mt-2 text-sm leading-relaxed text-muted">{body}</p>
             </div>
@@ -89,7 +93,7 @@ export default function AboutPage() {
               <MiniStat label="Feedback" value="Always open" />
             </div>
           </div>
-          <div className="rounded-md border border-line bg-panel p-6">
+          <div className="premium-shell rounded-[1.75rem] p-6">
             <ContactForm />
           </div>
         </div>
@@ -110,18 +114,22 @@ export default function AboutPage() {
   );
 }
 
-function Statement({ title, body }: { title: string; body: string }) {
+function Statement({ icon: Icon, title, body }: { icon: typeof Target; title: string; body: string }) {
   return (
-    <div className="rounded-md border border-line bg-panel p-6">
+    <div className="premium-shell rounded-[1.75rem] p-8">
+      <div className="mb-5 grid h-16 w-16 place-items-center rounded-2xl bg-teal-dim text-teal">
+        <Icon className="h-8 w-8" strokeWidth={1.7} />
+      </div>
       <div className="eyebrow">{title}</div>
       <p className="mt-4 text-sm leading-relaxed text-muted">{body}</p>
     </div>
   );
 }
 
-function MiniStat({ label, value }: { label: string; value: string }) {
+function MiniStat({ icon: Icon, label, value }: { icon: typeof GraduationCap; label: string; value: string }) {
   return (
-    <div className="rounded-md border border-line bg-panel-2 p-4">
+    <div className="rounded-2xl border border-line bg-white/70 p-5 shadow-sm">
+      <Icon className="mb-5 h-8 w-8 text-teal" strokeWidth={1.6} />
       <p className="text-xs uppercase tracking-wide text-muted-2">{label}</p>
       <p className="mt-2 text-sm font-semibold text-fg">{value}</p>
     </div>

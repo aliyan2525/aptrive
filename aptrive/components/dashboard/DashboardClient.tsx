@@ -165,10 +165,10 @@ export default function DashboardClient({
   ];
 
   return (
-    <main className="min-h-[calc(100vh-4rem)] bg-graphite px-4 py-8 pb-24 md:px-6 md:py-10">
+    <main className="min-h-[calc(100vh-4rem)] bg-[radial-gradient(circle_at_10%_0%,rgba(45,212,191,0.16),transparent_28rem),linear-gradient(180deg,#fff,#f6f9ff)] px-4 py-8 pb-24 md:px-6 md:py-10">
       <div className="container-aptrive grid grid-cols-1 md:grid-cols-6 lg:grid-cols-12 gap-6">
         {/* Row 1 — Welcome card + Daily goal */}
-        <div className="motion-card glass-panel rounded-[2rem] p-8 lg:p-12 lg:col-span-8 md:col-span-6 relative overflow-hidden before:absolute before:inset-0 before:ring-1 before:ring-inset before:ring-white/5 transition-all duration-500 hover:shadow-2xl">
+        <div className="motion-card premium-shell rounded-[1.75rem] p-8 lg:p-12 lg:col-span-8 md:col-span-6 relative overflow-hidden">
           <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-teal-dim blur-[100px] rounded-full pointer-events-none -translate-y-1/2 translate-x-1/4 opacity-60" />
           <div className="eyebrow relative z-10">Learning command center</div>
           <h1 className="font-display mt-4 text-4xl lg:text-5xl font-bold tracking-tight text-fg relative z-10">
@@ -178,10 +178,10 @@ export default function DashboardClient({
             {getStreakLine(streak)} {quote}
           </p>
           <div className="mt-8 flex flex-wrap gap-4 relative z-10">
-            <Link href="/practice" className="pressable rounded-full bg-teal px-6 py-3 text-sm font-semibold text-graphite shadow-[0_0_20px_rgba(35,213,196,0.4)] hover:shadow-[0_0_30px_rgba(35,213,196,0.6)]">
+            <Link href="/practice" className="pressable rounded-full bg-gradient-to-r from-blue-600 via-sky-500 to-violet-600 px-6 py-3 text-sm font-semibold text-white shadow-[0_12px_30px_rgba(37,99,235,0.24)]">
               Continue studying
             </Link>
-            <Link href="/onboarding" className="pressable rounded-full border border-line-strong px-6 py-3 text-sm font-semibold text-fg hover:bg-white/5">
+            <Link href="/onboarding" className="pressable rounded-full border border-line-strong bg-white/70 px-6 py-3 text-sm font-semibold text-fg hover:bg-white">
               Personalize plan
             </Link>
           </div>
@@ -267,7 +267,7 @@ export default function DashboardClient({
         <BentoCard title="Recommended for you" subtitle="Where to spend your next session" className="md:col-span-6 lg:col-span-6">
           <Link
             href="/practice"
-            className="group flex items-center justify-between rounded-sm border border-teal/30 bg-teal-dim p-4"
+            className="group flex items-center justify-between rounded-2xl border border-teal/30 bg-teal-dim p-4"
           >
             <div>
               <p className="font-medium text-fg">Resume last practice</p>
@@ -279,7 +279,7 @@ export default function DashboardClient({
           </Link>
           <div className="mt-3 space-y-3">
             {aiRecommendations.map((item) => (
-              <div key={item} className="rounded-sm border border-line bg-panel-2 p-4 text-sm leading-relaxed text-muted">
+              <div key={item} className="rounded-2xl border border-line bg-white/70 p-4 text-sm leading-relaxed text-muted">
                 {item}
               </div>
             ))}
@@ -307,7 +307,7 @@ export default function DashboardClient({
               <div
                 key={d.day}
                 title={d.active ? `${d.day} — session completed` : `${d.day} — no session`}
-                className={`relative grid aspect-square place-items-center rounded-sm border text-[11px] transition-colors duration-200 ${
+                  className={`relative grid aspect-square place-items-center rounded-xl border text-[11px] transition-colors duration-200 ${
                   d.active
                     ? "border-teal/40 bg-teal-dim text-fg"
                     : "border-line bg-panel-2 text-muted-2"
@@ -379,7 +379,7 @@ export default function DashboardClient({
             </dl>
             <div className="space-y-3">
               {(data.recentlyViewed.length ? data.recentlyViewed : fallbackRecent).map((item) => (
-                <div key={`${item.resource_id}-${item.viewed_at}`} className="rounded-sm border border-line bg-panel-2 p-3">
+                  <div key={`${item.resource_id}-${item.viewed_at}`} className="rounded-2xl border border-line bg-white/70 p-3">
                   <p className="text-sm font-medium text-fg">{friendlyResource(item.resource_type, item.resource_id)}</p>
                   <p className="mt-1 text-xs text-muted">{item.resource_type.replace("_", " ")} - {formatDate(item.viewed_at)}</p>
                 </div>
@@ -394,7 +394,7 @@ export default function DashboardClient({
             <Link
               key={action.title}
               href={action.href}
-              className="motion-card group rounded-md border border-line bg-panel p-5"
+              className="motion-card premium-shell group rounded-[1.25rem] p-5"
               style={{ animationDelay: `${index * 45}ms` }}
             >
               <div className="flex items-start justify-between gap-4">

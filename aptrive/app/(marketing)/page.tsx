@@ -1,15 +1,12 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { redirect } from "next/navigation";
-import { ArrowRight, BrainCircuit, Timer, LineChart, MapIcon, Compass, Play, Star } from "lucide-react";
+import { ArrowRight, BrainCircuit, Timer, LineChart, Compass, Play, Star } from "lucide-react";
 
 
 import Reveal from "@/components/Reveal";
 import PopularUniversities from "@/components/PopularUniversities";
-import FeaturedLibrary from "@/components/FeaturedLibrary";
-import FAQAccordion from "@/components/FAQAccordion";
 import Button from "@/components/ui/Button";
-import Card from "@/components/ui/Card";
 import Eyebrow from "@/components/ui/Eyebrow";
 import { createClient } from "@/lib/supabase/server";
 import PremiumFeatureCard from "@/components/features/PremiumFeatureCard";
@@ -163,15 +160,15 @@ export default async function Home() {
         </div>
       </section>
 
-      <section className="relative overflow-hidden bg-panel py-32 md:py-48 z-10">
+      <section className="relative overflow-hidden bg-white py-28 md:py-40 z-10">
         <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-6xl h-[1px] bg-gradient-to-r from-transparent via-line-strong to-transparent" />
         
         <div className="container-aptrive relative">
           <Reveal>
             <div className="mx-auto max-w-4xl text-center">
-              <Eyebrow className="text-gold">Engineering Excellence</Eyebrow>
+              <Eyebrow className="text-violet-600">Engineering Excellence</Eyebrow>
               <h2 className="text-display-2 text-fg mt-8">
-                Built to be the most sophisticated educational tool in existence.
+                Built like serious software for students who need clarity.
               </h2>
             </div>
           </Reveal>
@@ -191,7 +188,7 @@ export default async function Home() {
         </div>
       </section>
 
-      <section className="relative overflow-hidden bg-panel-2 py-32 md:py-48 z-10">
+      <section className="relative overflow-hidden bg-gradient-to-b from-[#f8fbff] to-white py-28 md:py-40 z-10">
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[1000px] h-[500px] bg-teal-dim blur-3xl rounded-[100%] pointer-events-none opacity-50" />
         
         <div className="container-aptrive relative">
@@ -208,7 +205,7 @@ export default async function Home() {
         </div>
       </section>
 
-      <section className="container-aptrive py-32 md:py-48 z-10 relative">
+      <section className="container-aptrive py-28 md:py-40 z-10 relative">
         <Reveal>
           <div className="flex flex-col md:flex-row md:items-end justify-between gap-8 border-b border-line pb-12">
             <div className="max-w-2xl">
@@ -230,16 +227,16 @@ export default async function Home() {
         </Reveal>
       </section>
 
-      <section className="bg-panel py-32 md:py-48 z-10 relative border-t border-line">
+      <section className="bg-gradient-to-b from-white to-[#f3f7ff] py-28 md:py-40 z-10 relative border-t border-line">
         <div className="container-aptrive text-center">
           <Reveal>
             <Eyebrow className="text-teal">The Final Step</Eyebrow>
             <h2 className="text-hero text-fg mt-8 max-w-5xl mx-auto mix-blend-plus-lighter">
-              It&apos;s time to realize your true potential.
+              Your next acceptance letter starts with today&apos;s session.
             </h2>
             <div className="mt-16">
-              <Button href="/signup" variant="primary" size="lg" className="h-16 px-12 text-lg shadow-[0_0_40px_rgba(35,213,196,0.3)] hover:shadow-[0_0_60px_rgba(35,213,196,0.5)]">
-                Begin The Journey
+              <Button href="/signup" variant="primary" size="lg" className="h-16 px-12 text-lg">
+                Begin the journey
               </Button>
             </div>
           </Reveal>

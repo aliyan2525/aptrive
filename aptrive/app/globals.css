@@ -1,27 +1,29 @@
 @import "tailwindcss";
 
 :root {
-  /* OKLCH Color System for Premium Gradients & Dynamic Lightness */
-  --graphite: oklch(20% 0.02 260); /* Deep cool black */
-  --panel: oklch(25% 0.01 260);
-  --panel-2: oklch(30% 0.01 260);
+  /* Aptrive Aurora: light-first, calm, high-contrast product tokens */
+  --graphite: oklch(98.5% 0.008 255);
+  --panel: oklch(100% 0 0);
+  --panel-2: oklch(96.8% 0.012 255);
   
-  --fg: oklch(98% 0.01 260); /* Crisp off-white */
-  --muted: oklch(65% 0.02 260);
-  --muted-2: oklch(50% 0.02 260);
+  --fg: oklch(19% 0.047 265);
+  --muted: oklch(46% 0.045 265);
+  --muted-2: oklch(62% 0.035 265);
   
-  --line: oklch(40% 0.02 260 / 0.2);
-  --line-strong: oklch(40% 0.02 260 / 0.4);
+  --line: oklch(72% 0.035 260 / 0.22);
+  --line-strong: oklch(63% 0.05 260 / 0.34);
   
   /* Primary Brands */
-  --teal: oklch(75% 0.15 180);
-  --teal-dim: oklch(75% 0.15 180 / 0.15);
+  --teal: oklch(66% 0.16 178);
+  --teal-dim: oklch(66% 0.16 178 / 0.14);
+  --blue: oklch(61% 0.21 255);
+  --violet: oklch(61% 0.24 292);
   
-  --gold: oklch(75% 0.15 70);
-  --gold-dim: oklch(75% 0.15 70 / 0.15);
+  --gold: oklch(72% 0.16 72);
+  --gold-dim: oklch(72% 0.16 72 / 0.14);
 
-  --surface-elevated: oklch(35% 0.01 260);
-  --surface-sunken: oklch(15% 0.02 260);
+  --surface-elevated: oklch(100% 0 0 / 0.84);
+  --surface-sunken: oklch(95% 0.012 255);
   
   --success: oklch(75% 0.15 140);
   --warning: oklch(80% 0.15 75);
@@ -86,7 +88,10 @@ html {
 }
 
 body {
-  background: var(--graphite);
+  background:
+    radial-gradient(circle at 12% 12%, oklch(79% 0.14 178 / 0.14), transparent 30rem),
+    radial-gradient(circle at 78% 4%, oklch(72% 0.19 292 / 0.12), transparent 34rem),
+    linear-gradient(180deg, oklch(100% 0 0), var(--graphite) 42rem);
   color: var(--fg);
   font-family: var(--font-body);
   -webkit-font-smoothing: antialiased;
@@ -99,7 +104,7 @@ body {
   font-family: var(--font-display);
   font-size: clamp(3.5rem, 5vw + 1rem, 7rem);
   line-height: 0.95;
-  letter-spacing: -0.03em;
+  letter-spacing: 0;
   font-weight: 700;
 }
 
@@ -107,7 +112,7 @@ body {
   font-family: var(--font-display);
   font-size: clamp(2.75rem, 2rem + 3.2vw, 4.75rem);
   line-height: 1.05;
-  letter-spacing: -0.02em;
+  letter-spacing: 0;
   font-weight: 600;
 }
 
@@ -115,7 +120,7 @@ body {
   font-family: var(--font-display);
   font-size: clamp(2.25rem, 1.8rem + 2vw, 3.5rem);
   line-height: 1.08;
-  letter-spacing: -0.015em;
+  letter-spacing: 0;
   font-weight: 600;
 }
 
@@ -162,11 +167,50 @@ body {
 }
 
 .glass-panel {
-  background: color-mix(in oklch, var(--panel) 60%, transparent);
-  backdrop-filter: blur(24px);
-  -webkit-backdrop-filter: blur(24px);
+  background: linear-gradient(135deg, oklch(100% 0 0 / 0.9), oklch(98% 0.012 255 / 0.72));
+  backdrop-filter: blur(28px) saturate(150%);
+  -webkit-backdrop-filter: blur(28px) saturate(150%);
   border: 1px solid var(--line);
-  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.2);
+  box-shadow: 0 24px 70px rgba(20, 32, 70, 0.08), inset 0 1px 0 rgba(255,255,255,0.9);
+}
+
+.text-heading-3 { font-family: var(--font-display); font-size: 1.125rem; line-height: 1.25; font-weight: 700; }
+.text-body-sm { font-size: 0.875rem; line-height: 1.6; color: var(--muted); }
+
+.premium-shell {
+  border: 1px solid var(--line);
+  background: linear-gradient(135deg, rgba(255,255,255,0.92), rgba(248,251,255,0.76));
+  box-shadow: 0 18px 55px rgba(20, 32, 70, 0.08), inset 0 1px 0 rgba(255,255,255,0.92);
+  backdrop-filter: blur(24px) saturate(150%);
+}
+
+.aurora-text {
+  background: linear-gradient(100deg, var(--blue), var(--violet) 48%, var(--teal));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.motion-card {
+  transform: translateZ(0);
+  transition: transform 260ms var(--ease-smooth), box-shadow 260ms var(--ease-smooth), border-color 260ms var(--ease-smooth), background 260ms var(--ease-smooth);
+}
+.motion-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 22px 60px rgba(20, 32, 70, 0.12);
+}
+.pressable {
+  transition: transform 180ms var(--ease-smooth), box-shadow 180ms var(--ease-smooth), background 180ms var(--ease-smooth);
+}
+.pressable:hover { transform: translateY(-1px); }
+.pressable:active { transform: translateY(0) scale(0.98); }
+.btn-ripple {
+  transform: scale(0);
+  opacity: 0.55;
+  animation: ripple 620ms var(--ease-smooth);
+}
+@keyframes ripple {
+  to { transform: scale(1); opacity: 0; }
 }
 
 /* Utilities */

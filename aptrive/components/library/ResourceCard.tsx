@@ -22,10 +22,10 @@ export default function ResourceCard({
     >
       <Link
         href={`/library/${resource.categorySlug}/${resource.id}`}
-        className="group relative flex h-full flex-col overflow-hidden rounded-2xl border border-line bg-panel p-6 shadow-sm transition-all duration-500 hover:-translate-y-1 hover:shadow-xl hover:shadow-black/5 hover:border-line-strong cursor-pointer"
+        className="group premium-shell relative flex h-full cursor-pointer flex-col overflow-hidden rounded-[1.35rem] p-6 transition-all duration-500 hover:-translate-y-1 hover:border-blue-300/60 hover:shadow-xl hover:shadow-blue-950/10"
       >
         {/* Soft Background Gradient */}
-        <div className="absolute inset-0 bg-gradient-to-br from-teal/10 to-transparent opacity-0 transition-opacity duration-700 group-hover:opacity-100 pointer-events-none mix-blend-plus-lighter dark:mix-blend-overlay" />
+        <div className="absolute inset-0 bg-gradient-to-br from-teal/10 to-transparent opacity-0 transition-opacity duration-700 group-hover:opacity-100 pointer-events-none" />
 
         <div className="flex items-start justify-between gap-3 relative z-10">
           <div className="flex items-center gap-2">
@@ -35,11 +35,11 @@ export default function ResourceCard({
             </span>
           </div>
           {resource.premium ? (
-            <span className="font-mono-data shrink-0 rounded-sm border border-gold/40 bg-gold-dim px-2 py-0.5 text-[10px] uppercase tracking-[0.12em] text-gold">
+            <span className="font-mono-data shrink-0 rounded-full border border-gold/40 bg-gold-dim px-2.5 py-1 text-[10px] uppercase tracking-[0.12em] text-gold">
               Premium
             </span>
           ) : (
-            <span className="font-mono-data shrink-0 rounded-sm border border-line-strong px-2 py-0.5 text-[10px] uppercase tracking-[0.12em] text-muted">
+            <span className="font-mono-data shrink-0 rounded-full border border-line-strong bg-white/70 px-2.5 py-1 text-[10px] uppercase tracking-[0.12em] text-muted">
               Free
             </span>
           )}

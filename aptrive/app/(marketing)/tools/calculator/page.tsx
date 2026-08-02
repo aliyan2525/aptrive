@@ -15,8 +15,8 @@ export default function CalculatorPage() {
       <section className="container-aptrive py-16 md:py-24">
         <div className="max-w-2xl">
           <div className="eyebrow">Free tool</div>
-          <h1 className="font-display mt-3 text-4xl font-semibold tracking-tight text-fg md:text-5xl">
-            University Aggregate Calculator
+          <h1 className="font-display mt-3 text-4xl font-bold tracking-normal text-fg md:text-5xl">
+            University <span className="aurora-text">Aggregate Calculator</span>
           </h1>
           <p className="mt-5 text-sm leading-relaxed text-muted">
             Every Pakistani university weights Matric, Intermediate, and the
@@ -39,9 +39,9 @@ export default function CalculatorPage() {
           {universities.length} universities, one calculator
         </h2>
 
-        <div className="mt-10 grid gap-px overflow-hidden rounded-md border border-line bg-line sm:grid-cols-2 md:grid-cols-3">
+        <div className="mt-10 grid gap-4 sm:grid-cols-2 md:grid-cols-3">
           {universities.map((u) => (
-            <div key={u.id} className="bg-panel p-5">
+            <div key={u.id} className="premium-shell rounded-2xl p-5">
               <div className="flex items-center justify-between">
                 <span className="font-display text-base font-semibold text-fg">
                   {u.name}

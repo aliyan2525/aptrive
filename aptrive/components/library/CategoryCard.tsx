@@ -119,7 +119,7 @@ export default function CategoryCard({
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5, delay: index * 0.1, ease: [0.16, 1, 0.3, 1] }}
-        className="group relative flex flex-col overflow-hidden rounded-2xl border border-line bg-panel p-6 opacity-60 transition-colors"
+        className="group premium-shell relative flex flex-col overflow-hidden rounded-[1.35rem] p-6 opacity-70 transition-colors"
       >
         <div className="absolute inset-0 bg-gradient-to-br opacity-0 transition-opacity duration-500 group-hover:opacity-100 mix-blend-overlay pointer-events-none" />
         
@@ -154,10 +154,10 @@ export default function CategoryCard({
     >
       <Link
         href={`/library/${category.slug}`}
-        className={`group relative flex h-full flex-col overflow-hidden rounded-2xl border border-line bg-panel p-6 shadow-sm transition-all duration-500 hover:-translate-y-1 hover:shadow-xl hover:shadow-black/5 hover:border-line-strong`}
+        className={`group premium-shell relative flex h-full flex-col overflow-hidden rounded-[1.35rem] p-6 transition-all duration-500 hover:-translate-y-1 hover:border-blue-300/60 hover:shadow-xl hover:shadow-blue-950/10`}
       >
         {/* Soft Background Gradient */}
-        <div className={`absolute inset-0 bg-gradient-to-br ${theme.gradient} opacity-0 transition-opacity duration-700 group-hover:opacity-100 pointer-events-none mix-blend-plus-lighter dark:mix-blend-overlay`} />
+        <div className={`absolute inset-0 bg-gradient-to-br ${theme.gradient} opacity-0 transition-opacity duration-700 group-hover:opacity-100 pointer-events-none`} />
 
         {/* Header */}
         <div className="flex items-start justify-between relative z-10">
@@ -170,7 +170,7 @@ export default function CategoryCard({
           </motion.div>
           
           <div className="flex flex-col items-end gap-1">
-            <span className="font-mono-data text-xs font-medium text-muted-2">
+            <span className="rounded-full bg-white/70 px-3 py-1 font-mono-data text-[10px] font-bold uppercase tracking-[0.12em] text-muted shadow-sm">
               {category.practiceSets} SETS
             </span>
           </div>
@@ -188,13 +188,13 @@ export default function CategoryCard({
 
         {/* Stats row */}
         <div className="mt-6 flex items-center gap-3 relative z-10">
-          <div className="flex items-center gap-1.5 rounded-lg border border-line/50 bg-panel-2/50 px-2.5 py-1.5">
+          <div className="flex items-center gap-1.5 rounded-xl border border-line/50 bg-white/70 px-2.5 py-1.5 shadow-sm">
             <BookMarked className="h-3.5 w-3.5 text-muted-2" />
             <span className="font-mono-data text-xs font-medium text-fg">
               {category.totalQuestions.toLocaleString()} <span className="text-muted-2 font-sans text-[10px] uppercase tracking-wider">Qs</span>
             </span>
           </div>
-          <div className="flex items-center gap-1.5 rounded-lg border border-line/50 bg-panel-2/50 px-2.5 py-1.5">
+          <div className="flex items-center gap-1.5 rounded-xl border border-line/50 bg-white/70 px-2.5 py-1.5 shadow-sm">
             <Clock className="h-3.5 w-3.5 text-muted-2" />
             <span className="font-mono-data text-xs font-medium text-fg">
               {category.estimatedStudyTime}
@@ -204,7 +204,7 @@ export default function CategoryCard({
 
         {/* Difficulty Bar */}
         <div className="mt-5 relative z-10">
-          <div className="flex h-1.5 w-full overflow-hidden rounded-full bg-line/50 shadow-inner">
+          <div className="flex h-1.5 w-full overflow-hidden rounded-full bg-slate-200/70 shadow-inner">
             <motion.div 
               initial={{ width: 0 }}
               whileInView={{ width: `${easy}%` }}

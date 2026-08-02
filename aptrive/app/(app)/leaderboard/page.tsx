@@ -20,13 +20,13 @@ const tabs = ["Global", "Friends", "University", "Subject", "Weekly", "Monthly",
 
 export default function LeaderboardPage() {
   return (
-    <main className="min-h-[calc(100vh-4rem)] bg-graphite px-6 py-12">
+    <main className="min-h-[calc(100vh-4rem)] bg-[linear-gradient(180deg,#fff,#f6f9ff)] px-6 py-12">
       <div className="container-aptrive">
         <section className="grid gap-8 lg:grid-cols-[0.9fr_1.2fr] lg:items-end">
           <div>
             <div className="eyebrow">Rankings</div>
-            <h1 className="font-display mt-3 text-4xl font-semibold tracking-tight text-fg md:text-5xl">
-              Performance rankings built for serious preparation.
+            <h1 className="font-display mt-3 text-4xl font-bold tracking-normal text-fg md:text-5xl">
+              Performance rankings built for <span className="aurora-text">serious preparation</span>.
             </h1>
             <p className="mt-4 max-w-xl text-sm leading-relaxed text-muted">
               Rankings combine accuracy, XP, consistency, questions solved, and mock performance. The model is designed to shard by time window, subject, university, and cohort as Aptrive scales.
@@ -48,14 +48,14 @@ export default function LeaderboardPage() {
             <button
               key={tab}
               type="button"
-              className={`whitespace-nowrap rounded-sm border px-3 py-2 text-xs font-semibold ${index === 0 ? "border-teal bg-teal text-graphite" : "border-line-strong text-muted hover:text-fg"}`}
+              className={`whitespace-nowrap rounded-full border px-4 py-2 text-xs font-semibold transition ${index === 0 ? "border-blue-500 bg-gradient-to-r from-blue-600 to-violet-600 text-white shadow-lg shadow-blue-500/20" : "border-line-strong bg-white/70 text-muted hover:text-fg"}`}
             >
               {tab}
             </button>
           ))}
         </div>
 
-        <section className="mt-6 overflow-hidden rounded-md border border-line bg-panel">
+        <section className="premium-shell mt-6 overflow-hidden rounded-[1.5rem]">
           <div className="grid grid-cols-[64px_1fr_120px_100px_100px] gap-4 border-b border-line px-5 py-3 text-xs uppercase tracking-wide text-muted-2 max-md:hidden">
             <span>Rank</span>
             <span>Student</span>
@@ -95,7 +95,7 @@ export default function LeaderboardPage() {
 
 function Stat({ label, value, suffix = "" }: { label: string; value: number; suffix?: string }) {
   return (
-    <div className="rounded-md border border-line bg-panel p-4">
+    <div className="premium-shell rounded-2xl p-4">
       <p className="text-xs uppercase tracking-wide text-muted-2">{label}</p>
       <p className="font-display mt-2 text-2xl font-semibold text-fg">
         <AnimatedStat value={value} suffix={suffix} />

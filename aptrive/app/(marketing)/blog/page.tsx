@@ -15,12 +15,12 @@ export default function BlogIndexPage() {
   const tags = getAllTags();
 
   return (
-    <main className="min-h-[calc(100vh-4rem)] bg-graphite">
+    <main className="min-h-[calc(100vh-4rem)] bg-[linear-gradient(180deg,#fff,#f6f9ff)]">
       <section className="border-b border-line">
         <div className="container-aptrive py-16 md:py-20">
           <span className="eyebrow">Aptrive Blog</span>
           <h1 className="text-display-2 mt-4 max-w-2xl text-fg">
-            Practical, data-backed preparation guidance from the Aptrive team.
+            Practical, <span className="aurora-text">data-backed</span> preparation guidance from the Aptrive team.
           </h1>
         </div>
       </section>

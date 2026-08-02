@@ -14,8 +14,8 @@ export default function CoursesPage() {
     <section className="container-aptrive py-16 md:py-24">
       <div className="max-w-2xl">
         <div className="eyebrow">Courses</div>
-        <h1 className="font-display mt-3 text-4xl font-semibold tracking-tight text-fg md:text-5xl">
-          University-specific preparation tracks.
+        <h1 className="font-display mt-3 text-4xl font-bold tracking-normal text-fg md:text-5xl">
+          University-specific <span className="aurora-text">preparation tracks</span>.
         </h1>
         <p className="mt-5 text-sm leading-relaxed text-muted">
           Pick your target university to get a focused roadmap, merit formula,
@@ -30,7 +30,7 @@ export default function CoursesPage() {
             <Link
               key={university.id}
               href={`/courses/${courseSlug}`}
-              className="group rounded-md border border-line bg-panel p-5 transition-colors hover:border-line-strong hover:bg-panel-2"
+              className="group premium-shell motion-card rounded-[1.35rem] p-5"
             >
               <div className="flex items-start justify-between gap-3">
                 <div className="flex items-center gap-3">
