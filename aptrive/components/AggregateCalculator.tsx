@@ -112,6 +112,9 @@ export default function AggregateCalculator({ onResult }: AggregateCalculatorPro
     if (uni.id === "nust" && educationSystem === "alevel-final") {
       return "O Level equivalence 25% + NET/ACT/SAT 75%";
     }
+    if (uni.id === "nust" && educationSystem === "alevel") {
+      return "O Level equivalence 10% + A Level equivalence 15% + NET/ACT/SAT 75%";
+    }
     if (educationSystem !== "local") {
       return uni.formulaText
         .replace(/Matric|SSC/g, "O Level")
