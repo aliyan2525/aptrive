@@ -98,6 +98,11 @@ export const metadata: Metadata = {
     description:
       "Intelligent preparation platform for Pakistan's competitive university entrance examinations.",
   },
+
+  icons: {
+    icon: "/icon.png",
+    apple: "/icon.png",
+  },
 };
 
 export default function RootLayout({
