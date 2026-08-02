@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import type React from "react";
 import { BarChart3, Eye, Flag, GraduationCap, Rocket, ShieldCheck, Target } from "lucide-react";
 import ContactForm from "@/components/ContactForm";
 import FAQAccordion from "@/components/FAQAccordion";
@@ -126,10 +127,14 @@ function Statement({ icon: Icon, title, body }: { icon: typeof Target; title: st
   );
 }
 
-function MiniStat({ icon: Icon, label, value }: { icon: typeof GraduationCap; label: string; value: string }) {
+function MiniStat({ icon: Icon, label, value }: { icon?: React.ComponentType<any>; label: string; value: string }) {
   return (
     <div className="rounded-2xl border border-line bg-white/70 p-5 shadow-sm">
-      <Icon className="mb-5 h-8 w-8 text-teal" strokeWidth={1.6} />
+      {Icon ? (
+        <Icon className="mb-5 h-8 w-8 text-teal" strokeWidth={1.6} />
+      ) : (
+        <div className="mb-5 h-8 w-8" />
+      )}
       <p className="text-xs uppercase tracking-wide text-muted-2">{label}</p>
       <p className="mt-2 text-sm font-semibold text-fg">{value}</p>
     </div>
