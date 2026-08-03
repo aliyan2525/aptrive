@@ -2,6 +2,7 @@ import { redirect } from "next/navigation";
 import DashboardClient from "@/components/dashboard/DashboardClient";
 import { getDashboardData } from "@/lib/dashboard-data";
 import type { Database } from "@/lib/database.types";
+import { countUnreadNotifications, listNotifications } from "@/lib/repositories/notifications.repository";
 import { createClient } from "@/lib/supabase/server";
 
 type Profile = Database["public"]["Tables"]["profiles"]["Row"];
@@ -27,6 +28,10 @@ export default async function DashboardPage() {
   const displayName =
     dashboardData.studentProfile?.display_name || profile?.full_name || user.email || "there";
   const firstName = displayName.split(" ")[0] || "there";
+  const [notifications, unreadCount] = await Promise.all([
+    listNotifications(supabase, user.id),
+    countUnreadNotifications(supabase, user.id),
+  ]);
 
   return (
     <DashboardClient
@@ -35,6 +40,8 @@ export default async function DashboardPage() {
       role={profile?.role ?? "student"}
       memberSince={profile?.created_at ?? null}
       data={dashboardData}
+      notifications={notifications}
+      unreadCount={unreadCount}
     />
   );
 }

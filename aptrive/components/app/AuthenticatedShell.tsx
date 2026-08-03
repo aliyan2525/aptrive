@@ -1,7 +1,9 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { usePathname } from "next/navigation";
+import { useState } from "react";
 import {
   BarChart3,
   Bell,
@@ -20,8 +22,11 @@ import {
   Zap,
 } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
-import NotificationBell, { type NotificationItem } from "@/components/NotificationBell";
-import UserMenu, { type HeaderUser } from "@/components/UserMenu";
+import AppNotificationCenter from "@/components/app/AppNotificationCenter";
+import AuthAccountMenu from "@/components/app/AuthAccountMenu";
+import CommandPalette from "@/components/app/CommandPalette";
+import type { NotificationItem } from "@/components/NotificationBell";
+import type { HeaderUser } from "@/components/UserMenu";
 
 type AuthenticatedShellProps = {
   user: HeaderUser;
@@ -52,6 +57,7 @@ export default function AuthenticatedShell({
   children,
 }: AuthenticatedShellProps) {
   const pathname = usePathname();
+  const [commandOpen, setCommandOpen] = useState(false);
 
   if (pathname.startsWith("/dashboard")) {
     return <>{children}</>;
@@ -62,8 +68,8 @@ export default function AuthenticatedShell({
       <div className="grid min-h-screen grid-cols-1 xl:grid-cols-[17.5rem_minmax(0,1fr)]">
         <aside className="hidden border-r border-[#e6ebf7] bg-white/78 px-5 py-6 backdrop-blur-2xl xl:flex xl:flex-col">
           <Link href="/dashboard" className="flex items-center gap-3 px-2" aria-label="Aptrive dashboard">
-            <span className="grid h-10 w-10 place-items-center rounded-[0.85rem] bg-gradient-to-br from-blue-600 via-indigo-600 to-violet-600 text-lg font-black text-white shadow-[0_16px_32px_rgba(66,82,220,0.22)]">
-              A
+            <span className="grid h-10 w-10 place-items-center rounded-[0.85rem] bg-white shadow-[0_16px_32px_rgba(66,82,220,0.14)]">
+              <Image src="/logo-mark.png" alt="" width={28} height={31} className="h-8 w-auto" priority />
             </span>
             <span>
               <span className="block font-display text-2xl font-bold tracking-normal text-[#08112f]">Aptrive</span>
@@ -118,8 +124,8 @@ export default function AuthenticatedShell({
           <header className="sticky top-0 z-40 border-b border-[#e6ebf7]/90 bg-white/78 backdrop-blur-2xl">
             <div className="flex h-20 items-center justify-between gap-4 px-4 sm:px-6 lg:px-8">
               <div className="flex min-w-0 items-center gap-3 xl:hidden">
-                <Link href="/dashboard" className="grid h-10 w-10 place-items-center rounded-[0.85rem] bg-gradient-to-br from-blue-600 to-violet-600 font-black text-white">
-                  A
+                <Link href="/dashboard" className="grid h-10 w-10 place-items-center rounded-[0.85rem] bg-white shadow-sm">
+                  <Image src="/logo-mark.png" alt="" width={28} height={31} className="h-8 w-auto" priority />
                 </Link>
                 <div>
                   <p className="font-display text-lg font-bold text-[#08112f]">Aptrive</p>
@@ -129,7 +135,9 @@ export default function AuthenticatedShell({
 
               <button
                 type="button"
+                onClick={() => setCommandOpen(true)}
                 className="hidden h-11 w-full max-w-[36rem] items-center gap-3 rounded-[0.9rem] border border-[#e1e7f5] bg-[#f8faff] px-4 text-left text-sm text-[#7480a8] shadow-inner md:flex"
+                aria-label="Open command center"
               >
                 <Search className="h-5 w-5 text-[#4d5d91]" aria-hidden="true" />
                 Search topics, tests, notes...
@@ -147,15 +155,12 @@ export default function AuthenticatedShell({
                   Start Session
                 </Link>
                 <div className="hidden sm:block">
-                  <NotificationBell
-                    initialNotifications={notifications}
-                    initialUnreadCount={unreadCount}
-                  />
+                  <AppNotificationCenter initialNotifications={notifications} initialUnreadCount={unreadCount} />
                 </div>
                 <button className="relative grid h-10 w-10 place-items-center rounded-full text-[#4d5d91] transition hover:bg-[#eef3ff] sm:hidden" aria-label="Notifications">
                   <Bell className="h-5 w-5" aria-hidden="true" />
                 </button>
-                <UserMenu user={user} />
+                <AuthAccountMenu user={user} />
               </div>
             </div>
           </header>
@@ -165,6 +170,7 @@ export default function AuthenticatedShell({
           </div>
         </section>
       </div>
+      <CommandPalette open={commandOpen} onOpenChange={setCommandOpen} />
     </div>
   );
 }

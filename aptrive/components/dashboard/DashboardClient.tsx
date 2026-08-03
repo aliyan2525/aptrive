@@ -1,15 +1,14 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { useEffect, useMemo, useState } from "react";
 import {
   ArrowRight,
   BarChart3,
-  Bell,
   BookOpen,
   Brain,
   Check,
-  ChevronDown,
   Clock3,
   Flame,
   Gauge,
@@ -28,6 +27,11 @@ import {
 } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 import type { getDashboardData } from "@/lib/dashboard-data";
+import AppNotificationCenter from "@/components/app/AppNotificationCenter";
+import AuthAccountMenu from "@/components/app/AuthAccountMenu";
+import CommandPalette from "@/components/app/CommandPalette";
+import type { NotificationItem } from "@/components/NotificationBell";
+import type { HeaderUser } from "@/components/UserMenu";
 import UniversityLogo from "@/components/UniversityLogo";
 
 type DashboardData = Awaited<ReturnType<typeof getDashboardData>>;
@@ -39,14 +43,14 @@ type CalendarDay = {
 };
 
 const navItems = [
-  { label: "Dashboard", icon: LayoutDashboard, active: true },
-  { label: "Practice", icon: Brain },
-  { label: "Library", icon: BookOpen },
-  { label: "Mock Tests", icon: ListChecks },
-  { label: "Rankings", icon: Trophy },
-  { label: "Analytics", icon: BarChart3 },
-  { label: "Goals", icon: Target },
-  { label: "Settings", icon: Settings },
+  { label: "Dashboard", href: "/dashboard", icon: LayoutDashboard, active: true },
+  { label: "Practice", href: "/practice", icon: Brain },
+  { label: "Library", href: "/library", icon: BookOpen },
+  { label: "Mock Tests", href: "/practice", icon: ListChecks },
+  { label: "Rankings", href: "/leaderboard", icon: Trophy },
+  { label: "Analytics", href: "/practice/subjects", icon: BarChart3 },
+  { label: "Goals", href: "/onboarding", icon: Target },
+  { label: "Settings", href: "/profile", icon: Settings },
 ];
 
 const weekdayLabels = ["S", "M", "T", "W", "T", "F", "S"];
@@ -101,16 +105,21 @@ export default function DashboardClient({
   role,
   memberSince,
   data,
+  notifications,
+  unreadCount,
 }: {
   firstName: string;
   email: string;
   role: string;
   memberSince: string | null;
   data: DashboardData;
+  notifications: NotificationItem[];
+  unreadCount: number;
 }) {
   const streak = data.streak?.current_streak ?? 0;
   const [greeting, setGreeting] = useState("Mission Control");
   const [calendarDays, setCalendarDays] = useState<CalendarDay[]>([]);
+  const [commandOpen, setCommandOpen] = useState(false);
 
   useEffect(() => {
     // Client-only clock read avoids hydration mismatches between server and visitor timezone.
@@ -186,13 +195,21 @@ export default function DashboardClient({
     { title: "Revision Notes", meta: "Continue where you left off", icon: BookOpen, href: "/library" },
     { title: "Mock Test", meta: "Try Full Mock Test 03", icon: ListChecks, href: "/practice" },
   ];
+  const accountUser: HeaderUser = {
+    fullName: firstName,
+    email,
+    avatarUrl: null,
+    isStaff: role !== "student",
+  };
 
   return (
     <main className="fixed inset-0 z-[60] overflow-y-auto bg-[#f7f9ff] text-fg">
       <div className="grid min-h-screen grid-cols-1 xl:grid-cols-[18rem_minmax(0,1fr)]">
         <aside className="hidden border-r border-[#e8ecf8] bg-white/78 px-5 py-7 backdrop-blur-xl xl:block">
-          <Link href="/" className="flex items-center gap-3 px-2">
-            <span className="grid h-9 w-9 place-items-center rounded-[0.8rem] bg-gradient-to-br from-blue-600 to-violet-600 text-lg font-black text-white">A</span>
+          <Link href="/dashboard" className="flex items-center gap-3 px-2" aria-label="Aptrive dashboard">
+            <span className="grid h-9 w-9 place-items-center rounded-[0.8rem] bg-white shadow-[0_16px_32px_rgba(66,82,220,0.14)]">
+              <Image src="/logo-mark.png" alt="" width={28} height={31} className="h-8 w-auto" priority />
+            </span>
             <span className="font-display text-2xl font-bold text-[#08112f]">Aptrive</span>
           </Link>
           <nav className="mt-10 space-y-2" aria-label="Dashboard">
@@ -214,26 +231,19 @@ export default function DashboardClient({
         <section className="min-w-0">
           <header className="sticky top-0 z-30 border-b border-[#e8ecf8]/90 bg-white/76 backdrop-blur-xl">
             <div className="mx-auto flex h-20 max-w-[96rem] items-center justify-between gap-4 px-4 sm:px-6 lg:px-9">
-              <label className="hidden h-11 w-full max-w-[38rem] items-center gap-3 rounded-[0.85rem] border border-[#e6ebf7] bg-[#f8faff] px-4 text-sm text-[#7883a9] shadow-inner md:flex">
+              <button
+                type="button"
+                onClick={() => setCommandOpen(true)}
+                className="hidden h-11 w-full max-w-[38rem] items-center gap-3 rounded-[0.85rem] border border-[#e6ebf7] bg-[#f8faff] px-4 text-left text-sm text-[#7883a9] shadow-inner md:flex"
+                aria-label="Open command center"
+              >
                 <Search className="h-5 w-5 text-[#4d5d91]" aria-hidden="true" />
                 <span>Search topics, tests, or something...</span>
                 <kbd className="ml-auto rounded-md bg-white px-2 py-1 text-xs text-[#6c759b] shadow-sm">K</kbd>
-              </label>
+              </button>
               <div className="ml-auto flex items-center gap-4">
-                <button className="relative grid h-10 w-10 place-items-center rounded-full text-[#4d5d91] transition hover:bg-[#f1f4ff]" aria-label="Notifications">
-                  <Bell className="h-5 w-5" aria-hidden="true" />
-                  <span className="absolute right-1.5 top-1 grid h-4 w-4 place-items-center rounded-full bg-rose-500 text-[10px] font-bold text-white">3</span>
-                </button>
-                <div className="flex items-center gap-3">
-                  <span className="grid h-11 w-11 place-items-center rounded-full bg-gradient-to-br from-teal-400 to-emerald-500 text-sm font-bold text-white">
-                    {firstName.slice(0, 2).toUpperCase()}
-                  </span>
-                  <div className="hidden sm:block">
-                    <p className="text-sm font-bold text-[#101936]">{firstName}</p>
-                    <p className="text-xs font-semibold text-emerald-500">Pro Plan</p>
-                  </div>
-                  <ChevronDown className="h-4 w-4 text-[#4d5d91]" aria-hidden="true" />
-                </div>
+                <AppNotificationCenter initialNotifications={notifications} initialUnreadCount={unreadCount} />
+                <AuthAccountMenu user={accountUser} />
               </div>
             </div>
           </header>
@@ -285,14 +295,15 @@ export default function DashboardClient({
           </div>
         </section>
       </div>
+      <CommandPalette open={commandOpen} onOpenChange={setCommandOpen} />
     </main>
   );
 }
 
-function SideNavItem({ label, icon: Icon, active }: { label: string; icon: LucideIcon; active?: boolean }) {
+function SideNavItem({ label, href, icon: Icon, active }: { label: string; href: string; icon: LucideIcon; active?: boolean }) {
   return (
     <Link
-      href={label === "Dashboard" ? "/dashboard" : `/${label.toLowerCase().replace(/\s+/g, "-")}`}
+      href={href}
       className={`flex h-14 items-center gap-3 rounded-[0.7rem] px-4 text-sm font-semibold transition ${
         active ? "bg-[#f0f1ff] text-blue-700 shadow-sm" : "text-[#172247] hover:bg-[#f7f9ff]"
       }`}
