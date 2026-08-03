@@ -5,6 +5,7 @@ import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
 import {
+  BarChart2,
   BarChart3,
   Bell,
   BookOpen,
@@ -16,6 +17,7 @@ import {
   ListChecks,
   Medal,
   Search,
+  Settings,
   Target,
   Trophy,
   UserRound,
@@ -40,6 +42,9 @@ const primaryNav = [
   { href: "/practice", label: "Practice", icon: Brain },
   { href: "/library", label: "Library", icon: Library },
   { href: "/leaderboard", label: "Rankings", icon: Trophy },
+  { href: "/analytics", label: "Analytics", icon: BarChart2 },
+  { href: "/goals", label: "Goals", icon: Target },
+  { href: "/settings", label: "Settings", icon: Settings },
   { href: "/profile", label: "Profile", icon: UserRound },
 ];
 
@@ -47,7 +52,7 @@ const workspaceNav = [
   { href: "/practice/bookmarks", label: "Bookmarks", icon: BookOpen },
   { href: "/practice/revision", label: "Revision", icon: ListChecks },
   { href: "/practice/subjects", label: "Subjects", icon: BarChart3 },
-  { href: "/onboarding", label: "Goals", icon: Target },
+  { href: "/onboarding", label: "Personalize Plan", icon: Target },
 ];
 
 export default function AuthenticatedShell({
@@ -68,8 +73,8 @@ export default function AuthenticatedShell({
       <div className="grid min-h-screen grid-cols-1 xl:grid-cols-[17.5rem_minmax(0,1fr)]">
         <aside className="hidden border-r border-[#e6ebf7] bg-white/78 px-5 py-6 backdrop-blur-2xl xl:flex xl:flex-col">
           <Link href="/dashboard" className="flex items-center gap-3 px-2" aria-label="Aptrive dashboard">
-            <span className="grid h-10 w-10 place-items-center rounded-[0.85rem] bg-white shadow-[0_16px_32px_rgba(66,82,220,0.14)]">
-              <Image src="/logo-mark.png" alt="" width={28} height={31} className="h-8 w-auto" priority />
+            <span className="grid h-14 w-14 place-items-center rounded-[1rem] bg-white shadow-[0_16px_32px_rgba(66,82,220,0.14)]">
+              <Image src="/logo-mark.png" alt="" width={42} height={47} className="h-11 w-auto" priority />
             </span>
             <span>
               <span className="block font-display text-2xl font-bold tracking-normal text-[#08112f]">Aptrive</span>
@@ -124,8 +129,8 @@ export default function AuthenticatedShell({
           <header className="sticky top-0 z-40 border-b border-[#e6ebf7]/90 bg-white/78 backdrop-blur-2xl">
             <div className="flex h-20 items-center justify-between gap-4 px-4 sm:px-6 lg:px-8">
               <div className="flex min-w-0 items-center gap-3 xl:hidden">
-                <Link href="/dashboard" className="grid h-10 w-10 place-items-center rounded-[0.85rem] bg-white shadow-sm">
-                  <Image src="/logo-mark.png" alt="" width={28} height={31} className="h-8 w-auto" priority />
+                <Link href="/dashboard" className="grid h-12 w-12 place-items-center rounded-[0.95rem] bg-white shadow-sm">
+                  <Image src="/logo-mark.png" alt="" width={38} height={42} className="h-10 w-auto" priority />
                 </Link>
                 <div>
                   <p className="font-display text-lg font-bold text-[#08112f]">Aptrive</p>

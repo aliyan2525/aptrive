@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useEffect, useMemo, useRef, useState } from "react";
-import { BookOpen, Brain, Gauge, GraduationCap, Search, Target, Trophy, X } from "lucide-react";
+import { BarChart3, BookOpen, Brain, Gauge, GraduationCap, Search, Settings, Target, Trophy, X } from "lucide-react";
 
 const commands = [
   { href: "/dashboard", title: "Mission Control", group: "Navigation", keywords: "dashboard home overview", icon: Gauge },
@@ -11,7 +11,10 @@ const commands = [
   { href: "/practice/revision", title: "Revision Queue", group: "Study", keywords: "review mistakes weak topics", icon: BookOpen },
   { href: "/library", title: "Library", group: "Resources", keywords: "notes videos concepts", icon: BookOpen },
   { href: "/leaderboard", title: "Rankings", group: "Progress", keywords: "leaderboard rank score", icon: Trophy },
-  { href: "/onboarding", title: "Goals & University Target", group: "Planning", keywords: "goals university target personalize", icon: GraduationCap },
+  { href: "/goals", title: "Goals", group: "Planning", keywords: "goals streak target progress", icon: Target },
+  { href: "/analytics", title: "Analytics", group: "Progress", keywords: "analytics insights charts performance", icon: BarChart3 },
+  { href: "/settings", title: "Settings", group: "Account", keywords: "settings appearance notifications profile", icon: Settings },
+  { href: "/onboarding", title: "University Target", group: "Planning", keywords: "university target personalize", icon: GraduationCap },
   { href: "/profile", title: "Profile Settings", group: "Account", keywords: "account profile settings", icon: Gauge },
 ];
 

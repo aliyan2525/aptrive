@@ -48,9 +48,9 @@ const navItems = [
   { label: "Library", href: "/library", icon: BookOpen },
   { label: "Mock Tests", href: "/practice", icon: ListChecks },
   { label: "Rankings", href: "/leaderboard", icon: Trophy },
-  { label: "Analytics", href: "/practice/subjects", icon: BarChart3 },
-  { label: "Goals", href: "/onboarding", icon: Target },
-  { label: "Settings", href: "/profile", icon: Settings },
+  { label: "Analytics", href: "/analytics", icon: BarChart3 },
+  { label: "Goals", href: "/goals", icon: Target },
+  { label: "Settings", href: "/settings", icon: Settings },
 ];
 
 const weekdayLabels = ["S", "M", "T", "W", "T", "F", "S"];
@@ -203,12 +203,12 @@ export default function DashboardClient({
   };
 
   return (
-    <main className="fixed inset-0 z-[60] overflow-y-auto bg-[#f7f9ff] text-fg">
+    <main className="relative z-[60] min-h-screen bg-[#f7f9ff] text-fg">
       <div className="grid min-h-screen grid-cols-1 xl:grid-cols-[18rem_minmax(0,1fr)]">
         <aside className="hidden border-r border-[#e8ecf8] bg-white/78 px-5 py-7 backdrop-blur-xl xl:block">
           <Link href="/dashboard" className="flex items-center gap-3 px-2" aria-label="Aptrive dashboard">
-            <span className="grid h-9 w-9 place-items-center rounded-[0.8rem] bg-white shadow-[0_16px_32px_rgba(66,82,220,0.14)]">
-              <Image src="/logo-mark.png" alt="" width={28} height={31} className="h-8 w-auto" priority />
+            <span className="grid h-14 w-14 place-items-center rounded-[1rem] bg-white shadow-[0_16px_32px_rgba(66,82,220,0.14)]">
+              <Image src="/logo-mark.png" alt="" width={42} height={47} className="h-11 w-auto" priority />
             </span>
             <span className="font-display text-2xl font-bold text-[#08112f]">Aptrive</span>
           </Link>

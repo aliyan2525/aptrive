@@ -19,8 +19,6 @@ type NavItem = {
 const publicLinks: NavItem[] = [
   { href: "/", label: "Home", match: (path) => path === "/" },
   { href: "/library", label: "Library", match: (path) => path.startsWith("/library") },
-  { href: "/practice", label: "Practice", match: (path) => path.startsWith("/practice") },
-  { href: "/leaderboard", label: "Rankings", match: (path) => path.startsWith("/leaderboard") },
   { href: "/courses", label: "Courses", match: (path) => path.startsWith("/courses") || path.startsWith("/universities") },
 ];
 
