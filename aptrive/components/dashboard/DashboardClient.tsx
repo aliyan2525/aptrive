@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
 import {
   ArrowRight,
@@ -10,6 +11,11 @@ import {
   Clock3,
   Flame,
   Gauge,
+  LineChart,
+  ListChecks,
+  Medal,
+  ShieldCheck,
+  Sparkles,
   Target,
   Trophy,
   Zap,
@@ -27,16 +33,7 @@ type CalendarDay = {
   isToday: boolean;
 };
 
-const navItems = [
-  { label: "Dashboard", href: "/dashboard", icon: LayoutDashboard, active: true },
-  { label: "Practice", href: "/practice", icon: Brain },
-  { label: "Library", href: "/library", icon: BookOpen },
-  { label: "Mock Tests", href: "/practice", icon: ListChecks },
-  { label: "Rankings", href: "/leaderboard", icon: Trophy },
-  { label: "Analytics", href: "/analytics", icon: BarChart3 },
-  { label: "Goals", href: "/goals", icon: Target },
-  { label: "Settings", href: "/settings", icon: Settings },
-];
+
 
 const weekdayLabels = ["S", "M", "T", "W", "T", "F", "S"];
 
