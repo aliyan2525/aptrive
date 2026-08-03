@@ -154,7 +154,7 @@ export default function SettingsClient() {
                   <button 
                     key={color} 
                     className="grid h-8 w-8 place-items-center rounded-full transition-transform hover:scale-110 ring-2 ring-offset-2 ring-offset-[var(--bg)]"
-                    style={{ backgroundColor: color, ringColor: index === 0 ? color : 'transparent' }}
+                    style={{ backgroundColor: color, "--tw-ring-color": index === 0 ? color : 'transparent' } as React.CSSProperties}
                   >
                     {index === 0 && <Check className="h-4 w-4 text-white" aria-hidden="true" />}
                   </button>
