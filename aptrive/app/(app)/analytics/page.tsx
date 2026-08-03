@@ -1,14 +1,26 @@
 "use client";
 
 import * as React from "react";
-import { PredictionEngine } from "@/components/analytics/PredictionEngine";
-import { SubjectRadar } from "@/components/analytics/SubjectRadar";
-import { TrendChart } from "@/components/analytics/TrendChart";
 import { AIInsights } from "@/components/analytics/AIInsights";
-import { StudyHeatmap } from "@/components/analytics/StudyHeatmap";
+import dynamic from "next/dynamic";
 import { motion } from "framer-motion";
-import { Zap } from "lucide-react";
+import { Zap, Loader2 } from "lucide-react";
 import Link from "next/link";
+
+const PredictionEngine = dynamic(() => import("@/components/analytics/PredictionEngine").then((mod) => mod.PredictionEngine), {
+  loading: () => <div className="h-64 grid place-items-center"><Loader2 className="h-6 w-6 animate-spin text-blue-500" /></div>,
+});
+const SubjectRadar = dynamic(() => import("@/components/analytics/SubjectRadar").then((mod) => mod.SubjectRadar), {
+  loading: () => <div className="h-64 grid place-items-center"><Loader2 className="h-6 w-6 animate-spin text-blue-500" /></div>,
+});
+const TrendChart = dynamic(() => import("@/components/analytics/TrendChart").then((mod) => mod.TrendChart), {
+  loading: () => <div className="h-64 grid place-items-center"><Loader2 className="h-6 w-6 animate-spin text-blue-500" /></div>,
+});
+const StudyHeatmap = dynamic(() => import("@/components/analytics/StudyHeatmap").then((mod) => mod.StudyHeatmap), {
+  loading: () => <div className="h-64 grid place-items-center"><Loader2 className="h-6 w-6 animate-spin text-blue-500" /></div>,
+  ssr: false, // Heatmap heavily relies on client date calculations
+});
+
 
 export default function AnalyticsPage() {
   const radarData = [

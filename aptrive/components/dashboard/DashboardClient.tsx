@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
+import { motion } from "framer-motion";
 import {
   ArrowRight,
   BarChart3,
@@ -175,7 +176,18 @@ export default function DashboardClient({
 
   return (
     <div className="mx-auto max-w-[96rem] px-4 py-6 sm:px-6 lg:px-9 relative z-[10]">
-      <div className="grid grid-cols-1 gap-5 lg:grid-cols-12">
+      <motion.div 
+        className="grid grid-cols-1 gap-5 lg:grid-cols-12"
+        initial="hidden"
+        animate="visible"
+        variants={{
+          hidden: { opacity: 0 },
+          visible: {
+            opacity: 1,
+            transition: { staggerChildren: 0.05, ease: "easeOut" }
+          }
+        }}
+      >
 
 
               <CommandHero
@@ -219,7 +231,7 @@ export default function DashboardClient({
                 memberSince={memberSince}
                 recent={data.recentlyViewed.length ? data.recentlyViewed : fallbackRecent}
               />
-            </div>
+            </motion.div>
       </div>
   );
 }
@@ -240,7 +252,10 @@ function CommandHero({
   missionTime: number;
 }) {
   return (
-    <section className="relative overflow-hidden rounded-[1.4rem] border border-[#e4e9f6] bg-white p-6 shadow-[0_24px_70px_rgba(36,52,104,0.08)] lg:col-span-8 lg:p-8">
+    <motion.section 
+      variants={{ hidden: { opacity: 0, y: 15 }, visible: { opacity: 1, y: 0 } }}
+      className="relative overflow-hidden rounded-[1.4rem] border border-[#e4e9f6] bg-white p-6 shadow-[0_24px_70px_rgba(36,52,104,0.08)] lg:col-span-8 lg:p-8"
+    >
       <div className="absolute right-6 top-6 h-52 w-52 rounded-full bg-blue-500/10 blur-3xl" />
       <div className="absolute bottom-0 right-0 hidden h-56 w-80 rounded-tl-[5rem] bg-gradient-to-br from-[#eef7ff] to-[#f5efff] md:block" />
       <div className="relative z-10 grid gap-8 md:grid-cols-[minmax(0,1fr)_19rem]">
@@ -255,12 +270,12 @@ function CommandHero({
           <p className="mt-4 max-w-2xl text-sm leading-7 text-[#4d5a83]">{streakLine}</p>
           <div className="mt-7 flex flex-wrap gap-3">
             <Link href="/practice" className="pressable inline-flex h-14 items-center gap-3 rounded-[1rem] bg-gradient-to-r from-blue-600 to-violet-600 px-6 text-sm font-bold text-white shadow-[0_16px_30px_rgba(70,85,230,0.25)]">
-              Continue Studying
+              Resume Training
               <ArrowRight className="h-5 w-5" aria-hidden="true" />
             </Link>
             <Link href="/onboarding" className="pressable inline-flex h-14 items-center gap-3 rounded-[1rem] border border-[#dfe5f4] bg-white px-6 text-sm font-bold text-[#344065]">
               <Sparkles className="h-4 w-4 text-violet-500" aria-hidden="true" />
-              Personalize Plan
+              Optimize Strategy
             </Link>
           </div>
         </div>
@@ -280,7 +295,7 @@ function CommandHero({
           </p>
         </div>
       </div>
-    </section>
+    </motion.section>
   );
 }
 

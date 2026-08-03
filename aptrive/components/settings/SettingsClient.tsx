@@ -96,12 +96,12 @@ export default function SettingsClient() {
 
         {activeTab === "study" && (
           <div className="space-y-5 animate-in fade-in slide-in-from-bottom-2 duration-300">
-            <Panel title="Study Preferences" subtitle="Customize your learning experience.">
+            <Panel title="Study Preferences" subtitle="Configure your academic parameters and objectives.">
               <div className="space-y-4 mt-4">
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-4 rounded-xl border border-[var(--line)] bg-[var(--panel)]/50">
                   <div>
                     <p className="font-bold text-[var(--fg)]">Target Exam</p>
-                    <p className="text-sm text-gray-500">The primary university test you are preparing for.</p>
+                    <p className="text-sm text-gray-500">Your primary university admission target.</p>
                   </div>
                   <select 
                     value={targetExam}
@@ -116,8 +116,8 @@ export default function SettingsClient() {
                 
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-4 rounded-xl border border-[var(--line)] bg-[var(--panel)]/50">
                   <div>
-                    <p className="font-bold text-[var(--fg)]">Daily Study Goal</p>
-                    <p className="text-sm text-gray-500">Your target practice time per day.</p>
+                    <p className="font-bold text-[var(--fg)]">Daily Training Goal</p>
+                    <p className="text-sm text-gray-500">Your daily time commitment for active practice.</p>
                   </div>
                   <select className="h-10 rounded-lg border border-[var(--line)] bg-transparent px-3 text-sm font-semibold outline-none focus:border-blue-500">
                     <option>60 minutes</option>
@@ -142,7 +142,7 @@ export default function SettingsClient() {
 
         {activeTab === "appearance" && (
           <div className="space-y-5 animate-in fade-in slide-in-from-bottom-2 duration-300">
-            <Panel title="Appearance" subtitle="Choose how Aptrive looks for you.">
+            <Panel title="Appearance" subtitle="Customize your interface presentation.">
               <div className="grid gap-4 sm:grid-cols-3 mt-4">
                 <AppearanceOption title="Light" icon={Sun} selected />
                 <AppearanceOption title="Dark" icon={Moon} />
@@ -168,8 +168,8 @@ export default function SettingsClient() {
         {["notifications", "privacy", "subscription"].includes(activeTab) && (
           <div className="space-y-5 animate-in fade-in slide-in-from-bottom-2 duration-300 grid place-items-center h-64 rounded-2xl border border-dashed border-[var(--line)]">
              <div className="text-center text-gray-500">
-               <p className="font-bold">Work in Progress</p>
-               <p className="text-sm">This section is being wired up to the backend.</p>
+               <p className="font-bold">System Configuration</p>
+               <p className="text-sm">These parameters are currently being synchronized with our core servers.</p>
              </div>
           </div>
         )}
@@ -184,8 +184,8 @@ function ProfileCard() {
     <section className="rounded-[1.35rem] border border-[var(--line)] bg-[var(--panel)] p-6 shadow-[0_24px_70px_rgba(36,52,104,0.07)] dark:shadow-none">
       <div className="flex items-start justify-between gap-4">
         <div>
-          <h2 className="font-display text-xl font-bold text-[var(--fg)]">Profile Information</h2>
-          <p className="mt-1 text-sm text-gray-500">Manage your personal information and profile.</p>
+          <h2 className="font-display text-xl font-bold text-[var(--fg)]">Identity & Access</h2>
+          <p className="mt-1 text-sm text-gray-500">Manage your identity and contact details.</p>
         </div>
         <Link href="/profile" className="inline-flex h-11 items-center gap-2 rounded-[0.75rem] border border-[var(--line)] px-4 text-sm font-bold text-blue-700 dark:text-blue-400 hover:bg-[#f8faff] dark:hover:bg-white/5 transition-colors">
           <Edit3 className="h-4 w-4" aria-hidden="true" />

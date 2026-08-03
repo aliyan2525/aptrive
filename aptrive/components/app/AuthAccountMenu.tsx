@@ -3,9 +3,10 @@
 import Image from "next/image";
 import Link from "next/link";
 import { forwardRef, useEffect, useRef, useState } from "react";
-import { Bell, CircleHelp, Keyboard, LogOut, MessageSquare, Palette, UserRound } from "lucide-react";
+import { Bell, CircleHelp, Keyboard, LogOut, MessageSquare, Palette, ShieldCheck, UserRound } from "lucide-react";
 import { signOut } from "@/app/(marketing)/auth/actions";
 import type { HeaderUser } from "@/components/UserMenu";
+import { AnimatePresence, motion } from "framer-motion";
 
 export default function AuthAccountMenu({ user }: { user: HeaderUser }) {
   const [open, setOpen] = useState(false);
@@ -52,12 +53,17 @@ export default function AuthAccountMenu({ user }: { user: HeaderUser }) {
         </span>
       </button>
 
-      {open && (
-        <div
-          role="menu"
-          className="absolute right-0 top-[calc(100%+12px)] z-[80] w-80 origin-top-right overflow-hidden rounded-[1.2rem] border border-white/70 bg-white/90 shadow-[0_28px_90px_rgba(16,28,66,0.22)] backdrop-blur-3xl animate-in fade-in zoom-in-95"
-        >
-          <div className="border-b border-[#e7ecf8] bg-gradient-to-br from-white to-[#f4f7ff] p-4">
+      <AnimatePresence>
+        {open && (
+          <motion.div
+            initial={{ opacity: 0, scale: 0.95, y: -10 }}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
+            exit={{ opacity: 0, scale: 0.95, y: -10 }}
+            transition={{ duration: 0.15, ease: "easeOut" }}
+            role="menu"
+            className="absolute right-0 top-[calc(100%+12px)] z-[80] w-80 origin-top-right overflow-hidden rounded-[1.2rem] border border-white/70 bg-white/90 shadow-[0_28px_90px_rgba(16,28,66,0.22)] backdrop-blur-3xl"
+          >
+            <div className="border-b border-[#e7ecf8] bg-gradient-to-br from-white to-[#f4f7ff] p-4">
             <div className="flex items-center gap-3">
               <span className="relative grid h-12 w-12 place-items-center overflow-hidden rounded-full bg-gradient-to-br from-teal-400 to-emerald-500 text-sm font-bold text-white">
                 {user.avatarUrl ? <Image src={user.avatarUrl} alt="" fill className="object-cover" /> : initials}
@@ -70,7 +76,12 @@ export default function AuthAccountMenu({ user }: { user: HeaderUser }) {
             </div>
           </div>
           <div className="p-2">
-            <MenuLink ref={firstItemRef} href="/profile" icon={UserRound}>Edit profile</MenuLink>
+            {user.isStaff && (
+              <MenuLink ref={firstItemRef} href="/admin" icon={ShieldCheck} className="mb-1 bg-violet-50 text-violet-700 hover:bg-violet-100">
+                Switch to Admin
+              </MenuLink>
+            )}
+            <MenuLink ref={!user.isStaff ? firstItemRef : null} href="/profile" icon={UserRound}>Edit profile</MenuLink>
             <MenuLink href="/profile" icon={Bell}>Notifications</MenuLink>
             <MenuLink href="/profile" icon={Palette}>Appearance settings</MenuLink>
             <MenuLink href="/dashboard" icon={Keyboard}>Keyboard shortcuts</MenuLink>
@@ -87,8 +98,9 @@ export default function AuthAccountMenu({ user }: { user: HeaderUser }) {
               Sign out
             </button>
           </form>
-        </div>
-      )}
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }
@@ -96,10 +108,12 @@ export default function AuthAccountMenu({ user }: { user: HeaderUser }) {
 const MenuLink = forwardRef<HTMLAnchorElement, {
   href: string;
   icon: typeof UserRound;
+  className?: string;
   children: React.ReactNode;
 }>(function MenuLink({
   href,
   icon: Icon,
+  className,
   children,
 }, ref) {
   return (
@@ -107,9 +121,9 @@ const MenuLink = forwardRef<HTMLAnchorElement, {
       ref={ref}
       href={href}
       role="menuitem"
-      className="flex items-center gap-3 rounded-[0.85rem] px-3 py-3 text-sm font-bold text-[#263457] transition hover:bg-[#f1f5ff] focus:bg-[#f1f5ff] focus:outline-none"
+      className={`flex items-center gap-3 rounded-[0.85rem] px-3 py-3 text-sm font-bold transition focus:outline-none ${className || "text-[#263457] hover:bg-[#f1f5ff] focus:bg-[#f1f5ff]"}`}
     >
-      <Icon className="h-4 w-4 text-blue-600" aria-hidden="true" />
+      <Icon className={`h-4 w-4 ${className ? "" : "text-blue-600"}`} aria-hidden="true" />
       {children}
     </Link>
   );
