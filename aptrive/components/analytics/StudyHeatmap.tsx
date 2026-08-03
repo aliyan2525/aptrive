@@ -7,11 +7,14 @@ import { cn } from "@/lib/cn";
 
 export const StudyHeatmap = () => {
   // Generate mock data for the last 90 days
-  const data = React.useMemo(() => {
-    return Array.from({ length: 90 }, (_, i) => ({
+  const [data, setData] = React.useState<Array<{date: Date, intensity: number}>>([]);
+
+  React.useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setData(Array.from({ length: 90 }, (_, i) => ({
       date: new Date(Date.now() - (89 - i) * 24 * 60 * 60 * 1000),
       intensity: Math.random() > 0.3 ? Math.floor(Math.random() * 4) + 1 : 0,
-    }));
+    })));
   }, []);
 
   const intensityClasses = {
