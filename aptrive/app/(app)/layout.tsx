@@ -1,18 +1,53 @@
-import AuthHeader from "@/components/AuthHeader";
-import Footer from "@/components/Footer";
+import { redirect } from "next/navigation";
+import AuthenticatedShell from "@/components/app/AuthenticatedShell";
+import type { HeaderUser } from "@/components/UserMenu";
+import { STAFF_ROLES } from "@/lib/admin/auth";
+import { countUnreadNotifications, listNotifications } from "@/lib/repositories/notifications.repository";
+import { createClient } from "@/lib/supabase/server";
 
-export default function AppLayout({
+export default async function AppLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  if (!user) {
+    redirect("/login");
+  }
+
+  const { data } = await supabase
+    .from("profiles")
+    .select("role")
+    .eq("id", user.id)
+    .maybeSingle();
+
+  const profile = data as { role: string } | null;
+  const headerUser: HeaderUser = {
+    fullName:
+      (user.user_metadata?.full_name as string | undefined) ??
+      user.email ??
+      "Student",
+    email: user.email ?? "",
+    avatarUrl: (user.user_metadata?.avatar_url as string | undefined) ?? null,
+    isStaff: profile?.role ? STAFF_ROLES.includes(profile.role as (typeof STAFF_ROLES)[number]) : false,
+  };
+
+  const [notifications, unreadCount] = await Promise.all([
+    listNotifications(supabase, user.id),
+    countUnreadNotifications(supabase, user.id),
+  ]);
+
   return (
-    <>
-      <AuthHeader />
-      {/* Spacer matching the fixed header height to prevent content overlap */}
-      <div className="h-20" aria-hidden />
+    <AuthenticatedShell
+      user={headerUser}
+      notifications={notifications}
+      unreadCount={unreadCount}
+    >
       {children}
-      <Footer />
-    </>
+    </AuthenticatedShell>
   );
 }
