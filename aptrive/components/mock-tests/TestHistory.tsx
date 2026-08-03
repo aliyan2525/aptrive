@@ -1,7 +1,6 @@
 import * as React from "react";
 import { LiquidGlassCard } from "../ui/LiquidGlassCard";
 import { History, TrendingUp, TrendingDown, Minus } from "lucide-react";
-import { cn } from "@/lib/cn";
 
 interface HistoryItem {
   id: string;

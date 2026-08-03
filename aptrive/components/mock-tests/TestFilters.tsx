@@ -5,11 +5,6 @@ import { Search, SlidersHorizontal } from "lucide-react";
 import { cn } from "@/lib/cn";
 import { LiquidGlassCard } from "../ui/LiquidGlassCard";
 
-interface FilterOption {
-  label: string;
-  value: string;
-}
-
 interface TestFiltersProps {
   onSearch: (query: string) => void;
   onFilterChange: (type: string, value: string) => void;

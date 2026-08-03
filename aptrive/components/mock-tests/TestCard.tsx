@@ -1,6 +1,6 @@
 import * as React from "react";
 import { LiquidGlassCard } from "@/components/ui/LiquidGlassCard";
-import { Clock, BookOpen, Target, Sparkles, ChevronRight } from "lucide-react";
+import { Clock, BookOpen, Sparkles, ChevronRight } from "lucide-react";
 import { cn } from "@/lib/cn";
 
 export interface TestCardProps {
@@ -16,7 +16,6 @@ export interface TestCardProps {
 }
 
 export const TestCard = ({
-  id,
   university,
   examType,
   duration,
