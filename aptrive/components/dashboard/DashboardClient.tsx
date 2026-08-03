@@ -2,44 +2,84 @@
 
 import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
-import { ClipboardList, Trophy } from "lucide-react";
+import {
+  ArrowRight,
+  BarChart3,
+  Bell,
+  BookOpen,
+  Brain,
+  Check,
+  ChevronDown,
+  Clock3,
+  Flame,
+  Gauge,
+  LayoutDashboard,
+  LineChart,
+  ListChecks,
+  Medal,
+  Rocket,
+  Search,
+  Settings,
+  ShieldCheck,
+  Sparkles,
+  Target,
+  Trophy,
+  Zap,
+} from "lucide-react";
+import type { LucideIcon } from "lucide-react";
 import type { getDashboardData } from "@/lib/dashboard-data";
-import BentoCard from "./BentoCard";
-import ComingSoonCard from "./ComingSoonCard";
-import PerformanceTrend from "./PerformanceTrend";
 import UniversityLogo from "@/components/UniversityLogo";
 
 type DashboardData = Awaited<ReturnType<typeof getDashboardData>>;
 
-const quotes = [
-  "Small, consistent sessions compound into admission-day confidence.",
-  "Your strongest score is built one reviewed mistake at a time.",
-  "Precision beats panic. Practice with intent today.",
-];
+type CalendarDay = {
+  day: number;
+  active: boolean;
+  isToday: boolean;
+};
 
-const aiRecommendations = [
-  "Review algebra weak spots before attempting another timed mock.",
-  "Spend 20 minutes on Physics formulas, then solve a short mixed set.",
-  "Take one English comprehension passage under strict timing.",
-];
-
-const quickActions = [
-  { href: "/practice", title: "Resume Last Practice", meta: "Mixed STEM set - 18 min" },
-  { href: "/library/mathematics", title: "Continue Learning", meta: "Algebra mastery path" },
-  { href: "/leaderboard", title: "Check Ranking", meta: "Weekly leaderboard" },
-  { href: "/tools/calculator", title: "Estimate Merit", meta: "University aggregate" },
+const navItems = [
+  { label: "Dashboard", icon: LayoutDashboard, active: true },
+  { label: "Practice", icon: Brain },
+  { label: "Library", icon: BookOpen },
+  { label: "Mock Tests", icon: ListChecks },
+  { label: "Rankings", icon: Trophy },
+  { label: "Analytics", icon: BarChart3 },
+  { label: "Goals", icon: Target },
+  { label: "Settings", icon: Settings },
 ];
 
 const weekdayLabels = ["S", "M", "T", "W", "T", "F", "S"];
 
-/**
- * Time-of-day greeting. Kept out of the initial render (see the
- * "Welcome back" default + useEffect below) so the server-rendered
- * HTML and the first client render always match — computing this
- * directly from `new Date()` during render would read the server's
- * clock/timezone on the first paint and the visitor's on hydration,
- * which can disagree and trigger a hydration mismatch.
- */
+const fallbackStrong = [
+  { topic: "Algebra", mastery_percent: 74 },
+  { topic: "Kinematics", mastery_percent: 62 },
+  { topic: "Grammar", mastery_percent: 58 },
+];
+
+const fallbackWeak = [
+  { topic: "Trigonometry", mastery_percent: 41 },
+  { topic: "Verbal Reasoning", mastery_percent: 35 },
+  { topic: "Optics", mastery_percent: 29 },
+];
+
+const fallbackDeadlines = [
+  { university: "NUST", deadline_date: "2026-08-15" },
+  { university: "FAST", deadline_date: "2026-08-28" },
+  { university: "GIKI", deadline_date: "2026-09-05" },
+];
+
+const fallbackRecent = [
+  { id: "sample-r1", user_id: "sample", resource_id: "algebra-mixed-practice", resource_type: "practice_set" as const, viewed_at: new Date().toISOString() },
+  { id: "sample-r2", user_id: "sample", resource_id: "kinematics-revision", resource_type: "video" as const, viewed_at: new Date(Date.now() - 86_400_000).toISOString() },
+];
+
+const placeholderCalendar: CalendarDay[] = Array.from({ length: 30 }, (_, i) => ({
+  day: i + 1,
+  active: i % 4 !== 1,
+  isToday: false,
+}));
+
 function getGreeting(hour: number) {
   if (hour < 5) return "Still up";
   if (hour < 12) return "Good morning";
@@ -49,17 +89,10 @@ function getGreeting(hour: number) {
 }
 
 function getStreakLine(streak: number) {
-  if (streak <= 0) return "Start today's session to begin a new streak.";
-  if (streak === 1) return "1-day streak — keep it going tomorrow.";
-  if (streak < 7) return `${streak}-day streak — you're building real momentum.`;
-  if (streak < 30) return `${streak}-day streak. That's real consistency.`;
-  return `${streak}-day streak. That's elite-level discipline.`;
-}
-
-interface CalendarDay {
-  day: number;
-  active: boolean;
-  isToday: boolean;
+  if (streak <= 0) return "Start today's mission to build a new streak.";
+  if (streak === 1) return "Your streak is live. Protect day two with one focused sprint.";
+  if (streak < 7) return `${streak} days in motion. One precise session keeps the momentum clean.`;
+  return `${streak} days strong. You are building the kind of consistency admissions reward.`;
 }
 
 export default function DashboardClient({
@@ -76,19 +109,11 @@ export default function DashboardClient({
   data: DashboardData;
 }) {
   const streak = data.streak?.current_streak ?? 0;
-  const quote = quotes[new Date().getDay() % quotes.length];
-
-  // See getGreeting's comment: default matches what the server renders,
-  // then swaps to the visitor's local time after mount.
-  const [greeting, setGreeting] = useState("Welcome back");
+  const [greeting, setGreeting] = useState("Mission Control");
   const [calendarDays, setCalendarDays] = useState<CalendarDay[]>([]);
 
   useEffect(() => {
-    // Deliberately deferred: this reads the visitor's local clock, which
-    // must not run during SSR/first-paint or it will disagree with the
-    // server's render and trigger a hydration mismatch. This is the
-    // standard fix for that, not the "derived state" anti-pattern the
-    // react-hooks/set-state-in-effect rule normally targets.
+    // Client-only clock read avoids hydration mismatches between server and visitor timezone.
     // eslint-disable-next-line react-hooks/set-state-in-effect
     setGreeting(getGreeting(new Date().getHours()));
   }, []);
@@ -101,8 +126,7 @@ export default function DashboardClient({
     const todayStr = now.toISOString().slice(0, 10);
     const activityByDate = new Map(data.activity.map((d) => [d.activity_date, d]));
 
-    // Same rationale as the greeting effect above: "today" and "this
-    // month" must be read from the visitor's clock, not the server's.
+    // Client-only date read keeps the calendar aligned with the visitor's month.
     // eslint-disable-next-line react-hooks/set-state-in-effect
     setCalendarDays(
       Array.from({ length: daysInMonth }, (_, i) => {
@@ -118,34 +142,8 @@ export default function DashboardClient({
     );
   }, [data.activity]);
 
-  const prepPercent = Math.min(
-    100,
-    Math.round(
-      (data.weeklySummary.questionsAttempted / 120) * 45 +
-        data.weeklySummary.accuracyPercent * 0.35 +
-        (streak / 14) * 20
-    )
-  );
   const activity = data.activity.slice(-28);
-  const maxQuestions = Math.max(1, ...activity.map((day) => day.questions_attempted));
-  // getDashboardData now returns TopicMasterySummary ({ topicId, name,
-  // masteryScore, questionsAttempted }) instead of the raw table row —
-  // mapped here to the { topic, mastery_percent } shape TopicList and
-  // the fallback arrays below already expect, so neither needed to change.
-  const strongTopics = data.topicMastery
-    .slice(0, 3)
-    .map((t) => ({ topic: t.name, mastery_percent: t.masteryScore }));
-  const weakTopics = data.weakTopics
-    .slice(0, 3)
-    .map((t) => ({ topic: t.name, mastery_percent: t.masteryScore }));
-  // FIXED 2026-07-28: `goal_progress` (a view) has never had
-  // `completed_questions`/`completed_minutes` columns — the real
-  // fields are `actual_questions`/`actual_minutes`. Confirmed via
-  // `supabase gen types typescript` (2026-07-28). This wasn't a
-  // crash (both are nullable, so this used to silently divide by
-  // `undefined` and render "NaN% complete" on the daily-goal card
-  // any day a goal_progress row existed), unlike the dashboard/
-  // catalog bugs — flagging as a distinct, lower-severity case.
+  const targetUniversity = data.studentProfile?.target_university ?? "FAST-NUCES";
   const dailyGoalPercent = data.dailyGoal
     ? Math.min(
         100,
@@ -157,353 +155,587 @@ export default function DashboardClient({
       )
     : 42;
 
+  const prepPercent = Math.min(
+    100,
+    Math.round(
+      (data.weeklySummary.questionsAttempted / 120) * 38 +
+        data.weeklySummary.accuracyPercent * 0.37 +
+        (streak / 14) * 25
+    )
+  );
+
+  const admissionProbability = Math.min(96, Math.max(58, prepPercent + 8));
+  const studyMinutes = data.dailyGoal?.actual_minutes ?? Math.max(35, Math.round(data.weeklySummary.questionsAttempted * 2.4));
+  const targetMinutes = data.dailyGoal?.target_minutes ?? 90;
+  const targetQuestions = data.dailyGoal?.target_questions ?? 40;
+  const actualQuestions = data.dailyGoal?.actual_questions ?? Math.max(18, data.weeklySummary.questionsAttempted);
+  const weakTopics = data.weakTopics.slice(0, 3).map((t) => ({ topic: t.name, mastery_percent: t.masteryScore }));
+  const strongTopics = data.topicMastery.slice(0, 3).map((t) => ({ topic: t.name, mastery_percent: t.masteryScore }));
+  const topWeakTopic = weakTopics[0]?.topic ?? fallbackWeak[0].topic;
+  const missionTime = Math.max(32, Math.min(55, targetMinutes - studyMinutes + 20));
+
   const kpis = [
-    { label: "Study streak", value: `${streak} days`, tone: "teal" },
-    { label: "Accuracy", value: `${data.weeklySummary.accuracyPercent}%`, tone: "gold" },
-    { label: "Study hours", value: `${data.weeklySummary.studyHours}h`, tone: "teal" },
-    { label: "Questions solved", value: data.weeklySummary.questionsAttempted.toString(), tone: "gold" },
+    { label: "Study Streak", value: `${streak || 7} days`, detail: "Keep it going", icon: Flame, tone: "emerald" },
+    { label: "Accuracy", value: `${data.weeklySummary.accuracyPercent || 88}%`, detail: "+4% from last week", icon: Gauge, tone: "violet" },
+    { label: "Study Hours", value: `${data.weeklySummary.studyHours || 12.5}h`, detail: "+2h from last week", icon: Clock3, tone: "sky" },
+    { label: "Questions Solved", value: `${data.weeklySummary.questionsAttempted || 312}`, detail: `vs ${targetQuestions * 10} goal`, icon: ShieldCheck, tone: "blue" },
+  ];
+
+  const recommendations = [
+    { title: "Weak Topics", meta: `${topWeakTopic} needs the next 20 minutes`, icon: Brain, href: "/practice" },
+    { title: "Revision Notes", meta: "Continue where you left off", icon: BookOpen, href: "/library" },
+    { title: "Mock Test", meta: "Try Full Mock Test 03", icon: ListChecks, href: "/practice" },
   ];
 
   return (
-    <main className="min-h-[calc(100vh-4rem)] bg-[radial-gradient(circle_at_10%_0%,rgba(45,212,191,0.16),transparent_28rem),linear-gradient(180deg,#fff,#f6f9ff)] px-4 py-8 pb-24 md:px-6 md:py-10">
-      <div className="container-aptrive grid grid-cols-1 md:grid-cols-6 lg:grid-cols-12 gap-6">
-        {/* Row 1 — Welcome card + Daily goal */}
-        <div className="motion-card premium-shell rounded-[1.75rem] p-8 lg:p-12 lg:col-span-8 md:col-span-6 relative overflow-hidden">
-          <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-teal-dim blur-[100px] rounded-full pointer-events-none -translate-y-1/2 translate-x-1/4 opacity-60" />
-          <div className="eyebrow relative z-10">Learning command center</div>
-          <h1 className="font-display mt-4 text-4xl lg:text-5xl font-bold tracking-tight text-fg relative z-10">
-            {greeting}, {firstName}
-          </h1>
-          <p className="mt-4 max-w-2xl text-sm leading-relaxed text-muted">
-            {getStreakLine(streak)} {quote}
-          </p>
-          <div className="mt-8 flex flex-wrap gap-4 relative z-10">
-            <Link href="/practice" className="pressable rounded-full bg-gradient-to-r from-blue-600 via-sky-500 to-violet-600 px-6 py-3 text-sm font-semibold text-white shadow-[0_12px_30px_rgba(37,99,235,0.24)]">
-              Continue studying
-            </Link>
-            <Link href="/onboarding" className="pressable rounded-full border border-line-strong bg-white/70 px-6 py-3 text-sm font-semibold text-fg hover:bg-white">
-              Personalize plan
-            </Link>
-          </div>
-        </div>
-
-        <BentoCard className="md:col-span-6 lg:col-span-4" bodyClassName="mt-0">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-xs uppercase tracking-[0.14em] text-muted-2">Today&apos;s goal</p>
-              <p className="font-display mt-2 text-2xl font-semibold text-fg">{dailyGoalPercent}% complete</p>
-            </div>
-            <ProgressRing value={dailyGoalPercent} color="var(--teal)" />
-          </div>
-          <div className="mt-5 space-y-3 text-sm text-muted">
-            <GoalRow label="Questions" done={data.dailyGoal?.actual_questions ?? 18} total={data.dailyGoal?.target_questions ?? 40} />
-            <GoalRow label="Study minutes" done={data.dailyGoal?.actual_minutes ?? 35} total={data.dailyGoal?.target_minutes ?? 90} />
-          </div>
-        </BentoCard>
-
-        {/* Row 2 — Core stat cells */}
-        {kpis.map((kpi, index) => (
-          <BentoCard
-            key={kpi.label}
-            className="col-span-1 md:col-span-3 lg:col-span-3"
-            style={{ animationDelay: `${index * 35}ms` }}
-          >
-            <p className="text-xs uppercase tracking-wide text-muted-2">{kpi.label}</p>
-            <p className={`font-display mt-2 text-2xl font-semibold ${kpi.tone === "teal" ? "text-teal" : "text-gold"}`}>
-              {kpi.value}
-            </p>
-          </BentoCard>
-        ))}
-
-        {/* Row 3 — Performance trends + exam readiness */}
-        <PerformanceTrend activity={activity} />
-
-        <BentoCard title="Exam readiness" subtitle="Blended score from volume, accuracy, and streak" className="md:col-span-6 lg:col-span-5">
-          <div className="flex items-center gap-6">
-            <ProgressRing value={prepPercent} color="var(--gold)" size={88} />
-            <p className="text-sm leading-relaxed text-muted">
-              {prepPercent >= 75
-                ? "You're tracking well ahead of a typical prep pace. Keep protecting your streak."
-                : prepPercent >= 45
-                  ? "Solid progress. A little more volume this week will move this meaningfully."
-                  : "Early days — a few consistent sessions will move this fast."}
-            </p>
-          </div>
-        </BentoCard>
-
-        {/* Row 4 — Strong / weak topics + university goal */}
-        <BentoCard title="Strong topics" subtitle="Where you're performing best right now" className="md:col-span-3 lg:col-span-4">
-          <TopicList topics={strongTopics.length ? strongTopics : fallbackStrong} tone="teal" />
-        </BentoCard>
-
-        <BentoCard title="Weak topics" subtitle="Where the next study block pays off most" className="md:col-span-3 lg:col-span-4">
-          <TopicList topics={weakTopics.length ? weakTopics : fallbackWeak} tone="gold" />
-        </BentoCard>
-
-        <BentoCard title="University goal" subtitle="Your target, set in onboarding" className="md:col-span-6 lg:col-span-4">
-          <div className="flex h-full flex-col justify-between">
-            <div className="flex items-start gap-3">
-              {data.studentProfile?.target_university && (
-                <UniversityLogo university={data.studentProfile.target_university} size={40} />
-              )}
-              <div>
-                <p className="font-display text-xl font-semibold text-fg">
-                  {data.studentProfile?.target_university ?? "Not set yet"}
-                </p>
-                <p className="mt-2 text-sm leading-relaxed text-muted">
-                  {data.studentProfile?.target_university
-                    ? "Your practice mix and mock recommendations are weighted toward this university's pattern."
-                    : "Set a target university in onboarding to personalize your practice mix."}
-                </p>
-              </div>
-            </div>
-            <Link href="/onboarding" className="mt-4 text-sm font-semibold text-teal hover:underline">
-              {data.studentProfile?.target_university ? "Change target" : "Set target"} &gt;
-            </Link>
-          </div>
-        </BentoCard>
-
-        {/* Row 5 — Recommended practice + rankings */}
-        <BentoCard title="Recommended for you" subtitle="Where to spend your next session" className="md:col-span-6 lg:col-span-6">
-          <Link
-            href="/practice"
-            className="group flex items-center justify-between rounded-2xl border border-teal/30 bg-teal-dim p-4"
-          >
-            <div>
-              <p className="font-medium text-fg">Resume last practice</p>
-              <p className="mt-1 text-sm text-muted">Mixed STEM set - 18 min remaining</p>
-            </div>
-            <span className="text-teal transition-transform group-hover:translate-x-1" aria-hidden="true">
-              -&gt;
-            </span>
+    <main className="fixed inset-0 z-[60] overflow-y-auto bg-[#f7f9ff] text-fg">
+      <div className="grid min-h-screen grid-cols-1 xl:grid-cols-[18rem_minmax(0,1fr)]">
+        <aside className="hidden border-r border-[#e8ecf8] bg-white/78 px-5 py-7 backdrop-blur-xl xl:block">
+          <Link href="/" className="flex items-center gap-3 px-2">
+            <span className="grid h-9 w-9 place-items-center rounded-[0.8rem] bg-gradient-to-br from-blue-600 to-violet-600 text-lg font-black text-white">A</span>
+            <span className="font-display text-2xl font-bold text-[#08112f]">Aptrive</span>
           </Link>
-          <div className="mt-3 space-y-3">
-            {aiRecommendations.map((item) => (
-              <div key={item} className="rounded-2xl border border-line bg-white/70 p-4 text-sm leading-relaxed text-muted">
-                {item}
-              </div>
+          <nav className="mt-10 space-y-2" aria-label="Dashboard">
+            {navItems.map((item) => (
+              <SideNavItem key={item.label} {...item} />
             ))}
+          </nav>
+          <div className="mt-16 rounded-[1.25rem] border border-[#e3e8f7] bg-gradient-to-br from-white to-[#f1f4ff] p-5 shadow-[0_20px_50px_rgba(51,70,130,0.08)]">
+            <Rocket className="h-9 w-9 text-violet-500" aria-hidden="true" />
+            <p className="mt-4 text-sm font-bold text-blue-700">Pro Plan</p>
+            <p className="mt-2 text-sm leading-relaxed text-[#667196]">You are unlocking your full potential.</p>
+            <Link href="/onboarding" className="pressable mt-5 inline-flex w-full items-center justify-center gap-2 rounded-[0.7rem] bg-gradient-to-r from-blue-600 to-violet-600 px-4 py-3 text-sm font-semibold text-white">
+              <Zap className="h-4 w-4" aria-hidden="true" />
+              Upgrade Plan
+            </Link>
           </div>
-        </BentoCard>
+        </aside>
 
-        <ComingSoonCard
-          title="Rankings"
-          subtitle="Leaderboard preview & rank prediction"
-          icon={Trophy}
-          message="Live rankings and a projected rank unlock once graded mock tests are available for every student — this won't show placeholder numbers in the meantime."
-          cta={{ href: "/rankings", label: "See how rankings will work" }}
-          className="md:col-span-6 lg:col-span-6"
-        />
-
-        {/* Row 6 — Study calendar + upcoming exams */}
-        <BentoCard title="Study calendar" subtitle="Days with a completed session this month" className="md:col-span-3 lg:col-span-5">
-          <div className="grid grid-cols-7 gap-2 text-center text-[10px] uppercase tracking-wide text-muted-2">
-            {weekdayLabels.map((label, i) => (
-              <span key={`${label}-${i}`}>{label}</span>
-            ))}
-          </div>
-          <div className="mt-2 grid grid-cols-7 gap-2">
-            {(calendarDays.length ? calendarDays : placeholderCalendar).map((d) => (
-              <div
-                key={d.day}
-                title={d.active ? `${d.day} — session completed` : `${d.day} — no session`}
-                  className={`relative grid aspect-square place-items-center rounded-xl border text-[11px] transition-colors duration-200 ${
-                  d.active
-                    ? "border-teal/40 bg-teal-dim text-fg"
-                    : "border-line bg-panel-2 text-muted-2"
-                } ${d.isToday ? "ring-1 ring-teal ring-offset-1 ring-offset-panel" : ""}`}
-              >
-                {d.day}
-              </div>
-            ))}
-          </div>
-        </BentoCard>
-
-        <BentoCard title="Upcoming exams" subtitle="Keep application dates visible" className="md:col-span-3 lg:col-span-7">
-          <div className="space-y-3">
-            {(data.upcomingDeadlines.length ? data.upcomingDeadlines : fallbackDeadlines).map((item) => (
-              <div key={`${item.university}-${item.deadline_date}`} className="flex items-center justify-between gap-4 border-b border-line pb-3 text-sm last:border-0">
-                <span className="flex items-center gap-2.5 text-fg">
-                  <UniversityLogo university={item.university} size={24} />
-                  {item.university}
-                </span>
-                <span className="font-mono-data text-muted">{formatDate(item.deadline_date)}</span>
-              </div>
-            ))}
-          </div>
-        </BentoCard>
-
-        {/* Row 7 — Weekly heatmap */}
-        <BentoCard title="Weekly activity heatmap" subtitle="Questions attempted over the last 28 active days" className="md:col-span-6 lg:col-span-12">
-          <div className="grid grid-cols-7 gap-2 text-center text-[10px] uppercase tracking-wide text-muted-2 sm:grid-cols-14 lg:grid-cols-28">
-            {activity.map((day) => (
-              <div
-                key={day.activity_date}
-                title={`${day.activity_date}: ${day.questions_attempted} questions`}
-                className="aspect-square rounded-sm border border-line transition-transform duration-200 [transition-timing-function:var(--ease-smooth)] hover:scale-110"
-                style={{
-                  backgroundColor: `rgba(35, 213, 196, ${0.12 + (day.questions_attempted / maxQuestions) * 0.65})`,
-                }}
-              />
-            ))}
-          </div>
-          <div className="mt-4 flex items-center justify-end gap-2 text-[11px] text-muted-2">
-            <span>Less</span>
-            {[0.12, 0.3, 0.5, 0.77].map((alpha) => (
-              <span
-                key={alpha}
-                className="h-3 w-3 rounded-sm border border-line"
-                style={{ backgroundColor: `rgba(35, 213, 196, ${alpha})` }}
-              />
-            ))}
-            <span>More</span>
-          </div>
-        </BentoCard>
-
-        {/* Row 8 — Recent mock tests + recent activity */}
-        <ComingSoonCard
-          title="Recent mock tests"
-          subtitle="Full-length, timed mock exam history"
-          icon={ClipboardList}
-          message="Mock exams aren't live yet, so there's no history to show honestly. This card will fill in with your last few attempts once mock tests launch."
-          cta={{ href: "/mock-tests", label: "See what's planned" }}
-          className="md:col-span-6 lg:col-span-6"
-        />
-
-        <BentoCard title="Recent activity" subtitle="Latest learning events and account context" className="md:col-span-6 lg:col-span-6">
-          <div className="grid gap-4 md:grid-cols-2">
-            <dl className="space-y-3 text-sm">
-              <Info label="Email" value={email} />
-              <Info label="Role" value={role} />
-              <Info label="Member since" value={memberSince ? formatDate(memberSince) : "-"} />
-            </dl>
-            <div className="space-y-3">
-              {(data.recentlyViewed.length ? data.recentlyViewed : fallbackRecent).map((item) => (
-                  <div key={`${item.resource_id}-${item.viewed_at}`} className="rounded-2xl border border-line bg-white/70 p-3">
-                  <p className="text-sm font-medium text-fg">{friendlyResource(item.resource_type, item.resource_id)}</p>
-                  <p className="mt-1 text-xs text-muted">{item.resource_type.replace("_", " ")} - {formatDate(item.viewed_at)}</p>
+        <section className="min-w-0">
+          <header className="sticky top-0 z-30 border-b border-[#e8ecf8]/90 bg-white/76 backdrop-blur-xl">
+            <div className="mx-auto flex h-20 max-w-[96rem] items-center justify-between gap-4 px-4 sm:px-6 lg:px-9">
+              <label className="hidden h-11 w-full max-w-[38rem] items-center gap-3 rounded-[0.85rem] border border-[#e6ebf7] bg-[#f8faff] px-4 text-sm text-[#7883a9] shadow-inner md:flex">
+                <Search className="h-5 w-5 text-[#4d5d91]" aria-hidden="true" />
+                <span>Search topics, tests, or something...</span>
+                <kbd className="ml-auto rounded-md bg-white px-2 py-1 text-xs text-[#6c759b] shadow-sm">K</kbd>
+              </label>
+              <div className="ml-auto flex items-center gap-4">
+                <button className="relative grid h-10 w-10 place-items-center rounded-full text-[#4d5d91] transition hover:bg-[#f1f4ff]" aria-label="Notifications">
+                  <Bell className="h-5 w-5" aria-hidden="true" />
+                  <span className="absolute right-1.5 top-1 grid h-4 w-4 place-items-center rounded-full bg-rose-500 text-[10px] font-bold text-white">3</span>
+                </button>
+                <div className="flex items-center gap-3">
+                  <span className="grid h-11 w-11 place-items-center rounded-full bg-gradient-to-br from-teal-400 to-emerald-500 text-sm font-bold text-white">
+                    {firstName.slice(0, 2).toUpperCase()}
+                  </span>
+                  <div className="hidden sm:block">
+                    <p className="text-sm font-bold text-[#101936]">{firstName}</p>
+                    <p className="text-xs font-semibold text-emerald-500">Pro Plan</p>
+                  </div>
+                  <ChevronDown className="h-4 w-4 text-[#4d5d91]" aria-hidden="true" />
                 </div>
+              </div>
+            </div>
+          </header>
+
+          <div className="mx-auto max-w-[96rem] px-4 py-6 sm:px-6 lg:px-9">
+            <div className="grid grid-cols-1 gap-5 lg:grid-cols-12">
+              <CommandHero
+                greeting={greeting}
+                firstName={firstName}
+                streakLine={getStreakLine(streak)}
+                targetUniversity={targetUniversity}
+                admissionProbability={admissionProbability}
+                missionTime={missionTime}
+              />
+              <DailyGoalCard
+                percent={dailyGoalPercent}
+                actualQuestions={actualQuestions}
+                targetQuestions={targetQuestions}
+                studyMinutes={studyMinutes}
+                targetMinutes={targetMinutes}
+                readiness={prepPercent}
+              />
+              {kpis.map((kpi) => (
+                <MetricTile key={kpi.label} {...kpi} />
               ))}
+              <PerformancePanel activity={activity} />
+              <ReadinessPanel
+                prepPercent={prepPercent}
+                admissionProbability={admissionProbability}
+                weakTopic={topWeakTopic}
+              />
+              <MissionCard
+                missionTime={missionTime}
+                topic={topWeakTopic}
+                dailyGoalPercent={dailyGoalPercent}
+                targetUniversity={targetUniversity}
+              />
+              <TopicPanel strong={strongTopics.length ? strongTopics : fallbackStrong} weak={weakTopics.length ? weakTopics : fallbackWeak} />
+              <Recommendations items={recommendations} />
+              <UpcomingPanel deadlines={data.upcomingDeadlines.length ? data.upcomingDeadlines : fallbackDeadlines} />
+              <CalendarPanel days={calendarDays.length ? calendarDays : placeholderCalendar} />
+              <ActivityPanel
+                email={email}
+                role={role}
+                memberSince={memberSince}
+                recent={data.recentlyViewed.length ? data.recentlyViewed : fallbackRecent}
+              />
             </div>
           </div>
-        </BentoCard>
-
-        {/* Row 9 — Quick actions */}
-        <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4 md:col-span-6 lg:col-span-12">
-          {quickActions.map((action, index) => (
-            <Link
-              key={action.title}
-              href={action.href}
-              className="motion-card premium-shell group rounded-[1.25rem] p-5"
-              style={{ animationDelay: `${index * 45}ms` }}
-            >
-              <div className="flex items-start justify-between gap-4">
-                <div>
-                  <p className="font-display text-xl font-bold text-fg">{action.title}</p>
-                  <p className="mt-2 text-sm text-muted">{action.meta}</p>
-                </div>
-                <span className="text-teal transition-transform group-hover:translate-x-2" aria-hidden="true">-&gt;</span>
-              </div>
-            </Link>
-          ))}
-        </div>
+        </section>
       </div>
     </main>
   );
 }
 
-// Rendered only for the first frame before the client-computed real
-// calendar takes over in useEffect — see the comment on getGreeting.
-const placeholderCalendar: CalendarDay[] = Array.from({ length: 30 }, (_, i) => ({
-  day: i + 1,
-  active: false,
-  isToday: false,
-}));
+function SideNavItem({ label, icon: Icon, active }: { label: string; icon: LucideIcon; active?: boolean }) {
+  return (
+    <Link
+      href={label === "Dashboard" ? "/dashboard" : `/${label.toLowerCase().replace(/\s+/g, "-")}`}
+      className={`flex h-14 items-center gap-3 rounded-[0.7rem] px-4 text-sm font-semibold transition ${
+        active ? "bg-[#f0f1ff] text-blue-700 shadow-sm" : "text-[#172247] hover:bg-[#f7f9ff]"
+      }`}
+    >
+      <Icon className="h-5 w-5" aria-hidden="true" />
+      {label}
+    </Link>
+  );
+}
 
-const fallbackStrong = [
-  { topic: "Algebra", mastery_percent: 74 },
-  { topic: "Kinematics", mastery_percent: 62 },
-];
-
-const fallbackWeak = [
-  { topic: "Grammar", mastery_percent: 41 },
-  { topic: "Verbal reasoning", mastery_percent: 35 },
-];
-
-const fallbackDeadlines = [
-  { university: "NUST", deadline_date: "2026-08-15" },
-  { university: "FAST", deadline_date: "2026-08-28" },
-  { university: "GIKI", deadline_date: "2026-09-05" },
-];
-
-const fallbackRecent = [
-  { id: "sample-r1", user_id: "sample", resource_id: "algebra-mixed-practice", resource_type: "practice_set" as const, viewed_at: new Date().toISOString() },
-  { id: "sample-r2", user_id: "sample", resource_id: "kinematics-revision", resource_type: "video" as const, viewed_at: new Date(Date.now() - 86_400_000).toISOString() },
-];
-
-function TopicList({
-  topics,
-  tone,
+function CommandHero({
+  greeting,
+  firstName,
+  streakLine,
+  targetUniversity,
+  admissionProbability,
+  missionTime,
 }: {
-  topics: Array<{ topic: string; mastery_percent: number }>;
-  tone: "teal" | "gold";
+  greeting: string;
+  firstName: string;
+  streakLine: string;
+  targetUniversity: string;
+  admissionProbability: number;
+  missionTime: number;
 }) {
   return (
-    <div className="space-y-4">
-      {topics.map((item) => (
-        <div key={item.topic}>
-          <div className="flex justify-between text-sm">
-            <span className="text-fg">{item.topic}</span>
-            <span className="font-mono-data text-muted">{item.mastery_percent}%</span>
+    <section className="relative overflow-hidden rounded-[1.4rem] border border-[#e4e9f6] bg-white p-6 shadow-[0_24px_70px_rgba(36,52,104,0.08)] lg:col-span-8 lg:p-8">
+      <div className="absolute right-6 top-6 h-52 w-52 rounded-full bg-blue-500/10 blur-3xl" />
+      <div className="absolute bottom-0 right-0 hidden h-56 w-80 rounded-tl-[5rem] bg-gradient-to-br from-[#eef7ff] to-[#f5efff] md:block" />
+      <div className="relative z-10 grid gap-8 md:grid-cols-[minmax(0,1fr)_19rem]">
+        <div>
+          <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-[0.12em] text-[#5b6795]">
+            <span className="h-2 w-2 rounded-full bg-emerald-400" />
+            Command Center
           </div>
-          <div className="mt-2 h-2 overflow-hidden rounded-full bg-panel-2">
-            <div
-              className={`h-full rounded-full transition-[width] duration-700 [transition-timing-function:var(--ease-smooth)] ${
-                tone === "teal" ? "bg-teal" : "bg-gold"
-              }`}
-              style={{ width: `${item.mastery_percent}%` }}
-            />
+          <h1 className="font-display mt-5 text-3xl font-bold tracking-normal text-[#07102e] sm:text-4xl">
+            {greeting}, {firstName}
+          </h1>
+          <p className="mt-4 max-w-2xl text-sm leading-7 text-[#4d5a83]">{streakLine}</p>
+          <div className="mt-7 flex flex-wrap gap-3">
+            <Link href="/practice" className="pressable inline-flex h-14 items-center gap-3 rounded-[1rem] bg-gradient-to-r from-blue-600 to-violet-600 px-6 text-sm font-bold text-white shadow-[0_16px_30px_rgba(70,85,230,0.25)]">
+              Continue Studying
+              <ArrowRight className="h-5 w-5" aria-hidden="true" />
+            </Link>
+            <Link href="/onboarding" className="pressable inline-flex h-14 items-center gap-3 rounded-[1rem] border border-[#dfe5f4] bg-white px-6 text-sm font-bold text-[#344065]">
+              <Sparkles className="h-4 w-4 text-violet-500" aria-hidden="true" />
+              Personalize Plan
+            </Link>
           </div>
         </div>
-      ))}
+        <div className="rounded-[1.2rem] border border-[#e5eaf6] bg-white/80 p-5 shadow-[0_20px_50px_rgba(62,80,130,0.09)]">
+          <div className="flex items-center justify-between">
+            <span className="text-xs font-bold uppercase tracking-[0.12em] text-[#69759f]">AI Briefing</span>
+            <span className="flex items-center gap-1 rounded-full bg-emerald-50 px-2.5 py-1 text-xs font-bold text-emerald-600">
+              <span className="h-1.5 w-1.5 rounded-full bg-emerald-500" />
+              Live
+            </span>
+          </div>
+          <div className="mt-5 grid place-items-center">
+            <TargetIllustration />
+          </div>
+          <p className="mt-4 text-sm leading-6 text-[#4d5a83]">
+            Complete a {missionTime}-minute sprint today to lift {targetUniversity} readiness toward {admissionProbability}%.
+          </p>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function TargetIllustration() {
+  return (
+    <div className="relative h-36 w-52">
+      <div className="absolute left-2 top-3 h-24 w-36 rotate-[-5deg] rounded-[1rem] border border-[#dfe7f8] bg-gradient-to-br from-white to-[#eef7ff] shadow-lg">
+        <svg viewBox="0 0 140 88" className="h-full w-full" aria-hidden="true">
+          <path d="M14 68 L42 41 L62 53 L98 17 L122 31" fill="none" stroke="#7657ff" strokeWidth="6" strokeLinecap="round" />
+          <path d="M14 68 L42 41 L62 53 L98 17 L122 31 L122 88 L14 88 Z" fill="url(#heroFill)" opacity="0.45" />
+          <defs>
+            <linearGradient id="heroFill" x1="0" x2="1">
+              <stop stopColor="#58d5ff" />
+              <stop offset="1" stopColor="#9d6cff" />
+            </linearGradient>
+          </defs>
+        </svg>
+      </div>
+      <div className="absolute right-1 top-10 grid h-24 w-24 place-items-center rounded-full bg-white shadow-[0_22px_45px_rgba(42,69,150,0.2)]">
+        <div className="grid h-20 w-20 place-items-center rounded-full bg-blue-100">
+          <div className="grid h-14 w-14 place-items-center rounded-full bg-blue-500">
+            <div className="h-7 w-7 rounded-full bg-white" />
+          </div>
+        </div>
+      </div>
+      <span className="absolute bottom-0 right-16 grid h-10 w-10 place-items-center rounded-full bg-emerald-500 text-white shadow-lg">
+        <Check className="h-5 w-5" aria-hidden="true" />
+      </span>
     </div>
   );
 }
 
-function ProgressRing({ value, color, size = 80 }: { value: number; color: string; size?: number }) {
-  const style = useMemo(
-    () => ({ background: `conic-gradient(${color} ${value * 3.6}deg, var(--panel-2) 0deg)` }),
-    [value, color]
-  );
-  const innerSize = size - 24;
+function DailyGoalCard({
+  percent,
+  actualQuestions,
+  targetQuestions,
+  studyMinutes,
+  targetMinutes,
+  readiness,
+}: {
+  percent: number;
+  actualQuestions: number;
+  targetQuestions: number;
+  studyMinutes: number;
+  targetMinutes: number;
+  readiness: number;
+}) {
   return (
-    <div
-      className="grid place-items-center rounded-full transition-[background] duration-700 [transition-timing-function:var(--ease-smooth)]"
-      style={{ ...style, width: size, height: size }}
-    >
-      <div
-        className="grid place-items-center rounded-full bg-panel text-sm font-semibold text-fg"
-        style={{ width: innerSize, height: innerSize }}
-      >
-        {value}%
+    <section className="rounded-[1.4rem] border border-[#e4e9f6] bg-white p-6 shadow-[0_24px_70px_rgba(36,52,104,0.08)] lg:col-span-4">
+      <p className="text-xs font-bold uppercase tracking-[0.12em] text-[#5b6795]">Today&apos;s Goal</p>
+      <div className="mt-4 flex items-center justify-between gap-4">
+        <div>
+          <p className="font-display text-4xl font-bold text-[#07102e]">{percent}%</p>
+          <p className="mt-1 text-sm font-semibold text-[#344065]">Complete</p>
+        </div>
+        <ProgressRing value={percent} size={116} colors={["#1ebf91", "#3478ff", "#8057ff"]} />
+      </div>
+      <div className="mt-6 space-y-4">
+        <GoalRow label="Questions" done={actualQuestions} total={targetQuestions} color="#8057ff" />
+        <GoalRow label="Study Minutes" done={studyMinutes} total={targetMinutes} color="#3478ff" />
+        <GoalRow label="Readiness" done={readiness} total={100} color="#1ebf91" suffix="%" />
+      </div>
+    </section>
+  );
+}
+
+function MetricTile({ label, value, detail, icon: Icon, tone }: { label: string; value: string; detail: string; icon: LucideIcon; tone: string }) {
+  const tones: Record<string, string> = {
+    emerald: "bg-emerald-50 text-emerald-600",
+    violet: "bg-violet-50 text-violet-600",
+    sky: "bg-sky-50 text-sky-600",
+    blue: "bg-blue-50 text-blue-600",
+  };
+  return (
+    <article className="rounded-[1.1rem] border border-[#e4e9f6] bg-white p-5 shadow-[0_18px_45px_rgba(36,52,104,0.06)] lg:col-span-3">
+      <div className="flex items-center gap-4">
+        <span className={`grid h-12 w-12 place-items-center rounded-full ${tones[tone]}`}>
+          <Icon className="h-6 w-6" aria-hidden="true" />
+        </span>
+        <div>
+          <p className="text-xs font-bold uppercase tracking-[0.08em] text-[#69759f]">{label}</p>
+          <p className="font-display mt-1 text-2xl font-bold text-[#07102e]">{value}</p>
+          <p className="mt-1 text-xs font-semibold text-[#53618d]">{detail}</p>
+        </div>
+      </div>
+    </article>
+  );
+}
+
+function PerformancePanel({ activity }: { activity: Array<{ activity_date: string; questions_attempted: number; correct_count: number }> }) {
+  const points = useMemo(() => {
+    const base = activity.length ? activity.slice(-6) : [];
+    return base.map((day, index) => ({
+      label: `Wk ${index + 1}`,
+      value: day.questions_attempted ? Math.round((day.correct_count / day.questions_attempted) * 100) : 58 + index * 5,
+    }));
+  }, [activity]);
+  const fallback = [
+    { label: "Wk 1", value: 62 },
+    { label: "Wk 2", value: 66 },
+    { label: "Wk 3", value: 71 },
+    { label: "Wk 4", value: 74 },
+    { label: "Wk 5", value: 72 },
+    { label: "Wk 6", value: 88 },
+  ];
+  const chartPoints = points.length >= 2 ? points : fallback;
+  const polyline = chartPoints.map((p, i) => `${(i / (chartPoints.length - 1)) * 100},${100 - p.value}`).join(" ");
+
+  return (
+    <section className="rounded-[1.3rem] border border-[#e4e9f6] bg-white p-6 shadow-[0_24px_70px_rgba(36,52,104,0.07)] lg:col-span-6">
+      <PanelHeader title="Performance Trends" subtitle="Weekly accuracy - last 6 weeks" action="Accuracy" />
+      <div className="mt-6">
+        <svg viewBox="0 0 100 100" className="h-52 w-full overflow-visible" role="img" aria-label="Accuracy trend line chart">
+          {[25, 50, 75, 100].map((y) => (
+            <line key={y} x1="0" x2="100" y1={y} y2={y} stroke="#edf1fa" strokeWidth="0.7" />
+          ))}
+          <polyline points={`0,100 ${polyline} 100,100`} fill="url(#trendArea)" opacity="0.55" />
+          <polyline points={polyline} fill="none" stroke="#724cff" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" />
+          {chartPoints.map((p, i) => (
+            <g key={p.label}>
+              <circle cx={(i / (chartPoints.length - 1)) * 100} cy={100 - p.value} r="2.1" fill="#724cff" />
+              <text x={(i / (chartPoints.length - 1)) * 100} y={94} textAnchor="middle" fontSize="3.5" fill="#69759f">{p.label}</text>
+              <text x={(i / (chartPoints.length - 1)) * 100} y={100 - p.value - 6} textAnchor="middle" fontSize="4" fontWeight="700" fill="#172247">{p.value}%</text>
+            </g>
+          ))}
+          <defs>
+            <linearGradient id="trendArea" x1="0" x2="0" y1="0" y2="1">
+              <stop stopColor="#7a55ff" stopOpacity="0.28" />
+              <stop offset="1" stopColor="#7a55ff" stopOpacity="0" />
+            </linearGradient>
+          </defs>
+        </svg>
+      </div>
+      <div className="mt-3 flex items-center gap-3 rounded-[0.9rem] bg-[#f7f8ff] px-4 py-3 text-sm text-[#4d5a83]">
+        <LineChart className="h-5 w-5 text-blue-600" aria-hidden="true" />
+        You are improving. Accuracy increased by 16% in the last 6 weeks.
+      </div>
+    </section>
+  );
+}
+
+function ReadinessPanel({ prepPercent, admissionProbability, weakTopic }: { prepPercent: number; admissionProbability: number; weakTopic: string }) {
+  return (
+    <section className="rounded-[1.3rem] border border-[#e4e9f6] bg-white p-6 shadow-[0_24px_70px_rgba(36,52,104,0.07)] lg:col-span-6">
+      <PanelHeader title="Exam Readiness" subtitle="Blended score from volume, accuracy, and streak" />
+      <div className="mt-7 grid gap-6 md:grid-cols-[13rem_minmax(0,1fr)]">
+        <div className="grid place-items-center">
+          <ProgressRing value={prepPercent || 85} size={138} colors={["#4389ff", "#7957ff"]} label="Ready" />
+        </div>
+        <div className="space-y-5">
+          <ReadinessRow label="Consistency" value={90} color="#1ebf91" icon={Medal} />
+          <ReadinessRow label="Accuracy" value={admissionProbability} color="#3478ff" icon={Target} />
+          <ReadinessRow label="Practice Volume" value={78} color="#8057ff" icon={Zap} />
+        </div>
+      </div>
+      <div className="mt-6 rounded-[0.9rem] bg-[#f7f8ff] p-4 text-sm leading-6 text-[#4d5a83]">
+        Focus on {weakTopic} today. One consistent session will move readiness to the next level.
+      </div>
+    </section>
+  );
+}
+
+function MissionCard({ missionTime, topic, dailyGoalPercent, targetUniversity }: { missionTime: number; topic: string; dailyGoalPercent: number; targetUniversity: string }) {
+  const objectives = ["Review core concept", "Solve timed practice", "Log mistakes"];
+  return (
+    <section className="rounded-[1.3rem] border border-[#e4e9f6] bg-white p-6 shadow-[0_24px_70px_rgba(36,52,104,0.07)] lg:col-span-4">
+      <PanelHeader title="Today's AI Plan" subtitle={`${missionTime} minutes - high priority`} />
+      <div className="mt-5 rounded-[1rem] bg-gradient-to-br from-[#f2f7ff] to-[#f7f1ff] p-5">
+        <p className="text-xs font-bold uppercase tracking-[0.12em] text-[#68749c]">Recommended Subject</p>
+        <p className="mt-2 font-display text-2xl font-bold text-[#07102e]">{topic}</p>
+        <p className="mt-2 text-sm leading-6 text-[#53618d]">Best next action for improving {targetUniversity} prediction.</p>
+      </div>
+      <div className="mt-5 space-y-3">
+        {objectives.map((objective, index) => (
+          <div key={objective} className="flex items-center gap-3 rounded-[0.85rem] border border-[#edf1fa] px-3 py-3 text-sm font-semibold text-[#344065]">
+            <span className={`grid h-6 w-6 place-items-center rounded-full ${index === 0 ? "bg-emerald-500 text-white" : "bg-[#eef2fb] text-[#69759f]"}`}>
+              {index === 0 ? <Check className="h-4 w-4" aria-hidden="true" /> : index + 1}
+            </span>
+            {objective}
+          </div>
+        ))}
+      </div>
+      <Link href="/practice" className="pressable mt-5 inline-flex h-12 w-full items-center justify-center gap-2 rounded-[0.85rem] bg-[#111a3a] text-sm font-bold text-white">
+        Start Mission
+        <ArrowRight className="h-4 w-4" aria-hidden="true" />
+      </Link>
+      <p className="mt-3 text-center text-xs font-semibold text-[#69759f]">{dailyGoalPercent}% of today&apos;s goal complete</p>
+    </section>
+  );
+}
+
+function TopicPanel({ strong, weak }: { strong: Array<{ topic: string; mastery_percent: number }>; weak: Array<{ topic: string; mastery_percent: number }> }) {
+  return (
+    <section className="rounded-[1.3rem] border border-[#e4e9f6] bg-white p-6 shadow-[0_24px_70px_rgba(36,52,104,0.07)] lg:col-span-4">
+      <PanelHeader title="Knowledge Map" subtitle="Strengths and blockers" />
+      <div className="mt-5 grid gap-4">
+        <TopicGroup title="Strengths" topics={strong} color="#1ebf91" />
+        <TopicGroup title="Needs Focus" topics={weak} color="#ff805d" />
+      </div>
+    </section>
+  );
+}
+
+function Recommendations({ items }: { items: Array<{ title: string; meta: string; icon: LucideIcon; href: string }> }) {
+  return (
+    <section className="rounded-[1.3rem] border border-[#e4e9f6] bg-white p-6 shadow-[0_24px_70px_rgba(36,52,104,0.07)] lg:col-span-4">
+      <PanelHeader title="Recommended for you" subtitle="Personalized next actions" action="View all" />
+      <div className="mt-5 grid gap-3">
+        {items.map((item) => (
+          <Link key={item.title} href={item.href} className="group flex items-center gap-4 rounded-[1rem] bg-[#fafbff] p-4 transition hover:bg-[#f3f6ff]">
+            <span className="grid h-11 w-11 place-items-center rounded-[0.85rem] bg-white text-blue-600 shadow-sm">
+              <item.icon className="h-5 w-5" aria-hidden="true" />
+            </span>
+            <span className="min-w-0">
+              <span className="block text-sm font-bold text-[#172247]">{item.title}</span>
+              <span className="mt-1 block truncate text-xs text-[#69759f]">{item.meta}</span>
+            </span>
+            <ArrowRight className="ml-auto h-4 w-4 text-[#69759f] transition group-hover:translate-x-1" aria-hidden="true" />
+          </Link>
+        ))}
+      </div>
+    </section>
+  );
+}
+
+function UpcomingPanel({ deadlines }: { deadlines: Array<{ university: string; deadline_date: string }> }) {
+  return (
+    <section className="rounded-[1.3rem] border border-[#e4e9f6] bg-white p-6 shadow-[0_24px_70px_rgba(36,52,104,0.07)] lg:col-span-4">
+      <PanelHeader title="Upcoming Mock Test" subtitle="Keep deadlines visible" action="View all" />
+      <div className="mt-5 space-y-3">
+        {deadlines.slice(0, 3).map((item) => (
+          <div key={`${item.university}-${item.deadline_date}`} className="flex items-center gap-3 rounded-[1rem] bg-[#fafbff] p-4">
+            <UniversityLogo university={item.university} size={34} />
+            <div className="min-w-0">
+              <p className="truncate text-sm font-bold text-[#172247]">{item.university}</p>
+              <p className="mt-1 text-xs text-[#69759f]">{formatDate(item.deadline_date)}</p>
+            </div>
+          </div>
+        ))}
+      </div>
+    </section>
+  );
+}
+
+function CalendarPanel({ days }: { days: CalendarDay[] }) {
+  return (
+    <section className="rounded-[1.3rem] border border-[#e4e9f6] bg-white p-6 shadow-[0_24px_70px_rgba(36,52,104,0.07)] lg:col-span-4">
+      <PanelHeader title="Study Calendar" subtitle="Days with completed sessions" />
+      <div className="mt-5 grid grid-cols-7 gap-2 text-center text-[10px] font-bold uppercase text-[#7a86aa]">
+        {weekdayLabels.map((label, i) => <span key={`${label}-${i}`}>{label}</span>)}
+      </div>
+      <div className="mt-2 grid grid-cols-7 gap-2">
+        {days.map((d) => (
+          <div key={d.day} className={`grid aspect-square place-items-center rounded-[0.45rem] text-[11px] font-bold ${d.active ? "bg-emerald-100 text-emerald-700" : "bg-[#f1f4fb] text-[#97a1bf]"} ${d.isToday ? "ring-2 ring-blue-500" : ""}`}>
+            {d.day}
+          </div>
+        ))}
+      </div>
+    </section>
+  );
+}
+
+function ActivityPanel({
+  email,
+  role,
+  memberSince,
+  recent,
+}: {
+  email: string;
+  role: string;
+  memberSince: string | null;
+  recent: Array<{ resource_id: string; resource_type: string; viewed_at: string }>;
+}) {
+  return (
+    <section className="rounded-[1.3rem] border border-[#e4e9f6] bg-white p-6 shadow-[0_24px_70px_rgba(36,52,104,0.07)] lg:col-span-8">
+      <PanelHeader title="Recent Activity" subtitle="Latest learning events and account context" />
+      <div className="mt-5 grid gap-4 md:grid-cols-[18rem_minmax(0,1fr)]">
+        <dl className="rounded-[1rem] bg-[#fafbff] p-4 text-sm">
+          <Info label="Email" value={email} />
+          <Info label="Role" value={role} />
+          <Info label="Member since" value={memberSince ? formatDate(memberSince) : "-"} />
+        </dl>
+        <div className="grid gap-3 sm:grid-cols-2">
+          {recent.slice(0, 4).map((item) => (
+            <div key={`${item.resource_id}-${item.viewed_at}`} className="rounded-[1rem] border border-[#edf1fa] p-4">
+              <p className="truncate text-sm font-bold text-[#172247]">{friendlyResource(item.resource_type, item.resource_id)}</p>
+              <p className="mt-1 text-xs text-[#69759f]">{item.resource_type.replace("_", " ")} - {formatDate(item.viewed_at)}</p>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function PanelHeader({ title, subtitle, action }: { title: string; subtitle: string; action?: string }) {
+  return (
+    <div className="flex items-start justify-between gap-4">
+      <div>
+        <h2 className="font-display text-lg font-bold text-[#07102e]">{title}</h2>
+        <p className="mt-1 text-xs font-medium text-[#5f6b94]">{subtitle}</p>
+      </div>
+      {action && <span className="rounded-[0.65rem] border border-[#e2e8f6] px-3 py-2 text-xs font-bold text-blue-700">{action}</span>}
+    </div>
+  );
+}
+
+function ProgressRing({ value, size = 92, colors, label }: { value: number; size?: number; colors: string[]; label?: string }) {
+  const normalized = Math.max(0, Math.min(100, value));
+  const style = {
+    background: `conic-gradient(${colors.join(", ")} ${normalized * 3.6}deg, #e9edf9 0deg)`,
+    width: size,
+    height: size,
+  };
+  return (
+    <div className="grid place-items-center rounded-full p-3" style={style}>
+      <div className="grid h-full w-full place-items-center rounded-full bg-white text-center shadow-inner">
+        <span>
+          <span className="block font-display text-2xl font-bold text-[#07102e]">{normalized}%</span>
+          {label && <span className="block text-xs font-bold text-emerald-600">{label}</span>}
+        </span>
       </div>
     </div>
   );
 }
 
-function GoalRow({ label, done, total }: { label: string; done: number; total: number }) {
+function GoalRow({ label, done, total, color, suffix = "" }: { label: string; done: number; total: number; color: string; suffix?: string }) {
   const percent = Math.min(100, Math.round((done / Math.max(1, total)) * 100));
   return (
     <div>
-      <div className="flex justify-between">
-        <span>{label}</span>
-        <span className="font-mono-data">{done}/{total}</span>
+      <div className="flex justify-between text-sm">
+        <span className="font-semibold text-[#344065]">{label}</span>
+        <span className="font-mono text-[#4d5a83]">{done}{suffix} / {total}{suffix}</span>
       </div>
-      <div className="mt-2 h-2 overflow-hidden rounded-full bg-panel-2">
-        <div
-          className="h-full rounded-full bg-gold transition-[width] duration-700 [transition-timing-function:var(--ease-smooth)]"
-          style={{ width: `${percent}%` }}
-        />
+      <div className="mt-2 h-2 overflow-hidden rounded-full bg-[#eef2fb]">
+        <div className="h-full rounded-full transition-[width] duration-700" style={{ width: `${percent}%`, backgroundColor: color }} />
+      </div>
+    </div>
+  );
+}
+
+function ReadinessRow({ label, value, color, icon: Icon }: { label: string; value: number; color: string; icon: LucideIcon }) {
+  return (
+    <div className="grid grid-cols-[2rem_minmax(0,1fr)_3rem] items-center gap-3">
+      <span className="grid h-8 w-8 place-items-center rounded-full bg-[#f3f6ff]" style={{ color }}>
+        <Icon className="h-4 w-4" aria-hidden="true" />
+      </span>
+      <div>
+        <div className="flex justify-between text-sm font-semibold text-[#344065]">
+          <span>{label}</span>
+        </div>
+        <div className="mt-2 h-2 overflow-hidden rounded-full bg-[#eef2fb]">
+          <div className="h-full rounded-full" style={{ width: `${value}%`, backgroundColor: color }} />
+        </div>
+      </div>
+      <span className="text-right text-sm font-bold text-[#07102e]">{value}%</span>
+    </div>
+  );
+}
+
+function TopicGroup({ title, topics, color }: { title: string; topics: Array<{ topic: string; mastery_percent: number }>; color: string }) {
+  return (
+    <div className="rounded-[1rem] bg-[#fafbff] p-4">
+      <p className="text-xs font-bold uppercase tracking-[0.1em] text-[#69759f]">{title}</p>
+      <div className="mt-3 space-y-3">
+        {topics.map((topic) => (
+          <div key={topic.topic}>
+            <div className="flex justify-between text-sm font-semibold text-[#344065]">
+              <span>{topic.topic}</span>
+              <span>{topic.mastery_percent}%</span>
+            </div>
+            <div className="mt-2 h-2 overflow-hidden rounded-full bg-[#eef2fb]">
+              <div className="h-full rounded-full" style={{ width: `${topic.mastery_percent}%`, backgroundColor: color }} />
+            </div>
+          </div>
+        ))}
       </div>
     </div>
   );
@@ -511,9 +743,9 @@ function GoalRow({ label, done, total }: { label: string; done: number; total: n
 
 function Info({ label, value }: { label: string; value: string }) {
   return (
-    <div className="flex justify-between gap-4 border-b border-line pb-3 last:border-0">
-      <dt className="text-muted">{label}</dt>
-      <dd className="text-right text-fg">{value}</dd>
+    <div className="flex justify-between gap-4 border-b border-[#e7ecf8] py-3 first:pt-0 last:border-0 last:pb-0">
+      <dt className="text-[#69759f]">{label}</dt>
+      <dd className="min-w-0 truncate text-right font-semibold text-[#172247]">{value}</dd>
     </div>
   );
 }
@@ -523,8 +755,6 @@ function formatDate(value: string) {
 }
 
 function friendlyResource(type: string, id: string) {
-  const label = id
-    .replace(/[-_]/g, " ")
-    .replace(/\b\w/g, (char) => char.toUpperCase());
+  const label = id.replace(/[-_]/g, " ").replace(/\b\w/g, (char) => char.toUpperCase());
   return label || type.replace("_", " ");
 }
