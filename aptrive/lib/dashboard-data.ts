@@ -85,77 +85,25 @@ export async function getDashboardData(userId: string) {
   const supabase = await createClient();
   const today = new Date().toISOString().slice(0, 10);
 
-  const [
-    streakRes,
-    activityRes,
-    masteryRes,
-    weakTopicsRes,
-    goalRes,
-    achievementsRes,
-    deadlinesRes,
-    recentRes,
-    studentProfileRes,
-  ] = await Promise.all([
-    supabase.from("user_streaks").select("*").eq("user_id", userId).maybeSingle(),
-    supabase
-      .from("v_user_dashboard_summary")
-      .select("*")
-      .eq("user_id", userId)
-      .gte("activity_date", new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString().slice(0, 10)),
-    // FIXED 2026-07-28: `user_topic_progress` on the live database is
-    // keyed by (user_id, topic_id uuid) with a `mastery_score` column —
-    // not the `topic` (text)/`mastery_percent` shape this query used to
-    // assume. Confirmed directly against the live schema via
-    // `supabase gen types typescript` (2026-07-28). Ordering by
-    // `mastery_percent` (a column that doesn't exist on this table) was
-    // a guaranteed PostgREST 400 on every single dashboard load, for
-    // every signed-in user — this function is called directly (no
-    // try/catch) from app/dashboard/page.tsx, so it wasn't silently
-    // degrading, it was surfacing the app/dashboard/error.tsx boundary
-    // ("We couldn't load your dashboard") in place of the real page.
-    //
-    // Also added a `topics(name)` embed here: `topic_id` is just a
-    // uuid, so without this join TopicList (below) has nothing to
-    // render as the topic's label.
-    supabase
-      .from("v_user_topic_progress")
-      .select("*, topics(name)")
-      .eq("user_id", userId)
-      .order("mastery_score", { ascending: false })
-      .limit(6),
-    supabase
-      .from("v_user_topic_progress")
-      .select("*, topics(name)")
-      .eq("user_id", userId)
-      .order("mastery_score", { ascending: true })
-      .limit(5),
-    supabase
-      .from("goal_progress")
-      .select("*")
-      .eq("user_id", userId)
-      .eq("period", "daily")
-      .eq("period_start", today)
-      .maybeSingle(),
-    supabase
-      .from("user_achievements")
-      .select("achievement_id, earned_at, achievements(name, icon, description)")
-      .eq("user_id", userId)
-      .order("earned_at", { ascending: false })
-      .limit(5),
-    supabase
-      .from("admission_deadlines")
-      .select("*")
-      .gte("deadline_date", today)
-      .order("deadline_date", { ascending: true })
-      .limit(4),
-    supabase
-      .from("recently_viewed")
-      .select("*")
-      .eq("user_id", userId)
-      .order("viewed_at", { ascending: false })
-      .limit(5),
-    supabase.from("student_profiles").select("*").eq("user_id", userId).maybeSingle(),
-  ]);
+  const { data: rpcData, error } = await supabase.rpc("get_dashboard_data", { p_user_id: userId });
+  
+  if (error) {
+    console.error("Dashboard RPC Error:", error);
+  }
+
+  // Cast the RPC return as any so we can safely destructure it
+  // without depending on the generated typings (which need a db pull).
+  const payload: any = rpcData || {};
+
+  const streakRes = { data: payload.streak || null };
+  const activityRes = { data: payload.activity || [] };
+  const masteryRes = { data: payload.topic_mastery_strong || [] };
+  const weakTopicsRes = { data: payload.topic_mastery_weak || [] };
+  const goalRes = { data: payload.daily_goal || null };
+  const achievementsRes = { data: payload.achievements || [] };
+  const deadlinesRes = { data: payload.deadlines || [] };
+  const recentRes = { data: payload.recently_viewed || [] };
+  const studentProfileRes = { data: payload.profile || null };
 
   // The calendar/heatmap needs per-day data, which no live source
   // currently provides (see the FLAGGED comment above) — placeholder

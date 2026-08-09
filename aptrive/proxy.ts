@@ -1,7 +1,22 @@
 import { NextResponse, type NextRequest } from "next/server";
 import { updateSession } from "@/lib/supabase/middleware";
+import { checkRateLimit } from "@/lib/rate-limit";
 
 export async function proxy(request: NextRequest) {
+  if (["POST", "PUT", "PATCH", "DELETE"].includes(request.method)) {
+    const ip = request.headers.get("x-forwarded-for") || "unknown";
+    // Limit to 30 requests per minute
+    const { allowed, retryAfterSeconds } = await checkRateLimit(`global-mut:${ip}`, 30, 60);
+    if (!allowed) {
+      return new NextResponse("Too Many Requests", {
+        status: 429,
+        headers: {
+          "Retry-After": retryAfterSeconds.toString(),
+        },
+      });
+    }
+  }
+
   const response = await updateSession(request);
 
   const isProd = process.env.NODE_ENV === "production";

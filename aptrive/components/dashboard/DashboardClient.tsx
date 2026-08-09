@@ -5,7 +5,6 @@ import { useEffect, useMemo, useState } from "react";
 import { motion } from "framer-motion";
 import {
   ArrowRight,
-  BarChart3,
   BookOpen,
   Brain,
   Check,
@@ -18,12 +17,10 @@ import {
   ShieldCheck,
   Sparkles,
   Target,
-  Trophy,
   Zap,
 } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 import type { getDashboardData } from "@/lib/dashboard-data";
-import type { NotificationItem } from "@/components/NotificationBell";
 import UniversityLogo from "@/components/UniversityLogo";
 
 type DashboardData = Awaited<ReturnType<typeof getDashboardData>>;
@@ -33,8 +30,6 @@ type CalendarDay = {
   active: boolean;
   isToday: boolean;
 };
-
-
 
 const weekdayLabels = ["S", "M", "T", "W", "T", "F", "S"];
 
@@ -101,7 +96,6 @@ export default function DashboardClient({
 
   useEffect(() => {
     // Client-only clock read avoids hydration mismatches between server and visitor timezone.
-    // eslint-disable-next-line react-hooks/set-state-in-effect
     setGreeting(getGreeting(new Date().getHours()));
   }, []);
 
@@ -114,7 +108,6 @@ export default function DashboardClient({
     const activityByDate = new Map(data.activity.map((d) => [d.activity_date, d]));
 
     // Client-only date read keeps the calendar aligned with the visitor's month.
-    // eslint-disable-next-line react-hooks/set-state-in-effect
     setCalendarDays(
       Array.from({ length: daysInMonth }, (_, i) => {
         const day = i + 1;
@@ -175,7 +168,7 @@ export default function DashboardClient({
   ];
 
   return (
-    <div className="mx-auto max-w-[96rem] px-4 py-6 sm:px-6 lg:px-9 relative z-[10]">
+    <div className="mx-auto max-w-[96rem] px-4 py-6 sm:px-6 lg:px-9 relative z-[10] bg-black min-h-screen text-white">
       <motion.div 
         className="grid grid-cols-1 gap-5 lg:grid-cols-12"
         initial="hidden"
@@ -188,51 +181,49 @@ export default function DashboardClient({
           }
         }}
       >
-
-
-              <CommandHero
-                greeting={greeting}
-                firstName={firstName}
-                streakLine={getStreakLine(streak)}
-                targetUniversity={targetUniversity}
-                admissionProbability={admissionProbability}
-                missionTime={missionTime}
-              />
-              <DailyGoalCard
-                percent={dailyGoalPercent}
-                actualQuestions={actualQuestions}
-                targetQuestions={targetQuestions}
-                studyMinutes={studyMinutes}
-                targetMinutes={targetMinutes}
-                readiness={prepPercent}
-              />
-              {kpis.map((kpi) => (
-                <MetricTile key={kpi.label} {...kpi} />
-              ))}
-              <PerformancePanel activity={activity} />
-              <ReadinessPanel
-                prepPercent={prepPercent}
-                admissionProbability={admissionProbability}
-                weakTopic={topWeakTopic}
-              />
-              <MissionCard
-                missionTime={missionTime}
-                topic={topWeakTopic}
-                dailyGoalPercent={dailyGoalPercent}
-                targetUniversity={targetUniversity}
-              />
-              <TopicPanel strong={strongTopics.length ? strongTopics : fallbackStrong} weak={weakTopics.length ? weakTopics : fallbackWeak} />
-              <Recommendations items={recommendations} />
-              <UpcomingPanel deadlines={data.upcomingDeadlines.length ? data.upcomingDeadlines : fallbackDeadlines} />
-              <CalendarPanel days={calendarDays.length ? calendarDays : placeholderCalendar} />
-              <ActivityPanel
-                email={email}
-                role={role}
-                memberSince={memberSince}
-                recent={data.recentlyViewed.length ? data.recentlyViewed : fallbackRecent}
-              />
-            </motion.div>
-      </div>
+        <CommandHero
+          greeting={greeting}
+          firstName={firstName}
+          streakLine={getStreakLine(streak)}
+          targetUniversity={targetUniversity}
+          admissionProbability={admissionProbability}
+          missionTime={missionTime}
+        />
+        <DailyGoalCard
+          percent={dailyGoalPercent}
+          actualQuestions={actualQuestions}
+          targetQuestions={targetQuestions}
+          studyMinutes={studyMinutes}
+          targetMinutes={targetMinutes}
+          readiness={prepPercent}
+        />
+        {kpis.map((kpi) => (
+          <MetricTile key={kpi.label} {...kpi} />
+        ))}
+        <PerformancePanel activity={activity} />
+        <ReadinessPanel
+          prepPercent={prepPercent}
+          admissionProbability={admissionProbability}
+          weakTopic={topWeakTopic}
+        />
+        <MissionCard
+          missionTime={missionTime}
+          topic={topWeakTopic}
+          dailyGoalPercent={dailyGoalPercent}
+          targetUniversity={targetUniversity}
+        />
+        <TopicPanel strong={strongTopics.length ? strongTopics : fallbackStrong} weak={weakTopics.length ? weakTopics : fallbackWeak} />
+        <Recommendations items={recommendations} />
+        <UpcomingPanel deadlines={data.upcomingDeadlines.length ? data.upcomingDeadlines : fallbackDeadlines} />
+        <CalendarPanel days={calendarDays.length ? calendarDays : placeholderCalendar} />
+        <ActivityPanel
+          email={email}
+          role={role}
+          memberSince={memberSince}
+          recent={data.recentlyViewed.length ? data.recentlyViewed : fallbackRecent}
+        />
+      </motion.div>
+    </div>
   );
 }
 
@@ -254,43 +245,43 @@ function CommandHero({
   return (
     <motion.section 
       variants={{ hidden: { opacity: 0, y: 15 }, visible: { opacity: 1, y: 0 } }}
-      className="relative overflow-hidden rounded-[1.4rem] border border-[#e4e9f6] bg-white p-6 shadow-[0_24px_70px_rgba(36,52,104,0.08)] lg:col-span-8 lg:p-8"
+      className="relative overflow-hidden rounded-xl border border-white/10 bg-[#0a0a0a] p-6 lg:col-span-8 lg:p-8"
     >
-      <div className="absolute right-6 top-6 h-52 w-52 rounded-full bg-blue-500/10 blur-3xl" />
-      <div className="absolute bottom-0 right-0 hidden h-56 w-80 rounded-tl-[5rem] bg-gradient-to-br from-[#eef7ff] to-[#f5efff] md:block" />
+      <div className="absolute right-6 top-6 h-52 w-52 rounded-full bg-blue-500/5 blur-3xl" />
+      <div className="absolute bottom-0 right-0 hidden h-56 w-80 rounded-tl-[5rem] bg-gradient-to-br from-blue-500/5 to-violet-500/5 md:block" />
       <div className="relative z-10 grid gap-8 md:grid-cols-[minmax(0,1fr)_19rem]">
         <div>
-          <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-[0.12em] text-[#5b6795]">
-            <span className="h-2 w-2 rounded-full bg-emerald-400" />
+          <div className="flex items-center gap-2 text-xs font-medium uppercase tracking-[0.12em] text-neutral-500">
+            <span className="h-2 w-2 rounded-full bg-emerald-500" />
             Command Center
           </div>
-          <h1 className="font-display mt-5 text-3xl font-bold tracking-normal text-[#07102e] sm:text-4xl">
+          <h1 className="font-display mt-5 text-3xl font-medium tracking-tight text-white sm:text-4xl">
             {greeting}, {firstName}
           </h1>
-          <p className="mt-4 max-w-2xl text-sm leading-7 text-[#4d5a83]">{streakLine}</p>
+          <p className="mt-4 max-w-2xl text-sm leading-7 text-neutral-400">{streakLine}</p>
           <div className="mt-7 flex flex-wrap gap-3">
-            <Link href="/practice" className="pressable inline-flex h-14 items-center gap-3 rounded-[1rem] bg-gradient-to-r from-blue-600 to-violet-600 px-6 text-sm font-bold text-white shadow-[0_16px_30px_rgba(70,85,230,0.25)]">
+            <Link href="/practice" className="pressable inline-flex h-12 items-center gap-2 rounded-lg bg-white px-5 text-sm font-medium text-black transition-colors hover:bg-neutral-200">
               Resume Training
-              <ArrowRight className="h-5 w-5" aria-hidden="true" />
+              <ArrowRight className="h-4 w-4" aria-hidden="true" />
             </Link>
-            <Link href="/onboarding" className="pressable inline-flex h-14 items-center gap-3 rounded-[1rem] border border-[#dfe5f4] bg-white px-6 text-sm font-bold text-[#344065]">
-              <Sparkles className="h-4 w-4 text-violet-500" aria-hidden="true" />
+            <Link href="/onboarding" className="pressable inline-flex h-12 items-center gap-2 rounded-lg border border-white/10 bg-white/5 px-5 text-sm font-medium text-white transition-colors hover:bg-white/10">
+              <Sparkles className="h-4 w-4 text-neutral-400" aria-hidden="true" />
               Optimize Strategy
             </Link>
           </div>
         </div>
-        <div className="rounded-[1.2rem] border border-[#e5eaf6] bg-white/80 p-5 shadow-[0_20px_50px_rgba(62,80,130,0.09)]">
+        <div className="rounded-xl border border-white/10 bg-white/5 p-5 backdrop-blur-md">
           <div className="flex items-center justify-between">
-            <span className="text-xs font-bold uppercase tracking-[0.12em] text-[#69759f]">AI Briefing</span>
-            <span className="flex items-center gap-1 rounded-full bg-emerald-50 px-2.5 py-1 text-xs font-bold text-emerald-600">
-              <span className="h-1.5 w-1.5 rounded-full bg-emerald-500" />
+            <span className="text-xs font-medium uppercase tracking-[0.12em] text-neutral-500">AI Briefing</span>
+            <span className="flex items-center gap-1.5 rounded-full bg-emerald-500/10 px-2 py-1 text-[10px] font-semibold uppercase tracking-wide text-emerald-400">
+              <span className="h-1.5 w-1.5 rounded-full bg-emerald-400" />
               Live
             </span>
           </div>
           <div className="mt-5 grid place-items-center">
             <TargetIllustration />
           </div>
-          <p className="mt-4 text-sm leading-6 text-[#4d5a83]">
+          <p className="mt-4 text-xs leading-5 text-neutral-400">
             Complete a {missionTime}-minute sprint today to lift {targetUniversity} readiness toward {admissionProbability}%.
           </p>
         </div>
@@ -301,28 +292,21 @@ function CommandHero({
 
 function TargetIllustration() {
   return (
-    <div className="relative h-36 w-52">
-      <div className="absolute left-2 top-3 h-24 w-36 rotate-[-5deg] rounded-[1rem] border border-[#dfe7f8] bg-gradient-to-br from-white to-[#eef7ff] shadow-lg">
-        <svg viewBox="0 0 140 88" className="h-full w-full" aria-hidden="true">
-          <path d="M14 68 L42 41 L62 53 L98 17 L122 31" fill="none" stroke="#7657ff" strokeWidth="6" strokeLinecap="round" />
-          <path d="M14 68 L42 41 L62 53 L98 17 L122 31 L122 88 L14 88 Z" fill="url(#heroFill)" opacity="0.45" />
-          <defs>
-            <linearGradient id="heroFill" x1="0" x2="1">
-              <stop stopColor="#58d5ff" />
-              <stop offset="1" stopColor="#9d6cff" />
-            </linearGradient>
-          </defs>
+    <div className="relative h-32 w-48">
+      <div className="absolute left-2 top-3 h-20 w-32 rotate-[-5deg] rounded-lg border border-white/10 bg-gradient-to-br from-white/5 to-white/0 shadow-sm">
+        <svg viewBox="0 0 140 88" className="h-full w-full opacity-60" aria-hidden="true">
+          <path d="M14 68 L42 41 L62 53 L98 17 L122 31" fill="none" stroke="#fff" strokeWidth="3" strokeLinecap="round" />
         </svg>
       </div>
-      <div className="absolute right-1 top-10 grid h-24 w-24 place-items-center rounded-full bg-white shadow-[0_22px_45px_rgba(42,69,150,0.2)]">
-        <div className="grid h-20 w-20 place-items-center rounded-full bg-blue-100">
-          <div className="grid h-14 w-14 place-items-center rounded-full bg-blue-500">
-            <div className="h-7 w-7 rounded-full bg-white" />
+      <div className="absolute right-1 top-8 grid h-20 w-20 place-items-center rounded-full bg-white/5 shadow-sm border border-white/10">
+        <div className="grid h-16 w-16 place-items-center rounded-full bg-white/10">
+          <div className="grid h-12 w-12 place-items-center rounded-full bg-white/20">
+            <div className="h-6 w-6 rounded-full bg-white" />
           </div>
         </div>
       </div>
-      <span className="absolute bottom-0 right-16 grid h-10 w-10 place-items-center rounded-full bg-emerald-500 text-white shadow-lg">
-        <Check className="h-5 w-5" aria-hidden="true" />
+      <span className="absolute bottom-0 right-14 grid h-8 w-8 place-items-center rounded-full bg-emerald-500 text-black shadow-sm">
+        <Check className="h-4 w-4" aria-hidden="true" />
       </span>
     </div>
   );
@@ -344,44 +328,44 @@ function DailyGoalCard({
   readiness: number;
 }) {
   return (
-    <section className="rounded-[1.4rem] border border-[#e4e9f6] bg-white p-6 shadow-[0_24px_70px_rgba(36,52,104,0.08)] lg:col-span-4">
-      <p className="text-xs font-bold uppercase tracking-[0.12em] text-[#5b6795]">Today&apos;s Goal</p>
+    <motion.section whileHover={{ scale: 1.01 }} className="rounded-xl border border-white/10 bg-[#0a0a0a] p-6 lg:col-span-4 transition-transform duration-200">
+      <p className="text-xs font-medium uppercase tracking-[0.12em] text-neutral-500">Today&apos;s Goal</p>
       <div className="mt-4 flex items-center justify-between gap-4">
         <div>
-          <p className="font-display text-4xl font-bold text-[#07102e]">{percent}%</p>
-          <p className="mt-1 text-sm font-semibold text-[#344065]">Complete</p>
+          <p className="font-display text-4xl font-medium text-white">{percent}%</p>
+          <p className="mt-1 text-sm font-medium text-neutral-400">Complete</p>
         </div>
-        <ProgressRing value={percent} size={116} colors={["#1ebf91", "#3478ff", "#8057ff"]} />
+        <ProgressRing value={percent} size={100} colors={["#333", "#fff", "#fff"]} />
       </div>
       <div className="mt-6 space-y-4">
-        <GoalRow label="Questions" done={actualQuestions} total={targetQuestions} color="#8057ff" />
-        <GoalRow label="Study Minutes" done={studyMinutes} total={targetMinutes} color="#3478ff" />
-        <GoalRow label="Readiness" done={readiness} total={100} color="#1ebf91" suffix="%" />
+        <GoalRow label="Questions" done={actualQuestions} total={targetQuestions} color="#fff" />
+        <GoalRow label="Study Minutes" done={studyMinutes} total={targetMinutes} color="#aaa" />
+        <GoalRow label="Readiness" done={readiness} total={100} color="#666" suffix="%" />
       </div>
-    </section>
+    </motion.section>
   );
 }
 
 function MetricTile({ label, value, detail, icon: Icon, tone }: { label: string; value: string; detail: string; icon: LucideIcon; tone: string }) {
   const tones: Record<string, string> = {
-    emerald: "bg-emerald-50 text-emerald-600",
-    violet: "bg-violet-50 text-violet-600",
-    sky: "bg-sky-50 text-sky-600",
-    blue: "bg-blue-50 text-blue-600",
+    emerald: "bg-emerald-500/10 text-emerald-400",
+    violet: "bg-violet-500/10 text-violet-400",
+    sky: "bg-sky-500/10 text-sky-400",
+    blue: "bg-blue-500/10 text-blue-400",
   };
   return (
-    <article className="rounded-[1.1rem] border border-[#e4e9f6] bg-white p-5 shadow-[0_18px_45px_rgba(36,52,104,0.06)] lg:col-span-3">
+    <motion.article whileHover={{ scale: 1.02 }} className="rounded-xl border border-white/10 bg-[#0a0a0a] p-5 lg:col-span-3 transition-transform duration-200">
       <div className="flex items-center gap-4">
-        <span className={`grid h-12 w-12 place-items-center rounded-full ${tones[tone]}`}>
-          <Icon className="h-6 w-6" aria-hidden="true" />
+        <span className={`grid h-10 w-10 place-items-center rounded-lg ${tones[tone]}`}>
+          <Icon className="h-5 w-5" aria-hidden="true" />
         </span>
         <div>
-          <p className="text-xs font-bold uppercase tracking-[0.08em] text-[#69759f]">{label}</p>
-          <p className="font-display mt-1 text-2xl font-bold text-[#07102e]">{value}</p>
-          <p className="mt-1 text-xs font-semibold text-[#53618d]">{detail}</p>
+          <p className="text-xs font-medium uppercase tracking-[0.08em] text-neutral-500">{label}</p>
+          <p className="font-display mt-1 text-xl font-medium text-white">{value}</p>
+          <p className="mt-0.5 text-xs text-neutral-400">{detail}</p>
         </div>
       </div>
-    </article>
+    </motion.article>
   );
 }
 
@@ -405,32 +389,32 @@ function PerformancePanel({ activity }: { activity: Array<{ activity_date: strin
   const polyline = chartPoints.map((p, i) => `${(i / (chartPoints.length - 1)) * 100},${100 - p.value}`).join(" ");
 
   return (
-    <section className="rounded-[1.3rem] border border-[#e4e9f6] bg-white p-6 shadow-[0_24px_70px_rgba(36,52,104,0.07)] lg:col-span-6">
+    <section className="rounded-xl border border-white/10 bg-[#0a0a0a] p-6 lg:col-span-6">
       <PanelHeader title="Performance Trends" subtitle="Weekly accuracy - last 6 weeks" action="Accuracy" />
       <div className="mt-6">
         <svg viewBox="0 0 100 100" className="h-52 w-full overflow-visible" role="img" aria-label="Accuracy trend line chart">
           {[25, 50, 75, 100].map((y) => (
-            <line key={y} x1="0" x2="100" y1={y} y2={y} stroke="#edf1fa" strokeWidth="0.7" />
+            <line key={y} x1="0" x2="100" y1={y} y2={y} stroke="rgba(255,255,255,0.05)" strokeWidth="1" />
           ))}
-          <polyline points={`0,100 ${polyline} 100,100`} fill="url(#trendArea)" opacity="0.55" />
-          <polyline points={polyline} fill="none" stroke="#724cff" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" />
+          <polyline points={`0,100 ${polyline} 100,100`} fill="url(#trendArea)" opacity="0.3" />
+          <polyline points={polyline} fill="none" stroke="#fff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
           {chartPoints.map((p, i) => (
             <g key={p.label}>
-              <circle cx={(i / (chartPoints.length - 1)) * 100} cy={100 - p.value} r="2.1" fill="#724cff" />
-              <text x={(i / (chartPoints.length - 1)) * 100} y={94} textAnchor="middle" fontSize="3.5" fill="#69759f">{p.label}</text>
-              <text x={(i / (chartPoints.length - 1)) * 100} y={100 - p.value - 6} textAnchor="middle" fontSize="4" fontWeight="700" fill="#172247">{p.value}%</text>
+              <circle cx={(i / (chartPoints.length - 1)) * 100} cy={100 - p.value} r="2" fill="#fff" />
+              <text x={(i / (chartPoints.length - 1)) * 100} y={110} textAnchor="middle" fontSize="4" fill="#666">{p.label}</text>
+              <text x={(i / (chartPoints.length - 1)) * 100} y={100 - p.value - 6} textAnchor="middle" fontSize="4" fontWeight="500" fill="#fff">{p.value}%</text>
             </g>
           ))}
           <defs>
             <linearGradient id="trendArea" x1="0" x2="0" y1="0" y2="1">
-              <stop stopColor="#7a55ff" stopOpacity="0.28" />
-              <stop offset="1" stopColor="#7a55ff" stopOpacity="0" />
+              <stop stopColor="#fff" stopOpacity="1" />
+              <stop offset="1" stopColor="#fff" stopOpacity="0" />
             </linearGradient>
           </defs>
         </svg>
       </div>
-      <div className="mt-3 flex items-center gap-3 rounded-[0.9rem] bg-[#f7f8ff] px-4 py-3 text-sm text-[#4d5a83]">
-        <LineChart className="h-5 w-5 text-blue-600" aria-hidden="true" />
+      <div className="mt-4 flex items-center gap-3 rounded-lg border border-white/5 bg-white/5 px-4 py-3 text-sm text-neutral-300">
+        <LineChart className="h-4 w-4 text-neutral-400" aria-hidden="true" />
         You are improving. Accuracy increased by 16% in the last 6 weeks.
       </div>
     </section>
@@ -439,19 +423,19 @@ function PerformancePanel({ activity }: { activity: Array<{ activity_date: strin
 
 function ReadinessPanel({ prepPercent, admissionProbability, weakTopic }: { prepPercent: number; admissionProbability: number; weakTopic: string }) {
   return (
-    <section className="rounded-[1.3rem] border border-[#e4e9f6] bg-white p-6 shadow-[0_24px_70px_rgba(36,52,104,0.07)] lg:col-span-6">
+    <section className="rounded-xl border border-white/10 bg-[#0a0a0a] p-6 lg:col-span-6">
       <PanelHeader title="Exam Readiness" subtitle="Blended score from volume, accuracy, and streak" />
       <div className="mt-7 grid gap-6 md:grid-cols-[13rem_minmax(0,1fr)]">
         <div className="grid place-items-center">
-          <ProgressRing value={prepPercent || 85} size={138} colors={["#4389ff", "#7957ff"]} label="Ready" />
+          <ProgressRing value={prepPercent || 85} size={138} colors={["#333", "#fff", "#fff"]} label="Ready" />
         </div>
-        <div className="space-y-5">
-          <ReadinessRow label="Consistency" value={90} color="#1ebf91" icon={Medal} />
-          <ReadinessRow label="Accuracy" value={admissionProbability} color="#3478ff" icon={Target} />
-          <ReadinessRow label="Practice Volume" value={78} color="#8057ff" icon={Zap} />
+        <div className="space-y-5 mt-2">
+          <ReadinessRow label="Consistency" value={90} color="#fff" icon={Medal} />
+          <ReadinessRow label="Accuracy" value={admissionProbability} color="#aaa" icon={Target} />
+          <ReadinessRow label="Practice Volume" value={78} color="#666" icon={Zap} />
         </div>
       </div>
-      <div className="mt-6 rounded-[0.9rem] bg-[#f7f8ff] p-4 text-sm leading-6 text-[#4d5a83]">
+      <div className="mt-6 rounded-lg border border-white/5 bg-white/5 p-4 text-sm leading-6 text-neutral-300">
         Focus on {weakTopic} today. One consistent session will move readiness to the next level.
       </div>
     </section>
@@ -461,39 +445,39 @@ function ReadinessPanel({ prepPercent, admissionProbability, weakTopic }: { prep
 function MissionCard({ missionTime, topic, dailyGoalPercent, targetUniversity }: { missionTime: number; topic: string; dailyGoalPercent: number; targetUniversity: string }) {
   const objectives = ["Review core concept", "Solve timed practice", "Log mistakes"];
   return (
-    <section className="rounded-[1.3rem] border border-[#e4e9f6] bg-white p-6 shadow-[0_24px_70px_rgba(36,52,104,0.07)] lg:col-span-4">
+    <section className="rounded-xl border border-white/10 bg-[#0a0a0a] p-6 lg:col-span-4 flex flex-col">
       <PanelHeader title="Today's AI Plan" subtitle={`${missionTime} minutes - high priority`} />
-      <div className="mt-5 rounded-[1rem] bg-gradient-to-br from-[#f2f7ff] to-[#f7f1ff] p-5">
-        <p className="text-xs font-bold uppercase tracking-[0.12em] text-[#68749c]">Recommended Subject</p>
-        <p className="mt-2 font-display text-2xl font-bold text-[#07102e]">{topic}</p>
-        <p className="mt-2 text-sm leading-6 text-[#53618d]">Best next action for improving {targetUniversity} prediction.</p>
+      <div className="mt-5 rounded-lg border border-white/10 bg-white/5 p-5">
+        <p className="text-xs font-medium uppercase tracking-[0.12em] text-neutral-500">Recommended Subject</p>
+        <p className="mt-1 font-display text-2xl font-medium text-white">{topic}</p>
+        <p className="mt-1 text-sm text-neutral-400">Best next action for improving {targetUniversity} prediction.</p>
       </div>
-      <div className="mt-5 space-y-3">
+      <div className="mt-5 space-y-2 flex-grow">
         {objectives.map((objective, index) => (
-          <div key={objective} className="flex items-center gap-3 rounded-[0.85rem] border border-[#edf1fa] px-3 py-3 text-sm font-semibold text-[#344065]">
-            <span className={`grid h-6 w-6 place-items-center rounded-full ${index === 0 ? "bg-emerald-500 text-white" : "bg-[#eef2fb] text-[#69759f]"}`}>
-              {index === 0 ? <Check className="h-4 w-4" aria-hidden="true" /> : index + 1}
+          <div key={objective} className="flex items-center gap-3 rounded-lg border border-white/5 bg-white/5 px-3 py-2.5 text-sm font-medium text-neutral-300">
+            <span className={`grid h-5 w-5 place-items-center rounded-full text-[10px] ${index === 0 ? "bg-white text-black" : "bg-white/10 text-neutral-400"}`}>
+              {index === 0 ? <Check className="h-3 w-3" aria-hidden="true" /> : index + 1}
             </span>
             {objective}
           </div>
         ))}
       </div>
-      <Link href="/practice" className="pressable mt-5 inline-flex h-12 w-full items-center justify-center gap-2 rounded-[0.85rem] bg-[#111a3a] text-sm font-bold text-white">
+      <Link href="/practice" className="pressable mt-6 inline-flex h-11 w-full items-center justify-center gap-2 rounded-lg bg-white text-sm font-medium text-black transition-colors hover:bg-neutral-200">
         Start Mission
         <ArrowRight className="h-4 w-4" aria-hidden="true" />
       </Link>
-      <p className="mt-3 text-center text-xs font-semibold text-[#69759f]">{dailyGoalPercent}% of today&apos;s goal complete</p>
+      <p className="mt-3 text-center text-xs font-medium text-neutral-500">{dailyGoalPercent}% of today&apos;s goal complete</p>
     </section>
   );
 }
 
 function TopicPanel({ strong, weak }: { strong: Array<{ topic: string; mastery_percent: number }>; weak: Array<{ topic: string; mastery_percent: number }> }) {
   return (
-    <section className="rounded-[1.3rem] border border-[#e4e9f6] bg-white p-6 shadow-[0_24px_70px_rgba(36,52,104,0.07)] lg:col-span-4">
-      <PanelHeader title="Knowledge Map" subtitle="Strengths and blockers" />
-      <div className="mt-5 grid gap-4">
-        <TopicGroup title="Strengths" topics={strong} color="#1ebf91" />
-        <TopicGroup title="Needs Focus" topics={weak} color="#ff805d" />
+    <section className="rounded-xl border border-white/10 bg-[#0a0a0a] p-6 lg:col-span-4">
+      <PanelHeader title="Knowledge Map" subtitle="Data density heatmap" />
+      <div className="mt-5 grid gap-6">
+        <TopicGroup title="Strengths" topics={strong} color="#fff" />
+        <TopicGroup title="Needs Focus" topics={weak} color="#666" />
       </div>
     </section>
   );
@@ -501,19 +485,19 @@ function TopicPanel({ strong, weak }: { strong: Array<{ topic: string; mastery_p
 
 function Recommendations({ items }: { items: Array<{ title: string; meta: string; icon: LucideIcon; href: string }> }) {
   return (
-    <section className="rounded-[1.3rem] border border-[#e4e9f6] bg-white p-6 shadow-[0_24px_70px_rgba(36,52,104,0.07)] lg:col-span-4">
-      <PanelHeader title="Recommended for you" subtitle="Personalized next actions" action="View all" />
-      <div className="mt-5 grid gap-3">
+    <section className="rounded-xl border border-white/10 bg-[#0a0a0a] p-6 lg:col-span-4">
+      <PanelHeader title="Recommended" subtitle="Personalized next actions" action="View all" />
+      <div className="mt-5 grid gap-2">
         {items.map((item) => (
-          <Link key={item.title} href={item.href} className="group flex items-center gap-4 rounded-[1rem] bg-[#fafbff] p-4 transition hover:bg-[#f3f6ff]">
-            <span className="grid h-11 w-11 place-items-center rounded-[0.85rem] bg-white text-blue-600 shadow-sm">
-              <item.icon className="h-5 w-5" aria-hidden="true" />
+          <Link key={item.title} href={item.href} className="group flex items-center gap-4 rounded-lg border border-transparent p-3 transition-colors hover:border-white/10 hover:bg-white/5">
+            <span className="grid h-10 w-10 place-items-center rounded-lg border border-white/10 bg-white/5 text-neutral-300">
+              <item.icon className="h-4 w-4" aria-hidden="true" />
             </span>
             <span className="min-w-0">
-              <span className="block text-sm font-bold text-[#172247]">{item.title}</span>
-              <span className="mt-1 block truncate text-xs text-[#69759f]">{item.meta}</span>
+              <span className="block text-sm font-medium text-white">{item.title}</span>
+              <span className="mt-0.5 block truncate text-xs text-neutral-400">{item.meta}</span>
             </span>
-            <ArrowRight className="ml-auto h-4 w-4 text-[#69759f] transition group-hover:translate-x-1" aria-hidden="true" />
+            <ArrowRight className="ml-auto h-4 w-4 text-neutral-500 transition-transform group-hover:translate-x-1" aria-hidden="true" />
           </Link>
         ))}
       </div>
@@ -523,15 +507,17 @@ function Recommendations({ items }: { items: Array<{ title: string; meta: string
 
 function UpcomingPanel({ deadlines }: { deadlines: Array<{ university: string; deadline_date: string }> }) {
   return (
-    <section className="rounded-[1.3rem] border border-[#e4e9f6] bg-white p-6 shadow-[0_24px_70px_rgba(36,52,104,0.07)] lg:col-span-4">
+    <section className="rounded-xl border border-white/10 bg-[#0a0a0a] p-6 lg:col-span-4">
       <PanelHeader title="Upcoming Mock Test" subtitle="Keep deadlines visible" action="View all" />
-      <div className="mt-5 space-y-3">
+      <div className="mt-5 space-y-2">
         {deadlines.slice(0, 3).map((item) => (
-          <div key={`${item.university}-${item.deadline_date}`} className="flex items-center gap-3 rounded-[1rem] bg-[#fafbff] p-4">
-            <UniversityLogo university={item.university} size={34} />
+          <div key={`${item.university}-${item.deadline_date}`} className="flex items-center gap-3 rounded-lg border border-white/5 bg-white/5 p-3">
+            <div className="h-8 w-8 rounded-full bg-white/10 flex items-center justify-center">
+              <span className="text-[10px] font-bold">{item.university.slice(0,2)}</span>
+            </div>
             <div className="min-w-0">
-              <p className="truncate text-sm font-bold text-[#172247]">{item.university}</p>
-              <p className="mt-1 text-xs text-[#69759f]">{formatDate(item.deadline_date)}</p>
+              <p className="truncate text-sm font-medium text-white">{item.university}</p>
+              <p className="text-xs text-neutral-400">{formatDate(item.deadline_date)}</p>
             </div>
           </div>
         ))}
@@ -542,14 +528,14 @@ function UpcomingPanel({ deadlines }: { deadlines: Array<{ university: string; d
 
 function CalendarPanel({ days }: { days: CalendarDay[] }) {
   return (
-    <section className="rounded-[1.3rem] border border-[#e4e9f6] bg-white p-6 shadow-[0_24px_70px_rgba(36,52,104,0.07)] lg:col-span-4">
+    <section className="rounded-xl border border-white/10 bg-[#0a0a0a] p-6 lg:col-span-4">
       <PanelHeader title="Study Calendar" subtitle="Days with completed sessions" />
-      <div className="mt-5 grid grid-cols-7 gap-2 text-center text-[10px] font-bold uppercase text-[#7a86aa]">
+      <div className="mt-5 grid grid-cols-7 gap-2 text-center text-[10px] font-medium uppercase text-neutral-500">
         {weekdayLabels.map((label, i) => <span key={`${label}-${i}`}>{label}</span>)}
       </div>
       <div className="mt-2 grid grid-cols-7 gap-2">
         {days.map((d) => (
-          <div key={d.day} className={`grid aspect-square place-items-center rounded-[0.45rem] text-[11px] font-bold ${d.active ? "bg-emerald-100 text-emerald-700" : "bg-[#f1f4fb] text-[#97a1bf]"} ${d.isToday ? "ring-2 ring-blue-500" : ""}`}>
+          <div key={d.day} className={`grid aspect-square place-items-center rounded bg-white/5 text-[11px] font-medium transition-colors ${d.active ? "bg-white text-black" : "text-neutral-600"} ${d.isToday ? "border border-white/30" : ""}`}>
             {d.day}
           </div>
         ))}
@@ -570,19 +556,19 @@ function ActivityPanel({
   recent: Array<{ resource_id: string; resource_type: string; viewed_at: string }>;
 }) {
   return (
-    <section className="rounded-[1.3rem] border border-[#e4e9f6] bg-white p-6 shadow-[0_24px_70px_rgba(36,52,104,0.07)] lg:col-span-8">
+    <section className="rounded-xl border border-white/10 bg-[#0a0a0a] p-6 lg:col-span-8">
       <PanelHeader title="Recent Activity" subtitle="Latest learning events and account context" />
-      <div className="mt-5 grid gap-4 md:grid-cols-[18rem_minmax(0,1fr)]">
-        <dl className="rounded-[1rem] bg-[#fafbff] p-4 text-sm">
+      <div className="mt-5 grid gap-4 md:grid-cols-[16rem_minmax(0,1fr)]">
+        <dl className="rounded-lg border border-white/5 bg-white/5 p-4 text-sm">
           <Info label="Email" value={email} />
           <Info label="Role" value={role} />
           <Info label="Member since" value={memberSince ? formatDate(memberSince) : "-"} />
         </dl>
         <div className="grid gap-3 sm:grid-cols-2">
           {recent.slice(0, 4).map((item) => (
-            <div key={`${item.resource_id}-${item.viewed_at}`} className="rounded-[1rem] border border-[#edf1fa] p-4">
-              <p className="truncate text-sm font-bold text-[#172247]">{friendlyResource(item.resource_type, item.resource_id)}</p>
-              <p className="mt-1 text-xs text-[#69759f]">{item.resource_type.replace("_", " ")} - {formatDate(item.viewed_at)}</p>
+            <div key={`${item.resource_id}-${item.viewed_at}`} className="rounded-lg border border-white/10 bg-[#0a0a0a] p-4">
+              <p className="truncate text-sm font-medium text-white">{friendlyResource(item.resource_type, item.resource_id)}</p>
+              <p className="mt-1 text-xs text-neutral-400">{item.resource_type.replace("_", " ")} - {formatDate(item.viewed_at)}</p>
             </div>
           ))}
         </div>
@@ -595,10 +581,10 @@ function PanelHeader({ title, subtitle, action }: { title: string; subtitle: str
   return (
     <div className="flex items-start justify-between gap-4">
       <div>
-        <h2 className="font-display text-lg font-bold text-[#07102e]">{title}</h2>
-        <p className="mt-1 text-xs font-medium text-[#5f6b94]">{subtitle}</p>
+        <h2 className="font-display text-base font-medium text-white">{title}</h2>
+        <p className="text-xs text-neutral-400">{subtitle}</p>
       </div>
-      {action && <span className="rounded-[0.65rem] border border-[#e2e8f6] px-3 py-2 text-xs font-bold text-blue-700">{action}</span>}
+      {action && <span className="rounded-md border border-white/10 px-2.5 py-1 text-[10px] font-medium uppercase tracking-wide text-neutral-300">{action}</span>}
     </div>
   );
 }
@@ -606,16 +592,16 @@ function PanelHeader({ title, subtitle, action }: { title: string; subtitle: str
 function ProgressRing({ value, size = 92, colors, label }: { value: number; size?: number; colors: string[]; label?: string }) {
   const normalized = Math.max(0, Math.min(100, value));
   const style = {
-    background: `conic-gradient(${colors.join(", ")} ${normalized * 3.6}deg, #e9edf9 0deg)`,
+    background: `conic-gradient(${colors.join(", ")} ${normalized * 3.6}deg, rgba(255,255,255,0.05) 0deg)`,
     width: size,
     height: size,
   };
   return (
-    <div className="grid place-items-center rounded-full p-3" style={style}>
-      <div className="grid h-full w-full place-items-center rounded-full bg-white text-center shadow-inner">
+    <div className="grid place-items-center rounded-full p-2.5" style={style}>
+      <div className="grid h-full w-full place-items-center rounded-full bg-[#0a0a0a] text-center shadow-inner">
         <span>
-          <span className="block font-display text-2xl font-bold text-[#07102e]">{normalized}%</span>
-          {label && <span className="block text-xs font-bold text-emerald-600">{label}</span>}
+          <span className="block font-display text-xl font-medium text-white">{normalized}%</span>
+          {label && <span className="block text-[10px] font-medium uppercase tracking-wide text-neutral-500">{label}</span>}
         </span>
       </div>
     </div>
@@ -626,11 +612,11 @@ function GoalRow({ label, done, total, color, suffix = "" }: { label: string; do
   const percent = Math.min(100, Math.round((done / Math.max(1, total)) * 100));
   return (
     <div>
-      <div className="flex justify-between text-sm">
-        <span className="font-semibold text-[#344065]">{label}</span>
-        <span className="font-mono text-[#4d5a83]">{done}{suffix} / {total}{suffix}</span>
+      <div className="flex justify-between text-xs font-medium">
+        <span className="text-neutral-400">{label}</span>
+        <span className="text-neutral-300">{done}{suffix} / {total}{suffix}</span>
       </div>
-      <div className="mt-2 h-2 overflow-hidden rounded-full bg-[#eef2fb]">
+      <div className="mt-1.5 h-1.5 overflow-hidden rounded-full bg-white/10">
         <div className="h-full rounded-full transition-[width] duration-700" style={{ width: `${percent}%`, backgroundColor: color }} />
       </div>
     </div>
@@ -639,37 +625,36 @@ function GoalRow({ label, done, total, color, suffix = "" }: { label: string; do
 
 function ReadinessRow({ label, value, color, icon: Icon }: { label: string; value: number; color: string; icon: LucideIcon }) {
   return (
-    <div className="grid grid-cols-[2rem_minmax(0,1fr)_3rem] items-center gap-3">
-      <span className="grid h-8 w-8 place-items-center rounded-full bg-[#f3f6ff]" style={{ color }}>
+    <div className="grid grid-cols-[1.5rem_minmax(0,1fr)_2.5rem] items-center gap-3">
+      <span className="grid h-6 w-6 place-items-center text-neutral-400">
         <Icon className="h-4 w-4" aria-hidden="true" />
       </span>
       <div>
-        <div className="flex justify-between text-sm font-semibold text-[#344065]">
+        <div className="flex justify-between text-xs font-medium text-neutral-300">
           <span>{label}</span>
         </div>
-        <div className="mt-2 h-2 overflow-hidden rounded-full bg-[#eef2fb]">
+        <div className="mt-1 h-1 overflow-hidden rounded-full bg-white/10">
           <div className="h-full rounded-full" style={{ width: `${value}%`, backgroundColor: color }} />
         </div>
       </div>
-      <span className="text-right text-sm font-bold text-[#07102e]">{value}%</span>
+      <span className="text-right text-xs font-medium text-white">{value}%</span>
     </div>
   );
 }
 
 function TopicGroup({ title, topics, color }: { title: string; topics: Array<{ topic: string; mastery_percent: number }>; color: string }) {
+  // Linear style dense horizontal bar chart representation
   return (
-    <div className="rounded-[1rem] bg-[#fafbff] p-4">
-      <p className="text-xs font-bold uppercase tracking-[0.1em] text-[#69759f]">{title}</p>
-      <div className="mt-3 space-y-3">
+    <div>
+      <p className="text-[10px] font-medium uppercase tracking-[0.1em] text-neutral-500 mb-3">{title}</p>
+      <div className="space-y-2">
         {topics.map((topic) => (
-          <div key={topic.topic}>
-            <div className="flex justify-between text-sm font-semibold text-[#344065]">
-              <span>{topic.topic}</span>
-              <span>{topic.mastery_percent}%</span>
-            </div>
-            <div className="mt-2 h-2 overflow-hidden rounded-full bg-[#eef2fb]">
+          <div key={topic.topic} className="flex items-center gap-3">
+            <span className="w-1/3 truncate text-xs font-medium text-neutral-300">{topic.topic}</span>
+            <div className="flex-grow h-1.5 overflow-hidden rounded-full bg-white/5">
               <div className="h-full rounded-full" style={{ width: `${topic.mastery_percent}%`, backgroundColor: color }} />
             </div>
+            <span className="w-8 text-right text-[10px] font-mono text-neutral-500">{topic.mastery_percent}%</span>
           </div>
         ))}
       </div>
@@ -679,9 +664,9 @@ function TopicGroup({ title, topics, color }: { title: string; topics: Array<{ t
 
 function Info({ label, value }: { label: string; value: string }) {
   return (
-    <div className="flex justify-between gap-4 border-b border-[#e7ecf8] py-3 first:pt-0 last:border-0 last:pb-0">
-      <dt className="text-[#69759f]">{label}</dt>
-      <dd className="min-w-0 truncate text-right font-semibold text-[#172247]">{value}</dd>
+    <div className="flex justify-between gap-4 border-b border-white/5 py-2.5 first:pt-0 last:border-0 last:pb-0">
+      <dt className="text-neutral-500">{label}</dt>
+      <dd className="min-w-0 truncate text-right text-white">{value}</dd>
     </div>
   );
 }

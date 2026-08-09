@@ -4,6 +4,10 @@ import { SpeedInsights } from "@vercel/speed-insights/next";
 import { Analytics } from "@vercel/analytics/react";
 
 import "./globals.css";
+import appleIcon180 from "./apple-icon-180x180.png";
+import icon192 from "./icon-192x192.png";
+import icon32 from "./icon-32x32.png";
+import logoTransparentFull from "./logo-transparent-full.png";
 
 
 import { OrganizationSchema } from "@/components/StructuredData";
@@ -90,6 +94,12 @@ export const metadata: Metadata = {
     title: "Aptrive — Master the Test. Unlock Your Future.",
     description:
       "Intelligent preparation platform for Pakistan's competitive university entrance examinations.",
+    images: [
+      {
+        url: logoTransparentFull.src,
+        alt: "Aptrive",
+      },
+    ],
   },
 
   twitter: {
@@ -97,11 +107,21 @@ export const metadata: Metadata = {
     title: "Aptrive — Master the Test. Unlock Your Future.",
     description:
       "Intelligent preparation platform for Pakistan's competitive university entrance examinations.",
+    images: [logoTransparentFull.src],
   },
 
   icons: {
-    icon: "/icon.png",
-    apple: "/icon.png",
+    icon: [
+      { url: "/favicon.ico", sizes: "any" },
+      { url: icon32.src, type: "image/png", sizes: "32x32" },
+      { url: icon192.src, type: "image/png", sizes: "192x192" },
+    ],
+    shortcut: ["/favicon.ico"],
+    apple: [{ url: appleIcon180.src, type: "image/png", sizes: "180x180" }],
+    other: [
+      { rel: "android-chrome", url: icon192.src, sizes: "192x192" },
+      { rel: "mask-icon", url: icon32.src, color: "#6f45ff" },
+    ],
   },
 };
 

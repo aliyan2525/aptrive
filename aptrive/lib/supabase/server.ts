@@ -2,6 +2,8 @@ import { createServerClient } from "@supabase/ssr";
 import { cookies } from "next/headers";
 import type { Database } from "@/lib/database.types";
 
+import { cache } from "react";
+
 /**
  * Supabase client for use in Server Components, Server Actions, and
  * Route Handlers. Must be created fresh on every call (it reads the
@@ -12,7 +14,7 @@ import type { Database } from "@/lib/database.types";
  * browser treats it as a session cookie — cleared on browser close —
  * instead of the default persistent one.
  */
-export async function createClient(options?: { persistSession?: boolean }) {
+export const createClient = cache(async (options?: { persistSession?: boolean }) => {
   const cookieStore = await cookies();
   const persistSession = options?.persistSession ?? true;
 
@@ -42,7 +44,7 @@ export async function createClient(options?: { persistSession?: boolean }) {
       },
     }
   );
-}
+});
 
 import { createClient as createSupabaseClient } from "@supabase/supabase-js";
 

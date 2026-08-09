@@ -2275,6 +2275,7 @@ export type Database = {
       }
     }
     Functions: {
+      get_dashboard_data: { Args: { p_user_id: string }; Returns: Json }
       is_admin: { Args: never; Returns: boolean }
       is_staff: { Args: never; Returns: boolean }
       record_attempt_and_update_progress: {
