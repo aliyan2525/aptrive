@@ -26,8 +26,8 @@ export function useScrollProgress(
   const progressRef = useRef(0);
 
   // Map legacy GSAP strings (e.g. "top 75%") to Framer Motion offset strings (e.g. "start 75%")
-  const fmStart = start.replace("top", "start").replace("bottom", "end") as `${string} ${string}`;
-  const fmEnd = end.replace("top", "start").replace("bottom", "end") as `${string} ${string}`;
+  const fmStart = start.replace("top", "start").replace("bottom", "end") as any;
+  const fmEnd = end.replace("top", "start").replace("bottom", "end") as any;
 
   const { scrollYProgress } = useScroll({
     target: scopeRef,
