@@ -18,40 +18,40 @@ type ThemeConfig = {
 
 const themes: Record<string, ThemeConfig> = {
   nust: {
-    gradient: "from-blue-500/10 via-blue-500/5 to-transparent",
-    badgeBg: "bg-blue-500/10",
-    badgeText: "text-blue-600 dark:text-blue-400",
-    shadow: "hover:shadow-blue-500/20",
+    gradient: "from-blue-500/20 via-blue-500/10 to-transparent",
+    badgeBg: "bg-blue-500/15 backdrop-blur-xl border-blue-500/20",
+    badgeText: "text-blue-700 dark:text-blue-300",
+    shadow: "hover:shadow-blue-500/25 hover:border-blue-500/40",
   },
   fast: {
-    gradient: "from-emerald-500/10 via-emerald-500/5 to-transparent",
-    badgeBg: "bg-emerald-500/10",
-    badgeText: "text-emerald-600 dark:text-emerald-400",
-    shadow: "hover:shadow-emerald-500/20",
+    gradient: "from-emerald-500/20 via-emerald-500/10 to-transparent",
+    badgeBg: "bg-emerald-500/15 backdrop-blur-xl border-emerald-500/20",
+    badgeText: "text-emerald-700 dark:text-emerald-300",
+    shadow: "hover:shadow-emerald-500/25 hover:border-emerald-500/40",
   },
   giki: {
-    gradient: "from-orange-500/10 via-orange-500/5 to-transparent",
-    badgeBg: "bg-orange-500/10",
-    badgeText: "text-orange-600 dark:text-orange-400",
-    shadow: "hover:shadow-orange-500/20",
+    gradient: "from-orange-500/20 via-orange-500/10 to-transparent",
+    badgeBg: "bg-orange-500/15 backdrop-blur-xl border-orange-500/20",
+    badgeText: "text-orange-700 dark:text-orange-300",
+    shadow: "hover:shadow-orange-500/25 hover:border-orange-500/40",
   },
   pieas: {
-    gradient: "from-purple-500/10 via-purple-500/5 to-transparent",
-    badgeBg: "bg-purple-500/10",
-    badgeText: "text-purple-600 dark:text-purple-400",
-    shadow: "hover:shadow-purple-500/20",
+    gradient: "from-purple-500/20 via-purple-500/10 to-transparent",
+    badgeBg: "bg-purple-500/15 backdrop-blur-xl border-purple-500/20",
+    badgeText: "text-purple-700 dark:text-purple-300",
+    shadow: "hover:shadow-purple-500/25 hover:border-purple-500/40",
   },
   comsats: {
-    gradient: "from-cyan-500/10 via-cyan-500/5 to-transparent",
-    badgeBg: "bg-cyan-500/10",
-    badgeText: "text-cyan-600 dark:text-cyan-400",
-    shadow: "hover:shadow-cyan-500/20",
+    gradient: "from-cyan-500/20 via-cyan-500/10 to-transparent",
+    badgeBg: "bg-cyan-500/15 backdrop-blur-xl border-cyan-500/20",
+    badgeText: "text-cyan-700 dark:text-cyan-300",
+    shadow: "hover:shadow-cyan-500/25 hover:border-cyan-500/40",
   },
   ned: {
-    gradient: "from-rose-500/10 via-rose-500/5 to-transparent",
-    badgeBg: "bg-rose-500/10",
-    badgeText: "text-rose-600 dark:text-rose-400",
-    shadow: "hover:shadow-rose-500/20",
+    gradient: "from-rose-500/20 via-rose-500/10 to-transparent",
+    badgeBg: "bg-rose-500/15 backdrop-blur-xl border-rose-500/20",
+    badgeText: "text-rose-700 dark:text-rose-300",
+    shadow: "hover:shadow-rose-500/25 hover:border-rose-500/40",
   },
 };
 
@@ -100,10 +100,10 @@ export default function PopularUniversities() {
               className={`relative flex h-full flex-col overflow-hidden rounded-2xl border border-line bg-panel transition-all duration-500 hover:-translate-y-1.5 hover:shadow-2xl hover:border-line-strong ${theme.shadow}`}
             >
               {/* Animated Background Gradient */}
-              <div className={`absolute bottom-0 left-0 right-0 h-40 bg-gradient-to-t ${theme.gradient} opacity-60 transition-opacity duration-500 group-hover:opacity-100 pointer-events-none`} />
+              <div className={`absolute inset-0 bg-gradient-to-br ${theme.gradient} opacity-40 transition-opacity duration-700 group-hover:opacity-100 pointer-events-none`} />
 
               {/* Decorative graphic layer (simulating the beautiful backgrounds) */}
-              <div className="absolute -bottom-8 -right-8 h-48 w-48 rounded-full bg-white/5 blur-3xl mix-blend-overlay pointer-events-none" />
+              <div className={`absolute -bottom-8 -right-8 h-64 w-64 rounded-full ${theme.badgeBg} blur-3xl pointer-events-none transition-all duration-700 group-hover:scale-110`} />
               
               <div className="relative z-10 flex flex-col h-full p-6 pb-20">
                 <div className="flex items-start justify-between gap-4">

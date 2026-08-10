@@ -12,13 +12,13 @@ type UniversityLogoProps = {
 };
 
 const SIZE_TO_PADDING: Record<number, string> = {
-  28: "p-1",
-  32: "p-1",
-  36: "p-1.5",
-  40: "p-1.5",
-  48: "p-2",
-  56: "p-2",
-  64: "p-2.5",
+  28: "p-0.5",
+  32: "p-0.5",
+  36: "p-1",
+  40: "p-1",
+  48: "p-1.5",
+  56: "p-1.5",
+  64: "p-2",
 };
 
 /**
@@ -39,7 +39,7 @@ export default function UniversityLogo({
 
   return (
     <div
-      className={`flex shrink-0 items-center justify-center overflow-hidden rounded-2xl border border-black/[0.06] bg-white shadow-[0_8px_24px_-16px_rgba(15,23,42,0.35),inset_0_1px_0_rgba(255,255,255,0.9)] ${padding} ${className}`}
+      className={`flex shrink-0 items-center justify-center overflow-hidden rounded-2xl border border-black/[0.04] bg-white/60 mix-blend-multiply shadow-sm ${padding} ${className}`}
       style={{ width: size, height: size }}
     >
       {logo.available ? (

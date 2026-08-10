@@ -1,3 +1,4 @@
+import { Suspense } from "react";
 import { redirect } from "next/navigation";
 import AuthenticatedShell from "@/components/app/AuthenticatedShell";
 import type { HeaderUser } from "@/components/UserMenu";
@@ -47,7 +48,9 @@ export default async function AppLayout({
       notifications={notifications}
       unreadCount={unreadCount}
     >
-      {children}
+      <Suspense fallback={<div className="flex-1 animate-pulse bg-panel/50" />}>
+        {children}
+      </Suspense>
     </AuthenticatedShell>
   );
 }

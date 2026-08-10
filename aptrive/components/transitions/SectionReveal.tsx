@@ -1,8 +1,7 @@
 "use client";
 
-import { useRef, type ReactNode } from "react";
-import gsap from "gsap";
-import { useScrollTimeline } from "@/lib/scroll/useScrollTimeline";
+import React, { type ReactNode } from "react";
+import { motion, Variants } from "framer-motion";
 
 interface SectionRevealProps {
   children: ReactNode;
@@ -14,15 +13,6 @@ interface SectionRevealProps {
   delay?: number;
 }
 
-/**
- * GSAP/ScrollTrigger version of the same "fade + rise into view"
- * intent as components/Reveal.tsx, built on useScrollTimeline so it
- * can take part in richer, cross-section timelines later (the
- * "objects carry momentum into the next section" part of the scroll-
- * storytelling brief) without a rewrite. Reveal.tsx is left in place
- * unchanged — it's a fine, cheap CSS-only choice for a page that
- * doesn't need staggering or GSAP.
- */
 export default function SectionReveal({
   children,
   className = "",
@@ -30,28 +20,58 @@ export default function SectionReveal({
   y = 32,
   delay = 0,
 }: SectionRevealProps) {
-  const ref = useRef<HTMLDivElement>(null);
-
-  useScrollTimeline(
-    ref,
-    (timeline, { scope }) => {
-      const targets = stagger ? Array.from(scope.children) : scope;
-      gsap.set(targets, { opacity: 0, y });
-      timeline.to(targets, {
-        opacity: 1,
-        y: 0,
+  const containerVariants: Variants = {
+    hidden: { opacity: 0, y: stagger ? 0 : y },
+    visible: {
+      opacity: 1,
+      y: 0,
+      transition: {
         duration: 0.8,
         delay,
-        ease: "power3.out",
-        stagger: stagger ? 0.08 : 0,
-      });
+        ease: [0.165, 0.84, 0.44, 1],
+        staggerChildren: stagger ? 0.08 : 0,
+        delayChildren: delay,
+      },
     },
-    { start: "top 85%" }
-  );
+  };
 
+  const childVariants: Variants = {
+    hidden: { opacity: 0, y },
+    visible: {
+      opacity: 1,
+      y: 0,
+      transition: { duration: 0.8, ease: [0.165, 0.84, 0.44, 1] },
+    },
+  };
+
+  if (!stagger) {
+    return (
+      <motion.div
+        className={className}
+        initial="hidden"
+        whileInView="visible"
+        viewport={{ once: true, margin: "0px 0px -15% 0px" }}
+        variants={containerVariants}
+      >
+        {children}
+      </motion.div>
+    );
+  }
+
+  // With stagger, we map children and wrap them so they stagger automatically.
   return (
-    <div ref={ref} className={className}>
-      {children}
-    </div>
+    <motion.div
+      className={className}
+      initial="hidden"
+      whileInView="visible"
+      viewport={{ once: true, margin: "0px 0px -15% 0px" }}
+      variants={containerVariants}
+    >
+      {React.Children.map(children, (child, i) => (
+        <motion.div key={i} variants={childVariants}>
+          {child}
+        </motion.div>
+      ))}
+    </motion.div>
   );
 }

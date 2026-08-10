@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Space_Grotesk, Inter, IBM_Plex_Mono } from "next/font/google";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import { Analytics } from "@vercel/analytics/react";
@@ -7,14 +7,12 @@ import "./globals.css";
 import appleIcon180 from "./apple-icon-180x180.png";
 import icon192 from "./icon-192x192.png";
 import icon32 from "./icon-32x32.png";
-import logoTransparentFull from "./logo-transparent-full.png";
+import logoTransparentFull from "./logo-transparent-full.webp";
 
 
 import { OrganizationSchema } from "@/components/StructuredData";
 import GoogleAnalytics from "@/components/analytics/GoogleAnalytics";
-import { Scene3DProvider } from "@/components/three/Scene3DProvider";
-import { SmoothScrollProvider } from "@/lib/scroll/SmoothScrollProvider";
-import PageTransition from "@/components/transitions/PageTransition";
+
 
 const spaceGrotesk = Space_Grotesk({
   variable: "--font-space-grotesk",
@@ -39,6 +37,13 @@ const ibmPlexMono = IBM_Plex_Mono({
 });
 
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "https://aptrive.com";
+
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  maximumScale: 5, // allows a11y zooming but handles default sizing well
+  themeColor: "#ffffff",
+};
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
@@ -140,13 +145,9 @@ export default function RootLayout({
       <body className="min-h-full flex flex-col bg-graphite text-fg antialiased">
         <OrganizationSchema />
 
-        <SmoothScrollProvider>
-          <Scene3DProvider>
-            <main className="flex-1">
-              <PageTransition>{children}</PageTransition>
-            </main>
-          </Scene3DProvider>
-        </SmoothScrollProvider>
+        <main className="flex-1">
+          {children}
+        </main>
 
         {/* Vercel Analytics */}
         <Analytics />

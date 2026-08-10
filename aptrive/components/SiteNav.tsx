@@ -4,7 +4,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion, AnimatePresence, useScroll, useMotionValueEvent } from "framer-motion";
 import { ChevronDown } from "lucide-react";
 import UserMenu, { type HeaderUser } from "@/components/UserMenu";
 import Button from "@/components/ui/Button";
@@ -66,44 +66,43 @@ export default function SiteNav({
     || pathname.startsWith("/terms");
 
   useEffect(() => {
-    document.body.style.overflow = mobileOpen ? "hidden" : "";
+    if (mobileOpen) {
+      document.body.classList.add("mobile-scroll-lock");
+    } else {
+      document.body.classList.remove("mobile-scroll-lock");
+    }
     return () => {
-      document.body.style.overflow = "";
+      document.body.classList.remove("mobile-scroll-lock");
     };
   }, [mobileOpen]);
 
-  useEffect(() => {
-    function update() {
-      const y = window.scrollY;
-      setScrolled(y > 20);
+  const { scrollY } = useScroll();
+  useMotionValueEvent(scrollY, "change", (latest) => {
+    setScrolled(latest > 20);
 
-      if (mobileOpen) {
-        lastY.current = y;
-        return;
-      }
-
-      if (y < 80) {
-        setHidden(false);
-      } else if (y > lastY.current + 4) {
-        setHidden(true);
-      } else if (y < lastY.current - 4) {
-        setHidden(false);
-      }
-      lastY.current = y;
+    if (mobileOpen) {
+      lastY.current = latest;
+      return;
     }
-    update();
-    window.addEventListener("scroll", update, { passive: true });
-    return () => window.removeEventListener("scroll", update);
-  }, [mobileOpen]);
+
+    if (latest < 80) {
+      setHidden(false);
+    } else if (latest > lastY.current + 4) {
+      setHidden(true);
+    } else if (latest < lastY.current - 4) {
+      setHidden(false);
+    }
+    lastY.current = latest;
+  });
 
   return (
     <>
       <header
-        className={`fixed left-0 right-0 top-0 z-50 transition-all duration-500 ease-out ${
+        className={`fixed left-0 right-0 top-0 z-50 transition-all duration-500 ease-out pt-4 ${
           hidden ? "-translate-y-full" : "translate-y-0"
-        } ${scrolled ? "pt-4" : "pt-0"}`}
+        }`}
       >
-        <div className={`mx-auto flex transition-all duration-500 ${scrolled ? "max-w-[1220px] rounded-[1.35rem] border border-line bg-white/80 px-4 py-2.5 shadow-[0_18px_55px_rgba(20,32,70,0.10)] backdrop-blur-2xl" : "container-aptrive h-20 items-center border-b border-line/60 bg-white/70 backdrop-blur-xl"}`}>
+        <div className="mx-auto flex items-center transition-all duration-500 max-w-[1220px] rounded-[1.35rem] border border-line bg-white/80 px-4 py-2.5 shadow-[0_18px_55px_rgba(20,32,70,0.10)] backdrop-blur-2xl">
           <div className="flex w-full items-center justify-between">
             <Link href={user ? "/dashboard" : "/"} className="flex items-center gap-2.5 group" aria-label="Aptrive">
               <div className="relative">
@@ -187,7 +186,7 @@ export default function SiteNav({
 
               <button
                 type="button"
-                className="pressable flex h-10 w-10 items-center justify-center rounded-full border border-black/10 dark:border-white/10 text-black dark:text-white md:hidden"
+                className="pressable flex h-11 w-11 items-center justify-center rounded-full border border-black/10 dark:border-white/10 text-black dark:text-white md:hidden"
                 aria-expanded={mobileOpen}
                 aria-controls="mobile-nav"
                 aria-label={mobileOpen ? "Close menu" : "Open menu"}
@@ -214,7 +213,7 @@ export default function SiteNav({
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -20 }}
             id="mobile-nav" 
-            className="fixed inset-0 top-16 z-40 bg-white/95 dark:bg-black/95 backdrop-blur-2xl md:hidden"
+            className="fixed inset-0 top-16 z-40 bg-white/95 dark:bg-black/95 backdrop-blur-2xl md:hidden overflow-y-auto overscroll-contain h-[100dvh] pb-24"
           >
             <nav className="container-aptrive flex flex-col gap-1 py-6" aria-label="Mobile">
               {visibleLinks.map((link) => (
@@ -222,7 +221,7 @@ export default function SiteNav({
                   key={link.href}
                   href={link.href}
                   onClick={() => setMobileOpen(false)}
-                  className={`rounded-xl px-3 py-3 text-base font-medium transition-colors duration-200 ${
+                  className={`rounded-xl px-4 py-4 text-base font-medium transition-colors duration-200 ${
                     link.match(pathname) ? "bg-black/5 text-black dark:bg-white/10 dark:text-white" : "text-black/60 hover:bg-black/5 hover:text-black dark:text-white/60 dark:hover:bg-white/5 dark:hover:text-white"
                   }`}
                   aria-current={link.match(pathname) ? "page" : undefined}
@@ -243,13 +242,13 @@ export default function SiteNav({
                   </>
                 ) : (
                   <div className="grid grid-cols-3 gap-3">
-                    <Link href="/dashboard" onClick={() => setMobileOpen(false)} className="rounded-xl border border-black/10 dark:border-white/10 px-3 py-2 text-center text-xs text-black/60 dark:text-white/60">
+                    <Link href="/dashboard" onClick={() => setMobileOpen(false)} className="rounded-xl border border-black/10 dark:border-white/10 px-3 py-3 text-center text-xs text-black/60 dark:text-white/60">
                       Dashboard
                     </Link>
-                    <Link href="/profile" onClick={() => setMobileOpen(false)} className="rounded-xl border border-black/10 dark:border-white/10 px-3 py-2 text-center text-xs text-black/60 dark:text-white/60">
+                    <Link href="/profile" onClick={() => setMobileOpen(false)} className="rounded-xl border border-black/10 dark:border-white/10 px-3 py-3 text-center text-xs text-black/60 dark:text-white/60">
                       Profile
                     </Link>
-                    <Link href="/leaderboard" onClick={() => setMobileOpen(false)} className="rounded-xl bg-black px-3 py-2 text-center text-xs font-semibold text-white dark:bg-white dark:text-black">
+                    <Link href="/leaderboard" onClick={() => setMobileOpen(false)} className="rounded-xl bg-black px-3 py-3 text-center text-xs font-semibold text-white dark:bg-white dark:text-black">
                       Rankings
                     </Link>
                   </div>

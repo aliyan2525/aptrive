@@ -84,7 +84,6 @@
 
 html {
   scroll-behavior: auto; /* Handled by Lenis for smooth scrolling */
-  overflow-x: hidden;
 }
 
 body {
@@ -95,8 +94,17 @@ body {
   color: var(--fg);
   font-family: var(--font-body);
   -webkit-font-smoothing: antialiased;
-  overflow-x: hidden;
-  overscroll-behavior-y: none;
+}
+
+/* 
+ * Utility to prevent background scrolling when mobile menu is open.
+ * Instead of applying 'overflow: hidden' to body via JS (which fails on iOS Safari),
+ * we use this utility class.
+ */
+.mobile-scroll-lock {
+  overflow: hidden;
+  touch-action: none;
+  overscroll-behavior: none;
 }
 
 /* Fluid Typography Scales */

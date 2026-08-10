@@ -175,15 +175,25 @@ const profiles: Record<string, Omit<UniversityExperience, "university" | "slug">
   },
 };
 
-const defaultProfile = (university: University): Omit<UniversityExperience, "university" | "slug"> => ({
+const themeMap: Record<string, { gradient: string; accent: string; textAccent: string; visual: UniversityExperience["identity"]["visual"] }> = {
+  giki: { gradient: "from-orange-950 via-orange-900 to-red-950", accent: "bg-orange-300", textAccent: "text-orange-200", visual: "machine" },
+  pieas: { gradient: "from-purple-950 via-purple-900 to-violet-950", accent: "bg-purple-300", textAccent: "text-purple-200", visual: "atom" },
+  comsats: { gradient: "from-cyan-950 via-cyan-900 to-blue-950", accent: "bg-cyan-300", textAccent: "text-cyan-200", visual: "network" },
+  ned: { gradient: "from-rose-950 via-rose-900 to-pink-950", accent: "bg-rose-300", textAccent: "text-rose-200", visual: "gold" },
+};
+
+const defaultProfile = (university: University): Omit<UniversityExperience, "university" | "slug"> => {
+  const t = themeMap[university.id] || { gradient: "from-slate-900 via-teal-900 to-slate-800", accent: "bg-teal-300", textAccent: "text-teal-200", visual: "network" as const };
+  
+  return {
   identity: {
     signal: "Admission intelligence",
     headline: `Build a focused preparation system for ${university.name}.`,
     subhead: `A premium university-specific roadmap for ${university.fullName}, combining merit planning, practice, and analytics.`,
-    visual: "network",
-    gradient: "from-slate-900 via-teal-900 to-slate-800",
-    accent: "bg-teal-300",
-    textAccent: "text-teal-200",
+    visual: t.visual,
+    gradient: t.gradient,
+    accent: t.accent,
+    textAccent: t.textAccent,
     dark: "text-white",
   },
   heroStats: [
@@ -239,7 +249,8 @@ const defaultProfile = (university: University): Omit<UniversityExperience, "uni
     { q: "Are formulas final?", a: "Aptrive shows confirmed formulas where available, but applicants should always verify the latest admission cycle on the official website." },
     { q: "Can I use this for O/A Level?", a: "Use IBCC equivalence marks in the aggregate calculator where equivalence-based inputs are required." },
   ],
-});
+  };
+};
 
 export const universityExperiences: UniversityExperience[] = universities.map((university) => ({
   university,

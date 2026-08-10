@@ -2,11 +2,7 @@
 
 import { useEffect, useRef } from "react";
 import Lenis from "lenis";
-import gsap from "gsap";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { usePathname } from "next/navigation";
-
-gsap.registerPlugin(ScrollTrigger);
 
 // Explicit easing curve (Lenis's own documented default) rather than
 // leaving it implicit — every later phase's "does this feel right"
@@ -27,9 +23,7 @@ const LENIS_EASING = (t: number) => Math.min(1, 1.001 - Math.pow(2, -10 * t));
  * here — snapping every scroll gesture site-wide fights a
  * content-heavy page (forms, long reading sections, the dashboard)
  * more than it helps. Sections that want a snap point should opt in
- * locally via ScrollTrigger's own `snap` option inside their
- * `useScrollTimeline` call, which already has access to the same
- * Lenis-synced ScrollTrigger instance this provider sets up below.
+ * locally via framer-motion inside their `useScrollTimeline` call.
  */
 export function SmoothScrollProvider({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
@@ -67,20 +61,16 @@ export function SmoothScrollProvider({ children }: { children: React.ReactNode }
     });
     lenisRef.current = lenis;
 
-    // Keep ScrollTrigger's cached scroll position in sync with Lenis's
-    // virtual scroll rather than the (unused, while Lenis is active)
-    // native scrollTop.
-    lenis.on("scroll", ScrollTrigger.update);
-
-    // Drive Lenis's internal RAF from GSAP's ticker — one animation
-    // loop for the whole page instead of Lenis and GSAP each running
-    // their own requestAnimationFrame.
-    const update = (time: number) => lenis.raf(time * 1000);
-    gsap.ticker.add(update);
-    gsap.ticker.lagSmoothing(0);
+    // Drive Lenis's internal RAF with a standard requestAnimationFrame loop
+    let rafId: number;
+    const raf = (time: number) => {
+      lenis.raf(time);
+      rafId = requestAnimationFrame(raf);
+    };
+    rafId = requestAnimationFrame(raf);
 
     return () => {
-      gsap.ticker.remove(update);
+      cancelAnimationFrame(rafId);
       lenis.destroy();
       lenisRef.current = null;
     };
@@ -96,12 +86,10 @@ export function SmoothScrollProvider({ children }: { children: React.ReactNode }
       lenisRef.current.scrollTo(0, { immediate: true });
       requestAnimationFrame(() => {
         lenisRef.current?.resize();
-        ScrollTrigger.refresh();
       });
     } else {
       // Reduced-motion path: no Lenis instance exists, reset native scroll.
       window.scrollTo(0, 0);
-      requestAnimationFrame(() => ScrollTrigger.refresh());
     }
   }, [pathname]);
 
