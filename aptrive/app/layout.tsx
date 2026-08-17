@@ -1,4 +1,4 @@
-import type { Metadata, Viewport } from "next";
+﻿import type { Metadata, Viewport } from "next";
 import { Space_Grotesk, Inter, IBM_Plex_Mono } from "next/font/google";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import { Analytics } from "@vercel/analytics/react";
@@ -49,12 +49,12 @@ export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
 
   title: {
-    default: "Aptrive — Master the Test. Unlock Your Future.",
-    template: "%s · Aptrive",
+    default: "Aptrive | Entrance Exam Prep for Pakistan's Top Universities",
+    template: "%s Â· Aptrive",
   },
 
   description:
-    "Aptrive is an intelligent learning platform for Pakistan's most competitive university entrance examinations — structured education, analytics, and modern technology built for ambitious students.",
+    "Prepare for NUST NET, FAST, GIKI, and more with realistic mock exams, targeted practice, merit calculators, and focused study plans. Start with a free diagnostic.",
 
   keywords: [
     "NUST NET",
@@ -96,9 +96,9 @@ export const metadata: Metadata = {
     locale: "en_PK",
     url: siteUrl,
     siteName: "Aptrive",
-    title: "Aptrive — Master the Test. Unlock Your Future.",
+    title: "Aptrive | Entrance Exam Prep for Pakistan's Top Universities",
     description:
-      "Intelligent preparation platform for Pakistan's competitive university entrance examinations.",
+      "Prepare for NUST NET, FAST, GIKI, and more with realistic mock exams, targeted practice, merit calculators, and focused study plans. Start with a free diagnostic.",
     images: [
       {
         url: logoTransparentFull.src,
@@ -109,9 +109,9 @@ export const metadata: Metadata = {
 
   twitter: {
     card: "summary_large_image",
-    title: "Aptrive — Master the Test. Unlock Your Future.",
+    title: "Aptrive | Entrance Exam Prep for Pakistan's Top Universities",
     description:
-      "Intelligent preparation platform for Pakistan's competitive university entrance examinations.",
+      "Prepare for NUST NET, FAST, GIKI, and more with realistic mock exams, targeted practice, merit calculators, and focused study plans. Start with a free diagnostic.",
     images: [logoTransparentFull.src],
   },
 
@@ -161,3 +161,5 @@ export default function RootLayout({
     </html>
   );
 }
+
+

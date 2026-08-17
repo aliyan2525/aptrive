@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+﻿import type { Metadata } from "next";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { ArrowRight, BrainCircuit, Timer, LineChart, Compass, Star } from "lucide-react";
@@ -14,6 +14,7 @@ import AnimatedJourney from "@/components/journey/AnimatedJourney";
 
 import HeroBlobsSceneWrapper from "@/components/hero/HeroBlobsSceneWrapper";
 import HeroCTAButtons from "@/components/hero/HeroCTAButtons";
+import SignalToScore from "@/components/hero/SignalToScore";
 import HeroAtmosphere from "@/components/hero/HeroAtmosphere";
 import HeroOrbitDecor from "@/components/hero/HeroOrbitDecor";
 import HeroOrbitIcons from "@/components/hero/HeroOrbitIcons";
@@ -25,34 +26,34 @@ import HeroTrustedBy from "@/components/hero/HeroTrustedBy";
 import { siteStats } from "@/lib/site-stats";
 
 export const metadata: Metadata = {
-  title: "Aptrive — The Global Standard for Entrance Prep",
-  description: "A beautifully engineered platform to master your university entrance exams.",
+  title: "Aptrive â€” Entrance Exam Prep for Pakistan's Top Universities",
+  description: "Aptrive combines realistic mock exams, targeted practice, and merit tools to help you prepare with a clear plan for your target university.",
 };
 
 type PillarColor = "blue" | "teal" | "purple" | "orange";
 
 const pillars = [
   {
-    title: "Dynamic Intelligence",
-    body: "An engine that maps your weakest links in real time and rewrites your path accordingly.",
+    title: "Targeted Practice",
+    body: "Find the topics costing you marks and focus your next study session where it matters most.",
     icon: <BrainCircuit strokeWidth={1.5} className="h-7 w-7" />,
     color: "blue" as PillarColor,
   },
   {
-    title: "Precision Simulation",
-    body: "Experience the true velocity of exam day in a high-fidelity mock environment.",
+    title: "Realistic Mock Exams",
+    body: "Practise with timed questions in a high-fidelity exam environment before test day.",
     icon: <Timer strokeWidth={1.5} className="h-7 w-7" />,
     color: "orange" as PillarColor,
   },
   {
-    title: "Deep Analytics",
-    body: "Granular insights into your topic mastery and cognitive load during testing.",
+    title: "Progress You Can Use",
+    body: "See topic mastery, accuracy, and improvement trends without guesswork.",
     icon: <LineChart strokeWidth={1.5} className="h-7 w-7" />,
     color: "purple" as PillarColor,
   },
   {
-    title: "Official Pathways",
-    body: "Navigate the complex landscape of Pakistan's elite universities with absolute clarity.",
+    title: "University-Aligned Preparation",
+    body: "Compare target universities, merit formulas, and preparation priorities in one clear path.",
     icon: <Compass strokeWidth={1.5} className="h-7 w-7" />,
     color: "teal" as PillarColor,
   },
@@ -76,20 +77,20 @@ export default async function Home() {
 
         <div className="container-aptrive relative z-10 pb-20 pt-14 md:pb-28 md:pt-20">
           <div className="grid items-center gap-14 lg:grid-cols-[1.05fr_1fr] lg:gap-8">
-            {/* Left column — copy */}
+            {/* Left column â€” copy */}
             <div className="flex flex-col items-start text-left">
               <Reveal>
                 <div className="inline-flex items-center gap-2.5 rounded-full border border-black/[0.06] bg-white/80 px-5 py-2 shadow-sm backdrop-blur-sm">
                   <span className="flex h-2.5 w-2.5 rounded-full bg-teal-500 shadow-[0_0_10px_rgba(20,184,166,0.7)] animate-pulse" />
                   <span className="text-[11px] font-semibold uppercase tracking-[0.14em] text-neutral-500">
-                    The New Standard in EdTech
+                    Pakistan entrance prep, made measurable
                   </span>
                 </div>
               </Reveal>
 
               <Reveal delay={100}>
                 <h1 className="mt-8 font-display text-[2.75rem] font-bold leading-[0.98] tracking-tight text-neutral-900 sm:text-[3.5rem] lg:text-[4.15rem]">
-                  Master your future.
+                  Know your score. Raise it.
                   <br />
                   With{" "}
                   <span className="bg-gradient-to-r from-teal-500 via-sky-500 to-violet-500 bg-clip-text text-transparent">
@@ -101,7 +102,7 @@ export default async function Home() {
 
               <Reveal delay={200}>
                 <p className="mt-7 max-w-xl text-lg leading-relaxed text-neutral-500">
-                  Aptrive combines responsive 3D intelligence, elite analytics, and officially aligned pathways to transform your raw potential into an admission letter.
+                  Aptrive combines realistic mock exams, targeted practice, and merit tools to help you prepare with a clear plan for your target university.
                 </p>
               </Reveal>
 
@@ -131,11 +132,12 @@ export default async function Home() {
               </Reveal>
             </div>
 
-            {/* Right column — liquid-glass 3D composition */}
+            {/* Right column â€” liquid-glass 3D composition */}
             <div className="relative h-[420px] sm:h-[520px] lg:-ml-12 lg:h-[650px] xl:-ml-20">
               <HeroOrbitDecor />
               <HeroBlobsSceneWrapper />
               <HeroOrbitIcons />
+        <SignalToScore />
               <HeroUniversityBadges />
               <HeroAIPathwayCard />
               <HeroAtmosphere />
@@ -158,9 +160,9 @@ export default async function Home() {
         <div className="container-aptrive relative">
           <Reveal>
             <div className="mx-auto max-w-4xl text-center">
-              <Eyebrow className="text-violet-600">Engineering Excellence</Eyebrow>
+              <Eyebrow className="text-violet-600">Precision Mock Exams</Eyebrow>
               <h2 className="text-display-2 text-fg mt-8">
-                Built like serious software for students who need clarity.
+                Practice with realistic questions, timing, and difficulty so exam day feels familiar.
               </h2>
             </div>
           </Reveal>
@@ -186,9 +188,9 @@ export default async function Home() {
         <div className="container-aptrive relative">
           <Reveal>
             <div className="mx-auto max-w-3xl text-center">
-              <Eyebrow className="text-teal">Cognitive Path</Eyebrow>
+              <Eyebrow className="text-teal">Adaptive Study Paths</Eyebrow>
               <h2 className="text-display-2 text-fg mt-8">
-                A seamless progression to the finish line.
+                Find your weak topics and get a focused plan for what to practise next.
               </h2>
             </div>
           </Reveal>
@@ -201,9 +203,9 @@ export default async function Home() {
         <Reveal>
           <div className="flex flex-col md:flex-row md:items-end justify-between gap-8 border-b border-line pb-12">
             <div className="max-w-2xl">
-              <Eyebrow>Official Integration</Eyebrow>
+              <Eyebrow>University-Aligned Prep</Eyebrow>
               <h2 className="text-display-1 mt-6 text-fg">
-                Aligned with elite merit pathways.
+                Prepare around the subjects, formats, and merit calculations that matter for your target universities.
               </h2>
             </div>
             <Link
@@ -222,13 +224,13 @@ export default async function Home() {
       <section className="bg-gradient-to-b from-white to-[#f3f7ff] py-28 md:py-40 z-10 relative border-t border-line">
         <div className="container-aptrive text-center">
           <Reveal>
-            <Eyebrow className="text-teal">The Final Step</Eyebrow>
+            <Eyebrow className="text-teal">See what to study next</Eyebrow>
             <h2 className="text-hero text-fg mt-8 max-w-5xl mx-auto mix-blend-plus-lighter">
-              Your next acceptance letter starts with today&apos;s session.
+              Take a free diagnostic to see where you standand what to study next.
             </h2>
             <div className="mt-16">
               <Button href="/signup" variant="primary" size="lg" className="h-16 px-12 text-lg">
-                Begin the journey
+                Know your score. Raise it.
               </Button>
             </div>
           </Reveal>
@@ -237,3 +239,7 @@ export default async function Home() {
     </>
   );
 }
+
+
+
+

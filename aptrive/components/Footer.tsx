@@ -1,4 +1,4 @@
-import Link from "next/link";
+﻿import Link from "next/link";
 import Image from "next/image";
 import { Heart } from "lucide-react";
 
@@ -69,13 +69,13 @@ export default function Footer() {
           <div>
             <h4 className="font-mono-data text-xs font-semibold uppercase tracking-[0.14em] text-black dark:text-white transition-colors">Get started</h4>
             <p className="mt-6 text-sm text-black/60 dark:text-white/60 leading-relaxed transition-colors">
-              Take a free diagnostic and see exactly where you stand against your peers.
+              Take a free diagnostic to see where you standand what to study next.
             </p>
             <Link
               href="/signup"
               className="mt-6 inline-flex items-center justify-center rounded-full bg-black text-white dark:bg-white px-5 py-2.5 text-sm font-bold dark:text-black transition-transform hover:scale-105"
             >
-              Start free diagnostic
+              Start the free diagnostic
             </Link>
           </div>
         </div>
@@ -84,7 +84,7 @@ export default function Footer() {
       <div className="container-aptrive relative z-10">
         <div className="border-t border-black/5 dark:border-white/5 py-8 flex flex-col gap-4 text-xs font-medium text-black/40 dark:text-white/40 md:flex-row md:items-center md:justify-between transition-colors">
           <div className="flex items-center gap-1.5">
-            <span>© {new Date().getFullYear()} Aptrive. All rights reserved.</span>
+            <span>Â© {new Date().getFullYear()} Aptrive. All rights reserved.</span>
           </div>
           <div className="flex items-center gap-1.5 font-mono-data">
             Built with <Heart className="h-3.5 w-3.5 text-rose-500 inline-block animate-pulse" /> in Pakistan
@@ -94,3 +94,4 @@ export default function Footer() {
     </footer>
   );
 }
+

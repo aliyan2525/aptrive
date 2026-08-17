@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
@@ -19,7 +19,7 @@ type NavItem = {
 const publicLinks: NavItem[] = [
   { href: "/", label: "Home", match: (path) => path === "/" },
   { href: "/library", label: "Library", match: (path) => path.startsWith("/library") },
-  { href: "/courses", label: "Courses", match: (path) => path.startsWith("/courses") || path.startsWith("/universities") },
+  { href: "/courses", label: "Prep", match: (path) => path.startsWith("/courses") || path.startsWith("/universities") },
 ];
 
 const authLinks: NavItem[] = [
@@ -179,7 +179,7 @@ export default function SiteNav({
                     Login
                   </Button>
                   <Button href="/signup" variant="primary" size="sm" className="hidden sm:inline-flex px-5">
-                    Create account
+                    Start diagnostic
                   </Button>
                 </>
               )}
@@ -198,7 +198,7 @@ export default function SiteNav({
                   })
                 }
               >
-                {mobileOpen ? "✕" : "☰"}
+                {mobileOpen ? "âœ•" : "â˜°"}
               </button>
             </div>
           </div>
@@ -237,7 +237,7 @@ export default function SiteNav({
                       Login
                     </Button>
                     <Button href="/signup" variant="primary" size="md" fullWidth onClick={() => setMobileOpen(false)} className="bg-black text-white dark:bg-white dark:text-black">
-                      Create account
+                      Start diagnostic
                     </Button>
                   </>
                 ) : (
@@ -261,3 +261,4 @@ export default function SiteNav({
     </>
   );
 }
+
