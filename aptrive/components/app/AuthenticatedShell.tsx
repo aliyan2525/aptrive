@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import type { NotificationItem } from "@/components/NotificationBell";
 import type { HeaderUser } from "@/components/UserMenu";
@@ -19,7 +19,7 @@ export default function AuthenticatedShell({
   children,
 }: AuthenticatedShellProps) {
   return (
-    <div className="min-h-screen bg-[#f7f9ff] dark:bg-[#0a0a0a] text-fg">
+    <div className="app-shell min-h-screen bg-[#f7f9ff] dark:bg-[#0a0a0a] text-fg">
       <div className="grid min-h-screen grid-cols-1 xl:grid-cols-[18rem_minmax(0,1fr)]">
         {/* Unified Sidebar */}
         <AppSidebar />
@@ -42,3 +42,4 @@ export default function AuthenticatedShell({
     </div>
   );
 }
+

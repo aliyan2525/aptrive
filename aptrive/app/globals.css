@@ -289,3 +289,97 @@ body {
   );
   animation: shimmer-slide 2s infinite;
 }
+
+/* Site-wide Aurora polish: shared depth, focus, surfaces, and motion safeguards. */
+body {
+  position: relative;
+  isolation: isolate;
+  background: var(--graphite);
+}
+
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  opacity: 0.22;
+  background-image:
+    linear-gradient(rgba(111, 69, 255, 0.045) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(35, 213, 196, 0.04) 1px, transparent 1px);
+  background-size: 72px 72px;
+  mask-image: radial-gradient(ellipse at center, black 0%, transparent 78%);
+}
+
+.app-shell {
+  background:
+    radial-gradient(circle at 86% 0%, oklch(82% 0.12 180 / 0.12), transparent 28rem),
+    radial-gradient(circle at 0% 72%, oklch(82% 0.12 290 / 0.08), transparent 34rem),
+    var(--graphite);
+}
+
+.glass-panel,
+.premium-shell,
+.surface-card {
+  position: relative;
+  isolation: isolate;
+  border-color: color-mix(in oklab, var(--line-strong) 76%, transparent);
+  box-shadow: 0 18px 60px rgba(33, 45, 92, 0.08), inset 0 1px 0 rgba(255, 255, 255, 0.78);
+  transition: border-color 260ms var(--ease-smooth), box-shadow 260ms var(--ease-smooth), transform 260ms var(--ease-smooth);
+}
+
+.glass-panel::after,
+.premium-shell::after,
+.surface-card::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  border-radius: inherit;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.58), transparent 38%, rgba(111, 69, 255, 0.035));
+}
+
+.glass-panel:hover,
+.premium-shell:hover,
+.surface-card:hover {
+  border-color: color-mix(in oklab, var(--teal) 32%, var(--line-strong));
+  box-shadow: 0 24px 70px rgba(33, 45, 92, 0.12), inset 0 1px 0 rgba(255, 255, 255, 0.9);
+}
+
+button,
+a,
+[role="button"] {
+  -webkit-tap-highlight-color: transparent;
+}
+
+:focus-visible {
+  outline: 2px solid var(--teal);
+  outline-offset: 3px;
+  box-shadow: 0 0 0 5px color-mix(in oklab, var(--teal) 18%, transparent);
+}
+
+::selection {
+  color: var(--fg);
+  background: color-mix(in oklab, var(--teal) 28%, white);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .glass-panel,
+  .premium-shell,
+  .surface-card {
+    transition: none;
+  }
+
+  body::before {
+    opacity: 0.12;
+  }
+}
+
+@media (max-width: 767px) {
+  body::before {
+    background-size: 48px 48px;
+    opacity: 0.14;
+  }
+}
+
