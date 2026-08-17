@@ -1,10 +1,10 @@
-import type { Metadata } from "next";
+﻿import type { Metadata } from "next";
 import MeritEstimator from "@/components/MeritEstimator";
 import TickDivider from "@/components/TickDivider";
 import { nustPrograms } from "@/lib/nust-programs";
 
 export const metadata: Metadata = {
-  title: "Merit Estimator — Aptrive",
+  title: "Merit Estimator â€” Aptrive",
   description:
     "Estimate your chances of admission to NUST and other top Pakistani universities based on historical merit cutoffs.",
 };
@@ -12,7 +12,7 @@ export const metadata: Metadata = {
 export default function EstimatorPage() {
   return (
     <>
-      <section className="container-aptrive py-16 md:py-24">
+      <section className="tool-page container-aptrive py-16 md:py-24">
         <div className="max-w-2xl">
           <div className="eyebrow">Free tool</div>
           <h1 className="font-display mt-3 text-4xl font-semibold tracking-tight text-fg md:text-5xl">
@@ -30,7 +30,7 @@ export default function EstimatorPage() {
 
       <TickDivider />
 
-      <section className="container-aptrive py-16 md:py-24">
+      <section className="tool-page container-aptrive py-16 md:py-24">
         <div className="eyebrow">Data transparency</div>
         <h2 className="font-display mt-3 text-2xl font-semibold tracking-tight text-fg md:text-3xl">
           Based on real closing merits
@@ -47,3 +47,4 @@ export default function EstimatorPage() {
     </>
   );
 }
+

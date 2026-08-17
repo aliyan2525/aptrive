@@ -47,7 +47,7 @@ export default function AnalyticsPage() {
   ];
 
   return (
-    <main className="min-h-screen pt-24 pb-16 px-4 md:px-8">
+    <main className="analytics-aurora min-h-screen pt-24 pb-16 px-4 md:px-8">
       <div className="container-aptrive">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -67,7 +67,7 @@ export default function AnalyticsPage() {
             </div>
             <Link
               href="/practice"
-              className="pressable inline-flex h-12 items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-[var(--teal)] to-[var(--blue)] px-6 text-sm font-bold text-white shadow-[0_10px_30px_rgba(102,255,255,0.24)] hover:shadow-[0_15px_40px_rgba(102,255,255,0.35)] transition-all"
+              className="pressable inline-flex h-12 items-center justify-center gap-2 rounded-xl bg-violet-700 px-6 text-sm font-bold text-white shadow-[0_14px_32px_rgba(111,69,255,.2)] transition hover:-translate-y-0.5 hover:bg-violet-800"
             >
               Start Practice
               <Zap className="h-4 w-4" aria-hidden="true" />

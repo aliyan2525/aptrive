@@ -42,11 +42,11 @@ export default function MeritEstimator() {
 
   return (
     <div className="mx-auto w-full max-w-xl">
-      <div className="rounded-xl border border-line bg-panel p-6 md:p-8">
-        <h2 className="font-display text-2xl font-semibold text-fg">
+      <div className="premium-shell rounded-[1.75rem] border border-white/80 bg-white/80 p-6 shadow-[0_24px_70px_rgba(46,39,97,0.10)] backdrop-blur-xl md:p-8">
+        <div className="mb-6 flex items-start justify-between gap-4"><div><span className="eyebrow">Decision support</span><h2 className="mt-2 font-display text-2xl font-semibold text-fg">
           NUST Merit Estimator
-        </h2>
-        <p className="mt-2 text-sm text-muted">
+        </h2></div><span className="rounded-full bg-violet-500/10 px-3 py-1.5 text-[10px] font-semibold uppercase tracking-[0.16em] text-violet-700">NUST / live estimate</span></div>
+        <p className="mt-2 text-sm leading-6 text-muted">
           Enter your estimated aggregate to see your chances of admission for a specific program.
         </p>
 
@@ -67,7 +67,7 @@ export default function MeritEstimator() {
             placeholder="75.5"
             value={aggregate}
             onChange={(e) => setAggregate(e.target.value)}
-            className="mt-2 w-full rounded-sm border border-line bg-panel-2 px-4 py-3 text-sm text-fg outline-none transition-colors duration-200 placeholder:text-muted-2 focus:border-teal/50"
+            className="mt-2 w-full rounded-xl border border-neutral-200 bg-white/80 px-4 py-3 text-sm text-fg outline-none transition placeholder:text-muted-2 focus:border-violet-400 focus:ring-4 focus:ring-violet-500/10"
           />
 
           <div className="mt-6">
@@ -78,7 +78,7 @@ export default function MeritEstimator() {
               id="program"
               value={programCode}
               onChange={(e) => setProgramCode(e.target.value)}
-              className="pressable mt-2 w-full rounded-sm border border-line bg-panel-2 px-4 py-3 text-sm text-fg outline-none focus:border-teal/50"
+              className="pressable mt-2 w-full rounded-xl border border-neutral-200 bg-white/80 px-4 py-3 text-sm text-fg outline-none focus:border-violet-400 focus:ring-4 focus:ring-violet-500/10"
             >
               <option value="">Select a program…</option>
               {groupedNustPrograms.map((group) => (
@@ -95,14 +95,14 @@ export default function MeritEstimator() {
 
           <button
             type="submit"
-            className="mt-6 rounded-sm bg-teal px-5 py-2.5 text-sm font-semibold text-graphite hover:opacity-90"
+            className="pressable mt-6 w-full rounded-xl bg-violet-700 px-5 py-3 text-sm font-semibold text-white shadow-[0_12px_30px_rgba(111,69,255,0.22)] transition hover:-translate-y-0.5 hover:bg-violet-800 sm:w-auto"
           >
             Estimate chance
           </button>
         </form>
 
         {hasSubmitted && selectedProgram && canEstimate && chanceResult ? (
-          <div className="motion-card mt-8 rounded-md border border-line bg-panel-2 p-5">
+          <div className="motion-card mt-8 rounded-2xl border border-violet-200/70 bg-violet-50/55 p-5">
             <div className="flex items-center gap-3">
               <span
                 className="h-2.5 w-2.5 shrink-0 rounded-full"
@@ -142,7 +142,7 @@ export default function MeritEstimator() {
             </p>
           </div>
         ) : (
-          <p className="mt-6 text-xs leading-relaxed text-muted-2">
+          <p className="mt-6 rounded-xl border border-dashed border-neutral-200 bg-neutral-50/80 px-4 py-3 text-xs leading-relaxed text-muted-2">
             {hasSubmitted && !canEstimate
               ? "Enter a valid aggregate (0–100) and select a target program before estimating."
               : "Enter your aggregate and pick a program above, then click Estimate chance."}

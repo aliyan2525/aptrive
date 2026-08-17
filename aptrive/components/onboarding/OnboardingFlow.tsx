@@ -140,7 +140,7 @@ export default function OnboardingFlow({ existingProfile }: OnboardingFlowProps)
   }
 
   return (
-    <main className="min-h-[calc(100vh-4rem)] bg-graphite px-6 py-10">
+    <main className="onboarding-aurora min-h-[calc(100vh-4rem)] overflow-hidden px-6 py-10">
       <div className="container-aptrive grid gap-8 lg:grid-cols-[0.9fr_1.3fr]">
         <aside className="lg:sticky lg:top-24 lg:self-start">
           <div className="eyebrow">Personal setup</div>
@@ -150,7 +150,7 @@ export default function OnboardingFlow({ existingProfile }: OnboardingFlowProps)
           <p className="mt-4 text-sm leading-relaxed text-muted">
             Aptrive uses this profile to shape your dashboard, recommended practice, reminders, and future AI coaching.
           </p>
-          <div className="mt-8 rounded-md border border-line bg-panel p-5">
+          <div className="premium-shell mt-8 rounded-[1.5rem] border border-white/80 bg-white/80 p-5 shadow-[0_20px_60px_rgba(46,39,97,.08)] backdrop-blur-xl">
             <div className="flex justify-between text-xs text-muted">
               <span>Progress</span>
               <span className="font-mono-data">{completion}%</span>
@@ -164,8 +164,8 @@ export default function OnboardingFlow({ existingProfile }: OnboardingFlowProps)
                   key={item}
                   type="button"
                   onClick={() => setStep(index)}
-                  className={`flex w-full items-center justify-between rounded-sm px-3 py-2 text-left text-sm transition-colors ${
-                    step === index ? "bg-teal-dim text-fg" : "text-muted hover:bg-panel-2"
+className={`flex w-full items-center justify-between rounded-xl px-3 py-2.5 text-left text-sm transition ${
+                    step === index ? "bg-violet-500/10 font-semibold text-violet-700 shadow-sm" : "text-neutral-600 hover:bg-neutral-100"
                   }`}
                 >
                   {item}
@@ -176,7 +176,7 @@ export default function OnboardingFlow({ existingProfile }: OnboardingFlowProps)
           </div>
         </aside>
 
-        <section className="rounded-md border border-line bg-panel p-6 md:p-8">
+        <section className="premium-shell rounded-[1.75rem] border border-white/80 bg-white/80 p-6 shadow-[0_24px_70px_rgba(46,39,97,.10)] backdrop-blur-xl md:p-8">
           {step === 0 && (
             <Fieldset title="Tell us who is learning">
               <TextField label="Full name" value={form.fullName} onChange={(fullName) => setForm({ ...form, fullName })} />
@@ -222,8 +222,8 @@ export default function OnboardingFlow({ existingProfile }: OnboardingFlowProps)
                               : [...form.improvement, subject],
                           })
                         }
-                        className={`rounded-sm border px-3 py-2 text-xs font-medium ${
-                          active ? "border-teal bg-teal text-graphite" : "border-line-strong text-muted hover:text-fg"
+className={`rounded-xl border px-3 py-2 text-xs font-semibold transition ${
+                          active ? "border-violet-500 bg-violet-700 text-white shadow-sm" : "border-neutral-200 bg-white text-neutral-600 hover:border-violet-300 hover:text-violet-700"
                         }`}
                       >
                         {subject}
@@ -243,7 +243,7 @@ export default function OnboardingFlow({ existingProfile }: OnboardingFlowProps)
               </p>
               <div className="mt-6 grid gap-4 sm:grid-cols-2">
                 {plan.map((item) => (
-                  <div key={item.label} className="rounded-md border border-line bg-panel-2 p-5">
+                  <div key={item.label} className="rounded-2xl border border-violet-200/70 bg-violet-50/60 p-5">
                     <p className="text-xs uppercase tracking-wide text-muted-2">{item.label}</p>
                     <p className="font-display mt-2 text-xl font-semibold text-fg">{item.value}</p>
                   </div>
@@ -258,7 +258,7 @@ export default function OnboardingFlow({ existingProfile }: OnboardingFlowProps)
                 type="button"
                 onClick={handleFinish}
                 disabled={isPending}
-                className="mt-8 inline-flex rounded-sm bg-teal px-4 py-2 text-sm font-semibold text-graphite disabled:opacity-60"
+                className="pressable mt-8 inline-flex rounded-xl bg-violet-700 px-5 py-3 text-sm font-semibold text-white shadow-[0_12px_30px_rgba(111,69,255,.2)] transition hover:-translate-y-0.5 hover:bg-violet-800 disabled:opacity-60"
               >
                 {isPending ? "Saving…" : "Save and go to dashboard"}
               </button>
@@ -266,10 +266,10 @@ export default function OnboardingFlow({ existingProfile }: OnboardingFlowProps)
           )}
 
           <div className="mt-8 flex justify-between border-t border-line pt-6">
-            <button type="button" onClick={() => setStep(Math.max(0, step - 1))} className="rounded-sm border border-line-strong px-4 py-2 text-sm text-fg disabled:opacity-40" disabled={step === 0}>
+            <button type="button" onClick={() => setStep(Math.max(0, step - 1))} className="rounded-xl border border-neutral-200 bg-white px-4 py-2.5 text-sm font-semibold text-neutral-700 transition hover:border-violet-300 disabled:opacity-40" disabled={step === 0}>
               Back
             </button>
-            <button type="button" onClick={() => setStep(Math.min(steps.length - 1, step + 1))} className="rounded-sm bg-teal px-4 py-2 text-sm font-semibold text-graphite" disabled={step === steps.length - 1}>
+            <button type="button" onClick={() => setStep(Math.min(steps.length - 1, step + 1))} className="pressable rounded-xl bg-violet-700 px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-violet-800" disabled={step === steps.length - 1}>
               Continue
             </button>
           </div>
@@ -292,7 +292,7 @@ function TextField({ label, value, onChange, type = "text" }: { label: string; v
   return (
     <label className="grid gap-2 text-sm font-medium text-fg">
       {label}
-      <input type={type} value={value} onChange={(event) => onChange(event.target.value)} className="rounded-sm border border-line-strong bg-graphite px-4 py-3 text-sm text-fg" />
+      <input type={type} value={value} onChange={(event) => onChange(event.target.value)} className="rounded-xl border border-neutral-200 bg-white/80 px-4 py-3 text-sm text-fg outline-none transition focus:border-violet-400 focus:ring-4 focus:ring-violet-500/10" />
     </label>
   );
 }

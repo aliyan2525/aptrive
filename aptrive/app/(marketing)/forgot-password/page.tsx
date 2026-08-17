@@ -42,14 +42,14 @@ export default function ForgotPasswordPage() {
             required
             autoComplete="email"
             placeholder="you@example.com"
-            className="w-full rounded-sm border border-line bg-graphite px-3.5 py-2.5 text-sm text-fg outline-none transition-colors placeholder:text-muted-2 focus:border-teal/50"
+            className="w-full rounded-xl border border-neutral-200 bg-white/80 px-4 py-3 text-sm text-fg outline-none transition placeholder:text-muted-2 focus:border-violet-400 focus:ring-4 focus:ring-violet-500/10"
           />
         </div>
 
         {state?.error && (
           <p
             role="alert"
-            className="rounded-sm border border-red-500/30 bg-red-500/10 px-3 py-2 text-sm text-red-400"
+            className="rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700"
           >
             {state.error}
           </p>
@@ -58,7 +58,7 @@ export default function ForgotPasswordPage() {
         <button
           type="submit"
           disabled={isPending}
-          className="w-full rounded-sm bg-teal px-4 py-2.5 text-sm font-semibold text-graphite transition-colors hover:bg-teal/90 disabled:cursor-not-allowed disabled:opacity-60"
+          className="pressable w-full rounded-xl bg-violet-700 px-4 py-3 text-sm font-semibold text-white shadow-[0_12px_30px_rgba(111,69,255,0.22)] transition hover:-translate-y-0.5 hover:bg-violet-800 disabled:cursor-not-allowed disabled:opacity-60"
         >
           {isPending ? "Sending link…" : "Send reset link"}
         </button>

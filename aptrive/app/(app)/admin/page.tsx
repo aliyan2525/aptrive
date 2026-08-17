@@ -51,7 +51,7 @@ export default async function AdminDashboardPage() {
   ];
 
   return (
-    <div>
+    <div className="admin-aurora">
       <div className="eyebrow">Content operations</div>
       <h1 className="font-display mt-2 text-3xl font-semibold text-fg">Admin overview</h1>
       <p className="mt-2 max-w-xl text-sm text-muted">
@@ -60,7 +60,7 @@ export default async function AdminDashboardPage() {
 
       <div className="mt-8 grid grid-cols-2 gap-4 md:grid-cols-4">
         {stats.map((stat) => (
-          <div key={stat.label} className="rounded-md border border-line bg-panel p-5">
+          <div key={stat.label} className="premium-shell rounded-[1.35rem] border border-white/80 bg-white/80 p-5 shadow-[0_18px_50px_rgba(46,39,97,.06)] backdrop-blur-xl">
             <p className="text-xs uppercase tracking-wide text-muted-2">{stat.label}</p>
             <p className={`font-mono-data mt-2 text-3xl font-semibold ${stat.accent}`}>
               {stat.value.toLocaleString()}
@@ -72,37 +72,37 @@ export default async function AdminDashboardPage() {
       <div className="mt-10 grid gap-4 sm:grid-cols-3">
         <Link
           href="/admin/catalog"
-          className="rounded-md border border-line bg-panel p-6 transition-colors hover:border-teal/50"
+          className="group premium-shell rounded-[1.35rem] border border-white/80 bg-white/80 p-6 shadow-[0_18px_50px_rgba(46,39,97,.06)] transition hover:-translate-y-1 hover:border-violet-300 hover:shadow-[0_22px_60px_rgba(46,39,97,.10)]"
         >
           <p className="font-display text-lg font-semibold text-fg">Catalog</p>
           <p className="mt-1 text-sm text-muted">Manage chapters, topics, and question taxonomy.</p>
         </Link>
         <Link
           href="/admin/questions/new"
-          className="rounded-md border border-line bg-panel p-6 transition-colors hover:border-teal/50"
+          className="group premium-shell rounded-[1.35rem] border border-white/80 bg-white/80 p-6 shadow-[0_18px_50px_rgba(46,39,97,.06)] transition hover:-translate-y-1 hover:border-violet-300 hover:shadow-[0_22px_60px_rgba(46,39,97,.10)]"
         >
           <p className="font-display text-lg font-semibold text-fg">Write a question</p>
           <p className="mt-1 text-sm text-muted">Create a single question by hand, with live preview.</p>
         </Link>
         <Link
           href="/admin/import"
-          className="rounded-md border border-line bg-panel p-6 transition-colors hover:border-teal/50"
+          className="group premium-shell rounded-[1.35rem] border border-white/80 bg-white/80 p-6 shadow-[0_18px_50px_rgba(46,39,97,.06)] transition hover:-translate-y-1 hover:border-violet-300 hover:shadow-[0_22px_60px_rgba(46,39,97,.10)]"
         >
           <p className="font-display text-lg font-semibold text-fg">Bulk import</p>
           <p className="mt-1 text-sm text-muted">Upload a CSV of questions, validate, then commit.</p>
         </Link>
       </div>
 
-      <div className="mt-10">
+      <div className="mt-10 premium-shell overflow-hidden rounded-[1.35rem] border border-white/80 bg-white/80 p-5 shadow-[0_18px_50px_rgba(46,39,97,.06)] backdrop-blur-xl">
         <div className="flex items-center justify-between">
-          <h2 className="font-display text-xl font-semibold text-fg">Recent import batches</h2>
+          <div><span className="eyebrow">Latest activity</span><h2 className="mt-2 font-display text-xl font-semibold text-fg">Recent import batches</h2></div>
           <Link href="/admin/import" className="text-sm text-teal hover:underline">
             View all
           </Link>
         </div>
-        <div className="mt-4 overflow-hidden rounded-md border border-line">
+        <div className="mt-5 overflow-hidden rounded-2xl border border-neutral-200/80">
           <table className="w-full text-left text-sm">
-            <thead className="bg-panel-2 text-xs uppercase tracking-wide text-muted-2">
+            <thead className="bg-neutral-50 text-xs uppercase tracking-wide text-muted-2">
               <tr>
                 <th className="px-4 py-3">File</th>
                 <th className="px-4 py-3">Status</th>
@@ -119,7 +119,7 @@ export default async function AdminDashboardPage() {
                 </tr>
               )}
               {health.recentBatches.map((batch) => (
-                <tr key={batch.id} className="border-t border-line">
+                <tr key={batch.id} className="border-t border-neutral-200/80">
                   <td className="px-4 py-3">
                     <Link href={`/admin/import/${batch.id}`} className="text-fg hover:text-teal">
                       {batch.file_name}

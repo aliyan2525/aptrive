@@ -30,14 +30,14 @@ export default function SignupPage() {
       <form action={signInWithGoogle}>
         <button
           type="submit"
-          className="flex w-full items-center justify-center gap-3 rounded-sm border border-line-strong bg-panel-2 px-4 py-2.5 text-sm font-medium text-fg transition-colors hover:border-teal/40 hover:bg-teal-dim"
+          className="pressable flex w-full items-center justify-center gap-3 rounded-xl border border-neutral-200 bg-white px-4 py-3 text-sm font-semibold text-neutral-800 shadow-sm transition hover:-translate-y-0.5 hover:border-violet-300 hover:shadow-md"
         >
           <GoogleIcon />
           Continue with Google
         </button>
       </form>
 
-      <div className="my-6 flex items-center gap-3">
+      <div className="my-7 flex items-center gap-3">
         <span className="h-px flex-1 bg-line" />
         <span className="font-mono-data text-xs uppercase tracking-wide text-muted-2">
           or
@@ -60,7 +60,7 @@ export default function SignupPage() {
             required
             autoComplete="name"
             placeholder="Ali Raza"
-            className="w-full rounded-sm border border-line bg-graphite px-3.5 py-2.5 text-sm text-fg outline-none transition-colors placeholder:text-muted-2 focus:border-teal/50"
+            className="w-full rounded-xl border border-neutral-200 bg-white/80 px-4 py-3 text-sm text-fg outline-none transition placeholder:text-muted-2 focus:border-violet-400 focus:ring-4 focus:ring-violet-500/10"
           />
         </div>
 
@@ -78,7 +78,7 @@ export default function SignupPage() {
             required
             autoComplete="email"
             placeholder="you@example.com"
-            className="w-full rounded-sm border border-line bg-graphite px-3.5 py-2.5 text-sm text-fg outline-none transition-colors placeholder:text-muted-2 focus:border-teal/50"
+            className="w-full rounded-xl border border-neutral-200 bg-white/80 px-4 py-3 text-sm text-fg outline-none transition placeholder:text-muted-2 focus:border-violet-400 focus:ring-4 focus:ring-violet-500/10"
           />
         </div>
 
@@ -98,7 +98,7 @@ export default function SignupPage() {
               minLength={8}
               autoComplete="new-password"
               placeholder="••••••••"
-              className="w-full rounded-sm border border-line bg-graphite px-3.5 py-2.5 text-sm text-fg outline-none transition-colors placeholder:text-muted-2 focus:border-teal/50"
+              className="w-full rounded-xl border border-neutral-200 bg-white/80 px-4 py-3 text-sm text-fg outline-none transition placeholder:text-muted-2 focus:border-violet-400 focus:ring-4 focus:ring-violet-500/10"
             />
           </div>
           <div>
@@ -116,7 +116,7 @@ export default function SignupPage() {
               minLength={8}
               autoComplete="new-password"
               placeholder="••••••••"
-              className="w-full rounded-sm border border-line bg-graphite px-3.5 py-2.5 text-sm text-fg outline-none transition-colors placeholder:text-muted-2 focus:border-teal/50"
+              className="w-full rounded-xl border border-neutral-200 bg-white/80 px-4 py-3 text-sm text-fg outline-none transition placeholder:text-muted-2 focus:border-violet-400 focus:ring-4 focus:ring-violet-500/10"
             />
           </div>
         </div>
@@ -128,7 +128,7 @@ export default function SignupPage() {
             required
             checked={agreed}
             onChange={(e) => setAgreed(e.target.checked)}
-            className="mt-0.5 h-4 w-4 rounded-sm border-line-strong bg-graphite accent-teal"
+            className="mt-0.5 h-4 w-4 rounded border-neutral-300 accent-violet-600"
           />
           <span>
             I agree to Aptrive&apos;s{" "}
@@ -146,7 +146,7 @@ export default function SignupPage() {
         {state?.error && (
           <p
             role="alert"
-            className="rounded-sm border border-red-500/30 bg-red-500/10 px-3 py-2 text-sm text-red-400"
+            className="rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700"
           >
             {state.error}
           </p>
@@ -155,7 +155,7 @@ export default function SignupPage() {
         <button
           type="submit"
           disabled={isPending || !agreed}
-          className="w-full rounded-sm bg-teal px-4 py-2.5 text-sm font-semibold text-graphite transition-colors hover:bg-teal/90 disabled:cursor-not-allowed disabled:opacity-60"
+          className="pressable w-full rounded-xl bg-violet-700 px-4 py-3 text-sm font-semibold text-white shadow-[0_12px_30px_rgba(111,69,255,0.22)] transition hover:-translate-y-0.5 hover:bg-violet-800 disabled:cursor-not-allowed disabled:opacity-60"
         >
           {isPending ? "Creating account…" : "Create account"}
         </button>

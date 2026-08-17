@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+﻿import type { Metadata } from "next";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { getDashboardData } from "@/lib/dashboard-data";
@@ -38,16 +38,16 @@ export default async function ProfilePage() {
   const level = Math.max(1, Math.floor(xp / 1000) + 1);
 
   return (
-    <main className="min-h-[calc(100vh-4rem)] bg-graphite px-4 py-8 pb-24 md:px-6 md:py-10">
+    <main className="profile-aurora min-h-[calc(100vh-4rem)] px-4 py-8 pb-24 md:px-6 md:py-10">
       <div className="container-aptrive">
-        <section className="motion-card overflow-hidden rounded-md border border-line bg-panel">
-          <div className="relative h-44 bg-[linear-gradient(135deg,rgba(35,213,196,0.35),rgba(201,162,75,0.2),rgba(11,14,19,0.9))]">
+        <section className="premium-shell motion-card overflow-hidden rounded-[1.75rem] border border-white/80 bg-white/80 shadow-[0_24px_70px_rgba(46,39,97,.10)] backdrop-blur-xl">
+          <div className="relative h-44 bg-[radial-gradient(circle_at_18%_25%,rgba(35,213,196,.46),transparent_30%),radial-gradient(circle_at_80%_10%,rgba(111,69,255,.34),transparent_32%),linear-gradient(135deg,#151326,#31246a)]">
             <div className="absolute inset-x-8 bottom-6 hidden h-px bg-[repeating-linear-gradient(to_right,rgba(243,245,242,0.28)_0,rgba(243,245,242,0.28)_1px,transparent_1px,transparent_18px)] md:block" />
           </div>
           <div className="p-6 md:p-8">
             <div className="-mt-20 flex flex-col gap-5 md:flex-row md:items-end md:justify-between">
               <div className="flex flex-col gap-4 md:flex-row md:items-end">
-                <div className="relative grid h-28 w-28 place-items-center overflow-hidden rounded-md border border-teal/40 bg-graphite font-display text-3xl font-semibold text-teal shadow-2xl">
+                <div className="relative grid h-28 w-28 place-items-center overflow-hidden rounded-[1.5rem] border border-white/80 bg-neutral-950 font-display text-3xl font-semibold text-teal shadow-[0_16px_40px_rgba(46,39,97,.22)]">
                   <span className="absolute -left-6 top-2 h-20 w-20 rounded-full bg-teal-dim" />
                   <span className="absolute -right-5 bottom-0 h-16 w-16 rounded-full bg-gold-dim" />
                   <span className="relative">{initials}</span>
@@ -61,7 +61,7 @@ export default async function ProfilePage() {
                   </p>
                 </div>
               </div>
-              <Link href="/onboarding" className="pressable rounded-sm border border-line-strong px-4 py-2 text-sm font-semibold text-fg hover:border-teal/50">
+              <Link href="/onboarding" className="pressable rounded-xl border border-neutral-200 bg-white px-4 py-2.5 text-sm font-semibold text-violet-700 transition hover:-translate-y-0.5 hover:border-violet-300 hover:shadow-sm">
                 Edit study profile
               </Link>
             </div>
@@ -76,7 +76,7 @@ export default async function ProfilePage() {
         </section>
 
         <section className="mt-6 grid gap-6 lg:grid-cols-[0.9fr_1.1fr]">
-          <div className="motion-card rounded-md border border-line bg-panel p-6">
+          <div className="premium-shell motion-card rounded-[1.5rem] border border-white/80 bg-white/80 p-6 shadow-[0_20px_60px_rgba(46,39,97,.07)] backdrop-blur-xl">
             <h2 className="font-display text-xl font-semibold text-fg">Academic summary</h2>
             <p className="mt-3 text-sm leading-relaxed text-muted">
               Strongest recent progress is visible in completed practice volume and reviewed mistakes. Recommended next step: timed mixed practice with review after every incorrect attempt.
@@ -88,11 +88,11 @@ export default async function ProfilePage() {
             </div>
           </div>
 
-          <div className="motion-card rounded-md border border-line bg-panel p-6">
+          <div className="premium-shell motion-card rounded-[1.5rem] border border-white/80 bg-white/80 p-6 shadow-[0_20px_60px_rgba(46,39,97,.07)] backdrop-blur-xl">
             <h2 className="font-display text-xl font-semibold text-fg">Badges & achievements</h2>
             <div className="mt-5 grid gap-3 sm:grid-cols-2">
               {badges.map((badge) => (
-                <div key={badge} className="rounded-md border border-line bg-panel-2 p-4 transition-transform hover:-translate-y-1">
+                <div key={badge} className="rounded-2xl border border-violet-100 bg-violet-50/55 p-4 transition hover:-translate-y-1 hover:border-violet-200">
                   <div className="grid h-10 w-10 place-items-center rounded-full bg-gold-dim text-gold">*</div>
                   <p className="mt-3 font-medium text-fg">{badge}</p>
                   <p className="mt-1 text-xs text-muted">Unlocked through consistent practice.</p>
@@ -109,11 +109,11 @@ export default async function ProfilePage() {
         </section>
 
         <section className="mt-6 grid gap-6 lg:grid-cols-[1fr_1fr]">
-          <div className="motion-card rounded-md border border-line bg-panel p-6">
+          <div className="premium-shell motion-card rounded-[1.5rem] border border-white/80 bg-white/80 p-6 shadow-[0_20px_60px_rgba(46,39,97,.07)] backdrop-blur-xl">
             <h2 className="font-display text-xl font-semibold text-fg">Weekly progress</h2>
             <div className="mt-5 grid grid-cols-7 gap-2">
               {dashboard.activity.slice(-14).map((day) => (
-                <div key={day.activity_date} className="rounded-sm border border-line bg-panel-2 p-2">
+                <div key={day.activity_date} className="rounded-xl border border-neutral-200/80 bg-white/75 p-2">
                   <div className="h-20 rounded-sm bg-teal-dim" style={{ opacity: 0.18 + Math.min(0.7, day.questions_attempted / 45) }} />
                   <p className="mt-2 text-center font-mono-data text-[10px] text-muted">{day.questions_attempted}</p>
                 </div>
@@ -121,7 +121,7 @@ export default async function ProfilePage() {
             </div>
           </div>
 
-          <div className="motion-card rounded-md border border-line bg-panel p-6">
+          <div className="premium-shell motion-card rounded-[1.5rem] border border-white/80 bg-white/80 p-6 shadow-[0_20px_60px_rgba(46,39,97,.07)] backdrop-blur-xl">
             <h2 className="font-display text-xl font-semibold text-fg">Learning statistics</h2>
             <dl className="mt-5 space-y-3 text-sm">
               <Info label="Weekly questions" value={dashboard.weeklySummary.questionsAttempted.toString()} />
@@ -138,7 +138,7 @@ export default async function ProfilePage() {
 
 function Metric({ label, value }: { label: string; value: string }) {
   return (
-    <div className="motion-card rounded-md border border-line bg-panel-2 p-5">
+    <div className="premium-shell motion-card rounded-2xl border border-white/80 bg-white/75 p-5 shadow-sm">
       <p className="text-xs uppercase tracking-wide text-muted-2">{label}</p>
       <p className="font-display mt-2 text-xl font-semibold text-fg">{value}</p>
     </div>
@@ -167,3 +167,4 @@ function Info({ label, value }: { label: string; value: string }) {
     </div>
   );
 }
+

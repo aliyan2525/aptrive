@@ -20,7 +20,7 @@ const tabs = ["Global", "Friends", "University", "Subject", "Weekly", "Monthly",
 
 export default function LeaderboardPage() {
   return (
-    <main className="min-h-[calc(100vh-4rem)] bg-[linear-gradient(180deg,#fff,#f6f9ff)] px-6 py-12">
+    <main className="leaderboard-aurora min-h-[calc(100vh-4rem)] px-6 py-12">
       <div className="container-aptrive">
         <section className="grid gap-8 lg:grid-cols-[0.9fr_1.2fr] lg:items-end">
           <div>
@@ -48,15 +48,15 @@ export default function LeaderboardPage() {
             <button
               key={tab}
               type="button"
-              className={`whitespace-nowrap rounded-full border px-4 py-2 text-xs font-semibold transition ${index === 0 ? "border-blue-500 bg-gradient-to-r from-blue-600 to-violet-600 text-white shadow-lg shadow-blue-500/20" : "border-line-strong bg-white/70 text-muted hover:text-fg"}`}
+              className={`whitespace-nowrap rounded-full border px-4 py-2 text-xs font-semibold transition ${index === 0 ? "border-violet-500 bg-violet-700 text-white shadow-lg shadow-violet-500/20" : "border-neutral-200 bg-white/70 text-muted hover:border-violet-300 hover:text-fg"}`}
             >
               {tab}
             </button>
           ))}
         </div>
 
-        <section className="premium-shell mt-6 overflow-hidden rounded-[1.5rem]">
-          <div className="grid grid-cols-[64px_1fr_120px_100px_100px] gap-4 border-b border-line px-5 py-3 text-xs uppercase tracking-wide text-muted-2 max-md:hidden">
+        <section className="premium-shell mt-6 overflow-hidden rounded-[1.5rem] border border-white/80 bg-white/80 shadow-[0_20px_60px_rgba(46,39,97,.08)] backdrop-blur-xl">
+          <div className="grid grid-cols-[64px_1fr_120px_100px_100px] gap-4 border-b border-neutral-200/80 bg-neutral-50/80 px-5 py-3 text-xs uppercase tracking-wide text-muted-2 max-md:hidden">
             <span>Rank</span>
             <span>Student</span>
             <span>Target</span>
@@ -64,7 +64,7 @@ export default function LeaderboardPage() {
             <span>XP</span>
           </div>
           {students.map((student) => (
-            <div key={student.rank} className="grid gap-4 border-b border-line px-5 py-4 last:border-0 md:grid-cols-[64px_1fr_120px_100px_100px] md:items-center">
+            <div key={student.rank} className="grid gap-4 border-b border-neutral-200/80 px-5 py-4 transition last:border-0 hover:bg-violet-50/35 md:grid-cols-[64px_1fr_120px_100px_100px] md:items-center">
               <div className="font-mono-data text-xl font-semibold text-teal">#{student.rank}</div>
               <div className="flex items-center gap-3">
                 <div className="grid h-11 w-11 place-items-center rounded-full border border-teal/30 bg-teal-dim font-display text-sm font-semibold text-teal">
@@ -95,7 +95,7 @@ export default function LeaderboardPage() {
 
 function Stat({ label, value, suffix = "" }: { label: string; value: number; suffix?: string }) {
   return (
-    <div className="premium-shell rounded-2xl p-4">
+    <div className="premium-shell rounded-2xl border border-white/80 bg-white/75 p-4 shadow-sm backdrop-blur-xl">
       <p className="text-xs uppercase tracking-wide text-muted-2">{label}</p>
       <p className="font-display mt-2 text-2xl font-semibold text-fg">
         <AnimatedStat value={value} suffix={suffix} />

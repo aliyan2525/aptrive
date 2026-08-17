@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+﻿import type { Metadata } from "next";
 import AggregateCalculator from "@/components/AggregateCalculator";
 import TickDivider from "@/components/TickDivider";
 import UniversityLogo from "@/components/UniversityLogo";
@@ -35,7 +35,7 @@ export default function CalculatorPage() {
 
       <TickDivider />
 
-      <section className="container-aptrive py-16 md:py-24">
+      <section className="tool-page container-aptrive py-16 md:py-24">
         <div className="eyebrow">Formulas covered</div>
         <h2 className="font-display mt-3 text-2xl font-semibold tracking-tight text-fg md:text-3xl">
           {universities.length} universities, one calculator
@@ -86,3 +86,4 @@ export default function CalculatorPage() {
     </>
   );
 }
+

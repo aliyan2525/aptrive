@@ -25,7 +25,7 @@ export default function AuthenticatedShell({
         <AppSidebar />
 
         {/* Main Content Area */}
-        <section className="min-w-0 flex flex-col min-h-screen">
+        <section className="workspace-surface min-w-0 flex flex-col min-h-screen">
           {/* Unified Header */}
           <AppHeader 
             user={user}
@@ -34,7 +34,7 @@ export default function AuthenticatedShell({
           />
 
           {/* Page Content */}
-          <div className="flex-1">
+          <div className="app-content flex-1">
             {children}
           </div>
         </section>
@@ -42,4 +42,5 @@ export default function AuthenticatedShell({
     </div>
   );
 }
+
 

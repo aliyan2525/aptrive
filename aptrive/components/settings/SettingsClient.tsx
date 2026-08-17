@@ -52,17 +52,17 @@ export default function SettingsClient() {
   };
 
   return (
-    <div className="mx-auto grid max-w-[96rem] gap-6 xl:grid-cols-[16rem_minmax(0,1fr)] relative">
+    <div className="settings-aurora mx-auto grid max-w-[96rem] gap-6 xl:grid-cols-[16rem_minmax(0,1fr)] relative">
       
       {/* Toast Notification */}
       {saveSuccess && (
-        <div className="fixed bottom-6 right-6 z-50 flex items-center gap-2 rounded-xl bg-emerald-500 px-4 py-3 text-sm font-bold text-white shadow-xl animate-in slide-in-from-bottom-5">
+        <div className="fixed bottom-6 right-6 z-50 flex items-center gap-2 rounded-2xl bg-neutral-950 px-4 py-3 text-sm font-bold text-white shadow-[0_18px_50px_rgba(46,39,97,.2)] animate-in slide-in-from-bottom-5">
           <Check className="h-5 w-5" />
           Settings saved successfully.
         </div>
       )}
 
-      <aside className="rounded-[1.35rem] border border-[var(--line)] bg-[var(--panel)]/86 p-4 shadow-[0_24px_70px_rgba(36,52,104,0.07)] dark:shadow-none backdrop-blur-2xl xl:sticky xl:top-24 xl:h-fit">
+      <aside className="premium-shell rounded-[1.5rem] border border-white/80 bg-white/80 p-4 shadow-[0_20px_60px_rgba(46,39,97,.08)] backdrop-blur-2xl xl:sticky xl:top-24 xl:h-fit">
         <h1 className="px-2 pb-4 font-display text-2xl font-bold text-[var(--fg)]">Settings</h1>
         <nav className="space-y-1" aria-label="Settings sections">
           {settingsNav.map((item) => {
@@ -75,8 +75,8 @@ export default function SettingsClient() {
                 onClick={() => setActiveTab(item.id)}
                 className={`flex h-11 w-full items-center gap-3 rounded-[0.8rem] px-3 text-left text-sm font-bold transition-all duration-200 ${
                   isActive 
-                    ? "bg-[#f0f1ff] dark:bg-blue-900/20 text-blue-700 dark:text-blue-400" 
-                    : "text-[#263457] dark:text-gray-300 hover:bg-[#f8faff] dark:hover:bg-white/5"
+                    ? "bg-violet-500/10 text-violet-700 shadow-sm" 
+                    : "text-neutral-600 hover:bg-neutral-100"
                 }`}
               >
                 <Icon className="h-4 w-4" aria-hidden="true" />
@@ -106,7 +106,7 @@ export default function SettingsClient() {
                   <select 
                     value={targetExam}
                     onChange={(e) => setTargetExam(e.target.value)}
-                    className="h-10 rounded-lg border border-[var(--line)] bg-transparent px-3 text-sm font-semibold outline-none focus:border-blue-500"
+                    className="h-11 rounded-xl border border-neutral-200 bg-white/80 px-3 text-sm font-semibold outline-none transition focus:border-violet-400 focus:ring-4 focus:ring-violet-500/10"
                   >
                     <option value="FAST-NUCES">FAST-NUCES</option>
                     <option value="NUST-NET">NUST NET</option>
@@ -119,7 +119,7 @@ export default function SettingsClient() {
                     <p className="font-bold text-[var(--fg)]">Daily Training Goal</p>
                     <p className="text-sm text-gray-500">Your daily time commitment for active practice.</p>
                   </div>
-                  <select className="h-10 rounded-lg border border-[var(--line)] bg-transparent px-3 text-sm font-semibold outline-none focus:border-blue-500">
+                  <select className="h-11 rounded-xl border border-neutral-200 bg-white/80 px-3 text-sm font-semibold outline-none transition focus:border-violet-400 focus:ring-4 focus:ring-violet-500/10">
                     <option>60 minutes</option>
                     <option>90 minutes</option>
                     <option>120 minutes</option>
@@ -130,7 +130,7 @@ export default function SettingsClient() {
                   <button 
                     onClick={handleSave}
                     disabled={isSaving}
-                    className="flex h-10 min-w-[120px] items-center justify-center gap-2 rounded-lg bg-blue-600 px-4 text-sm font-bold text-white transition hover:bg-blue-700 disabled:opacity-70"
+                    className="pressable flex h-11 min-w-[140px] items-center justify-center gap-2 rounded-xl bg-violet-700 px-4 text-sm font-bold text-white shadow-[0_12px_26px_rgba(111,69,255,.2)] transition hover:-translate-y-0.5 hover:bg-violet-800 disabled:opacity-70"
                   >
                     {isSaving ? <Loader2 className="h-4 w-4 animate-spin" /> : "Save Changes"}
                   </button>
@@ -181,7 +181,7 @@ export default function SettingsClient() {
 
 function ProfileCard() {
   return (
-    <section className="rounded-[1.35rem] border border-[var(--line)] bg-[var(--panel)] p-6 shadow-[0_24px_70px_rgba(36,52,104,0.07)] dark:shadow-none">
+    <section className="premium-shell settings-panel rounded-[1.5rem] border border-white/80 bg-white/80 p-6 shadow-[0_20px_60px_rgba(46,39,97,.08)] backdrop-blur-xl">
       <div className="flex items-start justify-between gap-4">
         <div>
           <h2 className="font-display text-xl font-bold text-[var(--fg)]">Identity & Access</h2>
@@ -205,7 +205,7 @@ function ProfileCard() {
 
 function Panel({ title, subtitle, action, children }: { title: string; subtitle: string; action?: string; children: React.ReactNode }) {
   return (
-    <section className="rounded-[1.35rem] border border-[var(--line)] bg-[var(--panel)] p-6 shadow-[0_24px_70px_rgba(36,52,104,0.07)] dark:shadow-none">
+    <section className="premium-shell settings-panel rounded-[1.5rem] border border-white/80 bg-white/80 p-6 shadow-[0_20px_60px_rgba(46,39,97,.08)] backdrop-blur-xl">
       <div className="mb-2 flex items-start justify-between gap-4 border-b border-[var(--line)] pb-5">
         <div>
           <h2 className="font-display text-xl font-bold text-[var(--fg)]">{title}</h2>

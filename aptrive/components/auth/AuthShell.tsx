@@ -1,4 +1,4 @@
-import type { ReactNode } from "react";
+﻿import type { ReactNode } from "react";
 
 export default function AuthShell({
   eyebrow,
@@ -23,7 +23,7 @@ export default function AuthShell({
   panelClassName?: string;
 }) {
   return (
-    <main className="flex min-h-[calc(100vh-4rem)] items-center justify-center bg-graphite px-6 py-16">
+    <main className="auth-shell relative flex min-h-[calc(100vh-4rem)] items-center justify-center overflow-hidden px-6 py-16">
       <div className={`w-full ${maxWidth}`}>
         <div className="mb-8 text-center">
           <span className="eyebrow">{eyebrow}</span>
@@ -36,7 +36,7 @@ export default function AuthShell({
         <div
           className={
             panelClassName ??
-            "rounded-md border border-line bg-panel p-6 sm:p-8"
+            "premium-shell auth-panel rounded-[1.75rem] border border-white/80 bg-white/80 p-6 shadow-[0_24px_80px_rgba(46,39,97,0.10)] backdrop-blur-xl sm:p-8"
           }
         >
           {children}
@@ -47,3 +47,5 @@ export default function AuthShell({
     </main>
   );
 }
+
+
