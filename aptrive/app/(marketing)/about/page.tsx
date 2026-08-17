@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+﻿import type { Metadata } from "next";
 import type React from "react";
 import { BarChart3, Eye, Flag, GraduationCap, Rocket, ShieldCheck, Target } from "lucide-react";
 import ContactForm from "@/components/ContactForm";
@@ -127,7 +127,7 @@ function Statement({ icon: Icon, title, body }: { icon: typeof Target; title: st
   );
 }
 
-function MiniStat({ icon: Icon, label, value }: { icon?: React.ComponentType<any>; label: string; value: string }) {
+function MiniStat({ icon: Icon, label, value }: { icon?: React.ComponentType<{ className?: string; strokeWidth?: number }>; label: string; value: string }) {
   return (
     <div className="rounded-2xl border border-line bg-white/70 p-5 shadow-sm">
       {Icon ? (
@@ -140,3 +140,4 @@ function MiniStat({ icon: Icon, label, value }: { icon?: React.ComponentType<any
     </div>
   );
 }
+

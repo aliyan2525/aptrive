@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useRef, useMemo } from "react";
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
@@ -6,7 +6,9 @@ import { Environment, Float, MeshDistortMaterial } from "@react-three/drei";
 import { EffectComposer, Bloom, Noise } from "@react-three/postprocessing";
 import * as THREE from "three";
 
-function AbstractShape({ position, color, speed, distort, radius }: any) {
+type AbstractShapeProps = { position: [number, number, number]; color: THREE.ColorRepresentation; speed: number; distort: number; radius: number };
+
+function AbstractShape({ position, color, speed, distort, radius }: AbstractShapeProps) {
   const meshRef = useRef<THREE.Mesh>(null);
   
   useFrame((state) => {
@@ -80,3 +82,4 @@ export default function HeroScene() {
     </div>
   );
 }
+

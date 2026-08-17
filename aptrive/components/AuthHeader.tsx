@@ -1,4 +1,4 @@
-import { createClient } from "@/lib/supabase/server";
+﻿import { createClient } from "@/lib/supabase/server";
 import Header from "@/components/Header";
 import type { HeaderUser } from "@/components/UserMenu";
 import { listNotifications, countUnreadNotifications } from "@/lib/repositories/notifications.repository";
@@ -31,7 +31,7 @@ export default async function AuthHeader() {
       email: user.email ?? "",
       avatarUrl: (user.user_metadata?.avatar_url as string | undefined) ?? null,
       isStaff: profile?.role
-        ? STAFF_ROLES.includes(profile.role as any)
+        ? (STAFF_ROLES as readonly string[]).includes(profile.role)
         : false,
     };
 
@@ -43,3 +43,4 @@ export default async function AuthHeader() {
 
   return <Header user={headerUser} notifications={notifications} unreadCount={unreadCount} />;
 }
+

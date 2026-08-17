@@ -1,5 +1,5 @@
-const fs = require('fs');
-const path = require('path');
+﻿import fs from 'node:fs';
+import path from 'node:path';
 
 function walkDir(dir, callback) {
   fs.readdirSync(dir).forEach(f => {
@@ -49,3 +49,4 @@ walkDir(path.join(process.cwd(), 'components'), (filePath) => {
 });
 
 console.log('Fixed imports');
+

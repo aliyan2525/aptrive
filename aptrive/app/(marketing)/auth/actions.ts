@@ -1,4 +1,4 @@
-"use server";
+﻿"use server";
 
 import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
@@ -38,7 +38,7 @@ export async function signIn(
       .maybeSingle();
     const profile = data as { role: string } | null;
     const isStaff = profile?.role
-      ? STAFF_ROLES.includes(profile.role as any)
+      ? (STAFF_ROLES as readonly string[]).includes(profile.role)
       : false;
 
     if (!isStaff) {
@@ -55,7 +55,7 @@ export async function signIn(
 
 /**
  * Only allow redirecting to an internal, single-segment-rooted path
- * (e.g. "/practice/subjects") after login — guards against the
+ * (e.g. "/practice/subjects") after login â€” guards against the
  * "next" query param being used for an open redirect.
  */
 function safeRedirectTarget(next: FormDataEntryValue | null): string | null {
@@ -181,7 +181,8 @@ function friendlyAuthError(message: string): string {
     return "An account with this email already exists. Try logging in instead.";
   }
   if (lower.includes("email not confirmed")) {
-    return "Please confirm your email before logging in — check your inbox.";
+    return "Please confirm your email before logging in â€” check your inbox.";
   }
   return message;
 }
+

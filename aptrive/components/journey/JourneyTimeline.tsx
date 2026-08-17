@@ -1,7 +1,7 @@
-"use client";
+﻿"use client";
 
 import { useRef } from "react";
-import { motion, useScroll, useTransform } from "framer-motion";
+import { motion, useScroll, useTransform, type MotionValue } from "framer-motion";
 import { cn } from "@/lib/cn";
 
 export interface JourneyStep {
@@ -64,7 +64,7 @@ function JourneyTimelineItem({
 }: { 
   step: JourneyStep; 
   index: number; 
-  scrollYProgress: any; 
+  scrollYProgress: MotionValue<number>; 
   targetProgress: number; 
 }) {
   // If scrollYProgress reaches targetProgress, animate to active state.
@@ -97,3 +97,4 @@ function JourneyTimelineItem({
     </li>
   );
 }
+

@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
@@ -96,6 +96,8 @@ export default function DashboardClient({
 
   useEffect(() => {
     // Client-only clock read avoids hydration mismatches between server and visitor timezone.
+    // This client-only update prevents a server/client timezone hydration mismatch.
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setGreeting(getGreeting(new Date().getHours()));
   }, []);
 
@@ -108,6 +110,8 @@ export default function DashboardClient({
     const activityByDate = new Map(data.activity.map((d) => [d.activity_date, d]));
 
     // Client-only date read keeps the calendar aligned with the visitor's month.
+    // Client-only date calculation keeps the calendar aligned with the visitor timezone.
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setCalendarDays(
       Array.from({ length: daysInMonth }, (_, i) => {
         const day = i + 1;
@@ -679,3 +683,5 @@ function friendlyResource(type: string, id: string) {
   const label = id.replace(/[-_]/g, " ").replace(/\b\w/g, (char) => char.toUpperCase());
   return label || type.replace("_", " ");
 }
+
+

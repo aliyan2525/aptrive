@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useEffect, useRef, type RefObject } from "react";
 import { useScroll, useMotionValueEvent } from "framer-motion";
@@ -7,7 +7,7 @@ interface UseScrollProgressOptions {
   start?: string;
   end?: string;
   /**
-   * Optional shaping function applied to the raw 0→1 scroll fraction
+   * Optional shaping function applied to the raw 0â†’1 scroll fraction
    * before it's written into the returned ref.
    */
   ease?: (t: number) => number;
@@ -15,7 +15,7 @@ interface UseScrollProgressOptions {
 
 /**
  * Tracks how far `scopeRef` has scrolled through its start/end window
- * as a 0→1 value, written into a ref rather than React state — a
+ * as a 0â†’1 value, written into a ref rather than React state â€” a
  * WebGL scene's useFrame reads the latest value every frame without
  * forcing a React re-render on every scroll tick.
  */
@@ -26,12 +26,15 @@ export function useScrollProgress(
   const progressRef = useRef(0);
 
   // Map legacy GSAP strings (e.g. "top 75%") to Framer Motion offset strings (e.g. "start 75%")
-  const fmStart = start.replace("top", "start").replace("bottom", "end") as any;
-  const fmEnd = end.replace("top", "start").replace("bottom", "end") as any;
+  const fmStart = start.replace("top", "start").replace("bottom", "end");
+  const fmEnd = end.replace("top", "start").replace("bottom", "end");
+
+  type ScrollOptions = NonNullable<Parameters<typeof useScroll>[0]>;
+  const offset = [fmStart, fmEnd] as ScrollOptions["offset"];
 
   const { scrollYProgress } = useScroll({
     target: scopeRef,
-    offset: [fmStart, fmEnd],
+    offset,
   });
 
   useMotionValueEvent(scrollYProgress, "change", (latest) => {
@@ -49,3 +52,5 @@ export function useScrollProgress(
 
   return progressRef;
 }
+
+
