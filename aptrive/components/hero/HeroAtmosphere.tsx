@@ -1,6 +1,7 @@
-"use client";
+﻿"use client";
 
 import { motion } from "framer-motion";
+import HeroCinematicLayer from "./HeroCinematicLayer";
 
 const particles = Array.from({ length: 26 }, (_, index) => ({
   id: index,
@@ -13,7 +14,9 @@ const particles = Array.from({ length: 26 }, (_, index) => ({
 
 export default function HeroAtmosphere() {
   return (
-    <div className="pointer-events-none absolute -inset-x-24 -inset-y-12 z-40 hidden overflow-visible lg:block" aria-hidden="true">
+    <>
+      <HeroCinematicLayer />
+      <div className="pointer-events-none absolute -inset-x-24 -inset-y-12 z-40 hidden overflow-visible lg:block" aria-hidden="true">
       <div className="absolute left-[44%] top-[8%] h-[520px] w-[520px] rounded-full bg-[radial-gradient(circle,rgba(20,184,166,0.12),rgba(14,165,233,0.08)_38%,transparent_70%)] blur-2xl" />
       <div className="absolute left-[62%] top-[22%] h-[360px] w-px rotate-[22deg] bg-gradient-to-b from-transparent via-teal-200/30 to-transparent blur-[0.4px]" />
       <div className="absolute left-[72%] top-[10%] h-[420px] w-px rotate-[35deg] bg-gradient-to-b from-transparent via-cyan-200/28 to-transparent blur-[0.4px]" />
@@ -41,6 +44,8 @@ export default function HeroAtmosphere() {
           }}
         />
       ))}
-    </div>
+      </div>
+    </>
   );
 }
+
