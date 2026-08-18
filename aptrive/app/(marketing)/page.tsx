@@ -27,7 +27,7 @@ import { siteStats } from "@/lib/site-stats";
 
 export const metadata: Metadata = {
   title: "Aptrive â€” Entrance Exam Prep for Pakistan's Top Universities",
-  description: "Aptrive combines realistic mock exams, targeted practice, and merit tools to help you prepare with a clear plan for your target university.",
+  description: "Aptrive combines realistic mock exams, targeted practice, and smart analytics to help you prepare with a clear plan for your dream university.",
 };
 
 type PillarColor = "blue" | "teal" | "purple" | "orange";
@@ -75,21 +75,21 @@ export default async function Home() {
         <div className="pointer-events-none absolute bottom-[-14%] right-[8%] h-[520px] w-[520px] rounded-full bg-violet-200/24 blur-[130px]" />
         <div className="pointer-events-none absolute left-[-15%] top-1/3 h-[440px] w-[440px] rounded-full bg-sky-100/50 blur-[120px]" />
 
-        <div className="container-aptrive relative z-10 pb-20 pt-14 md:pb-28 md:pt-20">
-          <div className="grid items-center gap-14 lg:grid-cols-[1.05fr_1fr] lg:gap-8">
+        <div className="container-aptrive relative z-10 pb-16 pt-14 md:pb-24 md:pt-20">
+          <div className="grid items-center gap-10 lg:grid-cols-[1.02fr_0.98fr] lg:gap-6 xl:gap-2">
             {/* Left column â€” copy */}
             <div className="flex flex-col items-start text-left">
               <Reveal>
                 <div className="inline-flex items-center gap-2.5 rounded-full border border-black/[0.06] bg-white/80 px-5 py-2 shadow-sm backdrop-blur-sm">
                   <span className="flex h-2.5 w-2.5 rounded-full bg-teal-500 shadow-[0_0_10px_rgba(20,184,166,0.7)] animate-pulse" />
                   <span className="text-[11px] font-semibold uppercase tracking-[0.14em] text-neutral-500">
-                    Pakistan entrance prep, made measurable
+                    Pakistan&apos;s most trusted entrance prep platform
                   </span>
                 </div>
               </Reveal>
 
               <Reveal delay={100}>
-                <h1 className="mt-8 font-display text-[2.75rem] font-bold leading-[0.98] tracking-tight text-neutral-900 sm:text-[3.5rem] lg:text-[4.15rem]">
+                <h1 className="mt-8 max-w-2xl font-display text-[2.9rem] font-semibold leading-[0.98] tracking-[-0.045em] text-neutral-950 sm:text-[3.8rem] lg:text-[4.35rem]">
                   Know your score. Raise it.
                   <br />
                   With{" "}
@@ -101,8 +101,8 @@ export default async function Home() {
               </Reveal>
 
               <Reveal delay={200}>
-                <p className="mt-7 max-w-xl text-lg leading-relaxed text-neutral-500">
-                  Aptrive combines realistic mock exams, targeted practice, and merit tools to help you prepare with a clear plan for your target university.
+                <p className="mt-7 max-w-xl text-base leading-7 text-neutral-600 sm:text-lg sm:leading-8">
+                  Aptrive combines realistic mock exams, targeted practice, and smart analytics to help you prepare with a clear plan for your dream university.
                 </p>
               </Reveal>
 
@@ -133,7 +133,7 @@ export default async function Home() {
             </div>
 
             {/* Right column â€” liquid-glass 3D composition */}
-            <div className="relative h-[420px] sm:h-[520px] lg:-ml-12 lg:h-[650px] xl:-ml-20">
+            <div className="relative h-[420px] sm:h-[520px] lg:-ml-10 lg:h-[650px] xl:-ml-16">
               <HeroOrbitDecor />
               <HeroBlobsSceneWrapper />
               <HeroOrbitIcons />
@@ -226,7 +226,7 @@ export default async function Home() {
           <Reveal>
             <Eyebrow className="text-teal">See what to study next</Eyebrow>
             <h2 className="text-hero text-fg mt-8 max-w-5xl mx-auto mix-blend-plus-lighter">
-              Take a free diagnostic to see where you standand what to study next.
+              Take a free diagnostic to see where you stand and what to study next.
             </h2>
             <div className="mt-16">
               <Button href="/signup" variant="primary" size="lg" className="h-16 px-12 text-lg">

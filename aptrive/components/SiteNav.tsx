@@ -102,14 +102,14 @@ export default function SiteNav({
           hidden ? "-translate-y-full" : "translate-y-0"
         }`}
       >
-        <div className="mx-auto flex items-center transition-all duration-500 max-w-[1220px] rounded-[1.35rem] border border-line bg-white/80 px-4 py-2.5 shadow-[0_18px_55px_rgba(20,32,70,0.10)] backdrop-blur-2xl">
+        <div className="mx-auto flex max-w-[1380px] items-center rounded-[1.75rem] border border-white/75 bg-white/80 px-5 py-2.5 shadow-[0_18px_55px_rgba(20,32,70,0.10)] backdrop-blur-2xl transition-all duration-500">
           <div className="flex w-full items-center justify-between">
             <Link href={user ? "/dashboard" : "/"} className="flex items-center gap-2.5 group" aria-label="Aptrive">
               <div className="relative">
                 <Image src="/logo-mark.png" alt="" width={34} height={38} priority className="h-9 w-auto transition-transform duration-300 group-hover:scale-105" />
                 <div className="absolute inset-0 bg-teal/20 blur-xl opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
               </div>
-              <span className="font-display text-lg font-bold tracking-normal text-fg transition-colors duration-300">Aptrive</span>
+              <span className="font-display text-xl font-bold tracking-[-0.02em] text-fg transition-colors duration-300">Aptrive</span>
             </Link>
 
             <nav className="hidden items-center md:flex relative" aria-label="Main">
@@ -119,7 +119,7 @@ export default function SiteNav({
                   <Link
                     key={link.href}
                     href={link.href}
-                    className="relative px-4 py-2 text-sm font-semibold transition-colors text-muted hover:text-fg"
+                    className="relative px-4 py-2 text-[15px] font-medium transition-colors text-muted hover:text-fg"
                     aria-current={isActive ? "page" : undefined}
                   >
                     {isActive && (
