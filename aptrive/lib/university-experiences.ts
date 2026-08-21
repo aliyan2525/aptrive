@@ -7,7 +7,7 @@ export type UniversityExperience = {
     signal: string;
     headline: string;
     subhead: string;
-    visual: "planet" | "code" | "gold" | "atom" | "machine" | "network" | "signal";
+    visual: "planet" | "code" | "gold" | "atom" | "machine" | "network" | "signal" | "radar" | "wave" | "constellation" | "ledger" | "path" | "campus" | "terminal";
     gradient: string;
     accent: string;
     textAccent: string;
@@ -180,6 +180,12 @@ const themeMap: Record<string, { gradient: string; accent: string; textAccent: s
   pieas: { gradient: "from-purple-950 via-purple-900 to-violet-950", accent: "bg-purple-300", textAccent: "text-purple-200", visual: "atom" },
   comsats: { gradient: "from-cyan-950 via-cyan-900 to-blue-950", accent: "bg-cyan-300", textAccent: "text-cyan-200", visual: "network" },
   ned: { gradient: "from-rose-950 via-rose-900 to-pink-950", accent: "bg-rose-300", textAccent: "text-rose-200", visual: "gold" },
+  "uet-lahore": { gradient: "from-sky-950 via-blue-900 to-indigo-950", accent: "bg-sky-300", textAccent: "text-sky-200", visual: "signal" },
+  air: { gradient: "from-indigo-950 via-blue-900 to-slate-950", accent: "bg-blue-300", textAccent: "text-blue-200", visual: "radar" },
+  bahria: { gradient: "from-teal-950 via-cyan-900 to-slate-900", accent: "bg-teal-300", textAccent: "text-teal-200", visual: "wave" },
+  ist: { gradient: "from-violet-950 via-indigo-900 to-slate-950", accent: "bg-violet-300", textAccent: "text-violet-200", visual: "constellation" },
+  umt: { gradient: "from-amber-950 via-orange-900 to-slate-950", accent: "bg-amber-300", textAccent: "text-amber-200", visual: "ledger" },
+  ucp: { gradient: "from-emerald-950 via-teal-900 to-slate-950", accent: "bg-emerald-300", textAccent: "text-emerald-200", visual: "path" },
 };
 
 const defaultProfile = (university: University): Omit<UniversityExperience, "university" | "slug"> => {
