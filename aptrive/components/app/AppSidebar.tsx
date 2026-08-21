@@ -31,7 +31,7 @@ export default function AppSidebar() {
   const pathname = usePathname();
 
   return (
-    <aside className="hidden xl:flex flex-col border-r border-[var(--line)] bg-[var(--panel)]/78 px-5 py-7 backdrop-blur-xl h-screen sticky top-0 left-0 overflow-y-auto no-scrollbar">
+    <aside className="hidden xl:flex flex-col border-r border-line bg-white/78 px-5 py-7 backdrop-blur-xl h-screen sticky top-0 left-0 overflow-y-auto no-scrollbar">
       <AppLogo />
       
       <nav className="mt-10 flex-1 space-y-2" aria-label="Sidebar Navigation">
@@ -44,12 +44,14 @@ export default function AppSidebar() {
         ))}
       </nav>
 
-      <div className="mt-8 mb-4 rounded-[1.25rem] border border-[#e3e8f7] bg-gradient-to-br from-white to-[#f1f4ff] p-5 shadow-[0_20px_50px_rgba(51,70,130,0.08)] dark:from-[#111] dark:to-[#1a1a2e] dark:border-white/10 shrink-0">
-        <Rocket className="h-9 w-9 text-violet-500" aria-hidden="true" />
-        <p className="mt-4 text-sm font-bold text-blue-700 dark:text-blue-400">Pro Plan</p>
-        <p className="mt-2 text-sm leading-relaxed text-[#667196] dark:text-gray-400">You are unlocking your full potential.</p>
-        <Link href="/onboarding" className="pressable mt-5 inline-flex w-full items-center justify-center gap-2 rounded-[0.7rem] bg-gradient-to-r from-blue-600 to-violet-600 px-4 py-3 text-sm font-semibold text-white transition-transform hover:scale-[1.02] active:scale-95 shadow-[0_10px_20px_rgba(37,99,235,0.2)]">
-          <Zap className="h-4 w-4" aria-hidden="true" />
+      <div className="mt-8 mb-4 rounded-[1.5rem] border border-white/80 bg-gradient-to-br from-white to-violet-50/50 p-5 shadow-[0_18px_45px_rgba(62,72,130,0.08)] shrink-0">
+        <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-violet-500/10 text-violet-600 shadow-sm">
+          <Rocket className="h-5 w-5" aria-hidden="true" />
+        </div>
+        <p className="mt-4 text-sm font-bold text-fg">Pro Plan</p>
+        <p className="mt-1.5 text-xs font-medium leading-relaxed text-muted">You are unlocking your full potential.</p>
+        <Link href="/onboarding" className="pressable mt-5 inline-flex w-full items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-violet-600 to-blue-600 px-4 py-2.5 text-[13px] font-bold text-white transition-transform hover:scale-[1.02] active:scale-95 shadow-[0_10px_24px_rgba(79,70,229,0.2)]">
+          <Zap className="h-3.5 w-3.5" aria-hidden="true" />
           Upgrade Plan
         </Link>
       </div>
@@ -61,14 +63,14 @@ function SideNavItem({ label, href, icon: Icon, active }: { label: string; href:
   return (
     <Link
       href={href}
-      className={`group flex h-12 items-center gap-3 rounded-[0.7rem] px-4 text-sm font-semibold transition-all duration-200 ${
+      className={`group flex h-11 items-center gap-3 rounded-xl px-4 text-sm font-bold transition-all duration-300 ${
         active 
-          ? "bg-[#f0f1ff] dark:bg-blue-900/20 text-blue-700 dark:text-blue-400 shadow-sm" 
-          : "text-[#172247] dark:text-gray-300 hover:bg-[#f7f9ff] dark:hover:bg-white/5"
+          ? "bg-violet-50 text-violet-700 shadow-sm ring-1 ring-inset ring-violet-200/50" 
+          : "text-muted hover:bg-black/[0.03] hover:text-fg"
       }`}
       aria-current={active ? "page" : undefined}
     >
-      <Icon className={`h-5 w-5 transition-colors ${active ? "text-blue-600 dark:text-blue-400" : "text-[#657199] dark:text-gray-500 group-hover:text-[#172247] dark:group-hover:text-gray-200"}`} aria-hidden="true" />
+      <Icon className={`h-4.5 w-4.5 transition-colors ${active ? "text-violet-600" : "text-muted-2 group-hover:text-fg"}`} aria-hidden="true" />
       {label}
     </Link>
   );

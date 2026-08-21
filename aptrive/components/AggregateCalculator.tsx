@@ -213,8 +213,8 @@ export default function AggregateCalculator({ onResult }: AggregateCalculatorPro
   }
 
   return (
-    <div className="grid gap-8 lg:grid-cols-[1.02fr_0.98fr] lg:gap-10">
-      <div className="relative overflow-hidden rounded-[1.35rem] border border-white/80 bg-white/76 p-6 shadow-[0_24px_80px_-42px_rgba(15,23,42,0.38)] backdrop-blur-2xl before:pointer-events-none before:absolute before:inset-0 before:bg-[radial-gradient(circle_at_12%_0%,rgba(20,184,166,0.16),transparent_18rem)] md:p-8 lg:p-10">
+    <div className="grid gap-6 lg:grid-cols-[0.9fr_1.1fr] lg:gap-7">
+      <div className="relative overflow-hidden rounded-[2rem] border border-white/85 bg-white/78 p-5 shadow-[0_26px_80px_-38px_rgba(62,72,130,0.24)] backdrop-blur-2xl before:pointer-events-none before:absolute before:inset-0 before:bg-[radial-gradient(circle_at_12%_0%,rgba(20,184,166,0.16),transparent_18rem)] sm:p-6 md:p-8">
         <div className="relative">
           <label htmlFor="university" className="eyebrow">
             University
@@ -227,7 +227,7 @@ export default function AggregateCalculator({ onResult }: AggregateCalculatorPro
               id="university"
               value={uniId}
               onChange={(e) => handleUniChange(e.target.value)}
-              className="pressable h-12 w-full rounded-2xl border border-black/[0.08] bg-white/80 px-4 text-sm font-semibold text-fg outline-none transition focus:border-teal/60 focus:ring-4 focus:ring-teal/10"
+              className="pressable h-12 w-full rounded-2xl border border-line bg-white/82 px-4 text-sm font-semibold text-fg outline-none transition focus:border-violet-400 focus:ring-4 focus:ring-violet-500/10"
             >
               {universities.map((u) => (
                 <option key={u.id} value={u.id}>
@@ -253,7 +253,7 @@ export default function AggregateCalculator({ onResult }: AggregateCalculatorPro
                 onClick={() => handleEducationSystemChange(option.id as EducationSystem)}
                 className={`h-10 rounded-xl px-3 text-xs font-semibold transition sm:px-4 ${
                   educationSystem === option.id
-                    ? "bg-neutral-900 text-white shadow-lg shadow-neutral-900/10"
+                    ? "bg-gradient-to-r from-violet-600 to-blue-600 text-white shadow-lg shadow-violet-600/15"
                     : "text-muted hover:bg-white hover:text-fg"
                 }`}
               >
@@ -340,14 +340,14 @@ export default function AggregateCalculator({ onResult }: AggregateCalculatorPro
               <div className="flex gap-3 pt-2">
                 <button
                   type="submit"
-                  className="pressable rounded-full bg-neutral-900 px-6 py-3 text-sm font-semibold text-white shadow-lg shadow-neutral-900/10 transition-opacity hover:opacity-90"
+                  className="pressable rounded-xl bg-gradient-to-r from-violet-600 via-blue-600 to-teal-500 px-6 py-3 text-sm font-bold text-white shadow-[0_12px_30px_rgba(79,70,229,0.22)] transition hover:-translate-y-0.5 hover:shadow-[0_16px_34px_rgba(79,70,229,0.3)]"
                 >
                   Calculate
                 </button>
                 <button
                   type="button"
                   onClick={resetCalculation}
-                  className="pressable rounded-full border border-black/[0.08] bg-white/70 px-6 py-3 text-sm font-semibold text-fg hover:border-teal/50"
+                  className="pressable rounded-xl border border-line bg-white/75 px-6 py-3 text-sm font-semibold text-fg transition hover:border-violet-300 hover:bg-white"
                 >
                   Reset
                 </button>
@@ -359,9 +359,9 @@ export default function AggregateCalculator({ onResult }: AggregateCalculatorPro
         </div>
       </div>
 
-      <div className="relative overflow-hidden rounded-[1.35rem] border border-white/80 bg-white/70 p-6 shadow-[0_24px_80px_-42px_rgba(15,23,42,0.38)] backdrop-blur-2xl before:pointer-events-none before:absolute before:inset-0 before:bg-[radial-gradient(circle_at_90%_0%,rgba(124,58,237,0.12),transparent_20rem)] md:p-8 lg:p-10">
+      <div className="relative min-h-[520px] overflow-hidden rounded-[2rem] border border-white/85 bg-[radial-gradient(circle_at_86%_8%,rgba(191,246,239,0.38),transparent_18rem),linear-gradient(145deg,rgba(255,255,255,0.82),rgba(239,244,255,0.68))] p-5 shadow-[0_26px_80px_-38px_rgba(62,72,130,0.24)] backdrop-blur-2xl sm:p-6 md:p-8">
         <div className="relative">
-          <div className="eyebrow">Result</div>
+          <div className="flex items-center justify-between gap-4"><div className="eyebrow">Result</div><span className="rounded-full bg-violet-500/10 px-3 py-1.5 font-mono-data text-[10px] font-bold uppercase tracking-[0.16em] text-violet-700">{uni.name} / live estimate</span></div>
 
           {!isUnavailable && (
             <AssemblingFormulaClient fragmentCount={activeComponents.length || 3} active={Boolean(result)} />
@@ -378,11 +378,11 @@ export default function AggregateCalculator({ onResult }: AggregateCalculatorPro
             </div>
           ) : (
             <div className="mt-6">
-              <div className="font-mono-data text-6xl font-semibold tracking-tight text-teal">
+              <div className="font-display text-6xl font-semibold tracking-[-0.06em] text-fg sm:text-7xl">
                 {animatedAggregate.toFixed(2)}%
               </div>
-              <div className="mt-1 text-xs uppercase tracking-[0.14em] text-muted">
-                Estimated {uni.name} aggregate
+              <div className="mt-1 text-xs font-semibold uppercase tracking-[0.16em] text-muted">
+                Your calculated aggregate
               </div>
 
               <div
@@ -428,11 +428,11 @@ export default function AggregateCalculator({ onResult }: AggregateCalculatorPro
                 This is an estimate based on {uni.name}&apos;s reported merit formula. Always confirm your final aggregate against the university&apos;s official admission portal.
               </p>
 
-              <div className="mt-8 rounded-2xl border border-black/[0.06] bg-white/58 p-5">
+              <div className="mt-8 rounded-2xl border border-white/80 bg-white/62 p-5 shadow-[0_12px_30px_rgba(62,72,130,0.08)]">
                 <p className="text-sm text-fg">Want to see if this is enough for admission?</p>
                 <a
                   href="/tools/estimator"
-                  className="mt-3 inline-flex items-center gap-1.5 rounded-full bg-teal px-4 py-2 text-sm font-semibold text-graphite transition-transform hover:scale-105 active:scale-95"
+                  className="mt-3 inline-flex items-center gap-1.5 rounded-xl bg-gradient-to-r from-violet-600 to-blue-600 px-4 py-2.5 text-sm font-semibold text-white shadow-[0_10px_24px_rgba(79,70,229,0.2)] transition-transform hover:-translate-y-0.5 active:scale-95"
                 >
                   Check chances in Merit Estimator
                 </a>
