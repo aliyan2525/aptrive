@@ -24,34 +24,34 @@ const themes: Record<string, ThemeConfig> = {
     shadow: "hover:shadow-blue-500/25 hover:border-blue-500/40",
   },
   fast: {
-    gradient: "from-emerald-500/20 via-emerald-500/10 to-transparent",
-    badgeBg: "bg-emerald-500/15 backdrop-blur-xl border-emerald-500/20",
-    badgeText: "text-emerald-700 dark:text-emerald-300",
-    shadow: "hover:shadow-emerald-500/25 hover:border-emerald-500/40",
+    gradient: "from-teal-500/20 via-teal-500/10 to-transparent",
+    badgeBg: "bg-teal-500/15 backdrop-blur-xl border-teal-500/20",
+    badgeText: "text-teal-700 dark:text-teal-300",
+    shadow: "hover:shadow-teal-500/25 hover:border-teal-500/40",
   },
   giki: {
-    gradient: "from-orange-500/20 via-orange-500/10 to-transparent",
-    badgeBg: "bg-orange-500/15 backdrop-blur-xl border-orange-500/20",
-    badgeText: "text-orange-700 dark:text-orange-300",
-    shadow: "hover:shadow-orange-500/25 hover:border-orange-500/40",
+    gradient: "from-violet-500/20 via-violet-500/10 to-transparent",
+    badgeBg: "bg-violet-500/15 backdrop-blur-xl border-violet-500/20",
+    badgeText: "text-violet-700 dark:text-violet-300",
+    shadow: "hover:shadow-violet-500/25 hover:border-violet-500/40",
   },
   pieas: {
-    gradient: "from-purple-500/20 via-purple-500/10 to-transparent",
-    badgeBg: "bg-purple-500/15 backdrop-blur-xl border-purple-500/20",
-    badgeText: "text-purple-700 dark:text-purple-300",
-    shadow: "hover:shadow-purple-500/25 hover:border-purple-500/40",
+    gradient: "from-indigo-500/20 via-indigo-500/10 to-transparent",
+    badgeBg: "bg-indigo-500/15 backdrop-blur-xl border-indigo-500/20",
+    badgeText: "text-indigo-700 dark:text-indigo-300",
+    shadow: "hover:shadow-indigo-500/25 hover:border-indigo-500/40",
   },
   comsats: {
-    gradient: "from-cyan-500/20 via-cyan-500/10 to-transparent",
-    badgeBg: "bg-cyan-500/15 backdrop-blur-xl border-cyan-500/20",
-    badgeText: "text-cyan-700 dark:text-cyan-300",
-    shadow: "hover:shadow-cyan-500/25 hover:border-cyan-500/40",
+    gradient: "from-sky-500/20 via-sky-500/10 to-transparent",
+    badgeBg: "bg-sky-500/15 backdrop-blur-xl border-sky-500/20",
+    badgeText: "text-sky-700 dark:text-sky-300",
+    shadow: "hover:shadow-sky-500/25 hover:border-sky-500/40",
   },
   ned: {
-    gradient: "from-rose-500/20 via-rose-500/10 to-transparent",
-    badgeBg: "bg-rose-500/15 backdrop-blur-xl border-rose-500/20",
-    badgeText: "text-rose-700 dark:text-rose-300",
-    shadow: "hover:shadow-rose-500/25 hover:border-rose-500/40",
+    gradient: "from-fuchsia-500/20 via-fuchsia-500/10 to-transparent",
+    badgeBg: "bg-fuchsia-500/15 backdrop-blur-xl border-fuchsia-500/20",
+    badgeText: "text-fuchsia-700 dark:text-fuchsia-300",
+    shadow: "hover:shadow-fuchsia-500/25 hover:border-fuchsia-500/40",
   },
 };
 
@@ -120,7 +120,7 @@ export default function PopularUniversities() {
                   </div>
 
                   {uni.verified && (
-                    <div className="flex items-center gap-1 rounded-full bg-emerald-500/10 px-2 py-1 text-emerald-600 dark:text-emerald-400 ring-1 ring-inset ring-emerald-500/20">
+                      <div className="flex items-center gap-1 rounded-full bg-teal-500/10 px-2 py-1 text-teal-700 ring-1 ring-inset ring-teal-500/20">
                       <CheckCircle2 className="h-3 w-3" />
                       <span className="font-mono-data text-[9px] uppercase tracking-wider font-bold">
                         Verified

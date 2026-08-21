@@ -16,8 +16,6 @@ import {
   Trophy,
 } from "lucide-react";
 
-const calculatorKeys = ["AC", "%", "÷", "×", "7", "8", "9", "−", "4", "5", "6", "+", "0", ".", "00", "="];
-
 export default function UniversityAlignedSection() {
   const reducedMotion = useReducedMotion();
   const motionEnabled = reducedMotion === false;
@@ -138,7 +136,7 @@ export default function UniversityAlignedSection() {
               </div>
 
               <div className="mt-4 grid grid-cols-4 gap-2">
-                {calculatorKeys.map((key, index) => (
+                {["AC", "%", "÷", "×", "7", "8", "9", "−", "4", "5", "6", "+", "0", ".", "00", "="].map((key, index) => (
                   <span
                     key={`${key}-${index}`}
                     className={`flex h-10 items-center justify-center rounded-xl border text-xs font-semibold shadow-[0_3px_8px_rgba(62,72,130,0.06)] ${
@@ -206,4 +204,3 @@ function TrendingArrow() {
     </span>
   );
 }
-
