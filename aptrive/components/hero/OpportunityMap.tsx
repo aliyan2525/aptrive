@@ -197,7 +197,7 @@ export default function OpportunityMap() {
           initial={{ opacity: 0, y: prefersReducedMotion ? 0 : 20 }}
           animate={{ opacity: 1, y: 0 }}
         >
-          <img src="/logo-mark.png" alt="Aptrive" className="w-12 h-12 object-contain mb-2" />
+          <Image src="/logo-mark.png" alt="Aptrive" width={48} height={48} className="mb-2 h-12 w-12 object-contain" />
           <div className="text-xs font-semibold uppercase tracking-widest text-neutral-400">Your Path</div>
         </motion.div>
 

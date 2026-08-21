@@ -72,7 +72,7 @@ export default function LibraryExperience() {
               Aptrive Library / 01
             </div>
             <h1 className="mt-7 max-w-4xl font-display text-5xl font-semibold leading-[0.98] tracking-[-0.055em] text-neutral-950 sm:text-6xl lg:text-[5.8rem]">
-              Find what to study.
+              Find the signal.
               <span className="block text-violet-700">Build the edge.</span>
             </h1>
             <p className="mt-7 max-w-2xl text-base leading-8 text-neutral-600 md:text-lg">
@@ -82,6 +82,14 @@ export default function LibraryExperience() {
               <span className="inline-flex items-center gap-2 rounded-full border border-white/80 bg-white/70 px-3 py-2 shadow-sm backdrop-blur"><BookOpen className="h-3.5 w-3.5 text-violet-600" /> {formatNumber(resources.length)} resources</span>
               <span className="inline-flex items-center gap-2 rounded-full border border-white/80 bg-white/70 px-3 py-2 shadow-sm backdrop-blur"><Layers3 className="h-3.5 w-3.5 text-teal-600" /> {categories.length} subjects</span>
               <span className="inline-flex items-center gap-2 rounded-full border border-white/80 bg-white/70 px-3 py-2 shadow-sm backdrop-blur"><Sparkles className="h-3.5 w-3.5 text-amber-500" /> Updated weekly</span>
+            </div>
+            <div className="mt-10 flex flex-wrap items-center gap-4">
+              <button type="button" className="inline-flex h-12 items-center justify-center gap-2 rounded-full bg-gradient-to-r from-blue-600 via-indigo-600 to-violet-600 px-8 text-sm font-semibold text-white shadow-lg transition-transform hover:scale-105">
+                Explore Library <ArrowUpRight className="h-4 w-4" />
+              </button>
+              <button type="button" className="inline-flex h-12 items-center justify-center gap-2 rounded-full border border-neutral-200 bg-white px-8 text-sm font-semibold text-neutral-700 shadow-sm transition-transform hover:scale-105">
+                View study plan <Clock3 className="h-4 w-4" />
+              </button>
             </div>
           </div>
 
@@ -93,7 +101,7 @@ export default function LibraryExperience() {
                 <h2 className="mt-4 max-w-sm font-display text-2xl font-semibold tracking-tight text-neutral-950">{featured.title}</h2>
                 <p className="mt-3 text-sm leading-6 text-neutral-600">A high-signal resource to move from passive reading into deliberate practice.</p>
               </div>
-              <span className="grid h-10 w-10 shrink-0 place-items-center rounded-2xl bg-neutral-950 text-white"><ArrowUpRight className="h-5 w-5" /></span>
+              <span className="grid h-10 w-10 shrink-0 place-items-center rounded-full bg-gradient-to-br from-violet-600 to-fuchsia-600 text-white"><ArrowUpRight className="h-5 w-5" /></span>
             </div>
             <div className="relative z-10 mt-7 flex flex-wrap gap-2 text-[10px] font-semibold uppercase tracking-[0.12em] text-neutral-500">
               <span className="rounded-full bg-neutral-100 px-2.5 py-1.5">{featuredCategory?.name ?? "Library"}</span>

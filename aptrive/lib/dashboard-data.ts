@@ -16,8 +16,8 @@ const DashboardSummarySchema = z.object({
   sessions_completed: z.number().nullable(),
 });
 type DashboardSummary = z.infer<typeof DashboardSummarySchema>;
-// Local shape for the calendar/heatmap, matching what sampleActivity()
-// produces below (placeholder data until a real per-day source exists).
+// Local shape for the calendar/heatmap, matching the per-day activity rows
+// returned by the dashboard RPC. Empty is a valid state for new learners.
 type DailyActivity = {
   user_id: string;
   activity_date: string;

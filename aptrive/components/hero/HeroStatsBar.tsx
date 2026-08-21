@@ -11,14 +11,14 @@ const stats = [
   },
   {
     icon: Sparkles,
-    value: "95%",
-    label: "Success Rate",
+    value: `${siteStats.satisfactionRate}%`,
+    label: "Students reporting better accuracy",
     tint: "bg-violet-500/10 text-violet-600",
   },
   {
     icon: BadgeCheck,
-    value: `${universities.length * 25}+`,
-    label: "Universities",
+    value: `${universities.length}+`,
+    label: "University pathways",
     tint: "bg-rose-500/10 text-rose-500",
   },
   {
@@ -29,8 +29,8 @@ const stats = [
   },
   {
     icon: Users,
-    value: "4.9/5",
-    label: "Student Rating",
+    value: `${siteStats.practiceSets}+`,
+    label: "Practice sets",
     tint: "bg-indigo-500/10 text-indigo-500",
   },
 ];

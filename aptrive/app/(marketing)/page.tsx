@@ -26,7 +26,7 @@ import HeroTrustedBy from "@/components/hero/HeroTrustedBy";
 import { siteStats } from "@/lib/site-stats";
 
 export const metadata: Metadata = {
-  title: "Aptrive â€” Entrance Exam Prep for Pakistan's Top Universities",
+  title: "Aptrive — Entrance Exam Prep for Pakistan's Top Universities",
   description: "Aptrive combines realistic mock exams, targeted practice, and smart analytics to help you prepare with a clear plan for your dream university.",
 };
 
@@ -69,7 +69,7 @@ export default async function Home() {
 
   return (
     <>
-      <section className="relative overflow-hidden bg-[radial-gradient(circle_at_82%_34%,rgba(191,246,239,0.72),transparent_31rem),radial-gradient(circle_at_66%_18%,rgba(231,237,255,0.84),transparent_30rem),linear-gradient(180deg,#ffffff_0%,#f7faff_62%,#eef3ff_100%)] pt-20">
+      <section className="homepage-hero relative overflow-hidden bg-[radial-gradient(circle_at_82%_34%,rgba(191,246,239,0.72),transparent_31rem),radial-gradient(circle_at_66%_18%,rgba(231,237,255,0.84),transparent_30rem),linear-gradient(180deg,#ffffff_0%,#f7faff_62%,#eef3ff_100%)] pt-20">
         {/* Ambient color glows behind the composition */}
         <div className="pointer-events-none absolute -top-32 right-[-8%] h-[640px] w-[640px] rounded-full bg-cyan-200/35 blur-[130px]" />
         <div className="pointer-events-none absolute bottom-[-14%] right-[8%] h-[520px] w-[520px] rounded-full bg-violet-200/24 blur-[130px]" />
@@ -89,7 +89,7 @@ export default async function Home() {
               </Reveal>
 
               <Reveal delay={100}>
-                <h1 className="mt-8 max-w-2xl font-display text-[2.9rem] font-semibold leading-[0.98] tracking-[-0.045em] text-neutral-950 sm:text-[3.8rem] lg:text-[4.35rem]">
+                <h1 className="mt-8 max-w-[680px] font-display text-[2.9rem] font-semibold leading-[0.98] tracking-[-0.045em] text-neutral-950 sm:text-[3.8rem] lg:text-[4.35rem]">
                   Know your score. Raise it.
                   <br />
                   With{" "}
@@ -101,8 +101,8 @@ export default async function Home() {
               </Reveal>
 
               <Reveal delay={200}>
-                <p className="mt-7 max-w-xl text-base leading-7 text-neutral-600 sm:text-lg sm:leading-8">
-                  Aptrive combines realistic mock exams, targeted practice, and smart analytics to help you prepare with a clear plan for your dream university.
+<p className="mt-7 max-w-xl text-base leading-7 text-neutral-600 sm:text-lg sm:leading-8">
+                  Take a free diagnostic, see exactly where you are losing marks, and leave with a focused study path for your target university.
                 </p>
               </Reveal>
 
@@ -111,7 +111,7 @@ export default async function Home() {
               </Reveal>
 
               <Reveal delay={400}>
-                <div className="mt-12 flex items-center gap-4">
+                <div className="mt-8 flex items-center gap-4 sm:mt-10">
                   <HeroAvatarStack />
                   <div>
                     <p className="text-sm font-semibold text-neutral-800">
@@ -133,7 +133,7 @@ export default async function Home() {
             </div>
 
             {/* Right column â€” liquid-glass 3D composition */}
-            <div className="relative h-[420px] sm:h-[520px] lg:-ml-10 lg:h-[650px] xl:-ml-16">
+            <div className="homepage-visual relative h-[420px] sm:h-[520px] lg:-ml-10 lg:h-[650px] xl:-ml-16">
               <HeroOrbitDecor />
               <HeroBlobsSceneWrapper />
               <HeroOrbitIcons />
@@ -229,8 +229,8 @@ export default async function Home() {
               Take a free diagnostic to see where you stand and what to study next.
             </h2>
             <div className="mt-16">
-              <Button href="/signup" variant="primary" size="lg" className="h-16 px-12 text-lg">
-                Know your score. Raise it.
+<Button href="/signup?source=homepage-final-cta" variant="primary" size="lg" className="h-16 px-12 text-lg" data-cta="homepage-final-diagnostic">
+                See your score for free
               </Button>
             </div>
           </Reveal>

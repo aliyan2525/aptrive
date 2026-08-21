@@ -33,34 +33,7 @@ type CalendarDay = {
 
 const weekdayLabels = ["S", "M", "T", "W", "T", "F", "S"];
 
-const fallbackStrong = [
-  { topic: "Algebra", mastery_percent: 74 },
-  { topic: "Kinematics", mastery_percent: 62 },
-  { topic: "Grammar", mastery_percent: 58 },
-];
 
-const fallbackWeak = [
-  { topic: "Trigonometry", mastery_percent: 41 },
-  { topic: "Verbal Reasoning", mastery_percent: 35 },
-  { topic: "Optics", mastery_percent: 29 },
-];
-
-const fallbackDeadlines = [
-  { university: "NUST", deadline_date: "2026-08-15" },
-  { university: "FAST", deadline_date: "2026-08-28" },
-  { university: "GIKI", deadline_date: "2026-09-05" },
-];
-
-const fallbackRecent = [
-  { id: "sample-r1", user_id: "sample", resource_id: "algebra-mixed-practice", resource_type: "practice_set" as const, viewed_at: new Date().toISOString() },
-  { id: "sample-r2", user_id: "sample", resource_id: "kinematics-revision", resource_type: "video" as const, viewed_at: new Date(Date.now() - 86_400_000).toISOString() },
-];
-
-const placeholderCalendar: CalendarDay[] = Array.from({ length: 30 }, (_, i) => ({
-  day: i + 1,
-  active: i % 4 !== 1,
-  isToday: false,
-}));
 
 function getGreeting(hour: number) {
   if (hour < 5) return "Still up";
@@ -127,7 +100,8 @@ export default function DashboardClient({
   }, [data.activity]);
 
   const activity = data.activity.slice(-28);
-  const targetUniversity = data.studentProfile?.target_university ?? "FAST-NUCES";
+  const targetUniversity = data.studentProfile?.target_university ?? "your target university";
+  const hasEvidence = data.weeklySummary.questionsAttempted > 0 || data.topicMastery.length > 0 || data.weakTopics.length > 0;
   const dailyGoalPercent = data.dailyGoal
     ? Math.min(
         100,
@@ -137,7 +111,7 @@ export default function DashboardClient({
             50
         )
       )
-    : 42;
+    : 0;
 
   const prepPercent = Math.min(
     100,
@@ -148,21 +122,21 @@ export default function DashboardClient({
     )
   );
 
-  const admissionProbability = Math.min(96, Math.max(58, prepPercent + 8));
-  const studyMinutes = data.dailyGoal?.actual_minutes ?? Math.max(35, Math.round(data.weeklySummary.questionsAttempted * 2.4));
-  const targetMinutes = data.dailyGoal?.target_minutes ?? 90;
-  const targetQuestions = data.dailyGoal?.target_questions ?? 40;
-  const actualQuestions = data.dailyGoal?.actual_questions ?? Math.max(18, data.weeklySummary.questionsAttempted);
+  const admissionProbability = hasEvidence ? Math.min(96, Math.max(0, prepPercent + 8)) : 0;
+  const studyMinutes = data.dailyGoal?.actual_minutes ?? 0;
+  const targetMinutes = data.dailyGoal?.target_minutes ?? data.studentProfile?.daily_study_target_minutes ?? 90;
+  const targetQuestions = data.dailyGoal?.target_questions ?? 20;
+  const actualQuestions = data.dailyGoal?.actual_questions ?? data.weeklySummary.questionsAttempted;
   const weakTopics = data.weakTopics.slice(0, 3).map((t) => ({ topic: t.name, mastery_percent: t.masteryScore }));
   const strongTopics = data.topicMastery.slice(0, 3).map((t) => ({ topic: t.name, mastery_percent: t.masteryScore }));
-  const topWeakTopic = weakTopics[0]?.topic ?? fallbackWeak[0].topic;
+  const topWeakTopic = weakTopics[0]?.topic ?? "a priority topic";
   const missionTime = Math.max(32, Math.min(55, targetMinutes - studyMinutes + 20));
 
   const kpis = [
-    { label: "Study Streak", value: `${streak || 7} days`, detail: "Keep it going", icon: Flame, tone: "emerald" },
-    { label: "Accuracy", value: `${data.weeklySummary.accuracyPercent || 88}%`, detail: "+4% from last week", icon: Gauge, tone: "violet" },
-    { label: "Study Hours", value: `${data.weeklySummary.studyHours || 12.5}h`, detail: "+2h from last week", icon: Clock3, tone: "sky" },
-    { label: "Questions Solved", value: `${data.weeklySummary.questionsAttempted || 312}`, detail: `vs ${targetQuestions * 10} goal`, icon: ShieldCheck, tone: "blue" },
+    { label: "Study Streak", value: `${streak} days`, detail: streak ? "Keep it going" : "Start your first streak", icon: Flame, tone: "emerald" },
+    { label: "Accuracy", value: `${data.weeklySummary.accuracyPercent}%`, detail: data.weeklySummary.questionsAttempted ? "Last 7 days" : "No attempts yet", icon: Gauge, tone: "violet" },
+    { label: "Study Hours", value: `${data.weeklySummary.studyHours}h`, detail: data.weeklySummary.studyHours ? "Last 7 days" : "Time tracking unavailable", icon: Clock3, tone: "sky" },
+    { label: "Questions Solved", value: `${data.weeklySummary.questionsAttempted}`, detail: `of ${targetQuestions} daily goal`, icon: ShieldCheck, tone: "blue" },
   ];
 
   const recommendations = [
@@ -216,15 +190,15 @@ export default function DashboardClient({
           dailyGoalPercent={dailyGoalPercent}
           targetUniversity={targetUniversity}
         />
-        <TopicPanel strong={strongTopics.length ? strongTopics : fallbackStrong} weak={weakTopics.length ? weakTopics : fallbackWeak} />
+        <TopicPanel strong={strongTopics} weak={weakTopics} />
         <Recommendations items={recommendations} />
-        <UpcomingPanel deadlines={data.upcomingDeadlines.length ? data.upcomingDeadlines : fallbackDeadlines} />
-        <CalendarPanel days={calendarDays.length ? calendarDays : placeholderCalendar} />
+        <UpcomingPanel deadlines={data.upcomingDeadlines} />
+        <CalendarPanel days={calendarDays} />
         <ActivityPanel
           email={email}
           role={role}
           memberSince={memberSince}
-          recent={data.recentlyViewed.length ? data.recentlyViewed : fallbackRecent}
+          recent={data.recentlyViewed}
         />
       </motion.div>
     </div>
@@ -336,15 +310,15 @@ function DailyGoalCard({
       <p className="text-xs font-medium uppercase tracking-[0.12em] text-neutral-500">Today&apos;s Goal</p>
       <div className="mt-4 flex items-center justify-between gap-4">
         <div>
-          <p className="font-display text-4xl font-medium text-white">{percent}%</p>
-          <p className="mt-1 text-sm font-medium text-neutral-400">Complete</p>
+<p className="font-display text-4xl font-medium text-fg">{percent}%</p>
+          <p className="mt-1 text-sm font-medium text-muted">Complete</p>
         </div>
-        <ProgressRing value={percent} size={100} colors={["#333", "#fff", "#fff"]} />
+        <ProgressRing value={percent} size={100} colors={["#23d5c4", "#6f45ff", "#dbe4ff"]} />
       </div>
       <div className="mt-6 space-y-4">
-        <GoalRow label="Questions" done={actualQuestions} total={targetQuestions} color="#fff" />
-        <GoalRow label="Study Minutes" done={studyMinutes} total={targetMinutes} color="#aaa" />
-        <GoalRow label="Readiness" done={readiness} total={100} color="#666" suffix="%" />
+<GoalRow label="Questions" done={actualQuestions} total={targetQuestions} color="#23d5c4" />
+        <GoalRow label="Study Minutes" done={studyMinutes} total={targetMinutes} color="#6f45ff" />
+        <GoalRow label="Readiness" done={readiness} total={100} color="#9b8cff" suffix="%" />
       </div>
     </motion.section>
   );
@@ -365,8 +339,8 @@ function MetricTile({ label, value, detail, icon: Icon, tone }: { label: string;
         </span>
         <div>
           <p className="text-xs font-medium uppercase tracking-[0.08em] text-neutral-500">{label}</p>
-          <p className="font-display mt-1 text-xl font-medium text-white">{value}</p>
-          <p className="mt-0.5 text-xs text-neutral-400">{detail}</p>
+<p className="font-display mt-1 text-xl font-medium text-fg">{value}</p>
+          <p className="mt-0.5 text-xs text-muted">{detail}</p>
         </div>
       </div>
     </motion.article>
@@ -378,25 +352,17 @@ function PerformancePanel({ activity }: { activity: Array<{ activity_date: strin
     const base = activity.length ? activity.slice(-6) : [];
     return base.map((day, index) => ({
       label: `Wk ${index + 1}`,
-      value: day.questions_attempted ? Math.round((day.correct_count / day.questions_attempted) * 100) : 58 + index * 5,
+      value: day.questions_attempted ? Math.round((day.correct_count / day.questions_attempted) * 100) : 0,
     }));
   }, [activity]);
-  const fallback = [
-    { label: "Wk 1", value: 62 },
-    { label: "Wk 2", value: 66 },
-    { label: "Wk 3", value: 71 },
-    { label: "Wk 4", value: 74 },
-    { label: "Wk 5", value: 72 },
-    { label: "Wk 6", value: 88 },
-  ];
-  const chartPoints = points.length >= 2 ? points : fallback;
+  const chartPoints = points.length >= 2 ? points : [];
   const polyline = chartPoints.map((p, i) => `${(i / (chartPoints.length - 1)) * 100},${100 - p.value}`).join(" ");
 
   return (
     <section className="glass-panel rounded-[1.35rem] p-6 lg:col-span-6">
       <PanelHeader title="Performance Trends" subtitle="Weekly accuracy - last 6 weeks" action="Accuracy" />
       <div className="mt-6">
-        <svg viewBox="0 0 100 100" className="h-52 w-full overflow-visible" role="img" aria-label="Accuracy trend line chart">
+        {!chartPoints.length ? <div className="grid h-52 place-items-center rounded-xl border border-dashed border-line bg-white/50 px-6 text-center text-sm text-muted">Complete at least two activity days to reveal your accuracy trend.</div> : <svg viewBox="0 0 100 100" className="h-52 w-full overflow-visible" role="img" aria-label="Accuracy trend line chart">
           {[25, 50, 75, 100].map((y) => (
             <line key={y} x1="0" x2="100" y1={y} y2={y} stroke="rgba(255,255,255,0.05)" strokeWidth="1" />
           ))}
@@ -415,11 +381,11 @@ function PerformancePanel({ activity }: { activity: Array<{ activity_date: strin
               <stop offset="1" stopColor="#fff" stopOpacity="0" />
             </linearGradient>
           </defs>
-        </svg>
+        </svg>}
       </div>
-      <div className="mt-4 flex items-center gap-3 rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-neutral-300">
-        <LineChart className="h-4 w-4 text-neutral-400" aria-hidden="true" />
-        You are improving. Accuracy increased by 16% in the last 6 weeks.
+      <div className="mt-4 flex items-center gap-3 rounded-xl border border-neutral-200/70 bg-white/70 px-4 py-3 text-sm text-muted">
+        <LineChart className="h-4 w-4 text-teal" aria-hidden="true" />
+        {chartPoints.length >= 2 ? "Your recent accuracy trend is calculated from recorded attempts." : "Your first recorded attempts will appear here as a trend."}
       </div>
     </section>
   );
@@ -431,16 +397,16 @@ function ReadinessPanel({ prepPercent, admissionProbability, weakTopic }: { prep
       <PanelHeader title="Exam Readiness" subtitle="Blended score from volume, accuracy, and streak" />
       <div className="mt-7 grid gap-6 md:grid-cols-[13rem_minmax(0,1fr)]">
         <div className="grid place-items-center">
-          <ProgressRing value={prepPercent || 85} size={138} colors={["#333", "#fff", "#fff"]} label="Ready" />
+          <ProgressRing value={prepPercent} size={138} colors={["#23d5c4", "#6f45ff", "#dbe4ff"]} label="Ready" />
         </div>
         <div className="space-y-5 mt-2">
-          <ReadinessRow label="Consistency" value={90} color="#fff" icon={Medal} />
-          <ReadinessRow label="Accuracy" value={admissionProbability} color="#aaa" icon={Target} />
-          <ReadinessRow label="Practice Volume" value={78} color="#666" icon={Zap} />
+          <ReadinessRow label="Consistency" value={Math.min(100, prepPercent)} color="#23d5c4" icon={Medal} />
+          <ReadinessRow label="Accuracy" value={Math.min(100, admissionProbability)} color="#6f45ff" icon={Target} />
+          <ReadinessRow label="Practice Volume" value={Math.min(100, prepPercent)} color="#9b8cff" icon={Zap} />
         </div>
       </div>
-      <div className="mt-6 rounded-xl border border-white/10 bg-white/5 p-4 text-sm leading-6 text-neutral-300">
-        Focus on {weakTopic} today. One consistent session will move readiness to the next level.
+      <div className="mt-6 rounded-xl border border-line bg-white/70 p-4 text-sm leading-6 text-muted">
+        {weakTopic === "a priority topic" ? "Complete a focused session to reveal the next readiness opportunity." : `Focus on ${weakTopic} today. One consistent session will move readiness to the next level.`}
       </div>
     </section>
   );
@@ -480,8 +446,8 @@ function TopicPanel({ strong, weak }: { strong: Array<{ topic: string; mastery_p
     <section className="glass-panel rounded-[1.35rem] p-6 lg:col-span-4">
       <PanelHeader title="Knowledge Map" subtitle="Data density heatmap" />
       <div className="mt-5 grid gap-6">
-        <TopicGroup title="Strengths" topics={strong} color="#fff" />
-        <TopicGroup title="Needs Focus" topics={weak} color="#666" />
+        <TopicGroup title="Strengths" topics={strong} color="#23d5c4" />
+        <TopicGroup title="Needs Focus" topics={weak} color="#6f45ff" />
       </div>
     </section>
   );
@@ -514,14 +480,15 @@ function UpcomingPanel({ deadlines }: { deadlines: Array<{ university: string; d
     <section className="glass-panel rounded-[1.35rem] p-6 lg:col-span-4">
       <PanelHeader title="Upcoming Mock Test" subtitle="Keep deadlines visible" action="View all" />
       <div className="mt-5 space-y-2">
+        {!deadlines.length ? <p className="rounded-xl border border-dashed border-line bg-white/50 p-4 text-sm leading-6 text-muted">No admission deadlines are saved yet. Add a target university to keep important dates visible.</p> : null}
         {deadlines.slice(0, 3).map((item) => (
-          <div key={`${item.university}-${item.deadline_date}`} className="flex items-center gap-3 rounded-xl border border-white/10 bg-white/5 p-3">
+          <div key={`${item.university}-${item.deadline_date}`} className="flex items-center gap-3 rounded-xl border border-line bg-white/70 p-3">
             <div className="h-8 w-8 rounded-full bg-white/10 flex items-center justify-center">
               <span className="text-[10px] font-bold">{item.university.slice(0,2)}</span>
             </div>
             <div className="min-w-0">
-              <p className="truncate text-sm font-medium text-white">{item.university}</p>
-              <p className="text-xs text-neutral-400">{formatDate(item.deadline_date)}</p>
+<p className="truncate text-sm font-medium text-fg">{item.university}</p>
+              <p className="text-xs text-muted">{formatDate(item.deadline_date)}</p>
             </div>
           </div>
         ))}
@@ -538,8 +505,9 @@ function CalendarPanel({ days }: { days: CalendarDay[] }) {
         {weekdayLabels.map((label, i) => <span key={`${label}-${i}`}>{label}</span>)}
       </div>
       <div className="mt-2 grid grid-cols-7 gap-2">
+        {!days.length ? <p className="col-span-7 rounded-xl border border-dashed border-line bg-white/50 p-4 text-sm leading-6 text-muted">Your activity calendar will fill in after your first completed session.</p> : null}
         {days.map((d) => (
-          <div key={d.day} className={`grid aspect-square place-items-center rounded bg-white/5 text-[11px] font-medium transition-colors ${d.active ? "bg-white text-black" : "text-neutral-600"} ${d.isToday ? "border border-white/30" : ""}`}>
+          <div key={d.day} className={`grid aspect-square place-items-center rounded bg-white/70 text-[11px] font-medium transition-colors ${d.active ? "bg-teal-100 text-teal-800" : "text-muted-2"} ${d.isToday ? "border border-violet-400" : ""}`}>
             {d.day}
           </div>
         ))}
@@ -569,10 +537,11 @@ function ActivityPanel({
           <Info label="Member since" value={memberSince ? formatDate(memberSince) : "-"} />
         </dl>
         <div className="grid gap-3 sm:grid-cols-2">
+          {!recent.length ? <p className="rounded-xl border border-dashed border-line bg-white/50 p-4 text-sm leading-6 text-muted sm:col-span-2">No recent learning activity yet. Start a practice set and your latest work will appear here.</p> : null}
           {recent.slice(0, 4).map((item) => (
-            <div key={`${item.resource_id}-${item.viewed_at}`} className="rounded-lg border border-white/10 bg-[#0a0a0a] p-4">
-              <p className="truncate text-sm font-medium text-white">{friendlyResource(item.resource_type, item.resource_id)}</p>
-              <p className="mt-1 text-xs text-neutral-400">{item.resource_type.replace("_", " ")} - {formatDate(item.viewed_at)}</p>
+<div key={`${item.resource_id}-${item.viewed_at}`} className="rounded-lg border border-line bg-white/70 p-4">
+              <p className="truncate text-sm font-medium text-fg">{friendlyResource(item.resource_type, item.resource_id)}</p>
+              <p className="mt-1 text-xs text-muted">{item.resource_type.replace("_", " ")} - {formatDate(item.viewed_at)}</p>
             </div>
           ))}
         </div>
@@ -585,8 +554,8 @@ function PanelHeader({ title, subtitle, action }: { title: string; subtitle: str
   return (
     <div className="flex items-start justify-between gap-4">
       <div>
-        <h2 className="font-display text-base font-medium text-white">{title}</h2>
-        <p className="text-xs text-neutral-400">{subtitle}</p>
+<h2 className="font-display text-base font-medium text-fg">{title}</h2>
+        <p className="text-xs text-muted">{subtitle}</p>
       </div>
       {action && <span className="rounded-md border border-white/10 px-2.5 py-1 text-[10px] font-medium uppercase tracking-wide text-neutral-300">{action}</span>}
     </div>
@@ -617,8 +586,8 @@ function GoalRow({ label, done, total, color, suffix = "" }: { label: string; do
   return (
     <div>
       <div className="flex justify-between text-xs font-medium">
-        <span className="text-neutral-400">{label}</span>
-        <span className="text-neutral-300">{done}{suffix} / {total}{suffix}</span>
+<span className="text-muted">{label}</span>
+        <span className="text-muted">{done}{suffix} / {total}{suffix}</span>
       </div>
       <div className="mt-1.5 h-1.5 overflow-hidden rounded-full bg-white/10">
         <div className="h-full rounded-full transition-[width] duration-700" style={{ width: `${percent}%`, backgroundColor: color }} />
@@ -641,7 +610,7 @@ function ReadinessRow({ label, value, color, icon: Icon }: { label: string; valu
           <div className="h-full rounded-full" style={{ width: `${value}%`, backgroundColor: color }} />
         </div>
       </div>
-      <span className="text-right text-xs font-medium text-white">{value}%</span>
+      <span className="text-right text-xs font-medium text-fg">{value}%</span>
     </div>
   );
 }
@@ -652,13 +621,14 @@ function TopicGroup({ title, topics, color }: { title: string; topics: Array<{ t
     <div>
       <p className="text-[10px] font-medium uppercase tracking-[0.1em] text-neutral-500 mb-3">{title}</p>
       <div className="space-y-2">
+        {!topics.length ? <p className="rounded-xl border border-dashed border-line bg-white/50 p-4 text-sm leading-6 text-muted">Complete a few questions to build this map.</p> : null}
         {topics.map((topic) => (
           <div key={topic.topic} className="flex items-center gap-3">
-            <span className="w-1/3 truncate text-xs font-medium text-neutral-300">{topic.topic}</span>
+            <span className="w-1/3 truncate text-xs font-medium text-fg">{topic.topic}</span>
             <div className="flex-grow h-1.5 overflow-hidden rounded-full bg-white/5">
               <div className="h-full rounded-full" style={{ width: `${topic.mastery_percent}%`, backgroundColor: color }} />
             </div>
-            <span className="w-8 text-right text-[10px] font-mono text-neutral-500">{topic.mastery_percent}%</span>
+            <span className="w-8 text-right text-[10px] font-mono text-muted-2">{topic.mastery_percent}%</span>
           </div>
         ))}
       </div>
@@ -669,8 +639,8 @@ function TopicGroup({ title, topics, color }: { title: string; topics: Array<{ t
 function Info({ label, value }: { label: string; value: string }) {
   return (
     <div className="flex justify-between gap-4 border-b border-white/5 py-2.5 first:pt-0 last:border-0 last:pb-0">
-      <dt className="text-neutral-500">{label}</dt>
-      <dd className="min-w-0 truncate text-right text-white">{value}</dd>
+<dt className="text-muted">{label}</dt>
+      <dd className="min-w-0 truncate text-right text-fg">{value}</dd>
     </div>
   );
 }

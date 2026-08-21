@@ -31,10 +31,8 @@ import {
 const settingsNav = [
   { id: "profile", label: "Profile", icon: UserRound },
   { id: "study", label: "Study Preferences", icon: SlidersHorizontal },
-  { id: "notifications", label: "Notifications", icon: Bell },
   { id: "appearance", label: "Appearance", icon: Palette },
-  { id: "privacy", label: "Privacy & Security", icon: Lock },
-  { id: "subscription", label: "Subscription", icon: WalletCards },
+  { id: "security", label: "Security", icon: ShieldCheck },
 ];
 
 export default function SettingsClient({
@@ -100,6 +98,7 @@ export default function SettingsClient({
                 key={item.id}
                 type="button"
                 onClick={() => setActiveTab(item.id)}
+                aria-pressed={isActive}
                 className={`flex h-11 w-full items-center gap-3 rounded-[0.8rem] px-3 text-left text-sm font-bold transition-all duration-200 ${
                   isActive 
                     ? "bg-violet-500/10 text-violet-700 shadow-sm" 
@@ -150,9 +149,9 @@ export default function SettingsClient({
                     <p className="text-sm text-gray-500">Your daily time commitment for active practice.</p>
                   </div>
                   <select value={dailyTarget} onChange={(e) => setDailyTarget(e.target.value)} className="h-11 rounded-xl border border-neutral-200 bg-white/80 px-3 text-sm font-semibold outline-none transition focus:border-violet-400 focus:ring-4 focus:ring-violet-500/10">
-                    <option>60 minutes</option>
-                    <option>90 minutes</option>
-                    <option>120 minutes</option>
+                    <option value="60">60 minutes</option>
+                    <option value="90">90 minutes</option>
+                    <option value="120">120 minutes</option>
                   </select>
                 </div>
 
@@ -160,9 +159,10 @@ export default function SettingsClient({
                   <button 
                     onClick={handleSave}
                     disabled={isSaving}
+                    aria-busy={isSaving}
                     className="pressable flex h-11 min-w-[140px] items-center justify-center gap-2 rounded-xl bg-violet-700 px-4 text-sm font-bold text-white shadow-[0_12px_26px_rgba(111,69,255,.2)] transition hover:-translate-y-0.5 hover:bg-violet-800 disabled:opacity-70"
                   >
-                    {isSaving ? <Loader2 className="h-4 w-4 animate-spin" aria-label="Saving settings" /> : "Save Changes"}
+                    {isSaving ? <Loader2 className="h-4 w-4 animate-spin"                 aria-label="Saving settings" /> : "Save Changes"}
                   </button>
                 </div>
                 {saveError && <p role="alert" className="mt-4 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">{saveError}</p>}
@@ -195,13 +195,20 @@ export default function SettingsClient({
           </div>
         )}
         
-        {/* Fill in other tabs minimally */}
-        {["notifications", "privacy", "subscription"].includes(activeTab) && (
-          <div className="space-y-5 animate-in fade-in slide-in-from-bottom-2 duration-300 grid place-items-center h-64 rounded-2xl border border-dashed border-[var(--line)]">
-             <div className="text-center text-gray-500">
-               <p className="font-bold">This section is coming next</p>
-               <p className="text-sm">Notifications, privacy, and subscription controls are not connected yet.</p>
-             </div>
+        {activeTab === "security" && (
+          <div className="space-y-5 animate-in fade-in slide-in-from-bottom-2 duration-300">
+            <Panel title="Security & account" subtitle="Keep access to your Aptrive account under your control.">
+              <div className="mt-4 grid gap-3 sm:grid-cols-2">
+                <Link href="/forgot-password" className="rounded-xl border border-[var(--line)] bg-white/70 p-4 text-sm font-semibold text-fg transition hover:border-violet-300 hover:bg-violet-50">
+                  Reset password
+                  <span className="mt-1 block text-xs font-normal text-muted">Send a secure password-reset email.</span>
+                </Link>
+                <Link href="/privacy" className="rounded-xl border border-[var(--line)] bg-white/70 p-4 text-sm font-semibold text-fg transition hover:border-violet-300 hover:bg-violet-50">
+                  Privacy policy
+                  <span className="mt-1 block text-xs font-normal text-muted">Review how Aptrive handles account data.</span>
+                </Link>
+              </div>
+            </Panel>
           </div>
         )}
 

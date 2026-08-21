@@ -1,11 +1,11 @@
-﻿"use client";
+"use client";
 
 import { useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { motion, AnimatePresence, useScroll, useMotionValueEvent } from "framer-motion";
-import { ChevronDown } from "lucide-react";
+import { ChevronDown, ArrowUpRight, Menu, X } from "lucide-react";
 import UserMenu, { type HeaderUser } from "@/components/UserMenu";
 import Button from "@/components/ui/Button";
 import NotificationBell, { type NotificationItem } from "@/components/NotificationBell";
@@ -102,8 +102,8 @@ export default function SiteNav({
           hidden ? "-translate-y-full" : "translate-y-0"
         }`}
       >
-        <div className="mx-auto flex max-w-[1380px] items-center rounded-[1.75rem] border border-white/75 bg-white/80 px-5 py-2.5 shadow-[0_18px_55px_rgba(20,32,70,0.10)] backdrop-blur-2xl transition-all duration-500">
-          <div className="flex w-full items-center justify-between">
+        <div className="mx-auto flex w-[calc(100%-1rem)] max-w-[1400px] items-center gap-4 rounded-full border border-white/75 bg-white/80 px-4 py-2.5 shadow-[0_18px_55px_rgba(20,32,70,0.10)] backdrop-blur-2xl transition-all duration-500 sm:px-6 lg:gap-10">
+          <div className="flex w-full items-center justify-between gap-8">
             <Link href={user ? "/dashboard" : "/"} className="flex items-center gap-2.5 group" aria-label="Aptrive">
               <div className="relative">
                 <Image src="/logo-mark.png" alt="" width={34} height={38} priority className="h-9 w-auto transition-transform duration-300 group-hover:scale-105" />
@@ -125,7 +125,7 @@ export default function SiteNav({
                     {isActive && (
                       <motion.div
                         layoutId="nav-indicator"
-                        className="absolute inset-0 rounded-full bg-slate-900/[0.055] shadow-[inset_0_1px_0_rgba(255,255,255,0.9)]"
+                        className="absolute bottom-0 left-1/2 h-0.5 w-8 -translate-x-1/2 rounded-full bg-gradient-to-r from-blue-600 to-violet-600"
                         transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
                       />
                     )}
@@ -175,18 +175,18 @@ export default function SiteNav({
                 </>
               ) : (
                 <>
-                  <Button href="/login" variant="ghost" size="sm" ripple={false} className="hidden sm:inline-flex text-fg">
+                  <Button href="/login" variant="ghost" size="sm" ripple={false} className="hidden sm:inline-flex text-fg hover:bg-black/5">
                     Login
                   </Button>
-                  <Button href="/signup" variant="primary" size="sm" className="hidden sm:inline-flex px-5">
-                    Start diagnostic
-                  </Button>
+                  <Link href="/signup" className="hidden sm:inline-flex h-10 items-center justify-center gap-2 rounded-full bg-gradient-to-r from-blue-600 via-indigo-600 to-violet-600 px-5 text-sm font-semibold text-white shadow-lg transition-transform hover:scale-105">
+                    Start diagnostic <ArrowUpRight className="h-4 w-4" />
+                  </Link>
                 </>
               )}
 
               <button
                 type="button"
-                className="pressable flex h-11 w-11 items-center justify-center rounded-full border border-black/10 dark:border-white/10 text-black dark:text-white md:hidden"
+                className="pressable flex h-11 w-11 items-center justify-center rounded-full border border-line bg-white/70 text-fg md:hidden"
                 aria-expanded={mobileOpen}
                 aria-controls="mobile-nav"
                 aria-label={mobileOpen ? "Close menu" : "Open menu"}
@@ -198,7 +198,7 @@ export default function SiteNav({
                   })
                 }
               >
-                {mobileOpen ? "âœ•" : "â˜°"}
+                {mobileOpen ? <X className="h-5 w-5" aria-hidden="true" /> : <Menu className="h-5 w-5" aria-hidden="true" />}
               </button>
             </div>
           </div>
@@ -213,7 +213,7 @@ export default function SiteNav({
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -20 }}
             id="mobile-nav" 
-            className="fixed inset-0 top-16 z-40 bg-white/95 dark:bg-black/95 backdrop-blur-2xl md:hidden overflow-y-auto overscroll-contain h-[100dvh] pb-24"
+            className="fixed inset-0 top-16 z-40 h-[100dvh] overflow-y-auto overscroll-contain bg-white/95 pb-[calc(6rem+env(safe-area-inset-bottom))] backdrop-blur-2xl md:hidden"
           >
             <nav className="container-aptrive flex flex-col gap-1 py-6" aria-label="Mobile">
               {visibleLinks.map((link) => (

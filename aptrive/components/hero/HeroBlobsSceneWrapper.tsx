@@ -1,7 +1,7 @@
 "use client";
 
 import dynamic from "next/dynamic";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 const HeroBlobsScene = dynamic(() => import("@/components/hero/HeroBlobsScene"), {
   ssr: false,
@@ -23,6 +23,8 @@ function StaticHeroFallback() {
 
 export default function HeroBlobsSceneWrapper() {
   const [canRenderScene, setCanRenderScene] = useState(false);
+  const [isVisible, setIsVisible] = useState(true);
+  const containerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
@@ -37,10 +39,18 @@ export default function HeroBlobsSceneWrapper() {
     };
   }, []);
 
+  useEffect(() => {
+    const element = containerRef.current;
+    if (!element || typeof IntersectionObserver === "undefined") return;
+    const observer = new IntersectionObserver(([entry]) => setIsVisible(entry.isIntersecting), { rootMargin: "200px" });
+    observer.observe(element);
+    return () => observer.disconnect();
+  }, []);
+
   return (
-    <>
+    <div ref={containerRef} className="absolute inset-0" aria-hidden="true">
       <StaticHeroFallback />
-      {canRenderScene && <HeroBlobsScene />}
-    </>
+      {canRenderScene && isVisible && <HeroBlobsScene />}
+    </div>
   );
 }

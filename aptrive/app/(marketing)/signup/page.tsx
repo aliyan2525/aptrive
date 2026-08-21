@@ -15,9 +15,9 @@ export default function SignupPage() {
 
   return (
     <AuthShell
-      eyebrow="Get started"
-      title="Create your account"
-      subtitle="Join Aptrive and start practicing for NET, ECAT, MDCAT and more."
+eyebrow="Free diagnostic"
+      title="See where you stand"
+      subtitle="Create your free Aptrive account to get your diagnostic score and your next best study move."
       footer={
         <>
           Already have an account?{" "}
@@ -157,7 +157,7 @@ export default function SignupPage() {
           disabled={isPending || !agreed}
           className="pressable w-full rounded-xl bg-violet-700 px-4 py-3 text-sm font-semibold text-white shadow-[0_12px_30px_rgba(111,69,255,0.22)] transition hover:-translate-y-0.5 hover:bg-violet-800 disabled:cursor-not-allowed disabled:opacity-60"
         >
-          {isPending ? "Creating account…" : "Create account"}
+          {isPending ? "Preparing your diagnostic…" : "Start my free diagnostic"}
         </button>
       </form>
     </AuthShell>
