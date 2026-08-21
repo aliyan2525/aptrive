@@ -1,9 +1,14 @@
 "use client";
 
-import { useEffect, useRef, useState, type ComponentType } from "react";
-
-type HeroSceneComponent = ComponentType;
-
+/**
+ * Stable hero visual.
+ *
+ * The 3D scene used to be dynamically imported after hydration and crossfaded
+ * over this composition. That created a visible second state: the WebGL
+ * canvas had its own rectangular surface and the shader globe did not match
+ * the art-directed CSS globe shown on first paint. Keep one canonical visual
+ * so the hero never changes shape, framing, or contrast after load.
+ */
 function StaticHeroFallback() {
   return (
     <div className="hero-static-fallback absolute inset-0 overflow-hidden" aria-hidden="true">
@@ -18,51 +23,9 @@ function StaticHeroFallback() {
 }
 
 export default function HeroBlobsSceneWrapper() {
-  const [canRenderScene, setCanRenderScene] = useState(false);
-  const [isVisible, setIsVisible] = useState(true);
-  const [HeroBlobsScene, setHeroBlobsScene] = useState<HeroSceneComponent | null>(null);
-  const containerRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
-    const desktop = window.matchMedia("(min-width: 1024px)");
-    const update = () => setCanRenderScene(desktop.matches && !reducedMotion.matches);
-    update();
-    desktop.addEventListener("change", update);
-    reducedMotion.addEventListener("change", update);
-    return () => {
-      desktop.removeEventListener("change", update);
-      reducedMotion.removeEventListener("change", update);
-    };
-  }, []);
-
-  useEffect(() => {
-    if (!canRenderScene || !isVisible || HeroBlobsScene) return;
-    let cancelled = false;
-    import("@/components/hero/HeroBlobsScene").then((module) => {
-      if (!cancelled) setHeroBlobsScene(() => module.default);
-    });
-    return () => {
-      cancelled = true;
-    };
-  }, [HeroBlobsScene, canRenderScene, isVisible]);
-
-  useEffect(() => {
-    const element = containerRef.current;
-    if (!element || typeof IntersectionObserver === "undefined") return;
-    const observer = new IntersectionObserver(([entry]) => setIsVisible(entry.isIntersecting), { rootMargin: "200px" });
-    observer.observe(element);
-    return () => observer.disconnect();
-  }, []);
-
   return (
-    <div ref={containerRef} className="absolute inset-0" aria-hidden="true">
-      <div className={`absolute inset-0 transition-opacity duration-500 ease-out motion-reduce:transition-none ${HeroBlobsScene ? "opacity-0" : "opacity-100"}`}>
-        <StaticHeroFallback />
-      </div>
-      <div className={`absolute inset-0 transition-opacity duration-500 ease-out motion-reduce:transition-none ${HeroBlobsScene ? "opacity-100" : "pointer-events-none opacity-0"}`}>
-        {HeroBlobsScene && <HeroBlobsScene />}
-      </div>
+    <div className="absolute inset-0" aria-hidden="true">
+      <StaticHeroFallback />
     </div>
   );
 }

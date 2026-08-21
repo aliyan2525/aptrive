@@ -98,18 +98,18 @@ export default function SiteNav({
   return (
     <>
       <header
-        className={`fixed left-0 right-0 top-0 z-50 transition-all duration-500 ease-out pt-4 ${
+        className={`fixed left-0 right-0 top-0 z-50 transition-all duration-500 ease-out pt-3 ${
           hidden ? "-translate-y-full" : "translate-y-0"
         }`}
       >
-        <div className="mx-auto flex w-[calc(100%-1rem)] max-w-[1400px] items-center gap-4 rounded-full border border-white/75 bg-white/80 px-4 py-2.5 shadow-[0_18px_55px_rgba(20,32,70,0.10)] backdrop-blur-2xl transition-all duration-500 sm:px-6 lg:gap-10">
-          <div className="flex w-full items-center justify-between gap-8">
-            <Link href={user ? "/dashboard" : "/"} className="flex items-center gap-2.5 group" aria-label="Aptrive">
+        <div className="mx-auto flex w-[calc(100%-1.5rem)] max-w-[1340px] items-center gap-3 rounded-full border border-white/80 bg-white/82 px-3 py-2 shadow-[0_12px_34px_rgba(20,32,70,0.09)] backdrop-blur-2xl transition-all duration-500 sm:px-4 lg:gap-5">
+          <div className="flex w-full items-center justify-between gap-5">
+            <Link href={user ? "/dashboard" : "/"} className="group flex items-center gap-2" aria-label="Aptrive">
               <div className="relative">
-                <Image src="/logo-mark.png" alt="" width={34} height={38} priority className="h-9 w-auto transition-transform duration-300 group-hover:scale-105" />
+                <Image src="/logo-mark.png" alt="" width={30} height={34} priority className="h-8 w-auto transition-transform duration-300 group-hover:scale-105" />
                 <div className="absolute inset-0 bg-teal/20 blur-xl opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
               </div>
-              <span className="font-display text-xl font-bold tracking-[-0.02em] text-fg transition-colors duration-300">Aptrive</span>
+              <span className="font-display text-lg font-bold tracking-[-0.025em] text-fg transition-colors duration-300">Aptrive</span>
             </Link>
 
             <nav className="hidden items-center md:flex relative" aria-label="Main">
@@ -119,7 +119,7 @@ export default function SiteNav({
                   <Link
                     key={link.href}
                     href={link.href}
-                    className="relative px-4 py-2 text-[15px] font-medium transition-colors text-muted hover:text-fg"
+                    className="relative px-3 py-1.5 text-sm font-medium transition-colors text-muted hover:text-fg"
                     aria-current={isActive ? "page" : undefined}
                   >
                     {isActive && (
@@ -134,8 +134,9 @@ export default function SiteNav({
                 );
               })}
 
-              <div className="group relative px-2">
-                <button type="button" className={`inline-flex items-center gap-1.5 px-3 py-2 text-sm font-semibold transition-colors ${toolsActive ? "text-fg" : "text-muted hover:text-fg"}`}>
+              <div className="group relative px-1">
+                <button type="button" className={`inline-flex items-center gap-1 px-2.5 py-1.5 text-sm font-semibold transition-colors ${toolsActive ? "text-fg" : "text-muted hover:text-fg"}`}
+>
                   Tools
                   <ChevronDown className="h-3.5 w-3.5 transition-transform duration-300 group-hover:rotate-180" />
                 </button>
@@ -148,8 +149,8 @@ export default function SiteNav({
                 </div>
               </div>
 
-              <div className="group relative px-2">
-                <button type="button" className={`inline-flex items-center gap-1.5 px-3 py-2 text-sm font-semibold transition-colors ${aboutActive ? "text-fg" : "text-muted hover:text-fg"}`}>
+              <div className="group relative px-1">
+                <button type="button" className={`inline-flex items-center gap-1 px-2.5 py-1.5 text-sm font-semibold transition-colors ${aboutActive ? "text-fg" : "text-muted hover:text-fg"}`}>
                   About
                   <ChevronDown className="h-3.5 w-3.5 transition-transform duration-300 group-hover:rotate-180" />
                 </button>
@@ -163,7 +164,7 @@ export default function SiteNav({
               </div>
             </nav>
 
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-2">
               {user ? (
                 <>
                   <NotificationBell
@@ -178,7 +179,7 @@ export default function SiteNav({
                   <Button href="/login" variant="ghost" size="sm" ripple={false} className="hidden sm:inline-flex text-fg hover:bg-black/5">
                     Login
                   </Button>
-                  <Link href="/signup" className="hidden sm:inline-flex h-10 items-center justify-center gap-2 rounded-full bg-gradient-to-r from-blue-600 via-indigo-600 to-violet-600 px-5 text-sm font-semibold text-white shadow-lg transition-transform hover:scale-105">
+                  <Link href="/signup" className="hidden h-9 items-center justify-center gap-1.5 rounded-full bg-gradient-to-r from-blue-600 via-indigo-600 to-violet-600 px-4 text-[13px] font-semibold text-white shadow-[0_8px_18px_rgba(79,70,229,0.24)] transition-transform hover:scale-[1.02] sm:inline-flex">
                     Start diagnostic <ArrowUpRight className="h-4 w-4" />
                   </Link>
                 </>

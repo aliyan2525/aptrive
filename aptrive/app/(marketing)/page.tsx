@@ -1,11 +1,11 @@
 ﻿import type { Metadata } from "next";
-import Link from "next/link";
+
 import { redirect } from "next/navigation";
-import { ArrowRight, BrainCircuit, Timer, LineChart, Compass, Star } from "lucide-react";
+import { BrainCircuit, Timer, LineChart, Compass, Star } from "lucide-react";
 
 
 import Reveal from "@/components/Reveal";
-import PopularUniversities from "@/components/PopularUniversities";
+import UniversityAlignedSection from "@/components/home/UniversityAlignedSection";
 import Button from "@/components/ui/Button";
 import Eyebrow from "@/components/ui/Eyebrow";
 import { createClient } from "@/lib/supabase/server";
@@ -19,7 +19,7 @@ import HeroAtmosphere from "@/components/hero/HeroAtmosphere";
 import HeroOrbitDecor from "@/components/hero/HeroOrbitDecor";
 import HeroOrbitIcons from "@/components/hero/HeroOrbitIcons";
 import HeroUniversityBadges from "@/components/hero/HeroUniversityBadges";
-import HeroAIPathwayCard from "@/components/hero/HeroAIPathwayCard";
+import RotatingHeroPhrase from "@/components/hero/RotatingHeroPhrase";
 import HeroAvatarStack from "@/components/hero/HeroAvatarStack";
 import HeroStatsBar from "@/components/hero/HeroStatsBar";
 import HeroTrustedBy from "@/components/hero/HeroTrustedBy";
@@ -92,9 +92,10 @@ export default async function Home() {
                 <h1 className="mt-8 max-w-[680px] font-display text-[2.9rem] font-semibold leading-[0.98] tracking-[-0.045em] text-neutral-950 sm:text-[3.8rem] lg:text-[4.35rem]">
                   Know your score. Raise it.
                   <br />
-                  With{" "}
-                  <span className="bg-gradient-to-r from-teal-500 via-sky-500 to-violet-500 bg-clip-text text-transparent">
-                    beautiful
+With{" "}
+                  <span className="relative inline-block">
+                    <span className="sr-only">beautiful</span>
+                    <RotatingHeroPhrase />
                   </span>{" "}
                   precision.
                 </h1>
@@ -139,7 +140,6 @@ export default async function Home() {
               <HeroOrbitIcons />
         <SignalToScore />
               <HeroUniversityBadges />
-              <HeroAIPathwayCard />
               <HeroAtmosphere />
             </div>
           </div>
@@ -199,27 +199,7 @@ export default async function Home() {
         </div>
       </section>
 
-      <section className="container-aptrive py-28 md:py-40 z-10 relative">
-        <Reveal>
-          <div className="flex flex-col md:flex-row md:items-end justify-between gap-8 border-b border-line pb-12">
-            <div className="max-w-2xl">
-              <Eyebrow>University-Aligned Prep</Eyebrow>
-              <h2 className="text-display-1 mt-6 text-fg">
-                Prepare around the subjects, formats, and merit calculations that matter for your target universities.
-              </h2>
-            </div>
-            <Link
-              href="/tools/calculator"
-              className="inline-flex items-center gap-2 text-sm font-semibold text-teal transition hover:gap-3 hover:text-fg"
-            >
-              Access Calculator <ArrowRight className="h-4 w-4" />
-            </Link>
-          </div>
-        </Reveal>
-        <Reveal delay={100} className="mt-16">
-          <PopularUniversities />
-        </Reveal>
-      </section>
+      <UniversityAlignedSection />
 
       <section className="bg-gradient-to-b from-white to-[#f3f7ff] py-28 md:py-40 z-10 relative border-t border-line">
         <div className="container-aptrive text-center">
