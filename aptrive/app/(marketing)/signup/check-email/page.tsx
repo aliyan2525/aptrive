@@ -7,7 +7,7 @@ export default function CheckEmailPage() {
     <AuthShell
       eyebrow="One more step"
       title="Check your inbox"
-      subtitle="We've sent a confirmation link to your email. Click it to activate your account."
+      subtitle="We sent a confirmation link to your email. Activate your account, then sign in to build your study plan."
       footer={
         <>
           Wrong email or didn&apos;t get it?{" "}
@@ -22,9 +22,9 @@ export default function CheckEmailPage() {
       <p className="text-center text-sm text-muted">
         Once confirmed, you can{" "}
         <Link href="/login" className="text-teal hover:underline">
-          log in
+          sign in
         </Link>{" "}
-        and jump straight into the Library.
+        and complete your target setup before starting practice.
       </p>
     </AuthShell>
   );

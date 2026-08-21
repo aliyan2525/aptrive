@@ -166,6 +166,7 @@ export default function DashboardClient({
           targetUniversity={targetUniversity}
           admissionProbability={admissionProbability}
           missionTime={missionTime}
+          hasEvidence={hasEvidence}
         />
         <DailyGoalCard
           percent={dailyGoalPercent}
@@ -212,6 +213,7 @@ function CommandHero({
   targetUniversity,
   admissionProbability,
   missionTime,
+  hasEvidence,
 }: {
   greeting: string;
   firstName: string;
@@ -219,6 +221,7 @@ function CommandHero({
   targetUniversity: string;
   admissionProbability: number;
   missionTime: number;
+  hasEvidence: boolean;
 }) {
   return (
     <motion.section 
@@ -239,12 +242,12 @@ function CommandHero({
           <p className="mt-4 max-w-2xl text-sm leading-7 text-neutral-400">{streakLine}</p>
           <div className="mt-7 flex flex-wrap gap-3">
             <Link href="/practice" className="pressable inline-flex h-12 items-center gap-2 rounded-lg bg-white px-5 text-sm font-medium text-black transition-colors hover:bg-neutral-200">
-              Resume Training
+              {hasEvidence ? "Resume Training" : "Start your first session"}
               <ArrowRight className="h-4 w-4" aria-hidden="true" />
             </Link>
             <Link href="/onboarding" className="pressable inline-flex h-12 items-center gap-2 rounded-xl border border-white/10 bg-white/5 px-5 text-sm font-medium text-white transition-colors hover:bg-white/10">
               <Sparkles className="h-4 w-4 text-neutral-400" aria-hidden="true" />
-              Optimize Strategy
+              {hasEvidence ? "Optimize Strategy" : "Review my setup"}
             </Link>
           </div>
         </div>
@@ -260,7 +263,7 @@ function CommandHero({
             <TargetIllustration />
           </div>
           <p className="mt-4 text-xs leading-5 text-neutral-400">
-            Complete a {missionTime}-minute sprint today to lift {targetUniversity} readiness toward {admissionProbability}%.
+            {hasEvidence ? `Complete a ${missionTime}-minute sprint today to lift ${targetUniversity} readiness toward ${admissionProbability}%.` : `Complete your first ${missionTime}-minute sprint to turn your setup into a real readiness signal.`}
           </p>
         </div>
       </div>

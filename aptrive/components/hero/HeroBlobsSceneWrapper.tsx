@@ -1,12 +1,8 @@
 "use client";
 
-import dynamic from "next/dynamic";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, type ComponentType } from "react";
 
-const HeroBlobsScene = dynamic(() => import("@/components/hero/HeroBlobsScene"), {
-  ssr: false,
-  loading: () => null,
-});
+type HeroSceneComponent = ComponentType;
 
 function StaticHeroFallback() {
   return (
@@ -24,6 +20,7 @@ function StaticHeroFallback() {
 export default function HeroBlobsSceneWrapper() {
   const [canRenderScene, setCanRenderScene] = useState(false);
   const [isVisible, setIsVisible] = useState(true);
+  const [HeroBlobsScene, setHeroBlobsScene] = useState<HeroSceneComponent | null>(null);
   const containerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -40,6 +37,17 @@ export default function HeroBlobsSceneWrapper() {
   }, []);
 
   useEffect(() => {
+    if (!canRenderScene || !isVisible || HeroBlobsScene) return;
+    let cancelled = false;
+    import("@/components/hero/HeroBlobsScene").then((module) => {
+      if (!cancelled) setHeroBlobsScene(() => module.default);
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, [HeroBlobsScene, canRenderScene, isVisible]);
+
+  useEffect(() => {
     const element = containerRef.current;
     if (!element || typeof IntersectionObserver === "undefined") return;
     const observer = new IntersectionObserver(([entry]) => setIsVisible(entry.isIntersecting), { rootMargin: "200px" });
@@ -49,8 +57,12 @@ export default function HeroBlobsSceneWrapper() {
 
   return (
     <div ref={containerRef} className="absolute inset-0" aria-hidden="true">
-      <StaticHeroFallback />
-      {canRenderScene && isVisible && <HeroBlobsScene />}
+      <div className={`absolute inset-0 transition-opacity duration-500 ease-out motion-reduce:transition-none ${HeroBlobsScene ? "opacity-0" : "opacity-100"}`}>
+        <StaticHeroFallback />
+      </div>
+      <div className={`absolute inset-0 transition-opacity duration-500 ease-out motion-reduce:transition-none ${HeroBlobsScene ? "opacity-100" : "pointer-events-none opacity-0"}`}>
+        {HeroBlobsScene && <HeroBlobsScene />}
+      </div>
     </div>
   );
 }

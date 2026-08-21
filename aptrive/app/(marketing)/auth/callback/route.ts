@@ -18,7 +18,19 @@ export async function GET(request: Request) {
     const supabase = await createClient();
     const { error } = await supabase.auth.exchangeCodeForSession(code);
     if (!error) {
-      return NextResponse.redirect(`${origin}${next}`);
+      let destination = next;
+      if (requestedNext === "/dashboard") {
+        const { data: { user } } = await supabase.auth.getUser();
+        if (user) {
+          const { data: studentProfile } = await supabase
+            .from("student_profiles")
+            .select("user_id")
+            .eq("user_id", user.id)
+            .maybeSingle();
+          if (!studentProfile) destination = "/onboarding";
+        }
+      }
+      return NextResponse.redirect(`${origin}${destination}`);
     }
   }
 

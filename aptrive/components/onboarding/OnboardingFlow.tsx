@@ -65,6 +65,7 @@ export default function OnboardingFlow({ existingProfile }: OnboardingFlowProps)
   const [step, setStep] = useState(0);
   const [isPending, startTransition] = useTransition();
   const [submitError, setSubmitError] = useState<string | null>(null);
+  const [validationError, setValidationError] = useState<string | null>(null);
   const [form, setForm] = useState({
     fullName: existingProfile?.display_name ?? "",
     displayName: existingProfile?.display_name ?? "",
@@ -92,6 +93,28 @@ export default function OnboardingFlow({ existingProfile }: OnboardingFlowProps)
       { label: "Priority subjects", value: form.improvement.join(", ") },
     ];
   }, [form.dailyTarget, form.improvement]);
+
+  function validateStep() {
+    if (step === 0 && !form.fullName.trim()) return "Add your name so we can personalize your plan.";
+    if (step === 1 && (!form.university || !form.program.trim() || !form.test)) return "Choose a target university, program, and entry test to continue.";
+    if (step === 2) {
+      const marks = [form.matric, form.intermediate].filter(Boolean).map(Number);
+      if (marks.some((value) => value < 0 || value > 100)) return "Marks should be between 0 and 100.";
+      if (!form.education) return "Choose your current education level to continue.";
+    }
+    if (step === 3) {
+      const minutes = Number(form.dailyTarget);
+      if (!Number.isFinite(minutes) || minutes < 15 || minutes > 480) return "Choose a daily target between 15 and 480 minutes.";
+      if (!form.improvement.length) return "Choose at least one subject to focus on.";
+    }
+    return null;
+  }
+
+  function handleNext() {
+    const error = validateStep();
+    setValidationError(error);
+    if (!error) setStep(Math.min(steps.length - 1, step + 1));
+  }
 
   function handleFinish() {
     setSubmitError(null);
@@ -163,8 +186,10 @@ export default function OnboardingFlow({ existingProfile }: OnboardingFlowProps)
                 <button
                   key={item}
                   type="button"
-                  onClick={() => setStep(index)}
-className={`flex w-full items-center justify-between rounded-xl px-3 py-2.5 text-left text-sm transition ${
+                  onClick={() => index <= step && setStep(index)}
+                  disabled={index > step}
+                  aria-current={step === index ? "step" : undefined}
+                  className={`flex w-full items-center justify-between rounded-xl px-3 py-2.5 text-left text-sm transition ${
                     step === index ? "bg-violet-500/10 font-semibold text-violet-700 shadow-sm" : "text-neutral-600 hover:bg-neutral-100"
                   }`}
                 >
@@ -249,9 +274,9 @@ className={`rounded-xl border px-3 py-2 text-xs font-semibold transition ${
                   </div>
                 ))}
               </div>
-              {submitError && (
-                <p className="mt-6 rounded-sm border border-red-500/30 bg-red-500/10 px-4 py-3 text-sm text-red-300">
-                  {submitError}
+              {(submitError || validationError) && (
+                <p role="alert" className="mt-6 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+                  {submitError ?? validationError}
                 </p>
               )}
               <button
@@ -269,7 +294,7 @@ className={`rounded-xl border px-3 py-2 text-xs font-semibold transition ${
             <button type="button" onClick={() => setStep(Math.max(0, step - 1))} className="rounded-xl border border-neutral-200 bg-white px-4 py-2.5 text-sm font-semibold text-neutral-700 transition hover:border-violet-300 disabled:opacity-40" disabled={step === 0}>
               Back
             </button>
-            <button type="button" onClick={() => setStep(Math.min(steps.length - 1, step + 1))} className="pressable rounded-xl bg-violet-700 px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-violet-800" disabled={step === steps.length - 1}>
+            <button type="button" onClick={handleNext} className="pressable rounded-xl bg-violet-700 px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-violet-800 disabled:opacity-50" disabled={step === steps.length - 1}>
               Continue
             </button>
           </div>
@@ -316,7 +341,7 @@ function SelectField({
       {label}
       <div className="flex items-center gap-3">
         {showLogo && <UniversityLogo university={value} size={36} />}
-        <select value={value} onChange={(event) => onChange(event.target.value)} className="w-full rounded-sm border border-line-strong bg-graphite px-4 py-3 text-sm text-fg">
+        <select value={value} onChange={(event) => onChange(event.target.value)} className="w-full rounded-xl border border-line bg-white/85 px-4 py-3 text-sm text-fg outline-none transition focus:border-violet-400 focus:ring-4 focus:ring-violet-500/10">
           {normalized.map((option) => (
             <option key={option.value} value={option.value}>{option.label}</option>
           ))}
