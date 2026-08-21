@@ -115,10 +115,10 @@ export async function getDashboardData(userId: string) {
   const recentRes = { data: payload.recently_viewed || [] };
   const studentProfileRes = { data: payload.profile || null };
 
-  // The calendar/heatmap needs per-day data, which no live source
-  // currently provides (see the FLAGGED comment above) â€” placeholder
-  // data until that's designed, same as before when no rows came back.
-  const activity = sampleActivity();
+  // Use the RPC activity rows as the single source of truth. When a new
+  // student has no activity yet, return an empty list so the UI can explain
+  // the state instead of manufacturing a study history.
+  const activity = activityRes.data;
   const activityResData = DashboardSummarySchema.array().safeParse(activityRes.data);
   const summary = activityResData.success ? activityResData.data : [];
   const attemptsLast7Days = summary.reduce((acc, row) => acc + (row.questions_attempted || 0), 0);
@@ -168,22 +168,6 @@ export async function getDashboardData(userId: string) {
       studyHours: 0,
     },
   };
-}
-
-function sampleActivity(): DailyActivity[] {
-  return Array.from({ length: 28 }, (_, index) => {
-    const date = new Date();
-    date.setDate(date.getDate() - (27 - index));
-    const questions = [8, 14, 0, 22, 18, 34, 26][index % 7];
-    return {
-      user_id: "sample",
-      activity_date: date.toISOString().slice(0, 10),
-      questions_attempted: questions,
-      correct_count: Math.round(questions * 0.68),
-      study_seconds: questions * 95,
-      sessions_completed: questions > 0 ? 1 : 0,
-    };
-  });
 }
 
 

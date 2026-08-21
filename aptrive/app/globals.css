@@ -1,38 +1,36 @@
 @import "tailwindcss";
 
 :root {
-  /* Aptrive Aurora: light-first, calm, high-contrast product tokens */
-  --graphite: oklch(98.5% 0.008 255);
-  --panel: oklch(100% 0 0);
-  --panel-2: oklch(96.8% 0.012 255);
+  /* Elite Semantic Tokens - Base (Dark Mode Native) */
+  --bg-app: oklch(14% 0.01 260); /* Deep, saturated dark background */
+  --panel-elevated: oklch(18% 0.015 260); /* For elevated cards */
+  --panel-sunken: oklch(12% 0.01 260);
   
-  --fg: oklch(19% 0.047 265);
-  --muted: oklch(46% 0.045 265);
-  --muted-2: oklch(62% 0.035 265);
+  --fg: oklch(98% 0.005 260);
+  --muted: oklch(70% 0.01 260);
+  --muted-2: oklch(50% 0.01 260);
   
-  --line: oklch(72% 0.035 260 / 0.22);
-  --line-strong: oklch(63% 0.05 260 / 0.34);
+  --line: oklch(25% 0.01 260);
+  --line-strong: oklch(35% 0.01 260);
   
-  /* Primary Brands */
-  --teal: oklch(66% 0.16 178);
-  --teal-dim: oklch(66% 0.16 178 / 0.14);
-  --blue: oklch(61% 0.21 255);
-  --violet: oklch(61% 0.24 292);
-  
-  --gold: oklch(72% 0.16 72);
-  --gold-dim: oklch(72% 0.16 72 / 0.14);
+  /* Brand/Accent Colors */
+  --teal: oklch(75% 0.15 180);
+  --teal-dim: oklch(75% 0.15 180 / 0.15);
+  --blue: oklch(70% 0.20 260);
+  --violet: oklch(75% 0.18 290);
+  --gold: oklch(80% 0.15 70);
+  --gold-dim: oklch(80% 0.15 70 / 0.15);
 
-  --surface-elevated: oklch(100% 0 0 / 0.84);
-  --surface-sunken: oklch(95% 0.012 255);
-  
+  /* Status */
   --success: oklch(75% 0.15 140);
   --warning: oklch(80% 0.15 75);
   --danger: oklch(65% 0.2 25);
 
-  /* Apple-inspired Motion Engine */
+  /* Premium Motion Engine (Apple-inspired) */
   --ease-apple: cubic-bezier(0.25, 1, 0.5, 1);
   --ease-spring: cubic-bezier(0.175, 0.885, 0.32, 1.275);
   --ease-smooth: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-snappy: cubic-bezier(0.4, 0, 0.2, 1);
 
   /* Spacing Grid (8px baseline) */
   --space-1: 4px;
@@ -46,32 +44,38 @@
 }
 
 :root[data-theme="light"], html[data-theme="light"] {
-  --graphite: oklch(98% 0.01 260);
-  --panel: oklch(100% 0 0);
-  --panel-2: oklch(96% 0.01 260);
+  --bg-app: oklch(98.5% 0.005 255);
+  --panel-elevated: oklch(100% 0 0);
+  --panel-sunken: oklch(96.5% 0.01 255);
   
-  --fg: oklch(20% 0.02 260);
+  --fg: oklch(15% 0.03 260);
   --muted: oklch(45% 0.02 260);
-  --muted-2: oklch(60% 0.02 260);
+  --muted-2: oklch(60% 0.01 260);
   
-  --line: oklch(40% 0.02 260 / 0.08);
-  --line-strong: oklch(40% 0.02 260 / 0.15);
+  --line: oklch(90% 0.01 260);
+  --line-strong: oklch(80% 0.01 260);
   
-  --teal: oklch(60% 0.15 180);
-  --gold: oklch(65% 0.15 70);
-  
-  --surface-elevated: oklch(100% 0 0);
-  --surface-sunken: oklch(92% 0.01 260);
+  --teal: oklch(55% 0.15 180);
+  --blue: oklch(50% 0.20 260);
+  --violet: oklch(55% 0.18 290);
+  --gold: oklch(60% 0.15 70);
 }
 
 @theme inline {
-  --color-graphite: var(--graphite);
-  --color-panel: var(--panel);
-  --color-panel-2: var(--panel-2);
+  --color-bg-app: var(--bg-app);
+  --color-panel-elevated: var(--panel-elevated);
+  --color-panel-sunken: var(--panel-sunken);
   --color-line: var(--line);
+  --color-line-strong: var(--line-strong);
   --color-fg: var(--fg);
   --color-muted: var(--muted);
+  --color-muted-2: var(--muted-2);
   --color-teal: var(--teal);
+  --color-teal-dim: var(--teal-dim);
+  --color-blue: var(--blue);
+  --color-violet: var(--violet);
+  --color-gold: var(--gold);
+  --color-gold-dim: var(--gold-dim);
   
   --font-display: var(--font-space-grotesk);
   --font-body: var(--font-inter);
@@ -90,7 +94,7 @@ body {
   background:
     radial-gradient(circle at 12% 12%, oklch(79% 0.14 178 / 0.14), transparent 30rem),
     radial-gradient(circle at 78% 4%, oklch(72% 0.19 292 / 0.12), transparent 34rem),
-    linear-gradient(180deg, oklch(100% 0 0), var(--graphite) 42rem);
+    linear-gradient(180deg, var(--bg-app), var(--bg-app) 42rem);
   color: var(--fg);
   font-family: var(--font-body);
   -webkit-font-smoothing: antialiased;
@@ -175,11 +179,11 @@ body {
 }
 
 .glass-panel {
-  background: linear-gradient(135deg, oklch(100% 0 0 / 0.9), oklch(98% 0.012 255 / 0.72));
+  background: linear-gradient(135deg, color-mix(in oklab, var(--panel-elevated) 85%, transparent), color-mix(in oklab, var(--panel-sunken) 60%, transparent));
   backdrop-filter: blur(28px) saturate(150%);
   -webkit-backdrop-filter: blur(28px) saturate(150%);
   border: 1px solid var(--line);
-  box-shadow: 0 24px 70px rgba(20, 32, 70, 0.08), inset 0 1px 0 rgba(255,255,255,0.9);
+  box-shadow: 0 24px 70px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255,255,255,0.05);
 }
 
 .text-heading-3 { font-family: var(--font-display); font-size: 1.125rem; line-height: 1.25; font-weight: 700; }
@@ -187,8 +191,8 @@ body {
 
 .premium-shell {
   border: 1px solid var(--line);
-  background: linear-gradient(135deg, rgba(255,255,255,0.92), rgba(248,251,255,0.76));
-  box-shadow: 0 18px 55px rgba(20, 32, 70, 0.08), inset 0 1px 0 rgba(255,255,255,0.92);
+  background: linear-gradient(135deg, var(--panel-elevated), color-mix(in oklab, var(--panel-sunken) 80%, transparent));
+  box-shadow: 0 18px 55px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255,255,255,0.05);
   backdrop-filter: blur(24px) saturate(150%);
 }
 
@@ -294,7 +298,7 @@ body {
 body {
   position: relative;
   isolation: isolate;
-  background: var(--graphite);
+  background: var(--bg-app);
 }
 
 body::before {
@@ -315,7 +319,7 @@ body::before {
   background:
     radial-gradient(circle at 86% 0%, oklch(82% 0.12 180 / 0.12), transparent 28rem),
     radial-gradient(circle at 0% 72%, oklch(82% 0.12 290 / 0.08), transparent 34rem),
-    var(--graphite);
+    var(--bg-app);
 }
 
 .glass-panel,

@@ -63,7 +63,7 @@ export const TestCard = ({
       </div>
 
       {/* AI Recommendation Panel */}
-      <div className="mt-auto bg-[var(--panel-2)]/50 rounded-xl p-4 border border-[var(--line)]/50 mb-4">
+      <div className="mt-auto bg-[var(--panel-sunken)]/50 rounded-xl p-4 border border-[var(--line)]/50 mb-4">
         <div className="flex items-center gap-2 mb-2">
           <Sparkles className="w-4 h-4 text-[var(--violet)]" />
           <span className="text-xs font-semibold uppercase tracking-wider text-[var(--violet)]">AI Prediction</span>

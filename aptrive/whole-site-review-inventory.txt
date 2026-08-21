@@ -1,0 +1,259 @@
+﻿=== PACKAGE ===
+  "name": "aptrive",
+  "version": "0.1.0",
+  "scripts": {
+    "framer-motion": "^12.42.2",
+    "next": "^16.2.12",
+    "ogl": "^1.0.11",
+    "postprocessing": "^6.39.3",
+    "react": "19.2.4",
+    "three": "^0.185.1",
+=== ROUTES ===
+app\(app)\admin\page.tsx
+app\(app)\admin\catalog\page.tsx
+app\(app)\admin\import\page.tsx
+app\(app)\admin\import\[batchId]\page.tsx
+app\(app)\admin\questions\page.tsx
+app\(app)\admin\questions\new\page.tsx
+app\(app)\admin\questions\[id]\edit\page.tsx
+app\(app)\admin\questions\[id]\versions\page.tsx
+app\(app)\analytics\page.tsx
+app\(app)\dashboard\page.tsx
+app\(app)\goals\page.tsx
+app\(app)\leaderboard\page.tsx
+app\(app)\onboarding\page.tsx
+app\(app)\practice\page.tsx
+app\(app)\practice\bookmarks\page.tsx
+app\(app)\practice\revision\page.tsx
+app\(app)\practice\session\[sessionId]\page.tsx
+app\(app)\practice\set\[practiceSetSlug]\page.tsx
+app\(app)\practice\subjects\page.tsx
+app\(app)\practice\subjects\[subjectSlug]\page.tsx
+app\(app)\profile\page.tsx
+app\(app)\settings\page.tsx
+app\(marketing)\page.tsx
+app\(marketing)\about\page.tsx
+app\(marketing)\blog\page.tsx
+app\(marketing)\blog\[slug]\page.tsx
+app\(marketing)\contact\page.tsx
+app\(marketing)\courses\page.tsx
+app\(marketing)\courses\[university]\page.tsx
+app\(marketing)\forgot-password\page.tsx
+app\(marketing)\forgot-password\check-email\page.tsx
+app\(marketing)\library\page.tsx
+app\(marketing)\library\[category]\page.tsx
+app\(marketing)\library\[category]\[resourceId]\page.tsx
+app\(marketing)\login\page.tsx
+app\(marketing)\privacy\page.tsx
+app\(marketing)\reset-password\page.tsx
+app\(marketing)\signup\page.tsx
+app\(marketing)\signup\check-email\page.tsx
+app\(marketing)\terms\page.tsx
+app\(marketing)\tools\calculator\page.tsx
+app\(marketing)\tools\estimator\page.tsx
+app\(marketing)\universities\[university]\page.tsx
+=== SHARED COMPONENTS ===
+components\admin\AdminNav.tsx
+components\admin\ConfirmSubmitButton.tsx
+components\admin\ImportBatchActions.tsx
+components\admin\ImportUploader.tsx
+components\admin\QuestionForm.tsx
+components\admin\QuestionStatusActions.tsx
+components\analytics\AIInsights.tsx
+components\analytics\GoogleAnalytics.tsx
+components\analytics\PredictionEngine.tsx
+components\analytics\SignupCompleteEvent.tsx
+components\analytics\StudyHeatmap.tsx
+components\analytics\SubjectRadar.tsx
+components\analytics\TrendChart.tsx
+components\app\AppHeader.tsx
+components\app\AppLogo.tsx
+components\app\AppNotificationCenter.tsx
+components\app\AppSidebar.tsx
+components\app\AuthAccountMenu.tsx
+components\app\AuthenticatedShell.tsx
+components\app\CommandPalette.tsx
+components\auth\AuthModeToggle.tsx
+components\auth\AuthShell.tsx
+components\auth\GoogleIcon.tsx
+components\blog\BlogCard.tsx
+components\blog\BlogListClient.tsx
+components\blog\NewsletterSignup.tsx
+components\blog\PostBody.tsx
+components\calculator\scene\AssemblingFormula.tsx
+components\calculator\scene\AssemblingFormulaClient.tsx
+components\courses\scene\RoadmapPath.tsx
+components\courses\scene\RoadmapPathClient.tsx
+components\courses\CoursesExperience.tsx
+components\courses\RoadmapSection.tsx
+components\dashboard\BentoCard.tsx
+components\dashboard\ComingSoonCard.tsx
+components\dashboard\DashboardClient.tsx
+components\dashboard\PerformanceTrend.tsx
+components\features\scene\SettlingFragments.tsx
+components\features\FeaturesBackground.tsx
+components\features\FeaturesScene.tsx
+components\features\FeaturesSceneClient.tsx
+components\features\PremiumFeatureCard.tsx
+components\hero\scene\shaders\atmosphere.glsl.ts
+components\hero\scene\shaders\particles.glsl.ts
+components\hero\scene\EducationalUniverse.tsx
+components\hero\scene\HeroStarfield.tsx
+components\hero\scene\KnowledgeParticles.tsx
+components\hero\scene\Nebula.tsx
+components\hero\shaders\glassPlanet.glsl.ts
+components\hero\FloatingStats.tsx
+components\hero\GlassPlanet.tsx
+components\hero\HeroAIPathwayCard.tsx
+components\hero\HeroAtmosphere.tsx
+components\hero\HeroAvatarStack.tsx
+components\hero\HeroBlobsScene.tsx
+components\hero\HeroBlobsSceneWrapper.tsx
+components\hero\HeroCinematicLayer.tsx
+components\hero\HeroCTAButtons.tsx
+components\hero\HeroOrbitDecor.tsx
+components\hero\HeroOrbitIcons.tsx
+components\hero\HeroScene.tsx
+components\hero\HeroSceneClient.tsx
+components\hero\heroSignal.ts
+components\hero\HeroStarfield.tsx
+components\hero\HeroStatsBar.tsx
+components\hero\HeroTrustedBy.tsx
+components\hero\HeroUniversityBadges.tsx
+components\hero\OpportunityMap.tsx
+components\hero\PostFX.tsx
+components\hero\SignalToScore.tsx
+components\hero\useHeroCameraRig.ts
+components\journey\scene\TravelingSignal.tsx
+components\journey\AnimatedJourney.tsx
+components\journey\JourneyBackground.tsx
+components\journey\JourneyScene.tsx
+components\journey\JourneySceneClient.tsx
+components\journey\JourneyTimeline.tsx
+components\leaderboard\scene\Podium3D.tsx
+components\leaderboard\scene\Podium3DClient.tsx
+components\leaderboard\AnimatedStat.tsx
+components\library\scene\FloatingBookshelf.tsx
+components\library\scene\FloatingBookshelfClient.tsx
+components\library\CategoryCard.tsx
+components\library\DifficultyBadge.tsx
+components\library\LibraryExperience.tsx
+components\library\LibraryExplorer.tsx
+components\library\ResourceCard.tsx
+components\mock-tests\FeaturedTest.tsx
+components\mock-tests\TestCard.tsx
+components\mock-tests\TestFilters.tsx
+components\mock-tests\TestHistory.tsx
+components\mock-tests\TestList.tsx
+components\onboarding\OnboardingFlow.tsx
+components\practice\BookmarkButton.tsx
+components\practice\PracticeInterface.tsx
+components\practice\PracticeRunner.tsx
+components\practice\PracticeSetCard.tsx
+components\settings\SettingsClient.tsx
+components\three\GPUTierGate.tsx
+components\three\HeroScene.tsx
+components\three\HeroSceneWrapper.tsx
+components\three\Scene3DProvider.tsx
+components\transitions\HeadlineReveal.tsx
+components\transitions\PageTransition.tsx
+components\transitions\SectionReveal.tsx
+components\ui\Button.tsx
+components\ui\Card.tsx
+components\ui\Eyebrow.tsx
+components\ui\Input.tsx
+components\ui\LiquidGlassCard.tsx
+components\ui\Modal.tsx
+components\university\UniversityExperiencePage.tsx
+components\AggregateCalculator.tsx
+components\AttributeTicker.tsx
+components\AuthHeader.tsx
+components\ContactForm.tsx
+components\FAQAccordion.tsx
+components\FeaturedLibrary.tsx
+components\Footer.tsx
+components\Header.tsx
+components\HeroBackground.tsx
+components\MeritEstimator.tsx
+components\NotificationBell.tsx
+components\PopularUniversities.tsx
+components\Reveal.tsx
+components\SiteNav.tsx
+components\SocialProofBar.tsx
+components\StatCounter.tsx
+components\StructuredData.tsx
+components\Testimonials.tsx
+components\ThemeToggle.tsx
+components\TickDivider.tsx
+components\UniversityLogo.tsx
+components\UserMenu.tsx
+=== DESIGN TOKEN SIGNALS ===
+--panel: oklch(100% 0 0);
+--panel-2: oklch(96.8% 0.012 255);
+--fg: oklch(19% 0.047 265);
+--muted: oklch(46% 0.045 265);
+--muted-2: oklch(62% 0.035 265);
+--line: oklch(72% 0.035 260 / 0.22);
+--line-strong: oklch(63% 0.05 260 / 0.34);
+--teal: oklch(66% 0.16 178);
+--teal-dim: oklch(66% 0.16 178 / 0.14);
+--violet: oklch(61% 0.24 292);
+--panel: oklch(100% 0 0);
+--panel-2: oklch(96% 0.01 260);
+--fg: oklch(20% 0.02 260);
+--muted: oklch(45% 0.02 260);
+--muted-2: oklch(60% 0.02 260);
+--line: oklch(40% 0.02 260 / 0.08);
+--line-strong: oklch(40% 0.02 260 / 0.15);
+--teal: oklch(60% 0.15 180);
+--color-panel: var(--panel);
+--color-panel-2: var(--panel-2);
+--color-line: var(--line);
+--color-fg: var(--fg);
+--color-muted: var(--muted);
+--color-teal: var(--teal);
+color: var(--fg);
+.text-body-lg { font-size: 1.125rem; line-height: 1.65; color: var(--muted); font-weight: 400; }
+.text-body { font-size: 1rem; line-height: 1.65; color: var(--muted); font-weight: 400; }
+.text-caption { font-family: var(--font-mono); font-size: 0.75rem; letter-spacing: 0.06em; color: var(--muted-2); }
+color: var(--muted);
+background: var(--teal);
+.container-aptrive {
+@media (min-width: 768px) { .container-aptrive { padding-inline: 4rem; } }
+.glass-panel {
+border: 1px solid var(--line);
+.text-body-sm { font-size: 0.875rem; line-height: 1.6; color: var(--muted); }
+.premium-shell {
+border: 1px solid var(--line);
+background: linear-gradient(100deg, var(--blue), var(--violet) 48%, var(--teal));
+@media (prefers-reduced-motion: reduce) {
+background: var(--line-strong);
+background: var(--panel-2);
+.app-shell {
+.glass-panel,
+.premium-shell,
+.surface-card {
+border-color: color-mix(in oklab, var(--line-strong) 76%, transparent);
+.glass-panel::after,
+.premium-shell::after,
+.surface-card::after {
+.glass-panel:hover,
+.premium-shell:hover,
+.surface-card:hover {
+border-color: color-mix(in oklab, var(--teal) 32%, var(--line-strong));
+outline: 2px solid var(--teal);
+box-shadow: 0 0 0 5px color-mix(in oklab, var(--teal) 18%, transparent);
+color: var(--fg);
+background: color-mix(in oklab, var(--teal) 28%, white);
+@media (prefers-reduced-motion: reduce) {
+.glass-panel,
+.premium-shell,
+.surface-card {
+@media (max-width: 767px) {
+.workspace-surface{background:radial-gradient(circle at 84% 0%,rgba(191,246,239,.22),transparent 26rem),linear-gradient(180deg,rgba(247,249,255,.92),rgba(239,243,255,.72))}.app-content{isolation:isolate}.workspace-surface .surface-card,.workspace-surface .glass-panel{backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px)}
+.dashboard-aurora .surface-card{box-shadow:0 14px 40px rgba(46,39,97,.06);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px)}.dashboard-aurora .surface-card .text-neutral-300{color:#52525b}.dashboard-aurora .surface-card .text-white{color:#18181b}.dashboard-aurora .surface-card .text-neutral-400{color:#71717a}
+.settings-aurora{position:relative}.settings-aurora .settings-panel{box-shadow:0 18px 55px rgba(46,39,97,.06)}.settings-aurora input,.settings-aurora select{color:var(--fg)}.settings-aurora button:focus-visible,.settings-aurora select:focus-visible{outline:2px solid rgba(111,69,255,.65);outline-offset:3px}@media(max-width:1279px){.settings-aurora{padding-bottom:2rem}}
+.onboarding-aurora{background:radial-gradient(circle at 12% 0%,rgba(35,213,196,.14),transparent 25rem),radial-gradient(circle at 88% 18%,rgba(111,69,255,.13),transparent 28rem),linear-gradient(180deg,#fbfdff,#eef3ff)}.onboarding-aurora input,.onboarding-aurora select{color:var(--fg)}.onboarding-aurora button:focus-visible,.onboarding-aurora input:focus-visible,.onboarding-aurora select:focus-visible{outline:2px solid rgba(111,69,255,.65);outline-offset:3px}
+.analytics-aurora,.leaderboard-aurora{background:radial-gradient(circle at 10% 0%,rgba(35,213,196,.10),transparent 26rem),radial-gradient(circle at 88% 8%,rgba(111,69,255,.10),transparent 28rem),linear-gradient(180deg,#fbfdff,#eef3ff)}.analytics-aurora a:focus-visible,.leaderboard-aurora a:focus-visible,.leaderboard-aurora button:focus-visible{outline:2px solid rgba(111,69,255,.65);outline-offset:3px}.leaderboard-aurora .premium-shell{box-shadow:0 18px 55px rgba(46,39,97,.07)}
+.homepage-primary-cta{background-size:180% 180%;background-position:0% 50%;transition:background-position .5s var(--ease-smooth),transform .3s var(--ease-smooth),box-shadow .3s var(--ease-smooth)}.homepage-primary-cta:hover{background-position:100% 50%}.homepage-proof-strip{isolation:isolate}.homepage-university-strip>div>div{min-height:44px}.homepage-university-strip a:focus-visible,.homepage-university-strip [role="link"]:focus-visible{outline:2px solid rgba(111,69,255,.65);outline-offset:3px}@media (max-width:767px){.homepage-proof-strip{padding-inline:1rem}.homepage-proof-strip>div>div{gap:.65rem}.homepage-proof-strip>div>div:nth-child(5){grid-column:span 2;justify-self:center}.homepage-university-strip{margin-top:2.5rem}.homepage-university-strip>div{gap:.5rem}.homepage-university-strip>div>div{padding-inline:.75rem}.homepage-university-strip>div>div:nth-child(n+6){display:none}}@media (prefers-reduced-motion:reduce){.homepage-primary-cta{transition:none}.homepage-university-strip>div>div{transition:none}}
+.library-reference{isolation:isolate}.library-reference .library-subject-grid>button,.library-reference .library-resource-card{box-shadow:0 12px 38px rgba(46,39,97,.045)}.library-reference .library-subject-grid>button:focus-visible,.library-reference .library-resource-card:focus-visible,.library-reference button:focus-visible,.library-reference input:focus-visible{outline:2px solid rgba(111,69,255,.65);outline-offset:3px}.library-reference .library-resource-card{min-height:12.5rem}.library-reference .library-featured{min-height:17rem}.library-reference .library-index{scroll-margin-top:6rem}@media(max-width:767px){.library-reference .library-featured{min-height:0}.library-reference .library-subject-grid>button{min-height:10.5rem}.library-reference .library-resource-card{min-height:0}.library-reference .library-index{border-radius:1.35rem;padding:1rem}.library-reference .library-resource-grid{grid-template-columns:1fr}}@media(prefers-reduced-motion:reduce){.library-reference .library-subject-grid>button,.library-reference .library-resource-card{transition:none}}

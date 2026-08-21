@@ -12,7 +12,7 @@ const variantClass: Record<CardVariant, string> = {
   gradient:
     "glass-panel relative overflow-hidden before:absolute before:inset-0 before:bg-gradient-to-br before:from-white/70 before:to-transparent before:pointer-events-none",
   // Recessed panel, for content nested inside another card.
-  sunken: "border border-line bg-[var(--surface-sunken)] shadow-inner",
+  sunken: "border border-line bg-panel-sunken shadow-inner",
 };
 
 type CardProps = HTMLAttributes<HTMLDivElement> & {

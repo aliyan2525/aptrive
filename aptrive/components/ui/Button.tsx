@@ -22,18 +22,13 @@ const base =
 
 const variantClass: Record<ButtonVariant, string> = {
   primary:
-    "bg-gradient-to-r from-blue-600 via-sky-500 to-violet-600 text-white shadow-[0_12px_30px_rgba(37,99,235,0.22)] hover:-translate-y-0.5 hover:shadow-[0_18px_42px_rgba(37,99,235,0.30)] active:translate-y-0",
+    "bg-gradient-to-r from-blue-600 via-sky-500 to-violet-600 text-white shadow-[0_12px_30px_rgba(37,99,235,0.22)] hover:-translate-y-0.5 hover:shadow-[0_18px_42px_rgba(37,99,235,0.30)] active:translate-y-0 active:scale-95",
   secondary:
-    "bg-white/80 text-fg border border-line-strong shadow-sm backdrop-blur-xl hover:border-blue-400/50 hover:-translate-y-0.5 hover:bg-white active:translate-y-0",
-  ghost: "text-muted hover:text-fg hover:bg-panel-2",
-  outline: "border border-line-strong bg-white/60 text-fg shadow-sm backdrop-blur-xl hover:border-blue-400/50 hover:-translate-y-0.5 hover:bg-white active:translate-y-0",
-  // Same translucent + blurred treatment as the Hero glass panel
-  // (bg-panel/40 backdrop-blur-xl) rather than a new glass recipe —
-  // "glassmorphism where appropriate, used sparingly" per the
-  // existing brief, so a CTA sitting on top of that panel or the
-  // Hero scene reads as part of the same surface.
+    "bg-panel-elevated text-fg border border-line-strong shadow-sm hover:border-teal/50 hover:-translate-y-0.5 hover:bg-panel-sunken active:translate-y-0 active:scale-95",
+  ghost: "text-muted hover:text-fg hover:bg-panel-sunken active:scale-95",
+  outline: "border border-line-strong bg-transparent text-fg hover:border-teal/50 hover:-translate-y-0.5 hover:bg-panel-elevated active:translate-y-0 active:scale-95",
   glass:
-    "border border-line/70 bg-white/55 text-fg shadow-sm backdrop-blur-2xl hover:border-blue-400/50 hover:bg-white/75 hover:-translate-y-0.5 active:translate-y-0",
+    "border border-line/70 bg-panel-elevated/40 text-fg shadow-sm backdrop-blur-2xl hover:border-teal/50 hover:bg-panel-elevated/70 hover:-translate-y-0.5 active:translate-y-0 active:scale-95",
 };
 
 const sizeClass: Record<ButtonSize, string> = {

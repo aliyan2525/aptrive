@@ -29,7 +29,7 @@ export const TestFilters = ({ onSearch, onFilterChange }: TestFiltersProps) => {
             type="text"
             placeholder="Search mock tests..."
             onChange={(e) => onSearch(e.target.value)}
-            className="w-full bg-[var(--panel-2)] border border-[var(--line)] rounded-2xl py-3 pl-12 pr-4 text-[var(--fg)] placeholder-[var(--muted-2)] focus:outline-none focus:border-[var(--teal)] focus:ring-1 focus:ring-[var(--teal)] transition-all"
+            className="w-full bg-[var(--panel-sunken)] border border-[var(--line)] rounded-2xl py-3 pl-12 pr-4 text-[var(--fg)] placeholder-[var(--muted-2)] focus:outline-none focus:border-[var(--teal)] focus:ring-1 focus:ring-[var(--teal)] transition-all"
           />
         </div>
 

@@ -52,7 +52,7 @@ export const TestHistory = () => {
                   <span className="text-[var(--muted-2)]">/{item.maxScore}</span>
                 </td>
                 <td className="py-4 text-right">
-                  <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-[var(--panel-2)] border border-[var(--line)]">
+                  <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-[var(--panel-sunken)] border border-[var(--line)]">
                     <span className="font-semibold aurora-text">{item.percentile}</span>
                     <span className="text-[10px] text-[var(--muted-2)]">PR</span>
                   </div>

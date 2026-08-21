@@ -1,6 +1,11 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useTransition } from "react";
+import type { Database } from "@/lib/database.types";
+import { saveSettingsAction } from "@/app/(app)/settings/actions";
+import type { OnboardingInput } from "@/lib/repositories/onboarding.repository";
+
+type StudentProfile = Database["public"]["Tables"]["student_profiles"]["Row"];
 import Link from "next/link";
 import {
   Bell,
@@ -9,7 +14,6 @@ import {
   ChevronRight,
   Cloud,
   CreditCard,
-  Database,
   Edit3,
   HelpCircle,
   KeyRound,
@@ -33,30 +37,53 @@ const settingsNav = [
   { id: "subscription", label: "Subscription", icon: WalletCards },
 ];
 
-export default function SettingsClient() {
+export default function SettingsClient({
+  user,
+  profile,
+}: {
+  user: { email: string; displayName: string };
+  profile: StudentProfile | null;
+}) {
   const [activeTab, setActiveTab] = useState("profile");
-  const [isSaving, setIsSaving] = useState(false);
+  const [isSaving, startSaving] = useTransition();
   const [saveSuccess, setSaveSuccess] = useState(false);
+  const [saveError, setSaveError] = useState<string | null>(null);
+  const [targetUniversity, setTargetUniversity] = useState(profile?.target_university ?? "NUST");
+  const [dailyTarget, setDailyTarget] = useState(String(profile?.daily_study_target_minutes ?? 90));
 
-  // Example State for Study Preferences
-  const [targetExam, setTargetExam] = useState("FAST-NUCES");
-  
-  const handleSave = () => {
-    setIsSaving(true);
+  function handleSave() {
     setSaveSuccess(false);
-    setTimeout(() => {
-      setIsSaving(false);
-      setSaveSuccess(true);
-      setTimeout(() => setSaveSuccess(false), 3000);
-    }, 1000);
-  };
+    setSaveError(null);
+    startSaving(async () => {
+      try {
+        const input: OnboardingInput = {
+          displayName: profile?.display_name ?? user.displayName,
+          targetUniversity,
+          targetProgram: profile?.target_degree ?? "Computer Science",
+          entryTest: (profile?.entry_test ?? "NET") as OnboardingInput["entryTest"],
+          educationLevel: (profile?.education_level ?? "intermediate") as OnboardingInput["educationLevel"],
+          matricMarks: profile?.matric_marks ?? null,
+          intermediateMarks: profile?.intermediate_marks ?? null,
+          expectedTestDate: profile?.expected_test_date ?? null,
+          preferredStudySchedule: (profile?.preferred_schedule ?? "flexible") as OnboardingInput["preferredStudySchedule"],
+          dailyStudyTargetMinutes: Number(dailyTarget) || 90,
+          improvementSubjects: profile?.weak_subjects ?? [],
+        };
+        await saveSettingsAction(input);
+        setSaveSuccess(true);
+        window.setTimeout(() => setSaveSuccess(false), 3000);
+      } catch (error) {
+        setSaveError(error instanceof Error ? error.message : "Settings could not be saved. Please try again.");
+      }
+    });
+  }
 
   return (
     <div className="settings-aurora mx-auto grid max-w-[96rem] gap-6 xl:grid-cols-[16rem_minmax(0,1fr)] relative">
       
       {/* Toast Notification */}
       {saveSuccess && (
-        <div className="fixed bottom-6 right-6 z-50 flex items-center gap-2 rounded-2xl bg-neutral-950 px-4 py-3 text-sm font-bold text-white shadow-[0_18px_50px_rgba(46,39,97,.2)] animate-in slide-in-from-bottom-5">
+        <div role="status" aria-live="polite" className="fixed bottom-6 right-6 z-50 flex max-w-[calc(100vw-2rem)] items-center gap-2 rounded-2xl bg-neutral-950 px-4 py-3 text-sm font-bold text-white shadow-[0_18px_50px_rgba(46,39,97,.2)] animate-in slide-in-from-bottom-5">
           <Check className="h-5 w-5" />
           Settings saved successfully.
         </div>
@@ -90,7 +117,7 @@ export default function SettingsClient() {
       <section className="space-y-5">
         {activeTab === "profile" && (
           <div className="space-y-5 animate-in fade-in slide-in-from-bottom-2 duration-300">
-            <ProfileCard />
+            <ProfileCard user={user} profile={profile} />
           </div>
         )}
 
@@ -100,17 +127,20 @@ export default function SettingsClient() {
               <div className="space-y-4 mt-4">
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-4 rounded-xl border border-[var(--line)] bg-[var(--panel)]/50">
                   <div>
-                    <p className="font-bold text-[var(--fg)]">Target Exam</p>
+                    <p className="font-bold text-[var(--fg)]">Target University</p>
                     <p className="text-sm text-gray-500">Your primary university admission target.</p>
                   </div>
                   <select 
-                    value={targetExam}
-                    onChange={(e) => setTargetExam(e.target.value)}
+                    value={targetUniversity}
+                    onChange={(e) => setTargetUniversity(e.target.value)}
                     className="h-11 rounded-xl border border-neutral-200 bg-white/80 px-3 text-sm font-semibold outline-none transition focus:border-violet-400 focus:ring-4 focus:ring-violet-500/10"
                   >
-                    <option value="FAST-NUCES">FAST-NUCES</option>
-                    <option value="NUST-NET">NUST NET</option>
+                    <option value="NUST">NUST</option>
+                    <option value="FAST">FAST-NUCES</option>
+                    <option value="COMSATS">COMSATS</option>
                     <option value="GIKI">GIKI</option>
+                    <option value="PIEAS">PIEAS</option>
+                    <option value="UET">UET Lahore</option>
                   </select>
                 </div>
                 
@@ -119,7 +149,7 @@ export default function SettingsClient() {
                     <p className="font-bold text-[var(--fg)]">Daily Training Goal</p>
                     <p className="text-sm text-gray-500">Your daily time commitment for active practice.</p>
                   </div>
-                  <select className="h-11 rounded-xl border border-neutral-200 bg-white/80 px-3 text-sm font-semibold outline-none transition focus:border-violet-400 focus:ring-4 focus:ring-violet-500/10">
+                  <select value={dailyTarget} onChange={(e) => setDailyTarget(e.target.value)} className="h-11 rounded-xl border border-neutral-200 bg-white/80 px-3 text-sm font-semibold outline-none transition focus:border-violet-400 focus:ring-4 focus:ring-violet-500/10">
                     <option>60 minutes</option>
                     <option>90 minutes</option>
                     <option>120 minutes</option>
@@ -132,9 +162,10 @@ export default function SettingsClient() {
                     disabled={isSaving}
                     className="pressable flex h-11 min-w-[140px] items-center justify-center gap-2 rounded-xl bg-violet-700 px-4 text-sm font-bold text-white shadow-[0_12px_26px_rgba(111,69,255,.2)] transition hover:-translate-y-0.5 hover:bg-violet-800 disabled:opacity-70"
                   >
-                    {isSaving ? <Loader2 className="h-4 w-4 animate-spin" /> : "Save Changes"}
+                    {isSaving ? <Loader2 className="h-4 w-4 animate-spin" aria-label="Saving settings" /> : "Save Changes"}
                   </button>
                 </div>
+                {saveError && <p role="alert" className="mt-4 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">{saveError}</p>}
               </div>
             </Panel>
           </div>
@@ -168,8 +199,8 @@ export default function SettingsClient() {
         {["notifications", "privacy", "subscription"].includes(activeTab) && (
           <div className="space-y-5 animate-in fade-in slide-in-from-bottom-2 duration-300 grid place-items-center h-64 rounded-2xl border border-dashed border-[var(--line)]">
              <div className="text-center text-gray-500">
-               <p className="font-bold">System Configuration</p>
-               <p className="text-sm">These parameters are currently being synchronized with our core servers.</p>
+               <p className="font-bold">This section is coming next</p>
+               <p className="text-sm">Notifications, privacy, and subscription controls are not connected yet.</p>
              </div>
           </div>
         )}
@@ -179,7 +210,7 @@ export default function SettingsClient() {
   );
 }
 
-function ProfileCard() {
+function ProfileCard({ user, profile }: { user: { email: string; displayName: string }; profile: StudentProfile | null }) {
   return (
     <section className="premium-shell settings-panel rounded-[1.5rem] border border-white/80 bg-white/80 p-6 shadow-[0_20px_60px_rgba(46,39,97,.08)] backdrop-blur-xl">
       <div className="flex items-start justify-between gap-4">
@@ -193,11 +224,11 @@ function ProfileCard() {
         </Link>
       </div>
       <div className="mt-6 grid gap-6 md:grid-cols-[6rem_repeat(4,minmax(0,1fr))] md:items-center">
-        <span className="grid h-20 w-20 place-items-center rounded-full bg-gradient-to-br from-teal-400 to-emerald-500 text-2xl font-bold text-white shadow-lg">DF</span>
-        <Info label="Full Name" value="Daniyal Farooq" />
-        <Info label="Email" value="daniyal.farooq@gmail.com" />
-        <Info label="Username" value="df_aspirant" />
-        <Info label="Phone" value="+92 301 1234567" />
+        <span className="grid h-20 w-20 place-items-center rounded-full bg-gradient-to-br from-teal-400 to-emerald-500 text-2xl font-bold text-white shadow-lg">{(profile?.display_name ?? user.displayName).split(" ").map((part) => part[0]).join("").slice(0, 2).toUpperCase()}</span>
+        <Info label="Full Name" value={profile?.display_name ?? user.displayName} />
+        <Info label="Email" value={user.email || "Not available"} />
+        <Info label="Target University" value={profile?.target_university ?? "Not set"} />
+        <Info label="Entry Test" value={profile?.entry_test ?? "Not set"} />
       </div>
     </section>
   );

@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
@@ -249,7 +249,7 @@ function CommandHero({
   return (
     <motion.section 
       variants={{ hidden: { opacity: 0, y: 15 }, visible: { opacity: 1, y: 0 } }}
-      className="premium-shell relative overflow-hidden rounded-[1.75rem] border border-white/80 bg-neutral-950 p-6 text-white shadow-[0_24px_70px_rgba(46,39,97,0.14)] lg:col-span-8 lg:p-8"
+      className="premium-shell relative overflow-hidden rounded-[1.75rem] p-6 lg:p-8 lg:col-span-8"
     >
       <div className="absolute right-6 top-6 h-52 w-52 rounded-full bg-blue-500/5 blur-3xl" />
       <div className="absolute bottom-0 right-0 hidden h-56 w-80 rounded-tl-[5rem] bg-gradient-to-br from-blue-500/5 to-violet-500/5 md:block" />
@@ -268,7 +268,7 @@ function CommandHero({
               Resume Training
               <ArrowRight className="h-4 w-4" aria-hidden="true" />
             </Link>
-            <Link href="/onboarding" className="pressable inline-flex h-12 items-center gap-2 rounded-xl border border-neutral-200/70 bg-white/70 px-5 text-sm font-medium text-white transition-colors hover:bg-white/10">
+            <Link href="/onboarding" className="pressable inline-flex h-12 items-center gap-2 rounded-xl border border-white/10 bg-white/5 px-5 text-sm font-medium text-white transition-colors hover:bg-white/10">
               <Sparkles className="h-4 w-4 text-neutral-400" aria-hidden="true" />
               Optimize Strategy
             </Link>
@@ -332,7 +332,7 @@ function DailyGoalCard({
   readiness: number;
 }) {
   return (
-    <motion.section whileHover={{ scale: 1.01 }} className="surface-card rounded-[1.35rem] border border-neutral-200/80 bg-white/78 shadow-sm p-6 lg:col-span-4 transition-transform duration-200">
+    <motion.section whileHover={{ scale: 1.01 }} className="glass-panel rounded-[1.35rem] p-6 lg:col-span-4 transition-transform duration-200">
       <p className="text-xs font-medium uppercase tracking-[0.12em] text-neutral-500">Today&apos;s Goal</p>
       <div className="mt-4 flex items-center justify-between gap-4">
         <div>
@@ -358,7 +358,7 @@ function MetricTile({ label, value, detail, icon: Icon, tone }: { label: string;
     blue: "bg-blue-500/10 text-blue-400",
   };
   return (
-    <motion.article whileHover={{ scale: 1.02 }} className="surface-card rounded-[1.35rem] border border-neutral-200/80 bg-white/78 shadow-sm p-5 lg:col-span-3 transition-transform duration-200">
+    <motion.article whileHover={{ scale: 1.02 }} className="glass-panel rounded-[1.35rem] p-5 lg:col-span-3 transition-transform duration-200">
       <div className="flex items-center gap-4">
         <span className={`grid h-10 w-10 place-items-center rounded-lg ${tones[tone]}`}>
           <Icon className="h-5 w-5" aria-hidden="true" />
@@ -393,7 +393,7 @@ function PerformancePanel({ activity }: { activity: Array<{ activity_date: strin
   const polyline = chartPoints.map((p, i) => `${(i / (chartPoints.length - 1)) * 100},${100 - p.value}`).join(" ");
 
   return (
-    <section className="surface-card rounded-[1.35rem] border border-neutral-200/80 bg-white/78 shadow-sm p-6 lg:col-span-6">
+    <section className="glass-panel rounded-[1.35rem] p-6 lg:col-span-6">
       <PanelHeader title="Performance Trends" subtitle="Weekly accuracy - last 6 weeks" action="Accuracy" />
       <div className="mt-6">
         <svg viewBox="0 0 100 100" className="h-52 w-full overflow-visible" role="img" aria-label="Accuracy trend line chart">
@@ -417,7 +417,7 @@ function PerformancePanel({ activity }: { activity: Array<{ activity_date: strin
           </defs>
         </svg>
       </div>
-      <div className="mt-4 flex items-center gap-3 rounded-xl border border-neutral-200/70 bg-white/70 px-4 py-3 text-sm text-neutral-300">
+      <div className="mt-4 flex items-center gap-3 rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-neutral-300">
         <LineChart className="h-4 w-4 text-neutral-400" aria-hidden="true" />
         You are improving. Accuracy increased by 16% in the last 6 weeks.
       </div>
@@ -427,7 +427,7 @@ function PerformancePanel({ activity }: { activity: Array<{ activity_date: strin
 
 function ReadinessPanel({ prepPercent, admissionProbability, weakTopic }: { prepPercent: number; admissionProbability: number; weakTopic: string }) {
   return (
-    <section className="surface-card rounded-[1.35rem] border border-neutral-200/80 bg-white/78 shadow-sm p-6 lg:col-span-6">
+    <section className="glass-panel rounded-[1.35rem] p-6 lg:col-span-6">
       <PanelHeader title="Exam Readiness" subtitle="Blended score from volume, accuracy, and streak" />
       <div className="mt-7 grid gap-6 md:grid-cols-[13rem_minmax(0,1fr)]">
         <div className="grid place-items-center">
@@ -439,7 +439,7 @@ function ReadinessPanel({ prepPercent, admissionProbability, weakTopic }: { prep
           <ReadinessRow label="Practice Volume" value={78} color="#666" icon={Zap} />
         </div>
       </div>
-      <div className="mt-6 rounded-xl border border-neutral-200/70 bg-white/70 p-4 text-sm leading-6 text-neutral-300">
+      <div className="mt-6 rounded-xl border border-white/10 bg-white/5 p-4 text-sm leading-6 text-neutral-300">
         Focus on {weakTopic} today. One consistent session will move readiness to the next level.
       </div>
     </section>
@@ -449,16 +449,16 @@ function ReadinessPanel({ prepPercent, admissionProbability, weakTopic }: { prep
 function MissionCard({ missionTime, topic, dailyGoalPercent, targetUniversity }: { missionTime: number; topic: string; dailyGoalPercent: number; targetUniversity: string }) {
   const objectives = ["Review core concept", "Solve timed practice", "Log mistakes"];
   return (
-    <section className="surface-card rounded-[1.35rem] border border-neutral-200/80 bg-white/78 shadow-sm p-6 lg:col-span-4 flex flex-col">
+    <section className="glass-panel rounded-[1.35rem] p-6 lg:col-span-4 flex flex-col">
       <PanelHeader title="Today's AI Plan" subtitle={`${missionTime} minutes - high priority`} />
-      <div className="mt-5 rounded-xl border border-neutral-200/70 bg-white/70 p-5">
+      <div className="mt-5 rounded-xl border border-white/10 bg-white/5 p-5">
         <p className="text-xs font-medium uppercase tracking-[0.12em] text-neutral-500">Recommended Subject</p>
         <p className="mt-1 font-display text-2xl font-medium text-white">{topic}</p>
         <p className="mt-1 text-sm text-neutral-400">Best next action for improving {targetUniversity} prediction.</p>
       </div>
       <div className="mt-5 space-y-2 flex-grow">
         {objectives.map((objective, index) => (
-          <div key={objective} className="flex items-center gap-3 rounded-xl border border-neutral-200/70 bg-white/70 px-3 py-2.5 text-sm font-medium text-neutral-300">
+          <div key={objective} className="flex items-center gap-3 rounded-xl border border-white/10 bg-white/5 px-3 py-2.5 text-sm font-medium text-neutral-300">
             <span className={`grid h-5 w-5 place-items-center rounded-full text-[10px] ${index === 0 ? "bg-white text-black" : "bg-white/10 text-neutral-400"}`}>
               {index === 0 ? <Check className="h-3 w-3" aria-hidden="true" /> : index + 1}
             </span>
@@ -477,7 +477,7 @@ function MissionCard({ missionTime, topic, dailyGoalPercent, targetUniversity }:
 
 function TopicPanel({ strong, weak }: { strong: Array<{ topic: string; mastery_percent: number }>; weak: Array<{ topic: string; mastery_percent: number }> }) {
   return (
-    <section className="surface-card rounded-[1.35rem] border border-neutral-200/80 bg-white/78 shadow-sm p-6 lg:col-span-4">
+    <section className="glass-panel rounded-[1.35rem] p-6 lg:col-span-4">
       <PanelHeader title="Knowledge Map" subtitle="Data density heatmap" />
       <div className="mt-5 grid gap-6">
         <TopicGroup title="Strengths" topics={strong} color="#fff" />
@@ -489,12 +489,12 @@ function TopicPanel({ strong, weak }: { strong: Array<{ topic: string; mastery_p
 
 function Recommendations({ items }: { items: Array<{ title: string; meta: string; icon: LucideIcon; href: string }> }) {
   return (
-    <section className="surface-card rounded-[1.35rem] border border-neutral-200/80 bg-white/78 shadow-sm p-6 lg:col-span-4">
+    <section className="glass-panel rounded-[1.35rem] p-6 lg:col-span-4">
       <PanelHeader title="Recommended" subtitle="Personalized next actions" action="View all" />
       <div className="mt-5 grid gap-2">
         {items.map((item) => (
           <Link key={item.title} href={item.href} className="group flex items-center gap-4 rounded-lg border border-transparent p-3 transition-colors hover:border-neutral-200 hover:bg-white">
-            <span className="grid h-10 w-10 place-items-center rounded-xl border border-neutral-200/70 bg-white/70 text-neutral-300">
+            <span className="grid h-10 w-10 place-items-center rounded-xl border border-white/10 bg-white/5 text-neutral-300">
               <item.icon className="h-4 w-4" aria-hidden="true" />
             </span>
             <span className="min-w-0">
@@ -511,11 +511,11 @@ function Recommendations({ items }: { items: Array<{ title: string; meta: string
 
 function UpcomingPanel({ deadlines }: { deadlines: Array<{ university: string; deadline_date: string }> }) {
   return (
-    <section className="surface-card rounded-[1.35rem] border border-neutral-200/80 bg-white/78 shadow-sm p-6 lg:col-span-4">
+    <section className="glass-panel rounded-[1.35rem] p-6 lg:col-span-4">
       <PanelHeader title="Upcoming Mock Test" subtitle="Keep deadlines visible" action="View all" />
       <div className="mt-5 space-y-2">
         {deadlines.slice(0, 3).map((item) => (
-          <div key={`${item.university}-${item.deadline_date}`} className="flex items-center gap-3 rounded-xl border border-neutral-200/70 bg-white/70 p-3">
+          <div key={`${item.university}-${item.deadline_date}`} className="flex items-center gap-3 rounded-xl border border-white/10 bg-white/5 p-3">
             <div className="h-8 w-8 rounded-full bg-white/10 flex items-center justify-center">
               <span className="text-[10px] font-bold">{item.university.slice(0,2)}</span>
             </div>
@@ -532,7 +532,7 @@ function UpcomingPanel({ deadlines }: { deadlines: Array<{ university: string; d
 
 function CalendarPanel({ days }: { days: CalendarDay[] }) {
   return (
-    <section className="surface-card rounded-[1.35rem] border border-neutral-200/80 bg-white/78 shadow-sm p-6 lg:col-span-4">
+    <section className="glass-panel rounded-[1.35rem] p-6 lg:col-span-4">
       <PanelHeader title="Study Calendar" subtitle="Days with completed sessions" />
       <div className="mt-5 grid grid-cols-7 gap-2 text-center text-[10px] font-medium uppercase text-neutral-500">
         {weekdayLabels.map((label, i) => <span key={`${label}-${i}`}>{label}</span>)}
@@ -560,10 +560,10 @@ function ActivityPanel({
   recent: Array<{ resource_id: string; resource_type: string; viewed_at: string }>;
 }) {
   return (
-    <section className="surface-card rounded-[1.35rem] border border-neutral-200/80 bg-white/78 shadow-sm p-6 lg:col-span-8">
+    <section className="glass-panel rounded-[1.35rem] p-6 lg:col-span-8">
       <PanelHeader title="Recent Activity" subtitle="Latest learning events and account context" />
       <div className="mt-5 grid gap-4 md:grid-cols-[16rem_minmax(0,1fr)]">
-        <dl className="rounded-xl border border-neutral-200/70 bg-white/70 p-4 text-sm">
+        <dl className="rounded-xl border border-white/10 bg-white/5 p-4 text-sm">
           <Info label="Email" value={email} />
           <Info label="Role" value={role} />
           <Info label="Member since" value={memberSince ? formatDate(memberSince) : "-"} />

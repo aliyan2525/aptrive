@@ -1,0 +1,232 @@
+﻿=== SPECIAL STATE FILES ===
+app\(app)\admin\error.tsx
+app\(app)\admin\loading.tsx
+app\(app)\dashboard\error.tsx
+app\(app)\dashboard\loading.tsx
+app\(app)\practice\error.tsx
+app\(app)\practice\loading.tsx
+app\(marketing)\library\loading.tsx
+app\error.tsx
+app\not-found.tsx
+=== NATIVE IMAGE SIGNALS ===
+components\hero\OpportunityMap.tsx:200:<img src="/logo-mark.png" alt="Aptrive" className="w-12 h-12 object-contain mb-2" />
+=== LIGHT-SURFACE / LIGHT-TEXT SIGNALS ===
+components\courses\CoursesExperience.tsx:28:<motion.div initial={{ opacity: 0, y: 18 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }} className="premium-shell relative overflow-hidden rounded-[2rem] border bg-neutral-950 p-7 text-white shadow-[0_28px_90px_rgba(56,42,122,0.18)] md:p-9"><div className="absolute -right-10 -top-10 h-44 w-44 rounded-full bg-teal-400/20 blur-3xl" /><div className="relative z-10"><div className="flex items-center justify-between"><span className="text-[10px] font-semibold uppercase tracking-[0.22em] text-white/55">The path is clearer when it is named</span><Compass className="h-5 w-5 text-teal-300" /></div><p className="mt-10 font-display text-4xl font-semibold tracking-tight">One target.<br /><span className="text-teal-300">A better plan.</span></p><div className="mt-9 grid grid-cols-3 gap-2 text-center"><div className="rounded-2xl border border-white/10 bg-white/5 p-3"><p className="font-display text-2xl font-semibold">{universities.length}</p><p className="mt-1 text-[9px] uppercase tracking-[0.14em] text-white/45">universities</p></div><div className="rounded-2xl border border-white/10 bg-white/5 p-3"><p className="font-display text-2xl font-semibold">4</p><p className="mt-1 text-[9px] uppercase tracking-[0.14em] text-white/45">path signals</p></div><div className="rounded-2xl border border-white/10 bg-white/5 p-3"><p className="font-display text-2xl font-semibold">1</p><p className="mt-1 text-[9px] uppercase tracking-[0.14em] text-white/45">next move</p></div></div></div></motion.div>
+components\dashboard\DashboardClient.tsx:252:className="premium-shell relative overflow-hidden rounded-[1.75rem] border border-white/80 bg-neutral-950 p-6 text-white shadow-[0_24px_70px_rgba(46,39,97,0.14)] lg:col-span-8 lg:p-8"
+components\dashboard\DashboardClient.tsx:271:<Link href="/onboarding" className="pressable inline-flex h-12 items-center gap-2 rounded-xl border border-neutral-200/70 bg-white/70 px-5 text-sm font-medium text-white transition-colors hover:bg-white/10">
+components\library\LibraryExperience.tsx:96:<span className="grid h-10 w-10 shrink-0 place-items-center rounded-2xl bg-neutral-950 text-white"><ArrowUpRight className="h-5 w-5" /></span>
+components\library\LibraryExperience.tsx:114:<button type="button" onClick={() => setCategory("all")} className={`premium-shell rounded-[1.5rem] border p-5 text-left transition ${category === "all" ? "border-neutral-950 bg-neutral-950 text-white" : "bg-white/72 text-neutral-950"}`}><div className="flex items-center justify-between"><span className="text-[10px] font-semibold uppercase tracking-[0.18em] opacity-65">All subjects</span><Layers3 className="h-5 w-5 opacity-70" /></div><p className="mt-8 font-display text-3xl font-semibold">{formatNumber(resources.length)}</p><p className="mt-1 text-xs opacity-65">resources to explore</p></button>
+components\library\LibraryExperience.tsx:122:<AnimatePresence initial={false}>{showFilters && <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: "auto" }} exit={{ opacity: 0, height: 0 }} className="mt-5 overflow-hidden"><div className="flex flex-wrap gap-2 border-t border-neutral-200/70 pt-5">{filters.map((item) => <button key={item.value} type="button" onClick={() => setFilter(item.value)} className={`rounded-full px-3.5 py-2 text-xs font-semibold transition ${filter === item.value ? "bg-neutral-950 text-white" : "bg-neutral-100 text-neutral-600 hover:bg-violet-50 hover:text-violet-700"}`}>{filter === item.value && <Check className="mr-1.5 inline h-3 w-3" />}{item.label}</button>)}</div></motion.div>}</AnimatePresence>
+components\settings\SettingsClient.tsx:59:<div className="fixed bottom-6 right-6 z-50 flex items-center gap-2 rounded-2xl bg-neutral-950 px-4 py-3 text-sm font-bold text-white shadow-[0_18px_50px_rgba(46,39,97,.2)] animate-in slide-in-from-bottom-5">
+components\university\UniversityExperiencePage.tsx:115:<Link href={`/tools/calculator?uni=${university.id}`} className="inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-6 py-3 text-sm font-bold text-white backdrop-blur-xl transition hover:-translate-y-0.5">
+components\university\UniversityExperiencePage.tsx:275:<Link href={`/tools/calculator?uni=${university.id}`} className="rounded-full border border-white/20 bg-white/10 px-7 py-3 text-sm font-bold text-white backdrop-blur-xl">Calculate merit</Link>
+components\AggregateCalculator.tsx:256:? "bg-neutral-900 text-white shadow-lg shadow-neutral-900/10"
+components\AggregateCalculator.tsx:343:className="pressable rounded-full bg-neutral-900 px-6 py-3 text-sm font-semibold text-white shadow-lg shadow-neutral-900/10 transition-opacity hover:opacity-90"
+components\FAQAccordion.tsx:58:className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-full transition-colors duration-300 ${isOpen ? "bg-teal-500 text-white dark:bg-teal dark:text-black" : "bg-black/5 text-black/50 dark:bg-white/5 dark:text-white/50 group-hover:bg-black/10 group-hover:text-black dark:group-hover:bg-white/10 dark:group-hover:text-white"}`}
+components\Footer.tsx:35:<a href="https://twitter.com" target="_blank" rel="noopener noreferrer" className="flex h-10 w-10 items-center justify-center rounded-full bg-black/5 text-black/60 transition-all hover:bg-black/10 hover:text-black dark:bg-white/5 dark:text-white/60 dark:hover:bg-white/10 dark:hover:text-white hover:scale-110">
+components\Footer.tsx:38:<a href="https://github.com" target="_blank" rel="noopener noreferrer" className="flex h-10 w-10 items-center justify-center rounded-full bg-black/5 text-black/60 transition-all hover:bg-black/10 hover:text-black dark:bg-white/5 dark:text-white/60 dark:hover:bg-white/10 dark:hover:text-white hover:scale-110">
+components\Footer.tsx:41:<a href="https://linkedin.com" target="_blank" rel="noopener noreferrer" className="flex h-10 w-10 items-center justify-center rounded-full bg-black/5 text-black/60 transition-all hover:bg-black/10 hover:text-black dark:bg-white/5 dark:text-white/60 dark:hover:bg-white/10 dark:hover:text-white hover:scale-110">
+components\SiteNav.tsx:225:link.match(pathname) ? "bg-black/5 text-black dark:bg-white/10 dark:text-white" : "text-black/60 hover:bg-black/5 hover:text-black dark:text-white/60 dark:hover:bg-white/5 dark:hover:text-white"
+=== FIXED / VIEWPORT / OVERFLOW SIGNALS ===
+app\(app)\admin\catalog\actions.ts:15:// FIXED 2026-07-29: every delete below used to just `if (error) throw
+app\(app)\admin\error.tsx:27:{/* FIXED 2026-07-29: error.message was only ever logged to the
+app\(app)\admin\layout.tsx:14:<div className="min-h-screen bg-graphite">
+app\(app)\analytics\page.tsx:50:<main className="analytics-aurora min-h-screen pt-24 pb-16 px-4 md:px-8">
+app\(app)\dashboard\error.tsx:18:<main className="min-h-[calc(100vh-4rem)] bg-graphite px-4 py-8 md:px-6 md:py-10">
+app\(app)\dashboard\loading.tsx:3:<main className="min-h-[calc(100vh-4rem)] bg-graphite px-4 py-8 md:px-6 md:py-10">
+app\(app)\leaderboard\page.tsx:23:<main className="leaderboard-aurora min-h-[calc(100vh-4rem)] px-6 py-12">
+app\(app)\leaderboard\page.tsx:46:<div className="mt-8 flex gap-2 overflow-x-auto pb-2">
+app\(app)\practice\actions.ts:77:// FIXED 2026-07-28: `record_attempt_and_update_progress`'s live
+app\(app)\practice\page.tsx:74:<main className="min-h-screen pt-24 pb-16 px-4 md:px-8">
+app\(app)\profile\page.tsx:41:<main className="profile-aurora min-h-[calc(100vh-4rem)] px-4 py-8 pb-24 md:px-6 md:py-10">
+app\(marketing)\blog\[slug]\page.tsx:39:<main className="min-h-[calc(100vh-4rem)] bg-graphite">
+app\(marketing)\blog\page.tsx:18:<main className="min-h-[calc(100vh-4rem)] bg-[linear-gradient(180deg,#fff,#f6f9ff)]">
+app\global-error.tsx:27:minHeight: "100vh",
+components\analytics\StudyHeatmap.tsx:40:<div className="overflow-x-auto no-scrollbar pb-2">
+components\app\AppSidebar.tsx:34:<aside className="hidden xl:flex flex-col border-r border-[var(--line)] bg-[var(--panel)]/78 px-5 py-7 backdrop-blur-xl h-screen sticky top-0 left-0 overflow-y-auto no-scrollbar">
+components\app\AuthenticatedShell.tsx:22:<div className="app-shell min-h-screen bg-[#f7f9ff] dark:bg-[#0a0a0a] text-fg">
+components\app\AuthenticatedShell.tsx:23:<div className="grid min-h-screen grid-cols-1 xl:grid-cols-[18rem_minmax(0,1fr)]">
+components\app\AuthenticatedShell.tsx:28:<section className="workspace-surface min-w-0 flex flex-col min-h-screen">
+components\app\CommandPalette.tsx:60:<div className="fixed inset-0 z-[100] bg-[#07102e]/28 p-4 backdrop-blur-sm" role="presentation" onMouseDown={() => onOpenChange(false)}>
+components\auth\AuthShell.tsx:26:<main className="auth-shell relative flex min-h-[calc(100vh-4rem)] items-center justify-center overflow-hidden px-6 py-16">
+components\blog\BlogListClient.tsx:103:<div className="mt-6 flex gap-4 overflow-x-auto pb-2">
+components\dashboard\DashboardClient.tsx:175:<div className="dashboard-aurora mx-auto max-w-[96rem] px-4 py-6 sm:px-6 lg:px-9 relative z-[10] min-h-screen text-fg">
+components\hero\shaders\glassPlanet.glsl.ts:171:// Fixed key light, upper-left — a soft studio specular hotspot
+components\hero\HeroScene.tsx:61:className="pointer-events-none fixed inset-0 -z-10 h-screen w-screen overflow-hidden"
+components\hero\HeroSceneClient.tsx:15:<div className="pointer-events-none fixed inset-0 -z-10 h-screen w-screen animate-pulse bg-graphite" />
+components\journey\scene\TravelingSignal.tsx:22:* Features' settling fragments (this one moves along a fixed path
+components\leaderboard\scene\Podium3D.tsx:42:// Keep the base fixed at GROUND_Y while the top grows upward —
+components\mock-tests\TestFilters.tsx:37:<LiquidGlassCard intensity="low" className="flex-1 w-full flex items-center gap-2 p-2 overflow-x-auto no-scrollbar rounded-2xl">
+components\mock-tests\TestHistory.tsx:34:<div className="overflow-x-auto no-scrollbar -mx-6 md:mx-0 px-6 md:px-0">
+components\onboarding\OnboardingFlow.tsx:143:<main className="onboarding-aurora min-h-[calc(100vh-4rem)] overflow-hidden px-6 py-10">
+components\practice\PracticeInterface.tsx:208:<main className="min-h-[calc(100vh-4rem)] bg-graphite px-4 py-8 pb-24 md:px-6">
+components\practice\PracticeInterface.tsx:253:<main className="min-h-[calc(100vh-4rem)] bg-graphite px-4 py-6 pb-24 md:px-6">
+components\practice\PracticeInterface.tsx:291:<div className="mt-4 flex gap-2 overflow-x-auto lg:block lg:space-y-2">
+components\settings\SettingsClient.tsx:59:<div className="fixed bottom-6 right-6 z-50 flex items-center gap-2 rounded-2xl bg-neutral-950 px-4 py-3 text-sm font-bold text-white shadow-[0_18px_50px_rgba(46,39,97,.2)] animate-in slide-in-from-bottom-5">
+components\ui\Modal.tsx:39:<div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+components\FAQAccordion.tsx:14:a: "Every attempt updates a topic-level mastery profile. Aptrive resequences upcoming questions toward your weakest topics instead of giving everyone the same fixed order.",
+components\HeroBackground.tsx:171:className="pointer-events-none fixed inset-0 -z-10 h-screen w-screen overflow-hidden"
+components\NotificationBell.tsx:121:<div className="absolute right-0 top-[calc(100%+12px)] z-50 w-80 rounded-xl border border-line bg-panel/95 shadow-2xl backdrop-blur">
+components\SiteNav.tsx:101:className={`fixed left-0 right-0 top-0 z-50 transition-all duration-500 ease-out pt-4 ${
+components\SiteNav.tsx:216:className="fixed inset-0 top-16 z-40 bg-white/95 dark:bg-black/95 backdrop-blur-2xl md:hidden overflow-y-auto overscroll-contain h-[100dvh] pb-24"
+=== MOTION / 3D SIGNALS ===
+app\(app)\admin\page.tsx:63:<div key={stat.label} className="premium-shell rounded-[1.35rem] border border-white/80 bg-white/80 p-5 shadow-[0_18px_50px_rgba(46,39,97,.06)] backdrop-blur-xl">
+app\(app)\admin\page.tsx:96:<div className="mt-10 premium-shell overflow-hidden rounded-[1.35rem] border border-white/80 bg-white/80 p-5 shadow-[0_18px_50px_rgba(46,39,97,.06)] backdrop-blur-xl">
+app\(app)\analytics\page.tsx:10:const PredictionEngine = dynamic(() => import("@/components/analytics/PredictionEngine").then((mod) => mod.PredictionEngine), {
+app\(app)\analytics\page.tsx:13:const SubjectRadar = dynamic(() => import("@/components/analytics/SubjectRadar").then((mod) => mod.SubjectRadar), {
+app\(app)\analytics\page.tsx:16:const TrendChart = dynamic(() => import("@/components/analytics/TrendChart").then((mod) => mod.TrendChart), {
+app\(app)\analytics\page.tsx:19:const StudyHeatmap = dynamic(() => import("@/components/analytics/StudyHeatmap").then((mod) => mod.StudyHeatmap), {
+app\(app)\analytics\page.tsx:52:<motion.div
+app\(app)\analytics\page.tsx:54:animate={{ opacity: 1, y: 0 }}
+app\(app)\analytics\page.tsx:99:</motion.div>
+app\(app)\goals\page.tsx:33:<div className="premium-shell rounded-[1.5rem] border border-white/80 bg-white/80 p-6 shadow-[0_20px_60px_rgba(46,39,97,.07)] backdrop-blur-xl">
+app\(app)\goals\page.tsx:75:<div className="premium-shell rounded-[1.5rem] border border-white/80 bg-white/80 p-6 shadow-[0_20px_60px_rgba(46,39,97,.07)] backdrop-blur-xl">
+app\(app)\goals\page.tsx:103:<article className="premium-shell flex items-center justify-between rounded-[1.35rem] border border-white/80 bg-white/80 p-6 shadow-[0_18px_50px_rgba(46,39,97,.06)] backdrop-blur-xl">
+app\(app)\goals\page.tsx:117:<div className="premium-shell rounded-[1.5rem] border border-white/80 bg-white/80 p-6 shadow-[0_20px_60px_rgba(46,39,97,.07)] backdrop-blur-xl">
+app\(app)\leaderboard\page.tsx:58:<section className="premium-shell mt-6 overflow-hidden rounded-[1.5rem] border border-white/80 bg-white/80 shadow-[0_20px_60px_rgba(46,39,97,.08)] backdrop-blur-xl">
+app\(app)\leaderboard\page.tsx:98:<div className="premium-shell rounded-2xl border border-white/80 bg-white/75 p-4 shadow-sm backdrop-blur-xl">
+app\(app)\practice\page.tsx:76:<motion.div
+app\(app)\practice\page.tsx:78:animate={{ opacity: 1, y: 0 }}
+app\(app)\practice\page.tsx:116:</motion.div>
+app\(app)\profile\page.tsx:43:<section className="premium-shell motion-card overflow-hidden rounded-[1.75rem] border border-white/80 bg-white/80 shadow-[0_24px_70px_rgba(46,39,97,.10)] backdrop-blur-xl">
+app\(app)\profile\page.tsx:79:<div className="premium-shell motion-card rounded-[1.5rem] border border-white/80 bg-white/80 p-6 shadow-[0_20px_60px_rgba(46,39,97,.07)] backdrop-blur-xl">
+app\(app)\profile\page.tsx:91:<div className="premium-shell motion-card rounded-[1.5rem] border border-white/80 bg-white/80 p-6 shadow-[0_20px_60px_rgba(46,39,97,.07)] backdrop-blur-xl">
+app\(app)\profile\page.tsx:112:<div className="premium-shell motion-card rounded-[1.5rem] border border-white/80 bg-white/80 p-6 shadow-[0_20px_60px_rgba(46,39,97,.07)] backdrop-blur-xl">
+app\(app)\profile\page.tsx:124:<div className="premium-shell motion-card rounded-[1.5rem] border border-white/80 bg-white/80 p-6 shadow-[0_20px_60px_rgba(46,39,97,.07)] backdrop-blur-xl">
+app\(marketing)\page.tsx:83:<div className="inline-flex items-center gap-2.5 rounded-full border border-black/[0.06] bg-white/80 px-5 py-2 shadow-sm backdrop-blur-sm">
+app\template.tsx:7:<motion.div
+app\template.tsx:9:animate={{ opacity: 1, y: 0 }}
+app\template.tsx:13:</motion.div>
+components\analytics\AIInsights.tsx:24:<motion.div
+components\analytics\AIInsights.tsx:27:animate={{ opacity: 1, x: 0 }}
+components\analytics\AIInsights.tsx:35:</motion.div>
+components\analytics\SubjectRadar.tsx:80:<motion.polygon
+components\analytics\SubjectRadar.tsx:82:animate={{ opacity: 1, scale: 1 }}
+components\analytics\TrendChart.tsx:82:<motion.path
+components\analytics\TrendChart.tsx:84:animate={{ opacity: 1 }}
+components\analytics\TrendChart.tsx:91:<motion.path
+components\analytics\TrendChart.tsx:93:animate={{ pathLength: 1 }}
+components\analytics\TrendChart.tsx:104:<motion.g
+components\analytics\TrendChart.tsx:107:animate={{ opacity: 1, scale: 1 }}
+components\analytics\TrendChart.tsx:118:</motion.g>
+components\app\AppHeader.tsx:23:<header className="sticky top-0 z-40 border-b border-[#e8ecf8]/90 dark:border-white/10 bg-white/76 dark:bg-[#0a0a0a]/76 backdrop-blur-xl">
+components\app\AppNotificationCenter.tsx:99:<div className="absolute right-0 top-[calc(100%+12px)] z-[80] w-[22rem] overflow-hidden rounded-[1.2rem] border border-white/70 bg-white/90 shadow-[0_28px_90px_rgba(16,28,66,0.22)] backdrop-blur-3xl animate-in fade-in zoom-in-95">
+components\app\AppSidebar.tsx:34:<aside className="hidden xl:flex flex-col border-r border-[var(--line)] bg-[var(--panel)]/78 px-5 py-7 backdrop-blur-xl h-screen sticky top-0 left-0 overflow-y-auto no-scrollbar">
+components\app\AuthAccountMenu.tsx:58:<motion.div
+components\app\AuthAccountMenu.tsx:60:animate={{ opacity: 1, scale: 1, y: 0 }}
+components\app\AuthAccountMenu.tsx:64:className="absolute right-0 top-[calc(100%+12px)] z-[80] w-80 origin-top-right overflow-hidden rounded-[1.2rem] border border-white/70 bg-white/90 shadow-[0_28px_90px_rgba(16,28,66,0.22)] backdrop-blur-3xl"
+components\app\AuthAccountMenu.tsx:101:</motion.div>
+components\app\CommandPalette.tsx:60:<div className="fixed inset-0 z-[100] bg-[#07102e]/28 p-4 backdrop-blur-sm" role="presentation" onMouseDown={() => onOpenChange(false)}>
+components\app\CommandPalette.tsx:65:className="mx-auto mt-20 max-w-2xl overflow-hidden rounded-[1.35rem] border border-white/60 bg-white/88 shadow-[0_36px_120px_rgba(15,28,70,0.28)] backdrop-blur-3xl"
+components\auth\AuthShell.tsx:39:"premium-shell auth-panel rounded-[1.75rem] border border-white/80 bg-white/80 p-6 shadow-[0_24px_80px_rgba(46,39,97,0.10)] backdrop-blur-xl sm:p-8"
+components\calculator\scene\AssemblingFormula.tsx:5:import { Canvas, useFrame } from "@react-three/fiber";
+components\calculator\scene\AssemblingFormula.tsx:46:useFrame(({ clock }) => {
+components\calculator\scene\AssemblingFormula.tsx:82:<Canvas
+components\calculator\scene\AssemblingFormula.tsx:94:</Canvas>
+components\calculator\scene\AssemblingFormulaClient.tsx:6:const AssemblingFormula = dynamic(() => import("./AssemblingFormula"), {
+components\calculator\scene\AssemblingFormulaClient.tsx:19:* loading, on low-tier GPUs, and under prefers-reduced-motion. Mirrors
+components\calculator\scene\AssemblingFormulaClient.tsx:20:* the two states the real scene animates between, just without motion.
+components\courses\scene\RoadmapPath.tsx:5:import { Canvas, useFrame } from "@react-three/fiber";
+components\courses\scene\RoadmapPath.tsx:43:useFrame(() => {
+components\courses\scene\RoadmapPath.tsx:97:<Canvas
+components\courses\scene\RoadmapPath.tsx:107:</Canvas>
+components\courses\scene\RoadmapPathClient.tsx:7:const RoadmapPath = dynamic(() => import("./RoadmapPath"), {
+components\courses\scene\RoadmapPathClient.tsx:14:/** Static dotted line standing in for the 3D path — used while loading, on low-tier GPUs, and under prefers-reduced-motion. */
+components\courses\CoursesExperience.tsx:28:<motion.div initial={{ opacity: 0, y: 18 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }} className="premium-shell relative overflow-hidden rounded-[2rem] border bg-neutral-950 p-7 text-white shadow-[0_28px_90px_rgba(56,42,122,0.18)] md:p-9"><div className="absolute -right-10 -top-10 h-44 w-44 rounded-full bg-teal-400/20 blur-3xl" /><div className="relative z-10"><div className="flex items-center justify-between"><span className="text-[10px] font-semibold uppercase tracking-[0.22em] text-white/55">The path is clearer when it is named</span><Compass className="h-5 w-5 text-teal-300" /></div><p className="mt-10 font-display text-4xl font-semibold tracking-tight">One target.<br /><span className="text-teal-300">A better plan.</span></p><div className="mt-9 grid grid-cols-3 gap-2 text-center"><div className="rounded-2xl border border-white/10 bg-white/5 p-3"><p className="font-display text-2xl font-semibold">{universities.length}</p><p className="mt-1 text-[9px] uppercase tracking-[0.14em] text-white/45">universities</p></div><div className="rounded-2xl border border-white/10 bg-white/5 p-3"><p className="font-display text-2xl font-semibold">4</p><p className="mt-1 text-[9px] uppercase tracking-[0.14em] text-white/45">path signals</p></div><div className="rounded-2xl border border-white/10 bg-white/5 p-3"><p className="font-display text-2xl font-semibold">1</p><p className="mt-1 text-[9px] uppercase tracking-[0.14em] text-white/45">next move</p></div></div></div></motion.div>
+components\courses\CoursesExperience.tsx:31:<section className="container-aptrive relative z-10 pb-24 md:pb-32"><div className="mb-7 flex flex-col gap-4 md:flex-row md:items-end md:justify-between"><div><span className="text-[10px] font-semibold uppercase tracking-[0.24em] text-neutral-500">University pathways</span><h2 className="mt-2 font-display text-3xl font-semibold tracking-tight text-neutral-950">Choose your target environment.</h2></div><div className="relative w-full md:max-w-sm"><Search className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-neutral-400" /><input value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Search university or city" className="h-12 w-full rounded-2xl border border-neutral-200 bg-white/80 pl-11 pr-4 text-sm text-neutral-900 outline-none transition placeholder:text-neutral-400 focus:border-violet-400 focus:ring-4 focus:ring-violet-500/10" /></div></div><div className="grid gap-5 md:grid-cols-2 xl:grid-cols-3">{filtered.map((university, index) => <motion.div key={university.id} initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4, delay: Math.min(index, 8) * 0.04 }}><Link href={`/universities/${university.id}`} className="group premium-shell block h-full rounded-[1.6rem] border bg-white/72 p-6 transition hover:-translate-y-1.5 hover:border-violet-300"><div className="flex items-start justify-between gap-4"><div className="grid h-12 w-12 place-items-center rounded-2xl bg-violet-500/10 text-violet-700"><Trophy className="h-6 w-6" /></div><ArrowUpRight className="h-5 w-5 text-neutral-300 transition group-hover:-translate-y-1 group-hover:translate-x-1 group-hover:text-violet-600" /></div><h3 className="mt-7 font-display text-2xl font-semibold tracking-tight text-neutral-950 group-hover:text-violet-700">{university.name}</h3><p className="mt-1 text-xs font-semibold uppercase tracking-[0.14em] text-neutral-500">{university.location}</p><p className="mt-5 line-clamp-2 text-sm leading-6 text-neutral-600">{university.formulaText}</p><div className="mt-6 flex flex-wrap gap-2">{university.components.slice(0, 3).map((component) => <span key={component.key} className="inline-flex items-center gap-1.5 rounded-full bg-neutral-100 px-2.5 py-1.5 text-[10px] font-semibold uppercase tracking-[0.1em] text-neutral-600"><Check className="h-3 w-3 text-teal-600" /> {component.label} {Math.round(component.weight * 100)}%</span>)}</div><div className="mt-7 flex items-center justify-between border-t border-neutral-200/70 pt-4 text-xs font-semibold text-neutral-500"><span>View pathway</span><span className="text-violet-700">Explore →</span></div></Link></motion.div>)}</div>{filtered.length === 0 && <div className="rounded-[1.5rem] border border-dashed border-neutral-300 bg-white/60 px-6 py-16 text-center"><Search className="mx-auto h-8 w-8 text-neutral-300" /><p className="mt-4 font-display text-xl font-semibold text-neutral-900">No target matches that search.</p></div>}</section>
+components\dashboard\DashboardClient.tsx:76:if (streak < 7) return `${streak} days in motion. One precise session keeps the momentum clean.`;
+components\dashboard\DashboardClient.tsx:176:<motion.div
+components\dashboard\DashboardClient.tsx:229:</motion.div>
+components\dashboard\DashboardClient.tsx:250:<motion.section
+components\dashboard\DashboardClient.tsx:277:<div className="rounded-xl border border-white/10 bg-white/5 p-5 backdrop-blur-md">
+components\dashboard\DashboardClient.tsx:293:</motion.section>
+components\dashboard\DashboardClient.tsx:335:<motion.section whileHover={{ scale: 1.01 }} className="surface-card rounded-[1.35rem] border border-neutral-200/80 bg-white/78 shadow-sm p-6 lg:col-span-4 transition-transform duration-200">
+components\dashboard\DashboardClient.tsx:349:</motion.section>
+components\dashboard\DashboardClient.tsx:361:<motion.article whileHover={{ scale: 1.02 }} className="surface-card rounded-[1.35rem] border border-neutral-200/80 bg-white/78 shadow-sm p-5 lg:col-span-3 transition-transform duration-200">
+components\dashboard\DashboardClient.tsx:372:</motion.article>
+components\features\scene\SettlingFragments.tsx:5:import { useFrame } from "@react-three/fiber";
+components\features\scene\SettlingFragments.tsx:81:useFrame((_, delta) => {
+components\features\FeaturesBackground.tsx:11:* No canvas, no animation loop — this must stay cheap, it's the thing
+components\features\FeaturesScene.tsx:4:import { Canvas } from "@react-three/fiber";
+components\features\FeaturesScene.tsx:13:* (GPU-tier-aware Canvas, Suspense, shared theme constants) but full-
+components\features\FeaturesScene.tsx:28:// section canvases.
+components\features\FeaturesScene.tsx:37:<Canvas
+components\features\FeaturesScene.tsx:51:</Canvas>
+components\features\FeaturesSceneClient.tsx:10:const FeaturesScene = dynamic(() => import("./FeaturesScene"), {
+components\features\PremiumFeatureCard.tsx:45:<motion.div
+components\features\PremiumFeatureCard.tsx:71:</motion.div>
+components\hero\scene\EducationalUniverse.tsx:5:import { useFrame } from "@react-three/fiber";
+components\hero\scene\EducationalUniverse.tsx:35:useFrame(({ clock }) => {
+components\hero\scene\EducationalUniverse.tsx:67:useFrame((_, delta) => {
+components\hero\scene\HeroStarfield.tsx:5:import { useFrame } from "@react-three/fiber";
+components\hero\scene\HeroStarfield.tsx:74:useFrame((_, delta) => {
+components\hero\scene\KnowledgeParticles.tsx:5:import { useFrame } from "@react-three/fiber";
+components\hero\scene\KnowledgeParticles.tsx:58:useFrame((_, delta) => {
+components\hero\scene\Nebula.tsx:5:import { useFrame } from "@react-three/fiber";
+components\hero\scene\Nebula.tsx:24:* offscreen canvas instead of a shipped image asset, and one texture
+components\hero\scene\Nebula.tsx:30:const canvas = document.createElement("canvas");
+components\hero\scene\Nebula.tsx:31:canvas.width = size;
+components\hero\scene\Nebula.tsx:32:canvas.height = size;
+components\hero\scene\Nebula.tsx:33:const ctx = canvas.getContext("2d");
+components\hero\scene\Nebula.tsx:49:const texture = new THREE.CanvasTexture(canvas);
+components\hero\scene\Nebula.tsx:66:useFrame((_, delta) => {
+components\hero\FloatingStats.tsx:9:<motion.div
+components\hero\FloatingStats.tsx:10:animate={{ y: [0, -15, 0], opacity: [0.6, 1, 0.6] }}
+components\hero\FloatingStats.tsx:12:className="absolute top-1/4 left-[10%] rounded-2xl border border-black/10 dark:border-white/10 bg-white/80 dark:bg-white/5 p-4 backdrop-blur-xl shadow-2xl shadow-blue-500/10"
+components\hero\FloatingStats.tsx:23:</motion.div>
+components\hero\FloatingStats.tsx:26:<motion.div
+components\hero\FloatingStats.tsx:27:animate={{ y: [0, 20, 0], opacity: [0.5, 0.9, 0.5] }}
+components\hero\FloatingStats.tsx:29:className="absolute bottom-1/4 right-[10%] rounded-2xl border border-black/10 dark:border-white/10 bg-white/80 dark:bg-white/5 p-4 backdrop-blur-xl shadow-2xl shadow-teal-500/10"
+components\hero\FloatingStats.tsx:40:</motion.div>
+components\hero\FloatingStats.tsx:43:<motion.div
+components\hero\FloatingStats.tsx:44:animate={{ rotate: 360, scale: [1, 1.2, 1], opacity: [0.1, 0.3, 0.1] }}
+components\hero\FloatingStats.tsx:49:</motion.div>
+components\hero\FloatingStats.tsx:50:<motion.div
+components\hero\FloatingStats.tsx:51:animate={{ y: [0, 40, 0], rotate: -45, opacity: [0.1, 0.4, 0.1] }}
+components\hero\FloatingStats.tsx:56:</motion.div>
+components\hero\FloatingStats.tsx:57:<motion.div
+components\hero\FloatingStats.tsx:58:animate={{ x: [0, -30, 0], rotate: 45, opacity: [0.1, 0.3, 0.1] }}
+components\hero\FloatingStats.tsx:63:</motion.div>
+components\hero\GlassPlanet.tsx:4:import { useFrame } from "@react-three/fiber";
+components\hero\GlassPlanet.tsx:78:useFrame((_, delta) => {
+components\hero\HeroAIPathwayCard.tsx:11:<motion.div
+components\hero\HeroAIPathwayCard.tsx:13:animate={{ opacity: 1, y: [0, -9, 0], scale: 1 }}
+components\hero\HeroAIPathwayCard.tsx:14:whileHover={{ y: -14, scale: 1.025 }}
+components\hero\HeroAIPathwayCard.tsx:22:className="pointer-events-auto absolute bottom-[7%] left-[8%] z-30 hidden w-[292px] rounded-[1.4rem] border border-white/75 bg-white/66 p-5 text-neutral-900 shadow-[0_28px_90px_-28px_rgba(30,41,59,0.5),inset_0_1px_0_rgba(255,255,255,0.95)] backdrop-blur-2xl transition-shadow hover:shadow-[0_34px_110px_-30px_rgba(20,184,166,0.34),inset_0_1px_0_rgba(255,255,255,0.98)] lg:block"
+components\hero\HeroAIPathwayCard.tsx:60:<motion.path
+components\hero\HeroAIPathwayCard.tsx:66:animate={{ pathLength: 1 }}
+components\hero\HeroAIPathwayCard.tsx:94:</motion.div>
+components\hero\HeroAtmosphere.tsx:24:<motion.span
+components\hero\HeroAtmosphere.tsx:33:animate={{
+components\hero\HeroBlobsScene.tsx:4:import { Canvas, useFrame, useThree } from "@react-three/fiber";
+components\hero\HeroBlobsScene.tsx:5:import { EffectComposer, Bloom } from "@react-three/postprocessing";
+components\hero\HeroBlobsScene.tsx:14:useFrame(() => {
+components\hero\HeroBlobsScene.tsx:29:type EffectComposerProps = ComponentProps<typeof EffectComposer>;
+components\hero\HeroBlobsScene.tsx:31:function SafeEffectComposer({ children, ...props }: EffectComposerProps & { children: ReactNode }) {
+components\hero\HeroBlobsScene.tsx:32:// EffectComposer depends on a working WebGL context. In some
+components\hero\HeroBlobsScene.tsx:44:return <EffectComposer {...props}>{children}</EffectComposer>;
+components\hero\HeroBlobsScene.tsx:50:<Canvas
+components\hero\HeroBlobsScene.tsx:61:<SafeEffectComposer multisampling={4}>
+components\hero\HeroBlobsScene.tsx:63:</SafeEffectComposer>
+components\hero\HeroBlobsScene.tsx:64:</Canvas>
+components\hero\HeroBlobsSceneWrapper.tsx:6:const HeroBlobsScene = dynamic(() => import("@/components/hero/HeroBlobsScene"), {
+components\hero\HeroBlobsSceneWrapper.tsx:30:const update = () => setCanRenderScene(desktop.matches && !reducedMotion.matches);
+components\hero\HeroBlobsSceneWrapper.tsx:33:reducedMotion.addEventListener("change", update);
+components\hero\HeroBlobsSceneWrapper.tsx:36:reducedMotion.removeEventListener("change", update);
+components\hero\HeroCinematicLayer.tsx:43:<motion.div
+components\hero\HeroCinematicLayer.tsx:50:</motion.div>
+components\hero\HeroCinematicLayer.tsx:52:<motion.div
+components\hero\HeroCinematicLayer.tsx:55:animate={{ scaleX: 1, opacity: active ? 0.86 : 0.48 }}
+components\hero\HeroCinematicLayer.tsx:59:<motion.div
+components\hero\HeroCinematicLayer.tsx:62:animate={{ opacity: 1, x: 0 }}
+components\hero\HeroCinematicLayer.tsx:66:</motion.div>
+components\hero\HeroCinematicLayer.tsx:68:<motion.div
+components\hero\HeroCinematicLayer.tsx:71:animate={{ opacity: 1, x: 0 }}
+components\hero\HeroCinematicLayer.tsx:75:</motion.div>
+components\hero\HeroCinematicLayer.tsx:77:<motion.div
+components\hero\HeroCinematicLayer.tsx:80:animate={{ opacity: 1, y: 0 }}
+components\hero\HeroCinematicLayer.tsx:86:</motion.div>
+components\hero\HeroOrbitIcons.tsx:70:<motion.div
+components\hero\HeroOrbitIcons.tsx:72:className={`absolute flex ${CHIP_SIZE[config.size]} items-center justify-center border border-white/65 bg-white/62 text-neutral-700 shadow-[0_18px_42px_-18px_rgba(30,41,59,0.34),inset_0_1px_0_rgba(255,255,255,0.9)] backdrop-blur-2xl`}
+components\hero\HeroOrbitIcons.tsx:75:animate={{
+components\hero\HeroOrbitIcons.tsx:90:</motion.div>

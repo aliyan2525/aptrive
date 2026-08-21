@@ -8,12 +8,14 @@ interface PredictionEngineProps {
   admissionProbability: number;
   estimatedAggregate: number;
   readinessScore: number;
+  hasEvidence?: boolean;
 }
 
 export const PredictionEngine = ({
   admissionProbability,
   estimatedAggregate,
   readinessScore,
+  hasEvidence = true,
 }: PredictionEngineProps) => {
   return (
     <LiquidGlassCard intensity="high" className="p-8">
@@ -23,7 +25,7 @@ export const PredictionEngine = ({
         </div>
         <div>
           <h2 className="text-2xl font-display font-bold text-[var(--fg)]">AI Prediction Engine</h2>
-          <p className="text-sm text-[var(--muted)]">Real-time forecasting based on your performance.</p>
+          <p className="text-sm text-[var(--muted)]">{hasEvidence ? "Forecasting based on your recent performance." : "Complete a practice session to unlock your first forecast."}</p>
         </div>
       </div>
 
@@ -36,8 +38,8 @@ export const PredictionEngine = ({
             <Zap className="w-5 h-5 text-[var(--teal)]" />
           </div>
           <div className="flex items-baseline gap-2">
-            <span className="text-5xl font-bold aurora-text">{admissionProbability}%</span>
-            <span className="text-sm text-[var(--success)] font-medium">+4% this week</span>
+            <span className="text-5xl font-bold aurora-text">{hasEvidence ? `${admissionProbability}%` : "—"}</span>
+            {hasEvidence ? <span className="text-sm text-[var(--success)] font-medium">Live signal</span> : <span className="text-sm text-[var(--muted)] font-medium">Needs data</span>}
           </div>
         </div>
 
@@ -48,8 +50,8 @@ export const PredictionEngine = ({
             <Award className="w-5 h-5 text-[var(--gold)]" />
           </div>
           <div className="flex items-baseline gap-2">
-            <span className="text-5xl font-bold text-[var(--fg)]">{estimatedAggregate.toFixed(1)}</span>
-            <span className="text-sm text-[var(--muted)]">/ 100</span>
+            <span className="text-5xl font-bold text-[var(--fg)]">{hasEvidence ? estimatedAggregate.toFixed(1) : "—"}</span>
+            <span className="text-sm text-[var(--muted)]">{hasEvidence ? "/ 100" : "Not enough attempts"}</span>
           </div>
         </div>
 
@@ -66,7 +68,7 @@ export const PredictionEngine = ({
               />
             </svg>
             <div className="absolute flex flex-col items-center">
-              <span className="text-xl font-bold text-[var(--fg)]">{readinessScore}</span>
+              <span className="text-xl font-bold text-[var(--fg)]">{hasEvidence ? readinessScore : "—"}</span>
             </div>
           </div>
         </div>

@@ -1,6 +1,7 @@
 import "server-only";
 import { unstable_cache } from "next/cache";
 import { createClient, createStaticClient } from "@/lib/supabase/server";
+import { withRedisCache } from "@/lib/redis-cache";
 import type { Database } from "@/lib/database.types";
 
 type SubjectRow = Database["public"]["Tables"]["subjects"]["Row"];
@@ -50,111 +51,117 @@ export type ChapterPracticeSummary = {
 };
 
 export const listSubjectsWithStats = unstable_cache(async (): Promise<SubjectWithStats[]> => {
-  const supabase = createStaticClient();
+  return withRedisCache("catalog-subjects-redis", async () => {
+    const supabase = createStaticClient();
 
-  const { data: subjectsData, error } = await supabase
-    .from("subjects")
-    .select("id, slug, name, description, is_coming_soon")
-    .order("name", { ascending: true });
+    const { data: subjectsData, error } = await supabase
+      .from("subjects")
+      .select("id, slug, name, description, is_coming_soon")
+      .order("name", { ascending: true });
 
-  if (error) throw error;
-  const subjects = (subjectsData ?? []) as unknown as Pick<
-    SubjectRow,
-    "id" | "slug" | "name" | "description" | "is_coming_soon"
-  >[];
-  if (subjects.length === 0) return [];
+    if (error) throw error;
+    const subjects = (subjectsData ?? []) as unknown as Pick<
+      SubjectRow,
+      "id" | "slug" | "name" | "description" | "is_coming_soon"
+    >[];
+    if (subjects.length === 0) return [];
 
-  const { data: setsData, error: setsError } = await supabase
-    .from("practice_sets")
-    .select("subject_id, question_count");
+    const { data: setsData, error: setsError } = await supabase
+      .from("practice_sets")
+      .select("subject_id, question_count");
 
-  if (setsError) throw setsError;
-  const sets = (setsData ?? []) as unknown as Pick<
-    PracticeSetRow,
-    "subject_id" | "question_count"
-  >[];
+    if (setsError) throw setsError;
+    const sets = (setsData ?? []) as unknown as Pick<
+      PracticeSetRow,
+      "subject_id" | "question_count"
+    >[];
 
-  const statsBySubject = new Map<string, { sets: number; questions: number }>();
-  for (const set of sets) {
-    const entry = statsBySubject.get(set.subject_id) ?? { sets: 0, questions: 0 };
-    entry.sets += 1;
-    entry.questions += set.question_count ?? 0;
-    statsBySubject.set(set.subject_id, entry);
-  }
+    const statsBySubject = new Map<string, { sets: number; questions: number }>();
+    for (const set of sets) {
+      const entry = statsBySubject.get(set.subject_id) ?? { sets: 0, questions: 0 };
+      entry.sets += 1;
+      entry.questions += set.question_count ?? 0;
+      statsBySubject.set(set.subject_id, entry);
+    }
 
-  return subjects.map((s) => {
-    const stats = statsBySubject.get(s.id) ?? { sets: 0, questions: 0 };
-    return {
-      id: s.id,
-      slug: s.slug,
-      name: s.name,
-      description: s.description,
-      isComingSoon: s.is_coming_soon,
-      practiceSetCount: stats.sets,
-      questionCount: stats.questions,
-    };
-  });
+    return subjects.map((s) => {
+      const stats = statsBySubject.get(s.id) ?? { sets: 0, questions: 0 };
+      return {
+        id: s.id,
+        slug: s.slug,
+        name: s.name,
+        description: s.description,
+        isComingSoon: s.is_coming_soon,
+        practiceSetCount: stats.sets,
+        questionCount: stats.questions,
+      };
+    });
+  }, 3600);
 }, ["catalog-subjects"], { revalidate: 3600, tags: ["catalog-subjects"] });
 
 export const getSubjectBySlug = unstable_cache(async (slug: string) => {
-  const supabase = createStaticClient();
-  const { data, error } = await supabase
-    .from("subjects")
-    .select("id, slug, name, description, is_coming_soon")
-    .eq("slug", slug)
-    .maybeSingle();
+  return withRedisCache(`catalog-subject-${slug}`, async () => {
+    const supabase = createStaticClient();
+    const { data, error } = await supabase
+      .from("subjects")
+      .select("id, slug, name, description, is_coming_soon")
+      .eq("slug", slug)
+      .maybeSingle();
 
-  if (error) throw error;
-  return data as unknown as Pick<
-    SubjectRow,
-    "id" | "slug" | "name" | "description" | "is_coming_soon"
-  > | null;
+    if (error) throw error;
+    return data as unknown as Pick<
+      SubjectRow,
+      "id" | "slug" | "name" | "description" | "is_coming_soon"
+    > | null;
+  }, 3600);
 }, ["catalog-subject"], { revalidate: 3600, tags: ["catalog-subject"] });
 
 export const listPracticeSetsForSubject = unstable_cache(async (
   subjectId: string
 ): Promise<PracticeSetSummary[]> => {
-  const supabase = createStaticClient();
-  const { data, error } = await supabase
-    .from("practice_sets")
-    .select(
-      "id, slug, title, topic, chapter, difficulty, question_count, estimated_minutes, is_premium"
-    )
-    .eq("subject_id", subjectId)
-    .order("topic", { ascending: true });
+  return withRedisCache(`catalog-practice-sets-${subjectId}`, async () => {
+    const supabase = createStaticClient();
+    const { data, error } = await supabase
+      .from("practice_sets")
+      .select(
+        "id, slug, title, topic, chapter, difficulty, question_count, estimated_minutes, is_premium"
+      )
+      .eq("subject_id", subjectId)
+      .order("topic", { ascending: true });
 
-  if (error) throw error;
+    if (error) throw error;
 
-  const sets = (data ?? []) as unknown as Pick<
-    PracticeSetRow,
-    | "id"
-    | "slug"
-    | "title"
-    | "topic"
-    | "chapter"
-    | "difficulty"
-    | "question_count"
-    | "estimated_minutes"
-    | "is_premium"
-  >[];
+    const sets = (data ?? []) as unknown as Pick<
+      PracticeSetRow,
+      | "id"
+      | "slug"
+      | "title"
+      | "topic"
+      | "chapter"
+      | "difficulty"
+      | "question_count"
+      | "estimated_minutes"
+      | "is_premium"
+    >[];
 
-  return sets.map((set) => ({
-    id: set.id,
-    slug: set.slug,
-    title: set.title,
-    topic: set.topic,
-    chapter: set.chapter,
-    // FIXED 2026-07-28: `practice_sets.difficulty` is a plain text
-    // column on the live schema (no DB enum backs it), so the real
-    // generated type is `string`, not the app's narrower `Difficulty`
-    // union — this cast makes that business-invariant assumption
-    // explicit at the query boundary instead of relying on a
-    // (previously inaccurate) hand-authored type to paper over it.
-    difficulty: set.difficulty as PracticeSetSummary["difficulty"],
-    questionCount: set.question_count,
-    estimatedMinutes: set.estimated_minutes,
-    isPremium: set.is_premium,
-  }));
+    return sets.map((set) => ({
+      id: set.id,
+      slug: set.slug,
+      title: set.title,
+      topic: set.topic,
+      chapter: set.chapter,
+      // FIXED 2026-07-28: `practice_sets.difficulty` is a plain text
+      // column on the live schema (no DB enum backs it), so the real
+      // generated type is `string`, not the app's narrower `Difficulty`
+      // union — this cast makes that business-invariant assumption
+      // explicit at the query boundary instead of relying on a
+      // (previously inaccurate) hand-authored type to paper over it.
+      difficulty: set.difficulty as PracticeSetSummary["difficulty"],
+      questionCount: set.question_count,
+      estimatedMinutes: set.estimated_minutes,
+      isPremium: set.is_premium,
+    }));
+  }, 3600);
 }, ["catalog-practice-sets"], { revalidate: 3600, tags: ["catalog-practice-sets"] });
 
 export async function listSubjectChaptersWithTopics(
