@@ -163,11 +163,11 @@ export default function OnboardingFlow({ existingProfile }: OnboardingFlowProps)
   }
 
   return (
-    <main className="onboarding-aurora min-h-[calc(100vh-4rem)] overflow-hidden px-6 py-10">
+    <main className="onboarding-aurora min-h-[calc(100vh-4rem)] overflow-hidden px-4 py-7 sm:px-6 sm:py-10">
       <div className="container-aptrive grid gap-8 lg:grid-cols-[0.9fr_1.3fr]">
         <aside className="lg:sticky lg:top-24 lg:self-start">
           <div className="eyebrow">Personal setup</div>
-          <h1 className="font-display mt-3 text-4xl font-semibold tracking-tight text-fg">
+          <h1 className="font-display mt-3 text-3xl font-semibold tracking-tight text-fg sm:text-4xl">
             Build a study plan that fits your admission target.
           </h1>
           <p className="mt-4 text-sm leading-relaxed text-muted">
@@ -189,7 +189,7 @@ export default function OnboardingFlow({ existingProfile }: OnboardingFlowProps)
                   onClick={() => index <= step && setStep(index)}
                   disabled={index > step}
                   aria-current={step === index ? "step" : undefined}
-                  className={`flex w-full items-center justify-between rounded-xl px-3 py-2.5 text-left text-sm transition ${
+                  className={`flex min-h-11 w-full items-center justify-between rounded-xl px-3 py-2.5 text-left text-sm transition ${
                     step === index ? "bg-violet-500/10 font-semibold text-violet-700 shadow-sm" : "text-neutral-600 hover:bg-neutral-100"
                   }`}
                 >
@@ -201,7 +201,7 @@ export default function OnboardingFlow({ existingProfile }: OnboardingFlowProps)
           </div>
         </aside>
 
-        <section className="premium-shell rounded-[1.75rem] border border-white/80 bg-white/80 p-6 shadow-[0_24px_70px_rgba(46,39,97,.10)] backdrop-blur-xl md:p-8">
+        <section className="premium-shell rounded-[1.75rem] border border-white/80 bg-white/80 p-5 shadow-[0_24px_70px_rgba(46,39,97,.10)] backdrop-blur-xl sm:p-6 md:p-8">
           {step === 0 && (
             <Fieldset title="Tell us who is learning">
               <TextField label="Full name" value={form.fullName} onChange={(fullName) => setForm({ ...form, fullName })} />
@@ -247,7 +247,7 @@ export default function OnboardingFlow({ existingProfile }: OnboardingFlowProps)
                               : [...form.improvement, subject],
                           })
                         }
-className={`rounded-xl border px-3 py-2 text-xs font-semibold transition ${
+className={`min-h-11 rounded-xl border px-3 py-2 text-xs font-semibold transition ${
                           active ? "border-violet-500 bg-violet-700 text-white shadow-sm" : "border-neutral-200 bg-white text-neutral-600 hover:border-violet-300 hover:text-violet-700"
                         }`}
                       >
@@ -283,7 +283,7 @@ className={`rounded-xl border px-3 py-2 text-xs font-semibold transition ${
                 type="button"
                 onClick={handleFinish}
                 disabled={isPending}
-                className="pressable mt-8 inline-flex rounded-xl bg-violet-700 px-5 py-3 text-sm font-semibold text-white shadow-[0_12px_30px_rgba(111,69,255,.2)] transition hover:-translate-y-0.5 hover:bg-violet-800 disabled:opacity-60"
+                className="pressable mt-8 inline-flex w-full justify-center rounded-xl bg-violet-700 px-5 py-3 text-sm font-semibold text-white sm:w-auto shadow-[0_12px_30px_rgba(111,69,255,.2)] transition hover:-translate-y-0.5 hover:bg-violet-800 disabled:opacity-60"
               >
                 {isPending ? "Saving…" : "Save and go to dashboard"}
               </button>

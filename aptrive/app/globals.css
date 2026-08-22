@@ -452,3 +452,92 @@ a,
 @media (prefers-reduced-motion:reduce){
   .homepage-hero .homepage-visual{transform:none}
 }
+
+
+/* Mobile-first quality pass: keep every route inside the viewport without flattening its art direction. */
+html,
+body {
+  max-width: 100%;
+  overflow-x: hidden;
+}
+
+body {
+  min-width: 320px;
+}
+
+img,
+svg,
+video,
+canvas {
+  max-width: 100%;
+}
+
+input:not([type="checkbox"]):not([type="radio"]):not([type="range"]),
+select,
+textarea {
+  max-width: 100%;
+  min-height: 44px;
+}
+
+button,
+a,
+[role="button"] {
+  touch-action: manipulation;
+}
+
+.mobile-scroll {
+  overflow-x: auto;
+  overscroll-behavior-inline: contain;
+  scrollbar-width: none;
+}
+
+.mobile-scroll::-webkit-scrollbar {
+  display: none;
+}
+
+@media (max-width: 767px) {
+  .container-aptrive {
+    padding-inline: 1rem;
+  }
+
+  .text-hero {
+    font-size: clamp(2.75rem, 13vw, 4.4rem);
+    line-height: 0.94;
+  }
+
+  .text-display-1 {
+    font-size: clamp(2.25rem, 10vw, 3.75rem);
+  }
+
+  .text-display-2 {
+    font-size: clamp(2rem, 8vw, 3rem);
+  }
+
+  .safe-area-top {
+    padding-top: max(1rem, env(safe-area-inset-top));
+  }
+
+  .safe-area-bottom {
+    padding-bottom: max(1rem, env(safe-area-inset-bottom));
+  }
+
+  .mobile-full-width {
+    width: 100%;
+  }
+
+  .mobile-stack-actions {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .mobile-stack-actions > * {
+    width: 100%;
+    justify-content: center;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .mobile-scroll {
+    scroll-behavior: auto;
+  }
+}

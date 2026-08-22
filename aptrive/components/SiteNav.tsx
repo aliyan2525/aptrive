@@ -112,7 +112,7 @@ export default function SiteNav({
               <span className="font-display text-lg font-bold tracking-[-0.025em] text-fg transition-colors duration-300">Aptrive</span>
             </Link>
 
-            <nav className="hidden items-center md:flex relative" aria-label="Main">
+            <nav className="relative hidden items-center lg:flex" aria-label="Main">
               {visibleLinks.map((link) => {
                 const isActive = link.match(pathname);
                 return (
@@ -187,7 +187,7 @@ export default function SiteNav({
 
               <button
                 type="button"
-                className="pressable flex h-11 w-11 items-center justify-center rounded-full border border-line bg-white/70 text-fg md:hidden"
+                className="pressable flex h-11 w-11 items-center justify-center rounded-full border border-line bg-white/70 text-fg lg:hidden"
                 aria-expanded={mobileOpen}
                 aria-controls="mobile-nav"
                 aria-label={mobileOpen ? "Close menu" : "Open menu"}
@@ -214,7 +214,7 @@ export default function SiteNav({
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -20 }}
             id="mobile-nav" 
-            className="fixed inset-0 top-16 z-40 h-[100dvh] overflow-y-auto overscroll-contain bg-white/95 pb-[calc(6rem+env(safe-area-inset-bottom))] backdrop-blur-2xl md:hidden"
+            className="fixed inset-0 top-[4.25rem] z-40 h-[100dvh] overflow-y-auto overscroll-contain bg-white/95 pb-[calc(6rem+env(safe-area-inset-bottom))] backdrop-blur-2xl lg:hidden"
           >
             <nav className="container-aptrive flex flex-col gap-1 py-6" aria-label="Mobile">
               {visibleLinks.map((link) => (

@@ -93,7 +93,7 @@ export default async function AnalyticsPage() {
             <div className="lg:col-span-2">
               {trendData.length >= 2 ? <TrendChart data={trendData} /> : <AnalyticsEmpty title="Accuracy trend is waiting" body="Two or more activity days will create your first trend line." href="/practice" />}
             </div>
-            <div className="lg:col-span-1"><StudyHeatmap /></div>
+            <div className="lg:col-span-1"><StudyHeatmap activity={data.activity} /></div>
           </div>
         </motion.div>
       </div>

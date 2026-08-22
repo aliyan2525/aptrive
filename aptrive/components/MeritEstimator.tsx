@@ -132,10 +132,10 @@ export default function MeritEstimator() {
           </div>
         </div>
 
-        <div className="relative min-h-[520px] overflow-hidden bg-[radial-gradient(circle_at_86%_14%,rgba(191,246,239,0.42),transparent_18rem),radial-gradient(circle_at_16%_82%,rgba(221,228,255,0.68),transparent_24rem),linear-gradient(145deg,rgba(248,250,255,0.9),rgba(239,244,255,0.74))] p-5 sm:p-7 md:p-9">
+        <div className="relative min-h-[420px] overflow-hidden bg-[radial-gradient(circle_at_86%_14%,rgba(191,246,239,0.42),transparent_18rem),radial-gradient(circle_at_16%_82%,rgba(221,228,255,0.68),transparent_24rem),linear-gradient(145deg,rgba(248,250,255,0.9),rgba(239,244,255,0.74))] p-5 sm:min-h-[520px] sm:p-7 md:p-9">
           <div className="pointer-events-none absolute right-10 top-12 h-56 w-56 rounded-full border border-white/70 bg-white/20 shadow-[0_0_70px_rgba(99,102,241,0.1)]" />
           <div className="relative">
-            <div className="flex items-center justify-between gap-4">
+            <div className="flex flex-wrap items-center justify-between gap-3">
               <span className="eyebrow">Result</span>
               <span className="rounded-full bg-violet-500/10 px-3 py-1.5 font-mono-data text-[10px] font-bold uppercase tracking-[0.16em] text-violet-700">NUST / live estimate</span>
             </div>
@@ -144,7 +144,7 @@ export default function MeritEstimator() {
               <div className="flex flex-wrap items-end justify-between gap-5">
                 <div>
                   <p className="text-sm font-semibold text-fg">Your estimated aggregate</p>
-                  <p className="mt-2 font-display text-6xl font-semibold tracking-[-0.07em] text-fg sm:text-7xl">
+                  <p className="mt-2 font-display text-5xl font-semibold tracking-[-0.07em] text-fg sm:text-7xl">
                     {canEstimate ? `${parsedAggregate.toFixed(1)}%` : "--"}
                   </p>
                   <div className="mt-2 inline-flex items-center gap-2 rounded-full bg-teal-500/10 px-3 py-1.5 text-xs font-semibold text-teal-700">

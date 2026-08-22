@@ -184,7 +184,7 @@ export default function SettingsClient({
                 {["#5b36ff", "#1685f8", "#10b981", "#f97316", "#f43f72"].map((color, index) => (
                   <button 
                     key={color} 
-                    className="grid h-8 w-8 place-items-center rounded-full transition-transform hover:scale-110 ring-2 ring-offset-2 ring-offset-[var(--bg)]"
+                    className="grid h-11 w-11 place-items-center rounded-full transition-transform hover:scale-110 ring-2 ring-offset-2 ring-offset-[var(--bg)]"
                     style={{ backgroundColor: color, "--tw-ring-color": index === 0 ? color : 'transparent' } as React.CSSProperties}
                   >
                     {index === 0 && <Check className="h-4 w-4 text-white" aria-hidden="true" />}
@@ -219,13 +219,13 @@ export default function SettingsClient({
 
 function ProfileCard({ user, profile }: { user: { email: string; displayName: string }; profile: StudentProfile | null }) {
   return (
-    <section className="premium-shell settings-panel rounded-[1.5rem] border border-white/80 bg-white/80 p-6 shadow-[0_20px_60px_rgba(46,39,97,.08)] backdrop-blur-xl">
-      <div className="flex items-start justify-between gap-4">
+    <section className="premium-shell settings-panel rounded-[1.5rem] border border-white/80 bg-white/80 p-5 shadow-[0_20px_60px_rgba(46,39,97,.08)] backdrop-blur-xl sm:p-6">
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
         <div>
           <h2 className="font-display text-xl font-bold text-[var(--fg)]">Identity & Access</h2>
           <p className="mt-1 text-sm text-gray-500">Manage your identity and contact details.</p>
         </div>
-        <Link href="/profile" className="inline-flex h-11 items-center gap-2 rounded-[0.75rem] border border-[var(--line)] px-4 text-sm font-bold text-blue-700 dark:text-blue-400 hover:bg-[#f8faff] dark:hover:bg-white/5 transition-colors">
+        <Link href="/profile" className="inline-flex h-11 w-full items-center justify-center gap-2 rounded-[0.75rem] border border-[var(--line)] px-4 text-sm font-bold text-blue-700 transition-colors hover:bg-[#f8faff] dark:text-blue-400 dark:hover:bg-white/5 sm:w-auto">
           <Edit3 className="h-4 w-4" aria-hidden="true" />
           Edit Profile
         </Link>
@@ -243,7 +243,7 @@ function ProfileCard({ user, profile }: { user: { email: string; displayName: st
 
 function Panel({ title, subtitle, action, children }: { title: string; subtitle: string; action?: string; children: React.ReactNode }) {
   return (
-    <section className="premium-shell settings-panel rounded-[1.5rem] border border-white/80 bg-white/80 p-6 shadow-[0_20px_60px_rgba(46,39,97,.08)] backdrop-blur-xl">
+    <section className="premium-shell settings-panel rounded-[1.5rem] border border-white/80 bg-white/80 p-5 shadow-[0_20px_60px_rgba(46,39,97,.08)] backdrop-blur-xl sm:p-6">
       <div className="mb-2 flex items-start justify-between gap-4 border-b border-[var(--line)] pb-5">
         <div>
           <h2 className="font-display text-xl font-bold text-[var(--fg)]">{title}</h2>

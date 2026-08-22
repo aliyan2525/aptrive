@@ -235,7 +235,7 @@ export default function PracticeInterface() {
                 );
               })}
             </div>
-            <div className="mt-8 flex flex-wrap gap-3">
+            <div className="mobile-stack-actions mt-8 flex flex-wrap gap-3 sm:flex-row">
               <button type="button" onClick={() => resetSession(setSubmitted, setAnswers, setFlagged, setBookmarked, setIndex)} className="pressable rounded-sm bg-teal px-4 py-2 text-sm font-semibold text-graphite">
                 Start another session
               </button>
@@ -305,7 +305,7 @@ export default function PracticeInterface() {
             </div>
 
             <p className="mt-6 text-xs uppercase tracking-wide text-muted-2">Question palette</p>
-            <div className="mt-4 grid grid-cols-6 gap-2 lg:grid-cols-5">
+            <div className="mt-4 grid grid-cols-5 gap-2 sm:grid-cols-6 lg:grid-cols-5">
               {questions.map((_, questionIndex) => (
                 <button
                   key={questionIndex}
@@ -368,8 +368,8 @@ export default function PracticeInterface() {
               )}
             </div>
 
-            <div className="flex flex-wrap items-center justify-between gap-3 border-t border-line p-4">
-              <div className="flex gap-2">
+            <div className="flex flex-col gap-3 border-t border-line p-4 sm:flex-row sm:items-center sm:justify-between">
+              <div className="flex flex-wrap gap-2">
                 <button type="button" onClick={() => toggle(index, flagged, setFlagged)} className="pressable rounded-sm border border-line-strong px-3 py-2 text-sm text-fg">
                   {flagged.includes(index) ? "Unflag" : "Flag"}
                 </button>
@@ -377,7 +377,7 @@ export default function PracticeInterface() {
                   {bookmarked.includes(index) ? "Saved" : "Bookmark"}
                 </button>
               </div>
-              <div className="flex gap-2">
+              <div className="flex flex-wrap gap-2 sm:justify-end">
                 <button type="button" onClick={() => setIndex(Math.max(0, index - 1))} className="pressable rounded-sm border border-line-strong px-4 py-2 text-sm text-fg">Previous</button>
                 <button type="button" onClick={() => index === questions.length - 1 ? setSubmitted(true) : setIndex(index + 1)} className="pressable rounded-sm bg-teal px-4 py-2 text-sm font-semibold text-graphite">
                   {index === questions.length - 1 ? "Finish" : "Next"}

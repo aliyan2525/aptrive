@@ -146,7 +146,7 @@ export default function DashboardClient({
   ];
 
   return (
-    <div className="dashboard-aurora mx-auto max-w-[96rem] px-4 py-6 sm:px-6 lg:px-9 relative z-[10] min-h-screen text-fg">
+    <div className="dashboard-aurora relative z-[10] mx-auto min-h-screen max-w-[96rem] px-3 py-4 text-fg sm:px-6 sm:py-6 lg:px-9">
       <motion.div 
         className="grid grid-cols-1 gap-5 lg:grid-cols-12"
         initial="hidden"
@@ -226,11 +226,11 @@ function CommandHero({
   return (
     <motion.section 
       variants={{ hidden: { opacity: 0, y: 15 }, visible: { opacity: 1, y: 0 } }}
-      className="relative overflow-hidden rounded-[2rem] border border-white/85 bg-white/72 p-6 shadow-[0_28px_90px_rgba(62,72,130,0.12)] backdrop-blur-2xl lg:col-span-8 lg:p-9"
+      className="relative overflow-hidden rounded-[2rem] border border-white/85 bg-white/72 p-5 shadow-[0_28px_90px_rgba(62,72,130,0.12)] backdrop-blur-2xl sm:p-6 lg:col-span-8 lg:p-9"
     >
       <div className="pointer-events-none absolute -right-10 -top-10 h-64 w-64 rounded-full bg-teal-200/25 blur-3xl" />
       <div className="pointer-events-none absolute -bottom-20 -left-20 h-80 w-80 rounded-full bg-violet-200/20 blur-3xl" />
-      <div className="relative z-10 grid gap-10 md:grid-cols-[minmax(0,1fr)_21rem]">
+      <div className="relative z-10 grid gap-7 md:grid-cols-[minmax(0,1fr)_21rem] lg:gap-10">
         <div>
           <div className="flex items-center gap-2.5 text-[10px] font-bold uppercase tracking-[0.22em] text-teal-700">
             <span className="h-1.5 w-1.5 rounded-full bg-teal-500 shadow-[0_0_0_4px_rgba(35,213,196,0.12)]" />

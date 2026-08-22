@@ -3,6 +3,8 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { categories, resources } from "@/lib/library-data";
 import LibraryExplorer from "@/components/library/LibraryExplorer";
+import { AuthenticatedLibraryCategory } from "@/components/library/AuthenticatedLibraryDetails";
+import { createClient } from "@/lib/supabase/server";
 
 export function generateStaticParams() {
   return categories
@@ -34,6 +36,14 @@ export default async function CategoryPage({
   if (!category || category.comingSoon) notFound();
 
   const categoryResources = resources.filter((r) => r.categorySlug === slug);
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  if (user) {
+    return <AuthenticatedLibraryCategory category={category} categoryResources={categoryResources} />;
+  }
 
   return (
     <section className="container-aptrive py-16 md:py-24">

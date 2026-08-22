@@ -18,12 +18,13 @@ export const TrendChart = ({ data }: TrendChartProps) => {
   const height = 300;
   const padding = 40;
 
-  const maxValue = Math.max(...data.map(d => d.value));
+  const maxValue = Math.max(1, ...data.map((d) => Number.isFinite(d.value) ? d.value : 0));
   
   // Calculate points
   const points = data.map((d, i) => {
-    const x = padding + (i * (width - 2 * padding) / (data.length - 1));
-    const y = height - padding - (d.value / maxValue) * (height - 2 * padding);
+    const x = padding + (i * (width - 2 * padding) / Math.max(1, data.length - 1));
+    const value = Number.isFinite(d.value) ? Math.max(0, d.value) : 0;
+    const y = height - padding - (value / maxValue) * (height - 2 * padding);
     return { x, y, ...d };
   });
 

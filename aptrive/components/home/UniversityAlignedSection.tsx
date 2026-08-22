@@ -21,7 +21,7 @@ export default function UniversityAlignedSection() {
   const motionEnabled = reducedMotion === false;
 
   return (
-    <section className="relative isolate overflow-hidden border-t border-line bg-[radial-gradient(circle_at_72%_42%,rgba(191,246,239,0.46),transparent_24rem),radial-gradient(circle_at_88%_10%,rgba(221,228,255,0.7),transparent_30rem),linear-gradient(135deg,#ffffff_0%,#f8fbff_58%,#f2f0ff_100%)] py-24 md:py-32 lg:py-36">
+    <section className="relative isolate overflow-hidden border-t border-line bg-[radial-gradient(circle_at_72%_42%,rgba(191,246,239,0.46),transparent_24rem),radial-gradient(circle_at_88%_10%,rgba(221,228,255,0.7),transparent_30rem),linear-gradient(135deg,#ffffff_0%,#f8fbff_58%,#f2f0ff_100%)] py-16 sm:py-24 md:py-32 lg:py-36">
       <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(rgba(79,70,229,0.035)_1px,transparent_1px),linear-gradient(90deg,rgba(79,70,229,0.035)_1px,transparent_1px)] bg-[size:72px_72px] [mask-image:linear-gradient(to_bottom,transparent,black_18%,black_78%,transparent)]" />
       <div className="pointer-events-none absolute -left-40 top-1/3 h-80 w-80 rounded-full bg-violet-200/35 blur-3xl" />
       <div className="pointer-events-none absolute -right-32 bottom-0 h-96 w-96 rounded-full bg-teal-200/30 blur-3xl" />
@@ -41,7 +41,7 @@ export default function UniversityAlignedSection() {
             </span>
           </div>
 
-          <h2 className="mt-7 max-w-[720px] font-display text-[2.65rem] font-semibold leading-[0.99] tracking-[-0.05em] text-fg sm:text-[3.55rem] lg:text-[4.15rem]">
+          <h2 className="mt-7 max-w-[720px] font-display text-[2.35rem] font-semibold leading-[0.99] tracking-[-0.05em] text-fg sm:text-[3.55rem] lg:text-[4.15rem]">
             Prepare around the subjects, formats, and{" "}
             <span className="bg-gradient-to-r from-teal-500 via-blue-600 to-violet-600 bg-clip-text text-transparent">
               merit calculations
@@ -78,11 +78,11 @@ export default function UniversityAlignedSection() {
           whileInView={{ opacity: 1, scale: 1, y: 0 }}
           viewport={{ once: true, margin: "-10% 0px" }}
           transition={{ duration: 0.85, delay: 0.08, ease: [0.16, 1, 0.3, 1] }}
-          className="relative min-h-[470px] sm:min-h-[520px]"
+          className="relative mt-2 min-h-[390px] sm:min-h-[520px] lg:mt-0"
           aria-hidden="true"
         >
-          <div className="absolute left-1/2 top-1/2 h-[390px] w-[390px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-[radial-gradient(circle,rgba(174,224,255,0.48),rgba(139,92,246,0.13)_48%,transparent_72%)] blur-2xl sm:h-[500px] sm:w-[500px]" />
-          <div className="absolute left-1/2 top-1/2 h-[390px] w-[390px] -translate-x-1/2 -translate-y-1/2 rounded-full border border-violet-400/15 sm:h-[500px] sm:w-[500px]" />
+          <div className="absolute left-1/2 top-1/2 h-[330px] w-[330px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-[radial-gradient(circle,rgba(174,224,255,0.48),rgba(139,92,246,0.13)_48%,transparent_72%)] blur-2xl sm:h-[500px] sm:w-[500px]" />
+          <div className="absolute left-1/2 top-1/2 h-[330px] w-[330px] -translate-x-1/2 -translate-y-1/2 rounded-full border border-violet-400/15 sm:h-[500px] sm:w-[500px]" />
           <div className="absolute left-1/2 top-1/2 h-[320px] w-[460px] -translate-x-1/2 -translate-y-1/2 rotate-[-17deg] rounded-[50%] border border-teal-400/20" />
 
           <motion.div

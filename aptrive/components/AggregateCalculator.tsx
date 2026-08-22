@@ -295,7 +295,7 @@ export default function AggregateCalculator({ onResult }: AggregateCalculatorPro
                         {Math.round(comp.weight * 100)}% weight
                       </span>
                     </div>
-                    <div className="mt-2 flex items-center gap-2">
+                    <div className="mt-2 grid grid-cols-[minmax(0,1fr)_auto_minmax(0,7rem)] items-center gap-2 sm:flex">
                       <input
                         id={`${comp.key}-obtained`}
                         type="number"
@@ -322,7 +322,7 @@ export default function AggregateCalculator({ onResult }: AggregateCalculatorPro
                         onChange={(e) => updateField(comp.key, "total", e.target.value)}
                         aria-label={`Total marks for ${comp.label}`}
                         aria-invalid={hasError}
-                        className={`h-11 w-32 rounded-xl border bg-white/80 px-3 text-sm text-fg outline-none transition-colors duration-200 placeholder:text-muted-2 ${
+                        className={`h-11 w-28 rounded-xl border bg-white/80 px-3 text-sm text-fg outline-none transition-colors duration-200 placeholder:text-muted-2 sm:w-32 ${
                           hasError
                             ? "border-red-400/60 focus:border-red-400"
                             : "border-line focus:border-teal/50"
@@ -337,7 +337,7 @@ export default function AggregateCalculator({ onResult }: AggregateCalculatorPro
                 );
               })}
 
-              <div className="flex gap-3 pt-2">
+              <div className="mobile-stack-actions flex gap-3 pt-2 sm:flex-row">
                 <button
                   type="submit"
                   className="pressable rounded-xl bg-gradient-to-r from-violet-600 via-blue-600 to-teal-500 px-6 py-3 text-sm font-bold text-white shadow-[0_12px_30px_rgba(79,70,229,0.22)] transition hover:-translate-y-0.5 hover:shadow-[0_16px_34px_rgba(79,70,229,0.3)]"
@@ -359,7 +359,7 @@ export default function AggregateCalculator({ onResult }: AggregateCalculatorPro
         </div>
       </div>
 
-      <div className="relative min-h-[520px] overflow-hidden rounded-[2rem] border border-white/85 bg-[radial-gradient(circle_at_86%_8%,rgba(191,246,239,0.38),transparent_18rem),linear-gradient(145deg,rgba(255,255,255,0.82),rgba(239,244,255,0.68))] p-5 shadow-[0_26px_80px_-38px_rgba(62,72,130,0.24)] backdrop-blur-2xl sm:p-6 md:p-8">
+      <div className="relative min-h-[420px] overflow-hidden rounded-[2rem] sm:min-h-[520px] border border-white/85 bg-[radial-gradient(circle_at_86%_8%,rgba(191,246,239,0.38),transparent_18rem),linear-gradient(145deg,rgba(255,255,255,0.82),rgba(239,244,255,0.68))] p-5 shadow-[0_26px_80px_-38px_rgba(62,72,130,0.24)] backdrop-blur-2xl sm:p-6 md:p-8">
         <div className="relative">
           <div className="flex items-center justify-between gap-4"><div className="eyebrow">Result</div><span className="rounded-full bg-violet-500/10 px-3 py-1.5 font-mono-data text-[10px] font-bold uppercase tracking-[0.16em] text-violet-700">{uni.name} / live estimate</span></div>
 
@@ -378,7 +378,7 @@ export default function AggregateCalculator({ onResult }: AggregateCalculatorPro
             </div>
           ) : (
             <div className="mt-6">
-              <div className="font-display text-6xl font-semibold tracking-[-0.06em] text-fg sm:text-7xl">
+              <div className="font-display text-5xl font-semibold tracking-[-0.06em] text-fg sm:text-7xl">
                 {animatedAggregate.toFixed(2)}%
               </div>
               <div className="mt-1 text-xs font-semibold uppercase tracking-[0.16em] text-muted">
@@ -406,13 +406,13 @@ export default function AggregateCalculator({ onResult }: AggregateCalculatorPro
 
               <div className="mt-6 space-y-4">
                 {result.breakdown.map((row, i) => (
-                  <div key={row.label} className="flex items-center gap-3">
+                  <div key={row.label} className="flex flex-wrap items-center gap-3">
                     <span
                       className="h-2.5 w-2.5 shrink-0 rounded-full"
                       style={{ backgroundColor: segmentPalette[i % segmentPalette.length] }}
                       aria-hidden="true"
                     />
-                    <div className="flex flex-1 justify-between gap-4 text-xs text-muted">
+                    <div className="flex min-w-0 flex-1 flex-wrap justify-between gap-x-4 gap-y-1 text-xs text-muted">
                       <span>
                         {row.label} ({Math.round(row.weight * 100)}%)
                       </span>

@@ -3,6 +3,7 @@
 import dynamic from "next/dynamic";
 import { useRef } from "react";
 import GPUTierGate from "@/components/three/GPUTierGate";
+import { Scene3DProvider } from "@/components/three/Scene3DProvider";
 import { useScrollProgress } from "@/lib/scroll/useScrollProgress";
 
 const Podium3D = dynamic(() => import("./Podium3D"), {
@@ -38,14 +39,16 @@ export default function Podium3DClient() {
   const progressRef = useScrollProgress(containerRef, { start: "top 80%", end: "bottom 50%" });
 
   return (
-    <div
-      ref={containerRef}
+    <Scene3DProvider>
+      <div
+        ref={containerRef}
       className="relative h-[260px] w-full overflow-hidden rounded-3xl border border-line bg-panel/40 md:h-[320px]"
     >
       <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_50%_100%,rgba(201,162,75,0.14),transparent_55%)]" />
-      <GPUTierGate fallback={<PodiumFallback />}>
-        <Podium3D progressRef={progressRef} />
-      </GPUTierGate>
-    </div>
+        <GPUTierGate fallback={<PodiumFallback />}>
+          <Podium3D progressRef={progressRef} />
+        </GPUTierGate>
+      </div>
+    </Scene3DProvider>
   );
 }
