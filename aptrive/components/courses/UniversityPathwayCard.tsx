@@ -22,34 +22,34 @@ const themes: Record<string, CardTheme> = {
     shadow: "hover:shadow-blue-500/20 hover:border-blue-500/35",
   },
   fast: {
-    gradient: "from-teal-500/20 via-teal-500/10 to-transparent",
-    badgeBg: "bg-teal-500/15 border-teal-500/20",
-    badgeText: "text-teal-700",
-    shadow: "hover:shadow-teal-500/20 hover:border-teal-500/35",
-  },
-  giki: {
-    gradient: "from-violet-500/20 via-violet-500/10 to-transparent",
-    badgeBg: "bg-violet-500/15 border-violet-500/20",
-    badgeText: "text-violet-700",
-    shadow: "hover:shadow-violet-500/20 hover:border-violet-500/35",
-  },
-  pieas: {
-    gradient: "from-indigo-500/20 via-indigo-500/10 to-transparent",
-    badgeBg: "bg-indigo-500/15 border-indigo-500/20",
-    badgeText: "text-indigo-700",
-    shadow: "hover:shadow-indigo-500/20 hover:border-indigo-500/35",
-  },
-  comsats: {
     gradient: "from-sky-500/20 via-sky-500/10 to-transparent",
     badgeBg: "bg-sky-500/15 border-sky-500/20",
     badgeText: "text-sky-700",
     shadow: "hover:shadow-sky-500/20 hover:border-sky-500/35",
   },
+  giki: {
+    gradient: "from-orange-500/20 via-orange-500/10 to-transparent",
+    badgeBg: "bg-orange-500/15 border-orange-500/20",
+    badgeText: "text-orange-700",
+    shadow: "hover:shadow-orange-500/20 hover:border-orange-500/35",
+  },
+  pieas: {
+    gradient: "from-violet-500/20 via-violet-500/10 to-transparent",
+    badgeBg: "bg-violet-500/15 border-violet-500/20",
+    badgeText: "text-violet-700",
+    shadow: "hover:shadow-violet-500/20 hover:border-violet-500/35",
+  },
+  comsats: {
+    gradient: "from-cyan-500/20 via-cyan-500/10 to-transparent",
+    badgeBg: "bg-cyan-500/15 border-cyan-500/20",
+    badgeText: "text-cyan-700",
+    shadow: "hover:shadow-cyan-500/20 hover:border-cyan-500/35",
+  },
   ned: {
-    gradient: "from-fuchsia-500/20 via-fuchsia-500/10 to-transparent",
-    badgeBg: "bg-fuchsia-500/15 border-fuchsia-500/20",
-    badgeText: "text-fuchsia-700",
-    shadow: "hover:shadow-fuchsia-500/20 hover:border-fuchsia-500/35",
+    gradient: "from-rose-500/20 via-rose-500/10 to-transparent",
+    badgeBg: "bg-rose-500/15 border-rose-500/20",
+    badgeText: "text-rose-700",
+    shadow: "hover:shadow-rose-500/20 hover:border-rose-500/35",
   },
   "uet-lahore": {
     gradient: "from-cyan-500/20 via-cyan-500/10 to-transparent",
@@ -64,28 +64,28 @@ const themes: Record<string, CardTheme> = {
     shadow: "hover:shadow-sky-500/20 hover:border-sky-500/35",
   },
   bahria: {
-    gradient: "from-blue-500/20 via-blue-500/10 to-transparent",
-    badgeBg: "bg-blue-500/15 border-blue-500/20",
-    badgeText: "text-blue-700",
-    shadow: "hover:shadow-blue-500/20 hover:border-blue-500/35",
-  },
-  ist: {
     gradient: "from-teal-500/20 via-teal-500/10 to-transparent",
     badgeBg: "bg-teal-500/15 border-teal-500/20",
     badgeText: "text-teal-700",
     shadow: "hover:shadow-teal-500/20 hover:border-teal-500/35",
   },
-  umt: {
+  ist: {
     gradient: "from-violet-500/20 via-violet-500/10 to-transparent",
     badgeBg: "bg-violet-500/15 border-violet-500/20",
     badgeText: "text-violet-700",
     shadow: "hover:shadow-violet-500/20 hover:border-violet-500/35",
   },
+  umt: {
+    gradient: "from-amber-500/20 via-amber-500/10 to-transparent",
+    badgeBg: "bg-amber-500/15 border-amber-500/20",
+    badgeText: "text-amber-700",
+    shadow: "hover:shadow-amber-500/20 hover:border-amber-500/35",
+  },
   ucp: {
-    gradient: "from-indigo-500/20 via-indigo-500/10 to-transparent",
-    badgeBg: "bg-indigo-500/15 border-indigo-500/20",
-    badgeText: "text-indigo-700",
-    shadow: "hover:shadow-indigo-500/20 hover:border-indigo-500/35",
+    gradient: "from-emerald-500/20 via-emerald-500/10 to-transparent",
+    badgeBg: "bg-emerald-500/15 border-emerald-500/20",
+    badgeText: "text-emerald-700",
+    shadow: "hover:shadow-emerald-500/20 hover:border-emerald-500/35",
   },
 };
 
