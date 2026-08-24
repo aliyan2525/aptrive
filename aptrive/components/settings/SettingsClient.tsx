@@ -4,6 +4,7 @@ import { useState, useTransition } from "react";
 import type { Database } from "@/lib/database.types";
 import { saveSettingsAction } from "@/app/(app)/settings/actions";
 import type { OnboardingInput } from "@/lib/repositories/onboarding.repository";
+import SubscriptionManagerModal from "./SubscriptionManagerModal";
 
 type StudentProfile = Database["public"]["Tables"]["student_profiles"]["Row"];
 import Link from "next/link";
@@ -48,6 +49,7 @@ export default function SettingsClient({
   const [saveError, setSaveError] = useState<string | null>(null);
   const [targetUniversity, setTargetUniversity] = useState(profile?.target_university ?? "NUST");
   const [dailyTarget, setDailyTarget] = useState(String(profile?.daily_study_target_minutes ?? 90));
+  const [subscriptionOpen, setSubscriptionOpen] = useState(false);
 
   function handleSave() {
     setSaveSuccess(false);
@@ -116,7 +118,7 @@ export default function SettingsClient({
       <section className="space-y-5">
         {activeTab === "profile" && (
           <div className="space-y-5 animate-in fade-in slide-in-from-bottom-2 duration-300">
-            <ProfileCard user={user} profile={profile} />
+            <ProfileCard user={user} profile={profile} onManageSubscription={() => setSubscriptionOpen(true)} />
           </div>
         )}
 
@@ -213,11 +215,12 @@ export default function SettingsClient({
         )}
 
       </section>
+      <SubscriptionManagerModal open={subscriptionOpen} onClose={() => setSubscriptionOpen(false)} />
     </div>
   );
 }
 
-function ProfileCard({ user, profile }: { user: { email: string; displayName: string }; profile: StudentProfile | null }) {
+function ProfileCard({ user, profile, onManageSubscription }: { user: { email: string; displayName: string }; profile: StudentProfile | null; onManageSubscription: () => void }) {
   return (
     <section className="premium-shell settings-panel rounded-[1.5rem] border border-white/80 bg-white/80 p-5 shadow-[0_20px_60px_rgba(46,39,97,.08)] backdrop-blur-xl sm:p-6">
       <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
@@ -225,10 +228,16 @@ function ProfileCard({ user, profile }: { user: { email: string; displayName: st
           <h2 className="font-display text-xl font-bold text-[var(--fg)]">Identity & Access</h2>
           <p className="mt-1 text-sm text-gray-500">Manage your identity and contact details.</p>
         </div>
-        <Link href="/profile" className="inline-flex h-11 w-full items-center justify-center gap-2 rounded-[0.75rem] border border-[var(--line)] px-4 text-sm font-bold text-blue-700 transition-colors hover:bg-[#f8faff] dark:text-blue-400 dark:hover:bg-white/5 sm:w-auto">
-          <Edit3 className="h-4 w-4" aria-hidden="true" />
-          Edit Profile
-        </Link>
+        <div className="flex w-full flex-col gap-2 sm:w-auto sm:flex-row">
+          <button type="button" onClick={onManageSubscription} className="inline-flex h-11 w-full items-center justify-center gap-2 rounded-[0.75rem] bg-violet-700 px-4 text-sm font-bold text-white shadow-[0_10px_24px_rgba(111,69,255,.16)] transition hover:bg-violet-800 sm:w-auto">
+            <WalletCards className="h-4 w-4" aria-hidden="true" />
+            Manage plan
+          </button>
+          <Link href="/profile" className="inline-flex h-11 w-full items-center justify-center gap-2 rounded-[0.75rem] border border-[var(--line)] px-4 text-sm font-bold text-blue-700 transition-colors hover:bg-[#f8faff] dark:text-blue-400 dark:hover:bg-white/5 sm:w-auto">
+            <Edit3 className="h-4 w-4" aria-hidden="true" />
+            Edit Profile
+          </Link>
+        </div>
       </div>
       <div className="mt-6 grid gap-6 md:grid-cols-[6rem_repeat(4,minmax(0,1fr))] md:items-center">
         <span className="grid h-20 w-20 place-items-center rounded-full bg-gradient-to-br from-teal-400 to-emerald-500 text-2xl font-bold text-white shadow-lg">{(profile?.display_name ?? user.displayName).split(" ").map((part) => part[0]).join("").slice(0, 2).toUpperCase()}</span>

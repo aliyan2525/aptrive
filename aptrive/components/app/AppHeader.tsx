@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
-import { Filter, Menu, Search, X } from "lucide-react";
+import { Filter, Menu, Search, Sparkles, X } from "lucide-react";
 import AppNotificationCenter from "./AppNotificationCenter";
 import AuthAccountMenu from "./AuthAccountMenu";
 import CommandPalette from "./CommandPalette";
@@ -27,6 +27,17 @@ const mobileLinks = [
   { label: "Settings", href: "/settings" },
 ];
 
+const pageTitles: Array<[string, string]> = [
+  ["/dashboard", "Mission control"],
+  ["/practice", "Practice lab"],
+  ["/library", "Learning library"],
+  ["/leaderboard", "Rankings"],
+  ["/analytics", "Analytics"],
+  ["/goals", "Goals"],
+  ["/settings", "Settings"],
+  ["/profile", "Profile"],
+];
+
 export default function AppHeader({ notifications, unreadCount, user }: AppHeaderProps) {
   const pathname = usePathname();
   const [commandOpen, setCommandOpen] = useState(false);
@@ -38,17 +49,18 @@ export default function AppHeader({ notifications, unreadCount, user }: AppHeade
     return () => document.body.classList.remove("mobile-scroll-lock");
   }, [mobileOpen]);
 
+  const pageTitle = pageTitles.find(([href]) => pathname === href || pathname.startsWith(`${href}/`))?.[1] ?? "Workspace";
 
   return (
     <>
-      <header className="relative sticky top-0 z-40 border-b border-line/80 bg-white/76 backdrop-blur-xl">
-        <div className="mx-auto flex h-[4.5rem] w-full items-center justify-between gap-3 px-4 sm:px-6 lg:px-9">
-          <div className="flex items-center gap-2 xl:hidden">
+      <header className="app-header sticky top-0 z-40 border-b border-line/75 bg-white/78 backdrop-blur-xl">
+        <div className="app-header__inner">
+          <div className="flex shrink-0 items-center gap-2 xl:hidden">
             <AppLogo className="px-0" />
             <button
               type="button"
               onClick={() => setMobileOpen((open) => !open)}
-              className="pressable inline-flex h-11 w-11 items-center justify-center rounded-xl border border-line bg-white/80 text-fg xl:hidden"
+              className="app-header__icon-button pressable xl:hidden"
               aria-expanded={mobileOpen}
               aria-controls="authenticated-mobile-nav"
               aria-label={mobileOpen ? "Close navigation" : "Open navigation"}
@@ -57,28 +69,46 @@ export default function AppHeader({ notifications, unreadCount, user }: AppHeade
             </button>
           </div>
 
+          <div className="app-header__context hidden lg:flex">
+            <span className="app-header__context-kicker">Workspace</span>
+            <span className="app-header__context-divider" aria-hidden="true" />
+            <span className="truncate">{pageTitle}</span>
+          </div>
+
           <button
             type="button"
             onClick={() => setCommandOpen(true)}
-            className="ml-4 hidden h-11 w-full max-w-[44rem] items-center gap-3 rounded-2xl border border-line bg-white/72 px-4 text-left text-sm text-muted shadow-[0_8px_24px_rgba(62,72,130,0.05)] backdrop-blur-xl transition-colors hover:bg-white md:flex xl:ml-0"
-            aria-label="Open command center"
+            className="app-header__search pressable"
+            aria-label="Open search and command center"
           >
-            <Search className="h-4.5 w-4.5 text-violet-600" aria-hidden="true" />
-            <span className="min-w-0 truncate">Search topics, tests, or ask anything...</span>
-            <kbd className="hidden shrink-0 rounded-lg border border-line bg-white px-2 py-1 text-xs font-bold text-muted shadow-sm sm:inline-block">⌘ K</kbd>
+            <span className="app-header__search-icon" aria-hidden="true">
+              <Search className="h-4 w-4" />
+            </span>
+            <span className="app-header__search-copy">
+              <span className="app-header__search-kicker">Quick find</span>
+              <span className="truncate">Search topics, tests, or ask anything</span>
+            </span>
+            <kbd className="app-header__shortcut">⌘ K</kbd>
           </button>
 
-          <div className="flex items-center gap-2 sm:gap-3">
-            <button type="button" onClick={() => setFilterOpen((open) => !open)} aria-expanded={filterOpen} aria-controls="authenticated-filter-menu" className="inline-flex h-11 items-center justify-center gap-2 rounded-xl border border-line bg-white/80 px-3 text-sm font-semibold text-muted transition hover:border-violet-300 hover:text-fg">
+          <div className="app-header__actions">
+            <button
+              type="button"
+              onClick={() => setFilterOpen((open) => !open)}
+              aria-expanded={filterOpen}
+              aria-controls="authenticated-filter-menu"
+              className="app-header__filter pressable"
+            >
               <Filter className="h-4 w-4 text-violet-600" aria-hidden="true" />
-              <span className="hidden sm:inline">Filter</span>
+              <span className="hidden sm:inline">Filters</span>
             </button>
             <AppNotificationCenter initialNotifications={notifications} initialUnreadCount={unreadCount} />
             <AuthAccountMenu user={user} />
           </div>
         </div>
+
         {filterOpen && (
-          <div id="authenticated-filter-menu" role="menu" className="absolute right-3 top-[calc(100%+0.75rem)] z-50 w-[min(19rem,calc(100vw-1.5rem))] rounded-2xl border border-line bg-white/95 p-3 shadow-[0_18px_50px_rgba(33,45,92,0.14)] backdrop-blur-2xl">
+          <div id="authenticated-filter-menu" role="menu" className="app-header__filter-menu">
             <p className="px-3 pb-2 text-[10px] font-bold uppercase tracking-[0.16em] text-muted-2">Filter workspace</p>
             <div className="grid gap-1">
               {[
@@ -96,6 +126,10 @@ export default function AppHeader({ notifications, unreadCount, user }: AppHeade
 
       {mobileOpen && (
         <div id="authenticated-mobile-nav" className="fixed inset-x-0 top-[4.5rem] z-30 max-h-[calc(100dvh-4.5rem)] overflow-y-auto border-b border-line bg-white/95 px-4 pb-[max(1.25rem,env(safe-area-inset-bottom))] pt-3 shadow-[0_18px_50px_rgba(33,45,92,0.12)] backdrop-blur-2xl xl:hidden">
+          <div className="mb-3 flex items-center gap-2 rounded-2xl border border-violet-100 bg-violet-50/70 px-3 py-2.5 text-xs font-semibold text-violet-700">
+            <Sparkles className="h-4 w-4" aria-hidden="true" />
+            Your workspace, one tap away.
+          </div>
           <nav className="grid gap-1" aria-label="Authenticated mobile navigation">
             {mobileLinks.map((item) => {
               const active = pathname === item.href || pathname.startsWith(`${item.href}/`);

@@ -1,9 +1,10 @@
 ﻿"use client";
 
+import { useState } from "react";
 import type { NotificationItem } from "@/components/NotificationBell";
 import type { HeaderUser } from "@/components/UserMenu";
-import AppSidebar from "./AppSidebar";
 import AppHeader from "./AppHeader";
+import AppSidebar from "./AppSidebar";
 
 type AuthenticatedShellProps = {
   user: HeaderUser;
@@ -18,29 +19,18 @@ export default function AuthenticatedShell({
   unreadCount,
   children,
 }: AuthenticatedShellProps) {
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
+
   return (
-    <div className="app-shell min-h-screen bg-[#f7f9ff] dark:bg-[#0a0a0a] text-fg">
-      <div className="grid min-h-screen grid-cols-1 xl:grid-cols-[18rem_minmax(0,1fr)]">
-        {/* Unified Sidebar */}
-        <AppSidebar />
+    <div className="app-shell min-h-screen bg-[#f7f9ff] text-fg dark:bg-[#0a0a0a]">
+      <div className={`app-layout ${sidebarCollapsed ? "app-layout--collapsed" : ""}`}>
+        <AppSidebar collapsed={sidebarCollapsed} onToggle={() => setSidebarCollapsed((value) => !value)} />
 
-        {/* Main Content Area */}
-        <section className="workspace-surface min-w-0 flex flex-col min-h-screen">
-          {/* Unified Header */}
-          <AppHeader 
-            user={user}
-            notifications={notifications}
-            unreadCount={unreadCount}
-          />
-
-          {/* Page Content */}
-          <div className="app-content flex-1">
-            {children}
-          </div>
+        <section className="workspace-surface min-w-0 flex min-h-screen flex-col">
+          <AppHeader user={user} notifications={notifications} unreadCount={unreadCount} />
+          <div className="app-content min-w-0 flex-1">{children}</div>
         </section>
       </div>
     </div>
   );
 }
-
-
