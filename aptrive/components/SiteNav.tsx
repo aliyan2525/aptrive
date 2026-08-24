@@ -19,7 +19,6 @@ type NavItem = {
 const publicLinks: NavItem[] = [
   { href: "/", label: "Home", match: (path) => path === "/" },
   { href: "/library", label: "Library", match: (path) => path.startsWith("/library") },
-  { href: "/courses", label: "Prep", match: (path) => path.startsWith("/courses") || path.startsWith("/universities") },
 ];
 
 const authLinks: NavItem[] = [
@@ -58,6 +57,7 @@ export default function SiteNav({
   const lastY = useRef(0);
 
   const visibleLinks = useMemo(() => (user ? authLinks : publicLinks), [user]);
+  const plansActive = pathname.startsWith("/subscriptions");
   const toolsActive = pathname.startsWith("/tools");
   const aboutActive = pathname.startsWith("/about")
     || pathname.startsWith("/contact")
@@ -176,6 +176,9 @@ export default function SiteNav({
                 </>
               ) : (
                 <>
+                  <Link href="/subscriptions" aria-current={plansActive ? "page" : undefined} className={`hidden rounded-full px-3 py-2 text-sm font-semibold transition-colors sm:inline-flex ${plansActive ? "bg-violet-500/10 text-violet-700" : "text-muted hover:text-fg"}`}>
+                    Plans
+                  </Link>
                   <Button href="/login" variant="ghost" size="sm" ripple={false} className="hidden sm:inline-flex text-fg hover:bg-black/5">
                     Login
                   </Button>
@@ -234,6 +237,9 @@ export default function SiteNav({
               <div className="mt-6 space-y-3 border-t border-black/10 dark:border-white/10 pt-6">
                 {!user ? (
                   <>
+                    <Link href="/subscriptions" onClick={() => setMobileOpen(false)} className={`rounded-xl border px-4 py-4 text-base font-medium transition-colors ${plansActive ? "border-violet-300 bg-violet-50 text-violet-700" : "border-black/10 text-black/60 hover:bg-black/5"}`}>
+                      Plans
+                    </Link>
                     <Button href="/login" variant="outline" size="md" fullWidth onClick={() => setMobileOpen(false)}>
                       Login
                     </Button>

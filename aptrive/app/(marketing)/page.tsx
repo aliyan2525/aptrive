@@ -52,8 +52,8 @@ const pillars = [
     color: "purple" as PillarColor,
   },
   {
-    title: "University-Aligned Preparation",
-    body: "Compare target universities, merit formulas, and preparation priorities in one clear path.",
+    title: "A Clear Study System",
+    body: "Turn your score, weak topics, and next study move into one clear plan you can act on.",
     icon: <Compass strokeWidth={1.5} className="h-7 w-7" />,
     color: "teal" as PillarColor,
   },
