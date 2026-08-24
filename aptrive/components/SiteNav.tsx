@@ -5,7 +5,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { motion, AnimatePresence, useScroll, useMotionValueEvent } from "framer-motion";
-import { ChevronDown, ArrowUpRight, Menu, X } from "lucide-react";
+import { BadgeCheck, ChevronDown, ArrowUpRight, Menu, X } from "lucide-react";
 import UserMenu, { type HeaderUser } from "@/components/UserMenu";
 import Button from "@/components/ui/Button";
 import NotificationBell, { type NotificationItem } from "@/components/NotificationBell";
@@ -176,7 +176,8 @@ export default function SiteNav({
                 </>
               ) : (
                 <>
-                  <Link href="/subscriptions" aria-current={plansActive ? "page" : undefined} className={`hidden rounded-full px-3 py-2 text-sm font-semibold transition-colors sm:inline-flex ${plansActive ? "bg-violet-500/10 text-violet-700" : "text-muted hover:text-fg"}`}>
+                  <Link href="/subscriptions" aria-current={plansActive ? "page" : undefined} className={`hidden items-center gap-1.5 rounded-full px-3 py-2 text-sm font-semibold transition-colors sm:inline-flex ${plansActive ? "bg-violet-500/10 text-violet-700" : "text-muted hover:text-fg"}`}>
+                    <BadgeCheck className={`h-4 w-4 ${plansActive ? "text-violet-600" : "text-teal-600"}`} aria-hidden="true" />
                     Plans
                   </Link>
                   <Button href="/login" variant="ghost" size="sm" ripple={false} className="hidden sm:inline-flex text-fg hover:bg-black/5">
@@ -237,7 +238,8 @@ export default function SiteNav({
               <div className="mt-6 space-y-3 border-t border-black/10 dark:border-white/10 pt-6">
                 {!user ? (
                   <>
-                    <Link href="/subscriptions" onClick={() => setMobileOpen(false)} className={`rounded-xl border px-4 py-4 text-base font-medium transition-colors ${plansActive ? "border-violet-300 bg-violet-50 text-violet-700" : "border-black/10 text-black/60 hover:bg-black/5"}`}>
+                    <Link href="/subscriptions" onClick={() => setMobileOpen(false)} className={`flex items-center gap-2 rounded-xl border px-4 py-4 text-base font-medium transition-colors ${plansActive ? "border-violet-300 bg-violet-50 text-violet-700" : "border-black/10 text-black/60 hover:bg-black/5"}`}>
+                      <BadgeCheck className="h-5 w-5 text-teal-600" aria-hidden="true" />
                       Plans
                     </Link>
                     <Button href="/login" variant="outline" size="md" fullWidth onClick={() => setMobileOpen(false)}>

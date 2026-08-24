@@ -24,7 +24,7 @@ const plans = [
     price: "PKR 1,000",
     cadence: "/ month",
     description: "A focused preparation system for the admission cycle you are in.",
-    benefits: ["Unlimited mock exams", "Full practice and revision library", "University-specific pathways", "Readiness analytics and weak-topic guidance", "Priority product support"],
+    benefits: ["Unlimited mock exams", "Full practice and revision library", "Timed practice with realistic exam conditions", "University-specific score and merit pathways", "Readiness analytics and weak-topic guidance", "Progress tracking across every session", "Bookmarks and focused revision queues", "Priority product support"],
     cta: "Choose monthly",
     href: "/signup?plan=pro-monthly&source=subscriptions",
     tone: "featured",
@@ -36,7 +36,7 @@ const plans = [
     price: "PKR 10,000",
     cadence: "/ year",
     description: "The complete year of preparation, with two months included.",
-    benefits: ["Everything in Pro Monthly", "Save PKR 2,000 every year", "One plan for the full admission season", "Priority access to new prep tools", "A calmer, longer runway to your target"],
+    benefits: ["Everything in Pro Monthly", "Save PKR 2,000 every year", "One plan for the full admission season", "Unlimited mocks from your first month to test day", "Priority access to new prep tools", "Long-term progress and readiness tracking", "A calmer runway to your target", "No monthly renewal decisions during exam season"],
     cta: "Choose annual",
     href: "/signup?plan=pro-annual&source=subscriptions",
     tone: "annual",
@@ -52,16 +52,16 @@ export default function SubscriptionExperience() {
       <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_74%_8%,rgba(102,220,205,0.24),transparent_26rem),radial-gradient(circle_at_12%_20%,rgba(126,108,255,0.17),transparent_28rem),linear-gradient(180deg,#ffffff_0%,#f7f9ff_48%,#eef3ff_100%)]" />
       <div className="pointer-events-none absolute left-1/2 top-20 h-[34rem] w-[34rem] -translate-x-1/2 rounded-full border border-violet-300/20 bg-white/20 blur-3xl" />
 
-      <section className="relative z-10 mx-auto max-w-[92rem] px-4 pb-16 pt-28 sm:px-6 sm:pb-24 sm:pt-36 lg:px-10">
+      <section className="relative z-10 mx-auto max-w-[92rem] px-4 pb-14 pt-24 sm:px-6 sm:pb-20 sm:pt-28 lg:px-10">
         <div className="mx-auto max-w-3xl text-center">
           <motion.div initial={motionEnabled ? { opacity: 0, y: 14 } : false} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.65, ease: [0.16, 1, 0.3, 1] }}>
-            <span className="inline-flex items-center gap-2 rounded-full border border-white/90 bg-white/75 px-3.5 py-2 text-[10px] font-bold uppercase tracking-[0.2em] text-teal-700 shadow-sm backdrop-blur-xl"><Sparkles className="h-3.5 w-3.5" aria-hidden="true" /> Aptrive plans</span>
-            <h1 className="font-display mt-7 text-4xl font-semibold leading-[0.98] tracking-[-0.06em] text-fg sm:text-6xl lg:text-7xl">Choose the amount of<br /><span className="bg-gradient-to-r from-violet-600 via-blue-600 to-teal-500 bg-clip-text text-transparent">focus you need.</span></h1>
-            <p className="mx-auto mt-6 max-w-2xl text-base leading-7 text-muted sm:text-lg">Start free. Move to Pro when you want the complete signal: unlimited practice, sharper feedback, and a plan built around your target university.</p>
+            <p className="text-[10px] font-bold uppercase tracking-[0.24em] text-teal-700">Aptrive / Plans</p>
+            <h1 className="font-display mt-4 text-3xl font-semibold leading-[1] tracking-[-0.055em] text-fg sm:text-5xl lg:text-6xl">Choose the amount of<br /><span className="bg-gradient-to-r from-violet-600 via-blue-600 to-teal-500 bg-clip-text text-transparent">focus you need.</span></h1>
+            <p className="mx-auto mt-5 max-w-2xl text-sm leading-6 text-muted sm:text-base sm:leading-7">Start free. Move to Pro when you want the complete signal: unlimited practice, sharper feedback, and a plan built around your target university.</p>
           </motion.div>
         </div>
 
-        <div className="mx-auto mt-12 grid max-w-6xl gap-5 lg:grid-cols-3 lg:items-stretch lg:gap-6">
+        <div className="mx-auto mt-8 grid max-w-6xl gap-5 lg:grid-cols-3 lg:items-stretch lg:gap-6">
           {plans.map((plan, index) => (
             <motion.article key={plan.id} initial={motionEnabled ? { opacity: 0, y: 22 } : false} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.65, delay: motionEnabled ? index * 0.08 : 0, ease: [0.16, 1, 0.3, 1] }} className={`relative flex h-full flex-col overflow-hidden rounded-[2rem] border p-6 shadow-[0_20px_60px_rgba(44,57,110,0.08)] backdrop-blur-2xl sm:p-7 ${plan.tone === "featured" ? "border-violet-400/60 bg-[linear-gradient(150deg,rgba(255,255,255,0.96),rgba(242,239,255,0.93)_54%,rgba(230,249,246,0.88))] shadow-[0_24px_80px_rgba(94,72,220,0.16)] lg:-translate-y-3" : plan.tone === "annual" ? "border-teal-300/60 bg-[linear-gradient(150deg,rgba(255,255,255,0.96),rgba(237,252,249,0.94)_58%,rgba(238,244,255,0.92))]" : "border-white/90 bg-white/78"}`}>
               {plan.tone === "featured" && <div className="absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-violet-600 via-blue-600 to-teal-500" />}
