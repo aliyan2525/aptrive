@@ -52,7 +52,7 @@ export default function SiteNav({
 }) {
   const pathname = usePathname();
   const [mobileOpen, setMobileOpen] = useState(false);
-  const [scrolled, setScrolled] = useState(false);
+  const [, setScrolled] = useState(false);
   const [hidden, setHidden] = useState(false);
   const lastY = useRef(0);
 

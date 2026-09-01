@@ -19,6 +19,7 @@ import {
   listTopicsForAdmin,
   listUniversitiesForAdmin,
 } from "@/lib/admin/catalog";
+import { requireStaff } from "@/lib/admin/auth";
 import { ConfirmSubmitButton } from "@/components/admin/ConfirmSubmitButton";
 
 export default async function AdminCatalogPage() {
@@ -33,6 +34,7 @@ export default async function AdminCatalogPage() {
 
   async function createUniversityAction(formData: FormData) {
     "use server";
+    await requireStaff();
     const name = String(formData.get("name") ?? "").trim();
     const slug = String(formData.get("slug") ?? "").trim();
     const description = String(formData.get("description") ?? "").trim();
@@ -43,6 +45,7 @@ export default async function AdminCatalogPage() {
 
   async function removeUniversityAction(formData: FormData) {
     "use server";
+    await requireStaff();
     const id = String(formData.get("id") ?? "");
     if (!id) throw new Error("University id is required.");
     await deleteUniversity(id);
@@ -51,6 +54,7 @@ export default async function AdminCatalogPage() {
 
   async function createTestAction(formData: FormData) {
     "use server";
+    await requireStaff();
     const universityId = String(formData.get("universityId") ?? "");
     const name = String(formData.get("name") ?? "").trim();
     const slug = String(formData.get("slug") ?? "").trim();
@@ -62,6 +66,7 @@ export default async function AdminCatalogPage() {
 
   async function removeTestAction(formData: FormData) {
     "use server";
+    await requireStaff();
     const id = String(formData.get("id") ?? "");
     if (!id) throw new Error("Test id is required.");
     await deleteTest(id);
@@ -70,6 +75,7 @@ export default async function AdminCatalogPage() {
 
   async function createChapterAction(formData: FormData) {
     "use server";
+    await requireStaff();
     const subjectId = String(formData.get("subjectId") ?? "");
     const name = String(formData.get("name") ?? "").trim();
     const slug = String(formData.get("slug") ?? "").trim();
@@ -81,6 +87,7 @@ export default async function AdminCatalogPage() {
 
   async function removeChapterAction(formData: FormData) {
     "use server";
+    await requireStaff();
     const id = String(formData.get("id") ?? "");
     if (!id) throw new Error("Chapter id is required.");
     await deleteChapter(id);
@@ -89,6 +96,7 @@ export default async function AdminCatalogPage() {
 
   async function createTopicAction(formData: FormData) {
     "use server";
+    await requireStaff();
     const chapterId = String(formData.get("chapterId") ?? "");
     const name = String(formData.get("name") ?? "").trim();
     const slug = String(formData.get("slug") ?? "").trim();
@@ -100,6 +108,7 @@ export default async function AdminCatalogPage() {
 
   async function removeTopicAction(formData: FormData) {
     "use server";
+    await requireStaff();
     const id = String(formData.get("id") ?? "");
     if (!id) throw new Error("Topic id is required.");
     await deleteTopic(id);
@@ -108,6 +117,7 @@ export default async function AdminCatalogPage() {
 
   async function createSubtopicAction(formData: FormData) {
     "use server";
+    await requireStaff();
     const topicId = String(formData.get("topicId") ?? "");
     const name = String(formData.get("name") ?? "").trim();
     const slug = String(formData.get("slug") ?? "").trim();
@@ -119,6 +129,7 @@ export default async function AdminCatalogPage() {
 
   async function removeSubtopicAction(formData: FormData) {
     "use server";
+    await requireStaff();
     const id = String(formData.get("id") ?? "");
     if (!id) throw new Error("Subtopic id is required.");
     await deleteSubtopic(id);

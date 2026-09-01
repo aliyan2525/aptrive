@@ -1,7 +1,7 @@
 "use client";
 
 import { motion, useReducedMotion } from "framer-motion";
-import { ArrowRight, BarChart3, Compass, Search, Sparkles, Target, Trophy } from "lucide-react";
+import { ArrowRight, BarChart3, Compass, Search, Sparkles, Target } from "lucide-react";
 import { useMemo, useState } from "react";
 import { universities } from "@/lib/universities";
 import UniversityPathwayCard from "@/components/courses/UniversityPathwayCard";

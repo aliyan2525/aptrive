@@ -1,6 +1,6 @@
 import * as React from "react"
 import { cn } from "@/lib/cn"
-import { motion } from "framer-motion"
+
 
 export interface InputProps
   extends React.InputHTMLAttributes<HTMLInputElement> {

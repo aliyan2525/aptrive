@@ -21,7 +21,7 @@ import {
 } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 import type { getDashboardData } from "@/lib/dashboard-data";
-import UniversityLogo from "@/components/UniversityLogo";
+
 
 type DashboardData = Awaited<ReturnType<typeof getDashboardData>>;
 
@@ -210,8 +210,8 @@ function CommandHero({
   greeting,
   firstName,
   streakLine,
-  targetUniversity,
-  admissionProbability,
+  targetUniversity: _targetUniversity,
+  admissionProbability: _admissionProbability,
   missionTime,
   hasEvidence,
 }: {

@@ -1,9 +1,9 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { BarChart3, CheckCircle2, CircleHelp, GraduationCap, ShieldCheck, Sparkles, Target, TrendingUp } from "lucide-react";
+import { BarChart3, CircleHelp, GraduationCap, ShieldCheck, Sparkles, Target, TrendingUp } from "lucide-react";
 import { nustPrograms, NUST_MERIT_SOURCE_NOTE } from "@/lib/nust-programs";
-import { estimateNustAdmissionChance, CHANCE_COLORS } from "@/lib/merit-chance";
+import { estimateNustAdmissionChance } from "@/lib/merit-chance";
 
 export default function MeritEstimator() {
   const [aggregate, setAggregate] = useState<string>("");

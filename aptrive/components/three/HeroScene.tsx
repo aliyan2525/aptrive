@@ -1,6 +1,6 @@
-﻿"use client";
+"use client";
 
-import { useRef, useMemo } from "react";
+import { useRef } from "react";
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
 import { Environment, Float, MeshDistortMaterial } from "@react-three/drei";
 import { EffectComposer, Bloom, Noise } from "@react-three/postprocessing";

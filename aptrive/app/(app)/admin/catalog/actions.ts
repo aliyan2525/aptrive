@@ -23,24 +23,25 @@ import {
 // delete and how many rows are involved, instead of a raw exception.
 async function deleteOrExplain(params: {
   supabase: Awaited<ReturnType<typeof createClient>>;
-  table: "chapters" | "topics" | "subtopics";
+  table: "universities" | "tests" | "chapters" | "topics" | "subtopics";
   id: string;
   entityLabel: string;
-  questionsColumn: "chapter_id" | "topic_id" | "subtopic_id";
+  dependentTable: "tests" | "questions";
+  dependentColumn: string;
 }) {
-  const { supabase, table, id, entityLabel, questionsColumn } = params;
+  const { supabase, table, id, entityLabel, dependentTable, dependentColumn } = params;
   const { error } = await supabase.from(table).delete().eq("id", id);
 
   if (error) {
     if (error.code === "23503") {
       const { count } = await supabase
-        .from("questions")
+        .from(dependentTable)
         .select("id", { count: "exact", head: true })
-        .eq(questionsColumn, id);
+        .eq(dependentColumn, id);
       const n = count ?? 0;
       throw new Error(
         n > 0
-          ? `Can't delete this ${entityLabel} — ${n} question${n === 1 ? "" : "s"} still reference${n === 1 ? "s" : ""} it. Reassign or delete ${n === 1 ? "it" : "them"} first.`
+          ? `Can't delete this ${entityLabel} — ${n} ${dependentTable} record${n === 1 ? "" : "s"} still reference${n === 1 ? "s" : ""} it. Reassign or delete ${n === 1 ? "it" : "them"} first.`
           : `Can't delete this ${entityLabel} — other records still reference it.`
       );
     }
@@ -80,8 +81,14 @@ export async function updateUniversity(id: string, name: string, slug: string, l
 export async function deleteUniversity(id: string) {
   await requireStaff();
   const supabase = await createClient();
-  const { error } = await supabase.from("universities").delete().eq("id", id);
-  if (error) throw error;
+  await deleteOrExplain({
+    supabase,
+    table: "universities",
+    id,
+    entityLabel: "university",
+    dependentTable: "tests",
+    dependentColumn: "university_id",
+  });
   revalidatePath("/admin/catalog");
 }
 
@@ -117,8 +124,14 @@ export async function updateTest(id: string, universityId: string | null, name: 
 export async function deleteTest(id: string) {
   await requireStaff();
   const supabase = await createClient();
-  const { error } = await supabase.from("tests").delete().eq("id", id);
-  if (error) throw error;
+  await deleteOrExplain({
+    supabase,
+    table: "tests",
+    id,
+    entityLabel: "test",
+    dependentTable: "questions",
+    dependentColumn: "test_id",
+  });
   revalidatePath("/admin/catalog");
 }
 
@@ -159,7 +172,8 @@ export async function deleteChapter(id: string) {
     table: "chapters",
     id,
     entityLabel: "chapter",
-    questionsColumn: "chapter_id",
+    dependentTable: "questions",
+    dependentColumn: "chapter_id",
   });
   revalidatePath("/admin/catalog");
 }
@@ -201,7 +215,8 @@ export async function deleteTopic(id: string) {
     table: "topics",
     id,
     entityLabel: "topic",
-    questionsColumn: "topic_id",
+    dependentTable: "questions",
+    dependentColumn: "topic_id",
   });
   revalidatePath("/admin/catalog");
 }
@@ -243,7 +258,8 @@ export async function deleteSubtopic(id: string) {
     table: "subtopics",
     id,
     entityLabel: "subtopic",
-    questionsColumn: "subtopic_id",
+    dependentTable: "questions",
+    dependentColumn: "subtopic_id",
   });
   revalidatePath("/admin/catalog");
 }

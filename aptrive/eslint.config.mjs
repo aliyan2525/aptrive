@@ -14,6 +14,15 @@ const eslintConfig = defineConfig([
     "next-env.d.ts",
   ]),
   {
+    rules: {
+      "@typescript-eslint/no-unused-vars": ["warn", {
+        argsIgnorePattern: "^_",
+        varsIgnorePattern: "^_",
+        destructuredArrayIgnorePattern: "^_",
+      }],
+    },
+  },
+  {
     // react-three-fiber's whole animation model is: read a ref/value
     // returned by useThree()/useMemo() and mutate it every frame inside
     // useFrame's callback. That callback runs on r3f's own render loop,

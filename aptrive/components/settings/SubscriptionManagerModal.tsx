@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { BadgeCheck, Check, CreditCard, LockKeyhole, X } from "lucide-react";
 
 type PlanId = "free" | "pro-monthly" | "pro-annual";
@@ -52,18 +52,40 @@ export default function SubscriptionManagerModal({
   currentPlan?: PlanId;
 }) {
   const [selectedPlan, setSelectedPlan] = useState<PlanId>(currentPlan);
+  const closeButtonRef = useRef<HTMLButtonElement>(null);
+  const previouslyFocusedRef = useRef<HTMLElement | null>(null);
 
   useEffect(() => {
     if (!open) return;
     const previousOverflow = document.body.style.overflow;
+    previouslyFocusedRef.current = document.activeElement instanceof HTMLElement ? document.activeElement : null;
     document.body.style.overflow = "hidden";
+    closeButtonRef.current?.focus();
     const handleKeyDown = (event: KeyboardEvent) => {
-      if (event.key === "Escape") onClose();
+      if (event.key === "Escape") {
+        onClose();
+        return;
+      }
+      if (event.key !== "Tab") return;
+      const dialog = document.querySelector<HTMLElement>("[aria-labelledby='subscription-modal-title']");
+      if (!dialog) return;
+      const focusable = Array.from(dialog.querySelectorAll<HTMLElement>("button:not([disabled]), a[href]"));
+      if (focusable.length === 0) return;
+      const first = focusable[0];
+      const last = focusable[focusable.length - 1];
+      if (event.shiftKey && document.activeElement === first) {
+        event.preventDefault();
+        last.focus();
+      } else if (!event.shiftKey && document.activeElement === last) {
+        event.preventDefault();
+        first.focus();
+      }
     };
     window.addEventListener("keydown", handleKeyDown);
     return () => {
       document.body.style.overflow = previousOverflow;
       window.removeEventListener("keydown", handleKeyDown);
+      previouslyFocusedRef.current?.focus();
     };
   }, [onClose, open]);
 
@@ -81,7 +103,7 @@ export default function SubscriptionManagerModal({
             <h2 id="subscription-modal-title" className="font-display mt-2 text-2xl font-semibold tracking-tight text-fg">Manage your plan</h2>
             <p className="mt-1 text-sm leading-6 text-muted">Review your current access, choose a plan, and continue through the secure account flow.</p>
           </div>
-          <button type="button" onClick={onClose} aria-label="Close subscription manager" className="grid h-11 w-11 shrink-0 place-items-center rounded-xl border border-line bg-white text-muted transition hover:border-violet-300 hover:text-fg"><X className="h-5 w-5" aria-hidden="true" /></button>
+          <button ref={closeButtonRef} type="button" onClick={onClose} aria-label="Close subscription manager" className="grid h-11 w-11 shrink-0 place-items-center rounded-xl border border-line bg-white text-muted transition hover:border-violet-300 hover:text-fg"><X className="h-5 w-5" aria-hidden="true" /></button>
         </div>
 
         <div className="mt-5 rounded-2xl border border-teal-300/30 bg-teal-50/65 p-4 sm:flex sm:items-center sm:justify-between sm:gap-5">

@@ -1,4 +1,4 @@
-﻿import { createClient } from "@/lib/supabase/server";
+import { createClient } from "@/lib/supabase/server";
 import type { Database } from "@/lib/database.types";
 import { z } from "zod";
 
@@ -15,7 +15,7 @@ const DashboardSummarySchema = z.object({
   study_seconds: z.number().nullable(),
   sessions_completed: z.number().nullable(),
 });
-type DashboardSummary = z.infer<typeof DashboardSummarySchema>;
+
 // Local shape for the calendar/heatmap, matching the per-day activity rows
 // returned by the dashboard RPC. Empty is a valid state for new learners.
 type DailyActivity = {
@@ -35,7 +35,7 @@ const TopicMasteryRowSchema = z.object({
     name: z.string()
   }).nullable()
 });
-type TopicMasteryRow = z.infer<typeof TopicMasteryRowSchema>;
+
 // Clean shape actually returned to callers â€” deliberately doesn't leak
 // the raw joined TopicProgress row (with its embed-only `topics` shape)
 // into component props.
@@ -83,7 +83,7 @@ type UserAchievement = Tables["user_achievements"]["Row"] & {
  */
 export async function getDashboardData(userId: string) {
   const supabase = await createClient();
-  const today = new Date().toISOString().slice(0, 10);
+
 
   const { data: rpcData, error } = await supabase.rpc("get_dashboard_data", { p_user_id: userId });
   

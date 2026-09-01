@@ -5,20 +5,14 @@ import type { Database } from "@/lib/database.types";
 import { saveSettingsAction } from "@/app/(app)/settings/actions";
 import type { OnboardingInput } from "@/lib/repositories/onboarding.repository";
 import SubscriptionManagerModal from "./SubscriptionManagerModal";
+import BillingHistorySection from "./BillingHistorySection";
 
 type StudentProfile = Database["public"]["Tables"]["student_profiles"]["Row"];
 import Link from "next/link";
 import {
-  Bell,
-  CalendarClock,
   Check,
-  ChevronRight,
   Cloud,
-  CreditCard,
   Edit3,
-  HelpCircle,
-  KeyRound,
-  Lock,
   Moon,
   Palette,
   ShieldCheck,
@@ -32,6 +26,7 @@ import {
 const settingsNav = [
   { id: "profile", label: "Profile", icon: UserRound },
   { id: "study", label: "Study Preferences", icon: SlidersHorizontal },
+  { id: "billing", label: "Billing", icon: WalletCards },
   { id: "appearance", label: "Appearance", icon: Palette },
   { id: "security", label: "Security", icon: ShieldCheck },
 ];
@@ -170,6 +165,12 @@ export default function SettingsClient({
                 {saveError && <p role="alert" className="mt-4 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">{saveError}</p>}
               </div>
             </Panel>
+          </div>
+        )}
+
+        {activeTab === "billing" && (
+          <div className="space-y-5 animate-in fade-in slide-in-from-bottom-2 duration-300">
+            <BillingHistorySection />
           </div>
         )}
 

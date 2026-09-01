@@ -54,48 +54,58 @@ export const listSubjectsWithStats = unstable_cache(async (): Promise<SubjectWit
   return withRedisCache("catalog-subjects-redis", async () => {
     const supabase = createStaticClient();
 
-    const { data: subjectsData, error } = await supabase
-      .from("subjects")
-      .select("id, slug, name, description, is_coming_soon")
-      .order("name", { ascending: true });
+    try {
+      const { data: subjectsData, error } = await supabase
+        .from("subjects")
+        .select("id, slug, name, description, is_coming_soon")
+        .order("name", { ascending: true });
 
-    if (error) throw error;
-    const subjects = (subjectsData ?? []) as unknown as Pick<
-      SubjectRow,
-      "id" | "slug" | "name" | "description" | "is_coming_soon"
-    >[];
-    if (subjects.length === 0) return [];
+      if (error) {
+        console.warn("Catalog subjects fetch warning during pre-render:", error.message);
+        return [];
+      }
+      const subjects = (subjectsData ?? []) as unknown as Pick<
+        SubjectRow,
+        "id" | "slug" | "name" | "description" | "is_coming_soon"
+      >[];
+      if (subjects.length === 0) return [];
 
-    const { data: setsData, error: setsError } = await supabase
-      .from("practice_sets")
-      .select("subject_id, question_count");
+      const { data: setsData, error: setsError } = await supabase
+        .from("practice_sets")
+        .select("subject_id, question_count");
 
-    if (setsError) throw setsError;
-    const sets = (setsData ?? []) as unknown as Pick<
-      PracticeSetRow,
-      "subject_id" | "question_count"
-    >[];
+      if (setsError) {
+        console.warn("Practice sets fetch warning during pre-render:", setsError.message);
+      }
+      const sets = (setsData ?? []) as unknown as Pick<
+        PracticeSetRow,
+        "subject_id" | "question_count"
+      >[];
 
-    const statsBySubject = new Map<string, { sets: number; questions: number }>();
-    for (const set of sets) {
-      const entry = statsBySubject.get(set.subject_id) ?? { sets: 0, questions: 0 };
-      entry.sets += 1;
-      entry.questions += set.question_count ?? 0;
-      statsBySubject.set(set.subject_id, entry);
+      const statsBySubject = new Map<string, { sets: number; questions: number }>();
+      for (const set of sets) {
+        const entry = statsBySubject.get(set.subject_id) ?? { sets: 0, questions: 0 };
+        entry.sets += 1;
+        entry.questions += set.question_count ?? 0;
+        statsBySubject.set(set.subject_id, entry);
+      }
+
+      return subjects.map((s) => {
+        const stats = statsBySubject.get(s.id) ?? { sets: 0, questions: 0 };
+        return {
+          id: s.id,
+          slug: s.slug,
+          name: s.name,
+          description: s.description,
+          isComingSoon: s.is_coming_soon,
+          practiceSetCount: stats.sets,
+          questionCount: stats.questions,
+        };
+      });
+    } catch (err) {
+      console.warn("Static catalog build fallback triggered:", err);
+      return [];
     }
-
-    return subjects.map((s) => {
-      const stats = statsBySubject.get(s.id) ?? { sets: 0, questions: 0 };
-      return {
-        id: s.id,
-        slug: s.slug,
-        name: s.name,
-        description: s.description,
-        isComingSoon: s.is_coming_soon,
-        practiceSetCount: stats.sets,
-        questionCount: stats.questions,
-      };
-    });
   }, 3600);
 }, ["catalog-subjects"], { revalidate: 3600, tags: ["catalog-subjects"] });
 
