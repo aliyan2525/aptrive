@@ -53,7 +53,7 @@ export default function AppHeader({ notifications, unreadCount, user }: AppHeade
 
   return (
     <>
-      <header className="app-header sticky top-0 z-40 border-b border-line/75 bg-white/78 backdrop-blur-xl">
+      <header className="app-header sticky top-0 z-40 border-b border-white/60 bg-white/70 backdrop-blur-2xl shadow-[0_4px_30px_rgba(0,0,0,0.03)]">
         <div className="app-header__inner">
           <div className="flex shrink-0 items-center gap-2 xl:hidden">
             <AppLogo className="px-0" />

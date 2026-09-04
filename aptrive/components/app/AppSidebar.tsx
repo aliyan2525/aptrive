@@ -38,7 +38,7 @@ export default function AppSidebar({ collapsed, onToggle }: AppSidebarProps) {
 
   return (
     <aside
-      className={`app-sidebar ${collapsed ? "app-sidebar--collapsed" : ""}`}
+      className={`app-sidebar bg-white/70 backdrop-blur-3xl border-r border-white/60 shadow-[4px_0_24px_rgba(0,0,0,0.02)] ${collapsed ? "app-sidebar--collapsed" : ""}`}
       aria-label="Authenticated navigation"
     >
       <div className="app-sidebar__top">

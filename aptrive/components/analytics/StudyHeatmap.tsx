@@ -62,7 +62,7 @@ export const StudyHeatmap = ({ activity }: { activity: ActivityPoint[] }) => {
           </div>
         </div>
       </div>
-      {!hasActivity && <p className="mt-4 rounded-xl border border-dashed border-line bg-white/50 p-3 text-xs leading-5 text-muted">Complete a practice session to start building your consistency signal.</p>}
+      {!hasActivity && <p className="premium-shell mt-4 rounded-xl border border-dashed border-white/80 bg-white/60 backdrop-blur-xl p-3 text-xs leading-5 text-muted">Complete a practice session to start building your consistency signal.</p>}
     </LiquidGlassCard>
   );
 };

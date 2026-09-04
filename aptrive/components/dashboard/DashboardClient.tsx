@@ -312,7 +312,7 @@ function DailyGoalCard({
   readiness: number;
 }) {
   return (
-    <motion.section whileHover={{ scale: 1.01 }} className="glass-panel rounded-[1.35rem] p-6 lg:col-span-4 transition-transform duration-200">
+    <motion.section whileHover={{ scale: 1.01 }} className="premium-shell bg-white/70 backdrop-blur-2xl rounded-[1.35rem] p-6 lg:col-span-4 transition-transform duration-200">
       <p className="text-xs font-medium uppercase tracking-[0.12em] text-muted">Today&apos;s Goal</p>
       <div className="mt-4 flex items-center justify-between gap-4">
         <div>
@@ -338,7 +338,7 @@ function MetricTile({ label, value, detail, icon: Icon, tone }: { label: string;
     blue: "bg-blue-500/10 text-blue-400",
   };
   return (
-    <motion.article whileHover={{ scale: 1.02 }} className="glass-panel rounded-[1.35rem] p-5 lg:col-span-3 transition-transform duration-200">
+    <motion.article whileHover={{ scale: 1.02 }} className="premium-shell bg-white/70 backdrop-blur-2xl rounded-[1.35rem] p-5 lg:col-span-3 transition-transform duration-200">
       <div className="flex items-center gap-4">
         <span className={`grid h-10 w-10 place-items-center rounded-lg ${tones[tone]}`}>
           <Icon className="h-5 w-5" aria-hidden="true" />
@@ -365,7 +365,7 @@ function PerformancePanel({ activity }: { activity: Array<{ activity_date: strin
   const polyline = chartPoints.map((p, i) => `${(i / (chartPoints.length - 1)) * 100},${100 - p.value}`).join(" ");
 
   return (
-    <section className="glass-panel rounded-[1.35rem] p-6 lg:col-span-6">
+    <section className="premium-shell bg-white/70 backdrop-blur-2xl rounded-[1.35rem] p-6 lg:col-span-6">
       <PanelHeader title="Performance Trends" subtitle="Weekly accuracy - last 6 weeks" action="Accuracy" />
       <div className="mt-6">
         {!chartPoints.length ? <div className="grid h-52 place-items-center rounded-xl border border-dashed border-line bg-white/50 px-6 text-center text-sm text-muted">Complete at least two activity days to reveal your accuracy trend.</div> : <svg viewBox="0 0 100 100" className="h-52 w-full overflow-visible" role="img" aria-label="Accuracy trend line chart">
@@ -399,7 +399,7 @@ function PerformancePanel({ activity }: { activity: Array<{ activity_date: strin
 
 function ReadinessPanel({ prepPercent, admissionProbability, weakTopic }: { prepPercent: number; admissionProbability: number; weakTopic: string }) {
   return (
-    <section className="glass-panel rounded-[1.35rem] p-6 lg:col-span-6">
+    <section className="premium-shell bg-white/70 backdrop-blur-2xl rounded-[1.35rem] p-6 lg:col-span-6">
       <PanelHeader title="Exam Readiness" subtitle="Blended score from volume, accuracy, and streak" />
       <div className="mt-7 grid gap-6 md:grid-cols-[13rem_minmax(0,1fr)]">
         <div className="grid place-items-center">
@@ -421,7 +421,7 @@ function ReadinessPanel({ prepPercent, admissionProbability, weakTopic }: { prep
 function MissionCard({ missionTime, topic, dailyGoalPercent, targetUniversity }: { missionTime: number; topic: string; dailyGoalPercent: number; targetUniversity: string }) {
   const objectives = ["Review core concept", "Solve timed practice", "Log mistakes"];
   return (
-    <section className="glass-panel rounded-[1.35rem] p-6 lg:col-span-4 flex flex-col">
+    <section className="premium-shell bg-white/70 backdrop-blur-2xl rounded-[1.35rem] p-6 lg:col-span-4 flex flex-col">
       <PanelHeader title="Today's AI Plan" subtitle={`${missionTime} minutes - high priority`} />
       <div className="mt-5 rounded-xl border border-white/80 bg-white/62 p-5">
         <p className="text-xs font-medium uppercase tracking-[0.12em] text-muted">Recommended Subject</p>
@@ -449,7 +449,7 @@ function MissionCard({ missionTime, topic, dailyGoalPercent, targetUniversity }:
 
 function TopicPanel({ strong, weak }: { strong: Array<{ topic: string; mastery_percent: number }>; weak: Array<{ topic: string; mastery_percent: number }> }) {
   return (
-    <section className="glass-panel rounded-[1.35rem] p-6 lg:col-span-4">
+    <section className="premium-shell bg-white/70 backdrop-blur-2xl rounded-[1.35rem] p-6 lg:col-span-4">
       <PanelHeader title="Knowledge Map" subtitle="Data density heatmap" />
       <div className="mt-5 grid gap-6">
         <TopicGroup title="Strengths" topics={strong} color="#23d5c4" />
@@ -461,7 +461,7 @@ function TopicPanel({ strong, weak }: { strong: Array<{ topic: string; mastery_p
 
 function Recommendations({ items }: { items: Array<{ title: string; meta: string; icon: LucideIcon; href: string }> }) {
   return (
-    <section className="glass-panel rounded-[1.35rem] p-6 lg:col-span-4">
+    <section className="premium-shell bg-white/70 backdrop-blur-2xl rounded-[1.35rem] p-6 lg:col-span-4">
       <PanelHeader title="Recommended" subtitle="Personalized next actions" action="View all" />
       <div className="mt-5 grid gap-2">
         {items.map((item) => (
@@ -483,7 +483,7 @@ function Recommendations({ items }: { items: Array<{ title: string; meta: string
 
 function UpcomingPanel({ deadlines }: { deadlines: Array<{ university: string; deadline_date: string }> }) {
   return (
-    <section className="glass-panel rounded-[1.35rem] p-6 lg:col-span-4">
+    <section className="premium-shell bg-white/70 backdrop-blur-2xl rounded-[1.35rem] p-6 lg:col-span-4">
       <PanelHeader title="Upcoming Mock Test" subtitle="Keep deadlines visible" action="View all" />
       <div className="mt-5 space-y-2">
         {!deadlines.length ? <p className="rounded-xl border border-dashed border-line bg-white/50 p-4 text-sm leading-6 text-muted">No admission deadlines are saved yet. Add a target university to keep important dates visible.</p> : null}
@@ -505,7 +505,7 @@ function UpcomingPanel({ deadlines }: { deadlines: Array<{ university: string; d
 
 function CalendarPanel({ days }: { days: CalendarDay[] }) {
   return (
-    <section className="glass-panel rounded-[1.35rem] p-6 lg:col-span-4">
+    <section className="premium-shell bg-white/70 backdrop-blur-2xl rounded-[1.35rem] p-6 lg:col-span-4">
       <PanelHeader title="Study Calendar" subtitle="Days with completed sessions" />
       <div className="mt-5 grid grid-cols-7 gap-2 text-center text-[10px] font-medium uppercase text-muted">
         {weekdayLabels.map((label, i) => <span key={`${label}-${i}`}>{label}</span>)}
@@ -534,7 +534,7 @@ function ActivityPanel({
   recent: Array<{ resource_id: string; resource_type: string; viewed_at: string }>;
 }) {
   return (
-    <section className="glass-panel rounded-[1.35rem] p-6 lg:col-span-8">
+    <section className="premium-shell bg-white/70 backdrop-blur-2xl rounded-[1.35rem] p-6 lg:col-span-8">
       <PanelHeader title="Recent Activity" subtitle="Latest learning events and account context" />
       <div className="mt-5 grid gap-4 md:grid-cols-[16rem_minmax(0,1fr)]">
         <dl className="rounded-xl border border-white/80 bg-white/62 p-4 text-sm">

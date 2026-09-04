@@ -72,11 +72,11 @@ export default function PracticeDiscovery({ sets }: { sets: PracticeSetSummary[]
             <label className="relative block">
               <span className="sr-only">Search practice sets</span>
               <Search className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-2" aria-hidden="true" />
-              <input value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Search by set, topic, or chapter" className="h-12 w-full rounded-xl border border-line bg-white/80 pl-11 pr-4 text-sm text-fg outline-none transition placeholder:text-muted-2 focus:border-violet-400 focus:ring-4 focus:ring-violet-500/10" />
+              <input value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Search by set, topic, or chapter" className="h-12 w-full rounded-xl border border-white/60 bg-white/70 backdrop-blur-lg shadow-[0_4px_24px_rgba(0,0,0,0.02)] pl-11 pr-4 text-sm text-fg outline-none transition placeholder:text-muted-2 focus:border-violet-400 focus:ring-4 focus:ring-violet-500/10" />
             </label>
             <label>
               <span className="sr-only">Filter by difficulty</span>
-              <select value={difficulty} onChange={(event) => setDifficulty(event.target.value as typeof difficulty)} className="h-12 w-full rounded-xl border border-line bg-white/80 px-4 text-sm font-semibold text-fg outline-none transition focus:border-violet-400 focus:ring-4 focus:ring-violet-500/10">
+              <select value={difficulty} onChange={(event) => setDifficulty(event.target.value as typeof difficulty)} className="h-12 w-full rounded-xl border border-white/60 bg-white/70 backdrop-blur-lg shadow-[0_4px_24px_rgba(0,0,0,0.02)] px-4 text-sm font-semibold text-fg outline-none transition focus:border-violet-400 focus:ring-4 focus:ring-violet-500/10">
                 <option value="All">All difficulties</option>
                 <option value="Easy">Easy</option>
                 <option value="Medium">Medium</option>
@@ -88,7 +88,7 @@ export default function PracticeDiscovery({ sets }: { sets: PracticeSetSummary[]
           {filteredSets.length ? (
             <motion.div layout className="mt-6 grid gap-5 md:grid-cols-2 xl:grid-cols-3">
               {filteredSets.map((set, index) => (
-                <motion.article key={set.id} layout initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: Math.min(index, 8) * 0.035 }} className="group rounded-[1.35rem] border border-line bg-white/78 p-5 shadow-sm transition hover:-translate-y-1 hover:border-violet-200 hover:shadow-[0_18px_45px_rgba(46,39,97,.10)]">
+                <motion.article key={set.id} layout initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: Math.min(index, 8) * 0.035 }} className="premium-shell group rounded-[1.35rem] bg-white/70 backdrop-blur-2xl p-5 transition-all duration-300 hover:-translate-y-1 hover:border-violet-300 hover:shadow-[0_22px_60px_rgba(46,39,97,.10)]">
                   <div className="flex items-start justify-between gap-4">
                     <span className="rounded-xl bg-violet-50 px-3 py-2 text-xs font-semibold uppercase tracking-[0.1em] text-violet-700">{set.difficulty}</span>
                     {set.isPremium ? <span className="rounded-full bg-gold-dim px-2.5 py-1 text-[10px] font-bold uppercase tracking-[0.12em] text-gold">Premium</span> : null}
@@ -106,7 +106,7 @@ export default function PracticeDiscovery({ sets }: { sets: PracticeSetSummary[]
               ))}
             </motion.div>
           ) : (
-            <div className="mt-6 grid min-h-56 place-items-center rounded-[1.35rem] border border-dashed border-line-strong bg-white/60 p-8 text-center">
+            <div className="premium-shell mt-6 grid min-h-56 place-items-center rounded-[1.35rem] border border-dashed border-white/80 bg-white/60 p-8 text-center backdrop-blur-xl">
               <div>
                 <p className="font-display text-xl font-semibold text-fg">No practice sets match that search.</p>
                 <p className="mt-2 text-sm text-muted">Try a broader topic or reset the difficulty filter.</p>

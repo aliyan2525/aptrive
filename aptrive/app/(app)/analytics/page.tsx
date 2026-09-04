@@ -103,7 +103,7 @@ export default async function AnalyticsPage() {
 
 function AnalyticsEmpty({ title, body, href }: { title: string; body: string; href: string }) {
   return (
-    <section className="grid min-h-64 place-items-center rounded-[1.5rem] border border-dashed border-neutral-300 bg-white/60 p-8 text-center">
+    <section className="premium-shell grid min-h-64 place-items-center rounded-[1.5rem] border border-dashed border-white/80 bg-white/60 backdrop-blur-xl p-8 text-center">
       <div>
         <p className="font-display text-xl font-semibold text-fg">{title}</p>
         <p className="mt-2 max-w-sm text-sm leading-6 text-muted">{body}</p>
