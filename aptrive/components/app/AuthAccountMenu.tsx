@@ -42,7 +42,7 @@ export default function AuthAccountMenu({ user }: { user: HeaderUser }) {
         onClick={() => setOpen((value) => !value)}
         aria-haspopup="menu"
         aria-expanded={open}
-        className="group flex items-center gap-3 rounded-full p-1 pr-3 transition hover:bg-[#eef3ff]"
+        className="group flex items-center gap-3 rounded-full border border-white/40 bg-white/50 backdrop-blur-md p-1 pr-3 shadow-[inset_0_1px_2px_rgba(255,255,255,0.8),0_4px_16px_rgba(46,39,97,0.03)] transition-all hover:bg-white/70 hover:shadow-[inset_0_1px_2px_rgba(255,255,255,0.9),0_6px_24px_rgba(46,39,97,0.06)] hover:border-white/60"
       >
         <span className="relative grid h-10 w-10 place-items-center overflow-hidden rounded-full bg-gradient-to-br from-teal-400 to-emerald-500 text-sm font-bold text-white shadow-[0_12px_24px_rgba(16,185,129,0.22)]">
           {user.avatarUrl ? <Image src={user.avatarUrl} alt="" fill className="object-cover" /> : initials}

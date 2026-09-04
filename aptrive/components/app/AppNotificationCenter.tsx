@@ -85,7 +85,7 @@ export default function AppNotificationCenter({
         onClick={() => setOpen((value) => !value)}
         aria-label={unreadCount > 0 ? `Notifications (${unreadCount} unread)` : "Notifications"}
         aria-expanded={open}
-        className="relative grid h-10 w-10 place-items-center rounded-full text-[#4d5d91] transition hover:bg-[#eef3ff] hover:text-blue-700"
+        className="relative grid h-11 w-11 place-items-center rounded-full border border-white/50 bg-white/60 backdrop-blur-md text-[#4d5d91] shadow-[inset_0_1px_2px_rgba(255,255,255,0.8),0_4px_16px_rgba(46,39,97,0.03)] transition-all hover:bg-white/80 hover:text-violet-700 hover:shadow-[inset_0_1px_2px_rgba(255,255,255,0.9),0_6px_24px_rgba(46,39,97,0.06)] hover:border-white/80"
       >
         <Bell className="h-5 w-5" aria-hidden="true" />
         {unreadCount > 0 && (
