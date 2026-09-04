@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { notFound } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 import { categories, contentTypeLabels, resources } from "@/lib/library-data";
 import { AuthenticatedLibraryResource } from "@/components/library/AuthenticatedLibraryDetails";
 import { createClient } from "@/lib/supabase/server";
@@ -45,7 +45,7 @@ export default async function LibraryResourcePage({ params }: PageProps) {
   } = await supabase.auth.getUser();
 
   if (user) {
-    return <AuthenticatedLibraryResource resource={resource} categoryName={categoryInfo.name} />;
+    redirect(`/materials/${category}/${resourceId}`);
   }
 
   return (

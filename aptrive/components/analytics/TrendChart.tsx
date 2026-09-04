@@ -1,7 +1,7 @@
 "use client";
 
 import * as React from "react";
-
+import { LiquidGlassCard } from "../ui/LiquidGlassCard";
 import { motion } from "framer-motion";
 
 interface TrendData {
@@ -50,7 +50,7 @@ export const TrendChart = ({ data }: TrendChartProps) => {
   const areaD = `${pathD} L ${points[points.length - 1].x},${height - padding} L ${points[0].x},${height - padding} Z`;
 
   return (
-    <section className="premium-shell flex h-full flex-col rounded-[1.5rem] bg-white/70 p-8 backdrop-blur-2xl">
+    <LiquidGlassCard intensity="low" className="p-8 h-full flex flex-col">
       <h3 className="text-lg font-semibold text-[var(--fg)] mb-6">Learning Velocity</h3>
       
       <div className="relative w-full flex-1 min-h-[300px]">
@@ -74,7 +74,7 @@ export const TrendChart = ({ data }: TrendChartProps) => {
           {/* Defs for gradients */}
           <defs>
             <linearGradient id="area-gradient" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0%" stopColor="var(--violet)" stopOpacity="0.6" />
+              <stop offset="0%" stopColor="var(--violet)" stopOpacity="0.4" />
               <stop offset="100%" stopColor="var(--violet)" stopOpacity="0.0" />
             </linearGradient>
           </defs>
@@ -97,7 +97,7 @@ export const TrendChart = ({ data }: TrendChartProps) => {
             fill="none"
             stroke="var(--violet)"
             strokeWidth="3"
-            className="drop-shadow-[0_0_12px_rgba(111,69,255,0.8)]"
+            className="drop-shadow-[0_0_8px_rgba(177,102,255,0.5)]"
           />
 
           {/* Data Points */}
@@ -133,6 +133,6 @@ export const TrendChart = ({ data }: TrendChartProps) => {
           ))}
         </svg>
       </div>
-    </section>
+    </LiquidGlassCard>
   );
 };

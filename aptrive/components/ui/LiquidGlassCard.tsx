@@ -14,9 +14,9 @@ export const LiquidGlassCard = React.forwardRef<HTMLDivElement, LiquidGlassCardP
   ({ children, className, glowColor = "rgba(255, 255, 255, 0.4)", intensity = "medium", interactive = false, ...props }, ref) => {
     
     const intensityMap = {
-      low: "backdrop-blur-md bg-white/40 dark:bg-black/40 shadow-[0_8px_30px_rgba(0,0,0,0.04)]",
-      medium: "backdrop-blur-xl bg-white/60 dark:bg-[#0a0a0a]/60 shadow-[0_8px_32px_rgba(31,38,135,0.07)] border border-white/20 dark:border-white/10",
-      high: "backdrop-blur-2xl bg-white/80 dark:bg-[#111]/80 shadow-[0_16px_40px_rgba(31,38,135,0.1)] border border-white/40 dark:border-white/15",
+      low: "premium-shell",
+      medium: "premium-shell",
+      high: "premium-shell",
     };
 
     return (

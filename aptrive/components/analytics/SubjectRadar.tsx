@@ -1,7 +1,7 @@
 "use client";
 
 import * as React from "react";
-
+import { LiquidGlassCard } from "../ui/LiquidGlassCard";
 import { motion } from "framer-motion";
 
 interface SubjectData {
@@ -32,7 +32,7 @@ export const SubjectRadar = ({ data }: SubjectRadarProps) => {
   const levels = [0.2, 0.4, 0.6, 0.8, 1];
 
   return (
-    <section className="premium-shell flex h-full flex-col items-center justify-center rounded-[1.5rem] bg-white/70 p-8 backdrop-blur-2xl">
+    <LiquidGlassCard intensity="low" className="p-8 h-full flex flex-col items-center justify-center">
       <h3 className="text-lg font-semibold text-[var(--fg)] w-full text-left mb-8">Subject Mastery</h3>
       
       <div className="relative w-[300px] h-[300px]">
@@ -86,7 +86,7 @@ export const SubjectRadar = ({ data }: SubjectRadarProps) => {
             fillOpacity="0.2"
             stroke="var(--teal)"
             strokeWidth="2"
-            className="drop-shadow-[0_0_16px_rgba(35,213,196,0.6)]"
+            className="drop-shadow-[0_0_10px_rgba(102,255,255,0.4)]"
             style={{ transformOrigin: "center" }}
           />
           
@@ -102,7 +102,7 @@ export const SubjectRadar = ({ data }: SubjectRadarProps) => {
                 cy={y}
                 r="4"
                 fill="var(--teal)"
-                className="drop-shadow-[0_0_8px_rgba(35,213,196,0.8)]"
+                className="drop-shadow-[0_0_5px_var(--teal)]"
               />
             );
           })}
@@ -125,6 +125,6 @@ export const SubjectRadar = ({ data }: SubjectRadarProps) => {
           );
         })}
       </div>
-    </section>
+    </LiquidGlassCard>
   );
 };

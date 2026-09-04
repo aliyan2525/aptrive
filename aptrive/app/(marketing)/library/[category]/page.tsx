@@ -1,9 +1,8 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { notFound } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 import { categories, resources } from "@/lib/library-data";
 import LibraryExplorer from "@/components/library/LibraryExplorer";
-import { AuthenticatedLibraryCategory } from "@/components/library/AuthenticatedLibraryDetails";
 import { createClient } from "@/lib/supabase/server";
 
 export function generateStaticParams() {
@@ -35,15 +34,16 @@ export default async function CategoryPage({
   const category = categories.find((c) => c.slug === slug);
   if (!category || category.comingSoon) notFound();
 
-  const categoryResources = resources.filter((r) => r.categorySlug === slug);
   const supabase = await createClient();
   const {
     data: { user },
   } = await supabase.auth.getUser();
 
   if (user) {
-    return <AuthenticatedLibraryCategory category={category} categoryResources={categoryResources} />;
+    redirect(`/materials/${slug}`);
   }
+
+  const categoryResources = resources.filter((r) => r.categorySlug === slug);
 
   return (
     <section className="container-aptrive py-16 md:py-24">

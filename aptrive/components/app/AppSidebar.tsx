@@ -26,7 +26,7 @@ type AppSidebarProps = {
 const navItems = [
   { label: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
   { label: "Practice", href: "/practice", icon: Brain },
-  { label: "Library", href: "/library", icon: BookOpen },
+  { label: "Library", href: "/materials", icon: BookOpen },
   { label: "Rankings", href: "/leaderboard", icon: Trophy },
   { label: "Analytics", href: "/analytics", icon: BarChart3 },
   { label: "Goals", href: "/goals", icon: Target },

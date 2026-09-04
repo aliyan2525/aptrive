@@ -1,7 +1,7 @@
 "use client";
 
 import * as React from "react";
-
+import { LiquidGlassCard } from "../ui/LiquidGlassCard";
 import { Sparkles, ArrowRight, Brain } from "lucide-react";
 import { motion } from "framer-motion";
 
@@ -11,7 +11,7 @@ interface AIInsightsProps {
 
 export const AIInsights = ({ insights }: AIInsightsProps) => {
   return (
-    <section className="premium-shell flex h-full flex-col rounded-[1.5rem] bg-white/70 p-8 backdrop-blur-2xl">
+    <LiquidGlassCard intensity="low" className="p-8 h-full flex flex-col">
       <div className="flex items-center gap-3 mb-6">
         <div className="p-2.5 rounded-lg bg-[var(--teal)]/10 text-[var(--teal)]">
           <Brain className="w-5 h-5" />
@@ -26,7 +26,7 @@ export const AIInsights = ({ insights }: AIInsightsProps) => {
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ delay: 0.2 + (index * 0.15) }}
-            className="group flex items-start gap-3 rounded-xl border border-white/60 bg-white/50 p-4 shadow-[0_4px_24px_rgba(0,0,0,0.02)] transition-all hover:-translate-y-0.5 hover:border-teal-200 hover:bg-white/70 hover:shadow-[0_8px_32px_rgba(35,213,196,0.1)]"
+            className="flex items-start gap-3 p-4 rounded-xl bg-[var(--panel-2)]/50 border border-[var(--line)]/50 hover:border-[var(--teal)]/30 transition-colors group"
           >
             <Sparkles className="w-4 h-4 text-[var(--teal)] mt-0.5 flex-shrink-0 group-hover:scale-110 transition-transform" />
             <p className="text-sm text-[var(--muted)] leading-relaxed">
@@ -40,6 +40,6 @@ export const AIInsights = ({ insights }: AIInsightsProps) => {
         View Detailed Report
         <ArrowRight className="w-4 h-4" />
       </button>
-    </section>
+    </LiquidGlassCard>
   );
 };

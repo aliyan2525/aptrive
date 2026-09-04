@@ -9,7 +9,7 @@ const commands = [
   { href: "/practice", title: "Start Practice", group: "Study", keywords: "questions session test", icon: Brain },
   { href: "/practice/subjects", title: "Browse Subjects", group: "Study", keywords: "topics math physics chemistry", icon: Target },
   { href: "/practice/revision", title: "Revision Queue", group: "Study", keywords: "review mistakes weak topics", icon: BookOpen },
-  { href: "/library", title: "Library", group: "Resources", keywords: "notes videos concepts", icon: BookOpen },
+  { href: "/materials", title: "Library", group: "Resources", keywords: "notes videos concepts", icon: BookOpen },
   { href: "/leaderboard", title: "Rankings", group: "Progress", keywords: "leaderboard rank score", icon: Trophy },
   { href: "/goals", title: "Goals", group: "Planning", keywords: "goals streak target progress", icon: Target },
   { href: "/analytics", title: "Analytics", group: "Progress", keywords: "analytics insights charts performance", icon: BarChart3 },

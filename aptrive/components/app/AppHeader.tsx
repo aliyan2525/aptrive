@@ -20,7 +20,7 @@ interface AppHeaderProps {
 const mobileLinks = [
   { label: "Dashboard", href: "/dashboard" },
   { label: "Practice", href: "/practice" },
-  { label: "Library", href: "/library" },
+  { label: "Library", href: "/materials" },
   { label: "Rankings", href: "/leaderboard" },
   { label: "Analytics", href: "/analytics" },
   { label: "Goals", href: "/goals" },
@@ -30,7 +30,7 @@ const mobileLinks = [
 const pageTitles: Array<[string, string]> = [
   ["/dashboard", "Mission control"],
   ["/practice", "Practice lab"],
-  ["/library", "Learning library"],
+  ["/materials", "Learning materials"],
   ["/leaderboard", "Rankings"],
   ["/analytics", "Analytics"],
   ["/goals", "Goals"],
@@ -112,7 +112,7 @@ export default function AppHeader({ notifications, unreadCount, user }: AppHeade
             <p className="px-3 pb-2 text-[10px] font-bold uppercase tracking-[0.16em] text-muted-2">Filter workspace</p>
             <div className="grid gap-1">
               {[
-                ["Library resources", "/library"],
+                ["Library resources", "/materials"],
                 ["Practice sets", "/practice"],
                 ["Progress analytics", "/analytics"],
                 ["Rankings", "/leaderboard"],

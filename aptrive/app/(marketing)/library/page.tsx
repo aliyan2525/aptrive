@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import LibraryExperience from "@/components/library/LibraryExperience";
-import AuthenticatedLibraryWorkspace from "@/components/library/AuthenticatedLibraryWorkspace";
 import { createClient } from "@/lib/supabase/server";
+import { redirect } from "next/navigation";
 
 export const metadata: Metadata = {
   title: "Library — Aptrive",
@@ -14,5 +14,9 @@ export default async function LibraryPage() {
     data: { user },
   } = await supabase.auth.getUser();
 
-  return user ? <AuthenticatedLibraryWorkspace /> : <LibraryExperience />;
+  if (user) {
+    redirect("/materials");
+  }
+
+  return <LibraryExperience />;
 }

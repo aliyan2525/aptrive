@@ -118,7 +118,7 @@ export default function AuthenticatedLibraryWorkspace() {
 function AuthenticatedResourceCard({ resource }: { resource: (typeof resources)[number] }) {
   const Icon = resource.contentType === "video" ? PlayCircle : FileText;
   return (
-    <Link href={`/library/${resource.categorySlug}/${resource.id}`} className="premium-shell group flex min-w-0 h-full flex-col rounded-[1.25rem] bg-white/70 backdrop-blur-2xl p-5 transition-all duration-300 hover:-translate-y-1 hover:border-violet-300 hover:shadow-[0_22px_60px_rgba(46,39,97,0.1)] focus-visible:outline-none">
+    <Link href={`/materials/${resource.categorySlug}/${resource.id}`} className="premium-shell group flex min-w-0 h-full flex-col rounded-[1.25rem] bg-white/70 backdrop-blur-2xl p-5 transition-all duration-300 hover:-translate-y-1 hover:border-violet-300 hover:shadow-[0_22px_60px_rgba(46,39,97,0.1)] focus-visible:outline-none">
       <div className="flex items-start justify-between gap-3">
         <span className="grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-violet-500/10 text-violet-700"><Icon className="h-5 w-5" aria-hidden="true" /></span>
         <span className={`rounded-full border px-2.5 py-1 text-[9px] font-bold uppercase tracking-[0.1em] ${resource.premium ? "border-amber-500/20 bg-amber-500/10 text-amber-700" : "border-teal-500/20 bg-teal-500/10 text-teal-700"}`}>{resource.premium ? "Premium" : "Open"}</span>
