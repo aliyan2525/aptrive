@@ -102,8 +102,8 @@ export default function SiteNav({
           hidden ? "-translate-y-full" : "translate-y-0"
         }`}
       >
-        <div className="mx-auto flex w-[calc(100%-1.5rem)] max-w-[1340px] items-center gap-3 rounded-full border border-white/80 bg-white/82 px-3 py-2 shadow-[0_12px_34px_rgba(20,32,70,0.09)] backdrop-blur-2xl transition-all duration-500 sm:px-4 lg:gap-5">
-          <div className="flex w-full items-center justify-between gap-5">
+        <div className="mx-auto flex w-[calc(100%-2rem)] md:w-max items-center md:gap-10 rounded-full border border-white/75 bg-white/80 px-4 py-2.5 md:px-6 shadow-[0_18px_55px_rgba(20,32,70,0.10)] backdrop-blur-2xl transition-all duration-500">
+          <div className="flex w-full items-center justify-between gap-4 md:gap-8">
             <Link href={user ? "/dashboard" : "/"} className="group flex items-center gap-2" aria-label="Aptrive">
               <div className="relative">
                 <Image src="/logo-mark.png" alt="" width={30} height={34} priority className="h-8 w-auto transition-transform duration-300 group-hover:scale-105" />

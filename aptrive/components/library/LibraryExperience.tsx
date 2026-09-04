@@ -2,6 +2,8 @@
 
 import Link from "next/link";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
+import HeroBlobsSceneWrapper from "@/components/hero/HeroBlobsSceneWrapper";
+import HeroOrbitIcons from "@/components/hero/HeroOrbitIcons";
 import {
   ArrowUpRight,
   BookOpen,
@@ -103,23 +105,27 @@ export default function LibraryExperience() {
             initial={motionEnabled ? { opacity: 0, y: 18, scale: 0.98 } : false}
             animate={{ opacity: 1, y: 0, scale: 1 }}
             transition={{ duration: 0.8, delay: 0.08, ease: [0.16, 1, 0.3, 1] }}
-            className="relative overflow-hidden rounded-[2rem] border border-white/85 bg-white/78 p-6 shadow-[0_28px_90px_rgba(62,72,130,0.15)] backdrop-blur-2xl md:p-8"
+            className="relative h-[420px] sm:h-[520px] lg:-ml-10 lg:h-[650px] xl:-ml-16 flex items-center justify-center"
           >
-            <div className="pointer-events-none absolute -right-10 -top-10 h-52 w-52 rounded-full bg-violet-200/30 blur-3xl" />
-            <div className="relative z-10 flex items-start justify-between gap-4">
-              <div>
-                <span className="inline-flex items-center gap-2 text-[10px] font-bold uppercase tracking-[0.22em] text-violet-700"><Star className="h-3.5 w-3.5 fill-violet-500 text-violet-500" /> Curated for your next session</span>
-                <h2 className="mt-5 max-w-sm font-display text-2xl font-semibold tracking-tight text-fg">{featured.title}</h2>
-                <p className="mt-3 text-sm leading-6 text-muted">A high-signal resource to move from passive reading into deliberate practice.</p>
+            <HeroBlobsSceneWrapper />
+            <HeroOrbitIcons />
+            
+            <motion.div initial={{ opacity: 0, y: 18 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }} className="library-featured premium-shell relative z-20 overflow-hidden rounded-[1.75rem] border border-white/80 bg-white/76 p-6 shadow-[0_24px_70px_rgba(56,42,122,0.10)] backdrop-blur-xl md:p-7 max-w-sm">
+              <div className="relative z-10 flex items-start justify-between gap-4">
+                <div>
+                  <span className="inline-flex items-center gap-2 text-[10px] font-semibold uppercase tracking-[0.22em] text-violet-700"><Star className="h-3.5 w-3.5 fill-violet-500 text-violet-500" /> Curated for your next session</span>
+                  <h2 className="mt-4 max-w-sm font-display text-2xl font-semibold tracking-tight text-neutral-950">{featured.title}</h2>
+                  <p className="mt-3 text-sm leading-6 text-neutral-600">A high-signal resource to move from passive reading into deliberate practice.</p>
+                </div>
+                <span className="grid h-10 w-10 shrink-0 place-items-center rounded-full bg-gradient-to-br from-violet-600 to-fuchsia-600 text-white"><ArrowUpRight className="h-5 w-5" /></span>
               </div>
-              <span className="grid h-10 w-10 shrink-0 place-items-center rounded-full bg-gradient-to-br from-violet-600 to-fuchsia-600 text-white shadow-lg shadow-violet-600/20"><ArrowUpRight className="h-5 w-5" /></span>
-            </div>
-            <div className="relative z-10 mt-8 flex flex-wrap gap-2 text-[10px] font-bold uppercase tracking-[0.12em] text-muted">
-              <span className="rounded-full border border-white/80 bg-white/62 px-3 py-1.5 shadow-sm">{featuredCategory?.name ?? "Library"}</span>
-              <span className="rounded-full border border-white/80 bg-white/62 px-3 py-1.5 shadow-sm">{contentTypeLabels[featured.contentType]}</span>
-              <span className="rounded-full border border-amber-500/20 bg-amber-500/10 px-3 py-1.5 text-amber-700 shadow-sm">{featured.difficulty}</span>
-            </div>
-            <Link href={`/library/${featured.categorySlug}/${featured.id}`} className="pressable relative z-10 mt-8 inline-flex items-center gap-2 text-sm font-bold text-fg transition-colors hover:text-violet-700">Open featured resource <ArrowUpRight className="h-4 w-4 text-violet-600" /></Link>
+              <div className="relative z-10 mt-7 flex flex-wrap gap-2 text-[10px] font-semibold uppercase tracking-[0.12em] text-neutral-500">
+                <span className="rounded-full bg-neutral-100 px-2.5 py-1.5">{featuredCategory?.name ?? "Library"}</span>
+                <span className="rounded-full bg-neutral-100 px-2.5 py-1.5">{contentTypeLabels[featured.contentType]}</span>
+                <span className="rounded-full bg-amber-100 px-2.5 py-1.5 text-amber-700">{featured.difficulty}</span>
+              </div>
+              <Link href={`/library/${featured.categorySlug}/${featured.id}`} className="pressable relative z-10 mt-7 inline-flex items-center gap-2 text-sm font-semibold text-neutral-950">Open featured resource <ArrowUpRight className="h-4 w-4 text-violet-600" /></Link>
+            </motion.div>
           </motion.div>
         </div>
       </section>

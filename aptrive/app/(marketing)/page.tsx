@@ -1,4 +1,4 @@
-﻿import type { Metadata } from "next";
+import type { Metadata } from "next";
 
 import { redirect } from "next/navigation";
 import { BrainCircuit, Timer, LineChart, Compass, Star } from "lucide-react";
@@ -11,6 +11,7 @@ import Eyebrow from "@/components/ui/Eyebrow";
 import { createClient } from "@/lib/supabase/server";
 import PremiumFeatureCard from "@/components/features/PremiumFeatureCard";
 import AnimatedJourney from "@/components/journey/AnimatedJourney";
+import HomePricingComparison from "@/components/marketing/HomePricingComparison";
 
 import HeroBlobsSceneWrapper from "@/components/hero/HeroBlobsSceneWrapper";
 import HeroCTAButtons from "@/components/hero/HeroCTAButtons";
@@ -201,6 +202,8 @@ With{" "}
 
       <UniversityAlignedSection />
 
+      <HomePricingComparison />
+
       <section className="bg-gradient-to-b from-white to-[#f3f7ff] py-28 md:py-40 z-10 relative border-t border-line">
         <div className="container-aptrive text-center">
           <Reveal>
@@ -209,7 +212,7 @@ With{" "}
               Take a free diagnostic to see where you stand and what to study next.
             </h2>
             <div className="mt-16">
-<Button href="/signup?source=homepage-final-cta" variant="primary" size="lg" className="h-16 px-12 text-lg" data-cta="homepage-final-diagnostic">
+              <Button href="/signup?source=homepage-final-cta" variant="primary" size="lg" className="h-16 px-12 text-lg" data-cta="homepage-final-diagnostic">
                 See your score for free
               </Button>
             </div>
@@ -219,7 +222,3 @@ With{" "}
     </>
   );
 }
-
-
-
-

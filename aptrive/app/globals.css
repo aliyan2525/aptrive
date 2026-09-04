@@ -2,8 +2,8 @@
 
 :root {
   /* Elite Semantic Tokens - Base (Dark Mode Native) */
-  --bg-app: oklch(14% 0.01 260); /* Deep, saturated dark background */
-  --panel-elevated: oklch(18% 0.015 260); /* For elevated cards */
+  --bg-app: oklch(14% 0.01 260); 
+  --panel-elevated: oklch(18% 0.015 260); 
   --panel-sunken: oklch(12% 0.01 260);
   
   --fg: oklch(98% 0.005 260);
@@ -13,52 +13,47 @@
   --line: oklch(25% 0.01 260);
   --line-strong: oklch(35% 0.01 260);
   
-  /* Brand/Accent Colors */
+  /* Brand/Accent Colors (Tamed, Highly Premium) */
+  --primary: oklch(55% 0.22 260); /* Electric Indigo */
+  --primary-hover: oklch(60% 0.24 260);
+  --primary-dim: oklch(55% 0.22 260 / 0.15);
+  
   --teal: oklch(75% 0.15 180);
-  --teal-dim: oklch(75% 0.15 180 / 0.15);
   --blue: oklch(70% 0.20 260);
   --violet: oklch(75% 0.18 290);
-  --gold: oklch(80% 0.15 70);
-  --gold-dim: oklch(80% 0.15 70 / 0.15);
-
+  
   /* Status */
-  --success: oklch(75% 0.15 140);
+  --success: oklch(65% 0.15 150);
   --warning: oklch(80% 0.15 75);
   --danger: oklch(65% 0.2 25);
 
-  /* Premium Motion Engine (Apple-inspired) */
+  /* Premium Motion Engine */
   --ease-apple: cubic-bezier(0.25, 1, 0.5, 1);
   --ease-spring: cubic-bezier(0.175, 0.885, 0.32, 1.275);
   --ease-smooth: cubic-bezier(0.16, 1, 0.3, 1);
   --ease-snappy: cubic-bezier(0.4, 0, 0.2, 1);
-
-  /* Spacing Grid (8px baseline) */
-  --space-1: 4px;
-  --space-2: 8px;
-  --space-3: 16px;
-  --space-4: 24px;
-  --space-5: 32px;
-  --space-6: 48px;
-  --space-7: 64px;
-  --space-8: 96px;
 }
 
 :root[data-theme="light"], html[data-theme="light"] {
-  --bg-app: oklch(98.5% 0.005 255);
+  --bg-app: oklch(99% 0 0); /* Pure, clean Apple-like white */
   --panel-elevated: oklch(100% 0 0);
-  --panel-sunken: oklch(96.5% 0.01 255);
+  --panel-sunken: oklch(97% 0 0);
   
-  --fg: oklch(15% 0.03 260);
-  --muted: oklch(45% 0.02 260);
+  /* Strict WCAG AA contrast for text */
+  --fg: oklch(15% 0.01 260); /* Deep rich black */
+  --muted: oklch(42% 0.01 260); /* High contrast gray */
   --muted-2: oklch(52% 0.01 260);
   
-  --line: oklch(90% 0.01 260);
-  --line-strong: oklch(80% 0.01 260);
+  --line: oklch(92% 0 0); /* Very subtle borders */
+  --line-strong: oklch(85% 0 0);
   
-  --teal: oklch(55% 0.15 180);
-  --blue: oklch(50% 0.20 260);
-  --violet: oklch(55% 0.18 290);
-  --gold: oklch(60% 0.15 70);
+  --primary: oklch(50% 0.22 260); /* Deep Indigo */
+  --primary-hover: oklch(45% 0.22 260);
+  --primary-dim: oklch(50% 0.22 260 / 0.08);
+
+  --teal: oklch(50% 0.15 180);
+  --blue: oklch(45% 0.20 260);
+  --violet: oklch(50% 0.18 290);
 }
 
 @theme inline {
@@ -70,12 +65,12 @@
   --color-fg: var(--fg);
   --color-muted: var(--muted);
   --color-muted-2: var(--muted-2);
+  --color-primary: var(--primary);
+  --color-primary-hover: var(--primary-hover);
+  --color-primary-dim: var(--primary-dim);
   --color-teal: var(--teal);
-  --color-teal-dim: var(--teal-dim);
   --color-blue: var(--blue);
   --color-violet: var(--violet);
-  --color-gold: var(--gold);
-  --color-gold-dim: var(--gold-dim);
   
   --font-display: var(--font-space-grotesk);
   --font-body: var(--font-inter);
@@ -114,31 +109,40 @@ body {
 /* Fluid Typography Scales */
 .text-hero {
   font-family: var(--font-display);
-  font-size: clamp(3.5rem, 5vw + 1rem, 7rem);
-  line-height: 0.95;
-  letter-spacing: 0;
+  font-size: clamp(3.25rem, 5vw + 1.5rem, 6.5rem);
+  line-height: 0.92;
+  letter-spacing: -0.04em;
   font-weight: 700;
 }
 
 .text-display-1 {
   font-family: var(--font-display);
-  font-size: clamp(2.75rem, 2rem + 3.2vw, 4.75rem);
+  font-size: clamp(2.5rem, 2.5rem + 2vw, 4.5rem);
   line-height: 1.05;
-  letter-spacing: 0;
-  font-weight: 600;
+  letter-spacing: -0.03em;
+  font-weight: 650;
 }
 
 .text-display-2 {
   font-family: var(--font-display);
-  font-size: clamp(2.25rem, 1.8rem + 2vw, 3.5rem);
-  line-height: 1.08;
-  letter-spacing: 0;
+  font-size: clamp(2rem, 1.8rem + 1.5vw, 3.25rem);
+  line-height: 1.1;
+  letter-spacing: -0.02em;
   font-weight: 600;
 }
 
-.text-body-lg { font-size: 1.125rem; line-height: 1.65; color: var(--muted); font-weight: 400; }
-.text-body { font-size: 1rem; line-height: 1.65; color: var(--muted); font-weight: 400; }
-.text-caption { font-family: var(--font-mono); font-size: 0.75rem; letter-spacing: 0.06em; color: var(--muted-2); }
+.text-heading-3 { 
+  font-family: var(--font-display); 
+  font-size: clamp(1.25rem, 1rem + 1vw, 1.75rem);
+  line-height: 1.25; 
+  letter-spacing: -0.01em;
+  font-weight: 600; 
+}
+
+.text-body-lg { font-family: var(--font-body); font-size: 1.125rem; line-height: 1.6; color: var(--muted); font-weight: 400; letter-spacing: -0.01em; }
+.text-body { font-family: var(--font-body); font-size: 1rem; line-height: 1.6; color: var(--muted); font-weight: 400; }
+.text-body-sm { font-family: var(--font-body); font-size: 0.875rem; line-height: 1.5; color: var(--muted); }
+.text-caption { font-family: var(--font-mono); font-size: 0.75rem; letter-spacing: 0.04em; color: var(--muted-2); }
 
 .eyebrow {
   font-family: var(--font-body);

@@ -56,23 +56,8 @@ export default function HeroCinematicLayer() {
         transition={{ duration: motionAllowed ? 1.3 : 0, delay: motionAllowed ? 0.35 : 0, ease: [0.16, 1, 0.3, 1] }}
       />
 
-      <motion.div
-        className="absolute left-[8%] top-[18%] hidden text-[10px] font-semibold uppercase tracking-[0.28em] text-neutral-500/70 md:block"
-        initial={{ opacity: 0, x: -8 }}
-        animate={{ opacity: 1, x: 0 }}
-        transition={{ duration: motionAllowed ? 0.7 : 0, delay: motionAllowed ? 0.55 : 0 }}
-      >
-        Aptrive / 01 — read the signal
-      </motion.div>
 
-      <motion.div
-        className="absolute right-[8%] top-[18%] hidden text-right text-[10px] font-semibold uppercase tracking-[0.28em] text-neutral-500/70 md:block"
-        initial={{ opacity: 0, x: 8 }}
-        animate={{ opacity: 1, x: 0 }}
-        transition={{ duration: motionAllowed ? 0.7 : 0, delay: motionAllowed ? 0.7 : 0 }}
-      >
-        Interactive pathway / 04 stages
-      </motion.div>
+
 
       <motion.div
         className="absolute bottom-[9%] left-1/2 hidden -translate-x-1/2 items-center gap-3 text-[10px] font-semibold uppercase tracking-[0.3em] text-neutral-500/65 sm:flex"

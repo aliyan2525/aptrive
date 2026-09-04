@@ -18,7 +18,7 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
           type={type}
           id={inputId}
           className={cn(
-            "peer flex h-14 w-full rounded-2xl border border-line bg-panel-sunken px-4 py-2 text-sm text-fg file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-transparent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal focus-visible:ring-offset-2 focus-visible:ring-offset-bg-app disabled:cursor-not-allowed disabled:opacity-50 transition-all duration-300 hover:border-line-strong pt-6",
+            "peer flex h-14 w-full rounded-xl border border-line bg-panel-sunken px-4 py-2 text-sm text-fg file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-transparent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-bg-app disabled:cursor-not-allowed disabled:opacity-50 transition-all duration-300 hover:border-line-strong pt-6",
             className
           )}
           ref={ref}
@@ -28,7 +28,7 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
         {label && (
           <label
             htmlFor={inputId}
-            className="absolute left-4 top-4 z-10 origin-[0] -translate-y-2.5 scale-75 transform text-muted transition-all duration-200 peer-placeholder-shown:translate-y-0 peer-placeholder-shown:scale-100 peer-focus:-translate-y-2.5 peer-focus:scale-75 peer-focus:text-teal font-medium cursor-text"
+            className="absolute left-4 top-4 z-10 origin-[0] -translate-y-2.5 scale-75 transform text-muted transition-all duration-200 peer-placeholder-shown:translate-y-0 peer-placeholder-shown:scale-100 peer-focus:-translate-y-2.5 peer-focus:scale-75 peer-focus:text-primary font-medium cursor-text"
           >
             {label}
           </label>

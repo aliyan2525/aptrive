@@ -30,7 +30,7 @@ const paddingClass: Record<NonNullable<CardProps["padding"]>, string> = {
 
 export default function Card({ variant = "default", padding = "md", className, children, ...rest }: CardProps) {
   return (
-    <div className={cn("rounded-[1.5rem]", variantClass[variant], paddingClass[padding], className)} {...rest}>
+    <div className={cn("rounded-2xl", variantClass[variant], paddingClass[padding], className)} {...rest}>
       {children}
     </div>
   );

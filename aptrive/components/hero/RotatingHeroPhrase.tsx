@@ -25,14 +25,14 @@ export default function RotatingHeroPhrase() {
 
   return (
     <span className="hero-phrase-slot relative inline-grid min-w-[7.2ch] align-baseline" aria-hidden="true">
-      <AnimatePresence initial={false} mode="wait">
+      <AnimatePresence initial={false} mode="popLayout">
         <motion.span
           key={phrases[index]}
-          className="col-start-1 row-start-1 bg-gradient-to-r from-teal-500 via-sky-500 to-violet-500 bg-clip-text text-transparent"
-          initial={{ opacity: 0, y: "0.42em", filter: "blur(7px)" }}
+          className="col-start-1 row-start-1 text-primary"
+          initial={{ opacity: 0, y: "0.5em", filter: "blur(6px)" }}
           animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
-          exit={{ opacity: 0, y: "-0.42em", filter: "blur(7px)" }}
-          transition={{ duration: 0.55, ease: [0.16, 1, 0.3, 1] }}
+          exit={{ opacity: 0, y: "-0.5em", filter: "blur(6px)", transition: { duration: 0.3 } }}
+          transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
         >
           {phrases[index]}
         </motion.span>

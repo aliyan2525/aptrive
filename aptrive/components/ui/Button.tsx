@@ -15,20 +15,20 @@ export type ButtonVariant = "primary" | "secondary" | "ghost" | "outline" | "gla
 export type ButtonSize = "sm" | "md" | "lg" | "icon";
 
 const base =
-  "relative inline-flex items-center justify-center gap-2 overflow-hidden whitespace-nowrap rounded-full font-semibold " +
+  "relative inline-flex items-center justify-center gap-2 overflow-hidden whitespace-nowrap rounded-xl font-semibold " +
   "transition duration-200 [transition-timing-function:var(--ease-smooth)] " +
   "disabled:pointer-events-none disabled:opacity-50 " +
-  "focus-visible:outline focus-visible:outline-2 focus-visible:outline-teal focus-visible:outline-offset-2";
+  "focus-visible:outline focus-visible:outline-2 focus-visible:outline-primary focus-visible:outline-offset-2";
 
 const variantClass: Record<ButtonVariant, string> = {
   primary:
-    "bg-gradient-to-r from-blue-600 via-sky-500 to-violet-600 text-white shadow-[0_12px_30px_rgba(37,99,235,0.22)] hover:-translate-y-0.5 hover:shadow-[0_18px_42px_rgba(37,99,235,0.30)] active:translate-y-0 active:scale-95",
+    "bg-primary text-white shadow-[0_4px_14px_rgba(0,0,0,0.1),inset_0_1px_0_rgba(255,255,255,0.15)] hover:-translate-y-0.5 hover:bg-primary-hover hover:shadow-[0_6px_20px_rgba(0,0,0,0.15),inset_0_1px_0_rgba(255,255,255,0.15)] active:translate-y-0 active:scale-[0.98]",
   secondary:
-    "bg-panel-elevated text-fg border border-line-strong shadow-sm hover:border-teal/50 hover:-translate-y-0.5 hover:bg-panel-sunken active:translate-y-0 active:scale-95",
-  ghost: "text-muted hover:text-fg hover:bg-panel-sunken active:scale-95",
-  outline: "border border-line-strong bg-transparent text-fg hover:border-teal/50 hover:-translate-y-0.5 hover:bg-panel-elevated active:translate-y-0 active:scale-95",
+    "bg-panel-elevated text-fg border border-line-strong shadow-sm hover:border-primary/50 hover:-translate-y-0.5 hover:bg-panel-sunken active:translate-y-0 active:scale-[0.98]",
+  ghost: "text-muted hover:text-fg hover:bg-panel-elevated active:scale-[0.98]",
+  outline: "border border-line-strong bg-transparent text-fg hover:border-primary/50 hover:-translate-y-0.5 hover:bg-panel-elevated active:translate-y-0 active:scale-[0.98]",
   glass:
-    "border border-line/70 bg-panel-elevated/40 text-fg shadow-sm backdrop-blur-2xl hover:border-teal/50 hover:bg-panel-elevated/70 hover:-translate-y-0.5 active:translate-y-0 active:scale-95",
+    "border border-line/70 bg-panel-elevated/40 text-fg shadow-sm backdrop-blur-2xl hover:border-primary/50 hover:bg-panel-elevated/70 hover:-translate-y-0.5 active:translate-y-0 active:scale-[0.98]",
 };
 
 const sizeClass: Record<ButtonSize, string> = {
