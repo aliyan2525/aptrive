@@ -1,7 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { Check, X, ArrowUpRight, TrendingDown, Clock, BookOpen, BrainCircuit } from "lucide-react";
+import { Check, X, ArrowUpRight, TrendingDown, Clock, BookOpen, BrainCircuit, Crown } from "lucide-react";
 import Link from "next/link";
 import Reveal from "@/components/Reveal";
 import Eyebrow from "@/components/ui/Eyebrow";
@@ -75,7 +75,7 @@ export default function HomePricingComparison() {
               <div className="relative z-10 flex items-start justify-between">
                 <div>
                   <div className="inline-flex items-center gap-2 rounded-full border border-violet-200 bg-violet-50 px-3 py-1 text-[10px] font-bold uppercase tracking-[0.2em] text-violet-700">
-                    <span className="h-1.5 w-1.5 rounded-full bg-violet-500 shadow-[0_0_8px_rgba(139,92,246,0.8)]" />
+                    <Crown className="h-3.5 w-3.5 text-violet-600" />
                     Aptrive Pro
                   </div>
                   <h3 className="mt-6 font-display text-3xl font-semibold text-neutral-900">The Smart Choice</h3>
