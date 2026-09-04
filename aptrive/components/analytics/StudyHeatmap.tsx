@@ -2,7 +2,7 @@
 
 import { Calendar } from "lucide-react";
 import { cn } from "@/lib/cn";
-import { LiquidGlassCard } from "../ui/LiquidGlassCard";
+
 
 type ActivityPoint = {
   activity_date: string;
@@ -34,7 +34,7 @@ export const StudyHeatmap = ({ activity }: { activity: ActivityPoint[] }) => {
   };
 
   return (
-    <LiquidGlassCard intensity="low" className="p-5 sm:p-8">
+    <section className="premium-shell rounded-[1.5rem] bg-white/70 p-5 backdrop-blur-2xl sm:p-8">
       <div className="mb-6 flex items-center gap-3">
         <div className="rounded-lg border border-[var(--line)] bg-[var(--panel)] p-2">
           <Calendar className="h-5 w-5 text-[var(--muted)]" aria-hidden="true" />
@@ -51,7 +51,7 @@ export const StudyHeatmap = ({ activity }: { activity: ActivityPoint[] }) => {
             {data.map((day) => (
               <div
                 key={day.date.toISOString()}
-                className={cn("h-3.5 w-3.5 rounded-sm transition-colors duration-300", intensityClasses[day.intensity as keyof typeof intensityClasses])}
+                className={cn("h-3.5 w-3.5 rounded-sm shadow-sm transition-all duration-300 hover:scale-125 hover:shadow-md", intensityClasses[day.intensity as keyof typeof intensityClasses])}
                 title={`${day.date.toDateString()}: ${day.intensity === 0 ? "No recorded activity" : `${day.intensity} activity level`}`}
               />
             ))}
@@ -63,6 +63,6 @@ export const StudyHeatmap = ({ activity }: { activity: ActivityPoint[] }) => {
         </div>
       </div>
       {!hasActivity && <p className="premium-shell mt-4 rounded-xl border border-dashed border-white/80 bg-white/60 backdrop-blur-xl p-3 text-xs leading-5 text-muted">Complete a practice session to start building your consistency signal.</p>}
-    </LiquidGlassCard>
+    </section>
   );
 };
