@@ -1,39 +1,48 @@
 import "server-only";
 import { headers } from "next/headers";
 import { Ratelimit } from "@upstash/ratelimit";
-import { Redis } from "@upstash/redis";
+import { redis } from "@/lib/redis";
 
 /**
  * Sliding-window rate limiter backed by Upstash Redis.
  *
- * Previously this was an in-memory Map, which meant each Vercel
- * serverless instance kept its own counter — an attacker distributed
- * across requests (and therefore across instances) could slip past it
- * even though a single script hammering one endpoint was still caught.
- * Redis gives every instance a shared counter, closing that gap.
+ * Architecture for 1M+ req/s:
+ * ─────────────────────────────
+ * 1. Redis-backed sliding window: every Vercel instance shares the same
+ *    counter, so distributed attackers can't bypass per-instance limits.
+ * 2. Tiered limits: different endpoints get different budgets
+ *    (e.g. auth = strict, reads = generous).
+ * 3. In-memory fallback for local dev: zero-config `npm run dev`.
+ * 4. Ephemeral deny cache: once an IP is rate-limited, subsequent requests
+ *    within the same serverless instance are rejected without a Redis call.
  *
- * Same key structure as before (e.g. `contact:${ip}`), so call sites
- * don't need to change other than awaiting the (now async) result.
- *
- * Local dev / preview without Upstash env vars configured: falls back
- * to the original in-memory limiter rather than failing outright, so
- * `npm run dev` keeps working with zero setup. Set
- * UPSTASH_REDIS_REST_URL / UPSTASH_REDIS_REST_TOKEN (from the Vercel
- * Upstash integration or the Upstash console) to get the real,
- * cross-instance behavior in every deployed environment.
+ * Set UPSTASH_REDIS_REST_URL / UPSTASH_REDIS_REST_TOKEN for production.
  */
 
 export type RateLimitResult = { allowed: boolean; retryAfterSeconds: number };
 
-const redisUrl = process.env.UPSTASH_REDIS_REST_URL;
-const redisToken = process.env.UPSTASH_REDIS_REST_TOKEN;
+// ---------------------------------------------------------------------------
+// Preset tiers — import and use these instead of raw numbers
+// ---------------------------------------------------------------------------
 
-const redis = redisUrl && redisToken ? new Redis({ url: redisUrl, token: redisToken }) : null;
+export const RATE_LIMIT_TIERS = {
+  /** Auth endpoints: login, signup, password reset. Very strict. */
+  auth: { limit: 5, windowSeconds: 60 },
+  /** Contact form, feedback submissions. */
+  contact: { limit: 3, windowSeconds: 60 },
+  /** Mutating API calls: POST/PUT/PATCH/DELETE. */
+  mutation: { limit: 30, windowSeconds: 60 },
+  /** Read-heavy API calls: GET. Generous to support high traffic. */
+  read: { limit: 120, windowSeconds: 60 },
+  /** Global catch-all for unclassified requests. */
+  global: { limit: 60, windowSeconds: 60 },
+} as const;
 
-// One Ratelimit instance per (limit, window) pair, cached so we don't
-// recreate the sliding-window state on every call. Keyed by
-// "limit:windowSeconds" since those two numbers fully determine the
-// Ratelimit config; the actual per-caller key is passed to .limit().
+// ---------------------------------------------------------------------------
+// Redis-backed limiter (production)
+// ---------------------------------------------------------------------------
+
+// Cache Ratelimit instances by config to avoid re-creation.
 const limiters = new Map<string, Ratelimit>();
 
 function getLimiter(limit: number, windowSeconds: number): Ratelimit {
@@ -46,12 +55,17 @@ function getLimiter(limit: number, windowSeconds: number): Ratelimit {
     limiter: Ratelimit.slidingWindow(limit, `${windowSeconds} s`),
     analytics: false,
     prefix: "ratelimit",
+    // Ephemeral cache: deny decisions are cached in-memory for up to 1s,
+    // so a hammering client doesn't cause a Redis call on every request.
+    ephemeralCache: new Map(),
   });
   limiters.set(cacheKey, limiter);
   return limiter;
 }
 
-// ---- In-memory fallback (local dev only — see module doc above) ----
+// ---------------------------------------------------------------------------
+// In-memory fallback (local dev only)
+// ---------------------------------------------------------------------------
 
 type Bucket = { count: number; resetAt: number };
 const buckets = new Map<string, Bucket>();
@@ -66,7 +80,11 @@ function sweep() {
   }
 }
 
-function checkRateLimitInMemory(key: string, limit: number, windowSeconds: number): RateLimitResult {
+function checkRateLimitInMemory(
+  key: string,
+  limit: number,
+  windowSeconds: number,
+): RateLimitResult {
   sweep();
   const now = Date.now();
   const existing = buckets.get(key);
@@ -77,23 +95,28 @@ function checkRateLimitInMemory(key: string, limit: number, windowSeconds: numbe
   }
 
   if (existing.count >= limit) {
-    return { allowed: false, retryAfterSeconds: Math.ceil((existing.resetAt - now) / 1000) };
+    return {
+      allowed: false,
+      retryAfterSeconds: Math.ceil((existing.resetAt - now) / 1000),
+    };
   }
 
   existing.count += 1;
   return { allowed: true, retryAfterSeconds: 0 };
 }
 
-// ---- Public API ------------------------------------------------------
+// ---------------------------------------------------------------------------
+// Public API
+// ---------------------------------------------------------------------------
 
 /**
- * Checks and increments the counter for `key` within `windowSeconds`.
+ * Check and increment the counter for `key` within `windowSeconds`.
  * Call once per attempt, before doing the real work.
  */
 export async function checkRateLimit(
   key: string,
   limit: number,
-  windowSeconds: number
+  windowSeconds: number,
 ): Promise<RateLimitResult> {
   if (!redis) {
     return checkRateLimitInMemory(key, limit, windowSeconds);
@@ -103,8 +126,26 @@ export async function checkRateLimit(
   const result = await limiter.limit(key);
   return {
     allowed: result.success,
-    retryAfterSeconds: result.success ? 0 : Math.max(0, Math.ceil((result.reset - Date.now()) / 1000)),
+    retryAfterSeconds: result.success
+      ? 0
+      : Math.max(0, Math.ceil((result.reset - Date.now()) / 1000)),
   };
+}
+
+/**
+ * Convenience: check rate limit using a named tier.
+ *
+ * Usage:
+ * ```ts
+ * const { allowed } = await checkRateLimitTier("auth", `login:${ip}`);
+ * ```
+ */
+export async function checkRateLimitTier(
+  tier: keyof typeof RATE_LIMIT_TIERS,
+  key: string,
+): Promise<RateLimitResult> {
+  const { limit, windowSeconds } = RATE_LIMIT_TIERS[tier];
+  return checkRateLimit(key, limit, windowSeconds);
 }
 
 /** Best-effort client IP from standard proxy headers (Vercel sets these). */

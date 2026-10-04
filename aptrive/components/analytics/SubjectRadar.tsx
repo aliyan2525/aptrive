@@ -2,7 +2,7 @@
 
 import * as React from "react";
 import { LiquidGlassCard } from "../ui/LiquidGlassCard";
-import { motion } from "framer-motion";
+import { motion } from "motion/react";
 
 interface SubjectData {
   subject: string;

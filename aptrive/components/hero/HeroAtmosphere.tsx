@@ -1,6 +1,6 @@
-﻿"use client";
+"use client";
 
-import { motion } from "framer-motion";
+import { motion } from "motion/react";
 import HeroCinematicLayer from "./HeroCinematicLayer";
 
 const particles = Array.from({ length: 26 }, (_, index) => ({

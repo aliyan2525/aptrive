@@ -1,7 +1,7 @@
-﻿"use client";
+"use client";
 
 import { useRef } from "react";
-import { motion, useScroll, useTransform, type MotionValue } from "framer-motion";
+import { motion, useScroll, useTransform, type MotionValue } from "motion/react";
 import { cn } from "@/lib/cn";
 
 export interface JourneyStep {

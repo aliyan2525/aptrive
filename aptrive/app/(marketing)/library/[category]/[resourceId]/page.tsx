@@ -2,7 +2,6 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 import { categories, contentTypeLabels, resources } from "@/lib/library-data";
-import { AuthenticatedLibraryResource } from "@/components/library/AuthenticatedLibraryDetails";
 import { createClient } from "@/lib/supabase/server";
 
 type PageProps = {

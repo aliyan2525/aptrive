@@ -2,7 +2,7 @@
 
 import { useMemo, useState } from "react";
 import Link from "next/link";
-import { motion } from "framer-motion";
+import { motion } from "motion/react";
 import { ArrowRight, Clock3, Filter, Search, Sparkles } from "lucide-react";
 import type { PracticeSetSummary } from "@/lib/repositories/catalog.repository";
 

@@ -1,6 +1,6 @@
 import { contentTypeLabels, type LibraryResource } from "@/lib/library-data";
 import DifficultyBadge from "./DifficultyBadge";
-import { motion } from "framer-motion";
+import { motion } from "motion/react";
 import { ArrowRight, PlayCircle, FileText, CheckCircle2 } from "lucide-react";
 import Link from "next/link";
 

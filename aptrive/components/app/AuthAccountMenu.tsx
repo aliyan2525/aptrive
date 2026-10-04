@@ -6,7 +6,7 @@ import { forwardRef, useEffect, useRef, useState } from "react";
 import { Bell, CircleHelp, Keyboard, LogOut, MessageSquare, Palette, ShieldCheck, UserRound } from "lucide-react";
 import { signOut } from "@/app/(marketing)/auth/actions";
 import type { HeaderUser } from "@/components/UserMenu";
-import { AnimatePresence, motion } from "framer-motion";
+import { AnimatePresence, motion } from "motion/react";
 
 export default function AuthAccountMenu({ user }: { user: HeaderUser }) {
   const [open, setOpen] = useState(false);

@@ -1,6 +1,3 @@
-"use client";
-
-import { motion } from "framer-motion";
 import { Check, X, ArrowUpRight, TrendingDown, Clock, BookOpen, BrainCircuit, Crown } from "lucide-react";
 import Link from "next/link";
 import Reveal from "@/components/Reveal";

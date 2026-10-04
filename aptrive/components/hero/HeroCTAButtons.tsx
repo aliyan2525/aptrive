@@ -1,6 +1,5 @@
 "use client";
 
-import Link from "next/link";
 import { ArrowRight, Calculator } from "lucide-react";
 import Button from "@/components/ui/Button";
 import { emitHeroSignal } from "./heroSignal";

@@ -1,6 +1,6 @@
 "use client";
 
-import { motion, useReducedMotion } from "framer-motion";
+import { motion, useReducedMotion } from "motion/react";
 import { Atom, Binary, Building2, Cpu, Database, GraduationCap, Landmark, Layers3, Orbit, Radio, Route, Sparkles, Target, Trophy, Waypoints } from "lucide-react";
 import type { ReactNode } from "react";
 

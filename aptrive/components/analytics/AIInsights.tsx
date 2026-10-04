@@ -3,7 +3,7 @@
 import * as React from "react";
 import { LiquidGlassCard } from "../ui/LiquidGlassCard";
 import { Sparkles, ArrowRight, Brain } from "lucide-react";
-import { motion } from "framer-motion";
+import { motion } from "motion/react";
 
 interface AIInsightsProps {
   insights: string[];

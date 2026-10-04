@@ -39,3 +39,16 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# one-off scripts (already executed, not part of the app)
+compress.js
+fix-imports.js
+
+# audit / planning artifacts (internal, not production code)
+whole-site-review-inventory.txt
+whole-site-risk-scan.txt
+STEP3_TYPES_PLAN.md
+TESTING.md
+
+# legacy proxy (replaced by middleware.ts)
+proxy.ts

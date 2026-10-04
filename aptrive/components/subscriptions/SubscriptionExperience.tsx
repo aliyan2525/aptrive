@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { Check, ChevronDown, LockKeyhole, Sparkles, ArrowUpRight, ShieldCheck } from "lucide-react";
-import { motion, useReducedMotion } from "framer-motion";
+import { motion, useReducedMotion } from "motion/react";
 
 const plans = [
   {

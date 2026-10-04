@@ -1,8 +1,8 @@
-﻿"use client";
+"use client";
 
 import Image from "next/image";
 import { useState, useId } from "react";
-import { motion, useReducedMotion } from "framer-motion";
+import { motion, useReducedMotion } from "motion/react";
 import { ArrowRight } from "lucide-react";
 import { cn } from "@/lib/cn";
 import UniversityLogo from "@/components/UniversityLogo";
@@ -17,8 +17,8 @@ type UnivNode = {
 };
 
 const universities: UnivNode[] = [
-  { id: "nust", name: "NUST", path: "NET Â· Engineering", loc: "Islamabad", x: -190, y: -160 },
-  { id: "fast", name: "FAST", path: "NU Test Â· Computing", loc: "Multiple campuses", x: 170, y: -180 },
+  { id: "nust", name: "NUST", path: "NET · Engineering", loc: "Islamabad", x: -190, y: -160 },
+  { id: "fast", name: "FAST", path: "NU Test · Computing", loc: "Multiple campuses", x: 170, y: -180 },
   { id: "lums", name: "LUMS", path: "Undergraduate", loc: "Lahore", x: 230, y: 30 },
   { id: "giki", name: "GIKI", path: "Admission Test", loc: "Topi", x: 130, y: 190 },
   { id: "uet", name: "UET", path: "ECAT", loc: "Lahore", x: -140, y: 210 },

@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { motion, useReducedMotion } from "framer-motion";
+import { motion, useReducedMotion } from "motion/react";
 import { CheckCircle2, GraduationCap } from "lucide-react";
 import UniversityLogo from "@/components/UniversityLogo";
 import { getUniversityExperienceSlug } from "@/lib/university-experiences";

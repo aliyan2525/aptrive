@@ -2,7 +2,7 @@ import * as React from "react";
 import { redirect } from "next/navigation";
 import { AIInsights } from "@/components/analytics/AIInsights";
 import dynamic from "next/dynamic";
-import { motion } from "framer-motion";
+import { motion } from "motion/react";
 import { Zap, Loader2 } from "lucide-react";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";

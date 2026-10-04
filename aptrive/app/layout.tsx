@@ -1,4 +1,4 @@
-﻿import type { Metadata, Viewport } from "next";
+import type { Metadata, Viewport } from "next";
 import { Space_Grotesk, Inter, IBM_Plex_Mono } from "next/font/google";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import { Analytics } from "@vercel/analytics/react";
@@ -50,7 +50,7 @@ export const metadata: Metadata = {
 
   title: {
     default: "Aptrive | Entrance Exam Prep for Pakistan's Top Universities",
-    template: "%s Â· Aptrive",
+    template: "%s · Aptrive",
   },
 
   description:
@@ -140,7 +140,7 @@ export default function RootLayout({
       lang="en"
       data-theme="light"
       className={`${spaceGrotesk.variable} ${inter.variable} ${ibmPlexMono.variable} h-full`}
-      suppressHydrationWarning
+
     >
       <body className="min-h-full flex flex-col bg-graphite text-fg antialiased">
         <OrganizationSchema />
@@ -161,5 +161,3 @@ export default function RootLayout({
     </html>
   );
 }
-
-

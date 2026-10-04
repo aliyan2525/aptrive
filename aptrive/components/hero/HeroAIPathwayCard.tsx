@@ -1,6 +1,6 @@
 "use client";
 
-import { motion } from "framer-motion";
+import { motion } from "motion/react";
 import { Activity, Sparkles, TrendingUp } from "lucide-react";
 import { emitHeroSignal } from "./heroSignal";
 

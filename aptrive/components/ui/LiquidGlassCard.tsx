@@ -1,6 +1,6 @@
 import * as React from "react";
 import { cn } from "@/lib/cn";
-import { motion, HTMLMotionProps } from "framer-motion";
+import { motion, HTMLMotionProps } from "motion/react";
 
 interface LiquidGlassCardProps extends HTMLMotionProps<"div"> {
   children: React.ReactNode;

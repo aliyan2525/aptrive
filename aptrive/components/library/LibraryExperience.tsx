@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
+import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 import HeroBlobsSceneWrapper from "@/components/hero/HeroBlobsSceneWrapper";
 import HeroOrbitIcons from "@/components/hero/HeroOrbitIcons";
 import {
